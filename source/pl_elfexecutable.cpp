@@ -14,13 +14,14 @@
 // Implementation of the Class ElfExecutable for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 
 #include "pl_elfexecutable.h"
 #include "errorhandler.h"
 #include <stdio.h>
+#include <cstring>
 #include "parameterlistinterface.h"
 #include "pl_elfimportrelocation.h"
 #include "pl_dllsymbol.h"
@@ -35,32 +36,32 @@ Constructor for class ElfExecutable
 @released
 */
 ElfExecutable::ElfExecutable(ParameterListInterface *aParameterListInterface) :\
-	iElfHeader(NULL), \
+	iElfHeader(nullptr), \
 	iEntryPoint(0),\
-	iProgHeader(NULL), \
+	iProgHeader(nullptr), \
 	iSONameOffset(0) ,\
-	iSections (NULL) , \
-	iVersionDef (NULL) , iVerDefCount(0), \
-	iVersionNeed (NULL) , iVerNeedCount(0), \
-	iVersionTbl (NULL) ,iRelSize(0),iRelEntSize(0), \
+	iSections (nullptr) , \
+	iVersionDef (nullptr) , iVerDefCount(0), \
+	iVersionNeed (nullptr) , iVerNeedCount(0), \
+	iVersionTbl (nullptr) ,iRelSize(0),iRelEntSize(0), \
 	iNRelocs(0),
-	iRel (NULL) ,iRelaSize(0), iRelaEntSize(0), \
-	iRela(NULL), 
-	iStringTable (NULL) , \
-	iSectionHdrStrTbl(NULL), \
-	iVerInfo(NULL),	iElfDynSym (NULL), \
-	iSymTab (NULL), \
-	iStrTab (NULL), \
-	iLim (NULL), \
+	iRel (nullptr) ,iRelaSize(0), iRelaEntSize(0), \
+	iRela(nullptr),
+	iStringTable (nullptr) , \
+	iSectionHdrStrTbl(nullptr), \
+	iVerInfo(nullptr),	iElfDynSym (nullptr), \
+	iSymTab (nullptr), \
+	iStrTab (nullptr), \
+	iLim (nullptr), \
 	iNSymbols(0), \
-	iHashTbl (NULL) , \
-	iDynSegmentHdr (NULL) , \
-	iDataSegmentHdr (NULL) ,iDataSegment(NULL), iDataSegmentSize(0), iDataSegmentIdx(0), \
-	iCodeSegmentHdr (NULL) , iCodeSegment(NULL), iCodeSegmentSize(0), iCodeSegmentIdx(0), \
-	iExports (NULL), \
+	iHashTbl (nullptr) , \
+	iDynSegmentHdr (nullptr) , \
+	iDataSegmentHdr (nullptr) ,iDataSegment(nullptr), iDataSegmentSize(0), iDataSegmentIdx(0), \
+	iCodeSegmentHdr (nullptr) , iCodeSegment(nullptr), iCodeSegmentSize(0), iCodeSegmentIdx(0), \
+	iExports (nullptr), \
 	iParameterListInterface(aParameterListInterface),\
 	iPltGotBase(0), iPltGotLimit(0), iStrTabSz(0), iSymEntSz(0), \
-	iPltGot(NULL), iPltRel(NULL),iPltRelaSz(0), iPltRela(NULL), iPltRelSz(0)  \
+	iPltGot(nullptr), iPltRel(nullptr),iPltRelaSz(0), iPltRela(nullptr), iPltRelSz(0)  \
 
 {
 }
@@ -75,14 +76,14 @@ ElfExecutable::~ElfExecutable()
 {
 	delete iExports;
 	delete [] iVerInfo;
-	/* 
-	all of these were getting deleted, they are not allocated by 
-	ElfExecutable, they simply refer to a linear array of images 
-	in an ElfImage, hence they shouldn't be de-allocated 
-	
+	/*
+	all of these were getting deleted, they are not allocated by
+	ElfExecutable, they simply refer to a linear array of images
+	in an ElfImage, hence they shouldn't be de-allocated
+
 	delete iRela;
 	delete iPltRel;
-	delete iPltRela; */ 
+	delete iPltRela; */
 
 	iNeeded.clear();
 	iSymbolTable.clear();
@@ -107,7 +108,7 @@ PLUINT32  ElfExecutable::ProcessElfFile(Elf32_Ehdr *aElfHdr) {
 
 	/* Get the Section base..*/
 	if(iElfHeader->e_shnum) {
-		iSections = ELF_ENTRY_PTR(Elf32_Shdr, iElfHeader, iElfHeader->e_shoff); 
+		iSections = ELF_ENTRY_PTR(Elf32_Shdr, iElfHeader, iElfHeader->e_shoff);
 	}
 
 	/* Get the program header..*/
@@ -242,7 +243,7 @@ Function to process the ARM to Thumb veneers
 void ElfExecutable::ProcessVeneers()
 {
 	if (iSymTab && iStrTab)
-	{	
+	{
 		ElfRelocations::RelocationList & iLocalCodeRelocs = GetCodeRelocations();
 
 		Elf32_Sym *aSymTab = iSymTab;
@@ -281,8 +282,8 @@ void ElfExecutable::ProcessVeneers()
 				/* If the symbol addresses a Thumb instruction, its value is the
 				 * address of the instruction with bit zero set (in a
 				 * relocatable object, the section offset with bit zero set).
-				 * This allows a linker to distinguish ARM and Thumb code symbols 
-				 * without having to refer to the map. An ARM symbol will always have 
+				 * This allows a linker to distinguish ARM and Thumb code symbols
+				 * without having to refer to the map. An ARM symbol will always have
 				 * an even value, while a Thumb symbol will always have an odd value.
 				 * Reference: Section 4.5.3 in Elf for the ARM Architecture Doc
 				 * aIsThumbSymbol will be 1 for a thumb symbol and 0 for ARM symbol
@@ -291,7 +292,7 @@ void ElfExecutable::ProcessVeneers()
 
 				/* The relocation entry should be generated for the veneer only if
 				 * the following three conditions are satisfied:
-				 * 1) Check if the instruction at the symbol is as expected 
+				 * 1) Check if the instruction at the symbol is as expected
 				 *    i.e. has the bit pattern 0xe51ff004 == 'LDR pc,[pc,#-4]'
 				 * 2) There is no relocation entry generated for the veneer symbol
 				 * 3) The instruction in the location provided by the pointer is a thumb symbol
@@ -301,8 +302,9 @@ void ElfExecutable::ProcessVeneers()
 					ElfLocalRelocation	*aRel;
 					PLUCHAR	aType = R_ARM_NONE;
 
-					aRel = new ElfLocalRelocation(this, aOffset, 0, 0, aType, NULL, ESegmentRO, aSym, false, true);
-					if(aRel) 
+					aRel = new ElfLocalRelocation(this, aOffset, 0, 0, aType, nullptr,
+                                    ESegmentRO, aSym, false, true);
+					if(aRel)
 					{
 						aRel->Add();
 					}
@@ -338,9 +340,9 @@ PLUINT32  ElfExecutable::ProcessSymbols(){
 	char		*aDllName;
 	char		*aSymName, *aNewSymName;
 	SymbolType	aType;
-	
+
 	while( aSymIdx < iNSymbols ) {
-		
+
 		aSymName = ELF_ENTRY_PTR(char, iStringTable, iElfDynSym[aSymIdx].st_name );
 
 		if( ExportedSymbol( &iElfDynSym[aSymIdx] ) ){
@@ -356,7 +358,7 @@ PLUINT32  ElfExecutable::ProcessSymbols(){
 			strcpy(aNewSymName, aSymName);
 			aSymbol = new DllSymbol( aNewSymName, aType, &iElfDynSym[aSymIdx], aSymIdx);
 			aSymbol->SetSymbolSize(iElfDynSym[aSymIdx].st_size);
-			
+
 			//Putting the symbols into a hash table - Used later while processing relocations
 			iSymbolTable[aSymIdx] = aSymbol ;
 			if( !AddToExports( aDllName, aSymbol ))
@@ -382,7 +384,7 @@ PLUINT32  ElfExecutable::ProcessSymbols(){
 			}
 			aDllName = iVerInfo[iVersionTbl[aSymIdx]].iLinkAs;
 			//aSymbol = new DllSymbol( aSymName, aType, &iElfDynSym[aSymIdx], aSymIdx);
-			
+
 			//Putting the symbols into a hash table
 			//iSymbolTable[aSymIdx] = aSymbol ;
 		}
@@ -431,7 +433,7 @@ void  ElfExecutable::AddToImports(ElfImportRelocation* aReloc){
 	//char *aDll = iVerInfo[iVersionTbl[aReloc->iSymNdx]].iLinkAs;
 	char *aDll = aReloc->iVerRecord->iLinkAs;
 	iImports.Add( (const char*)aDll, aReloc );
-		
+
 }
 
 /**
@@ -636,7 +638,7 @@ PLUINT32  ElfExecutable::ProcessDynamicEntries(){
 		if (iNSymbols && (iNSymbols != iHashTbl->nChains))
 			throw ELFFormatError(SYMBOLCOUNTMISMATCHERROR,(char*)iParameterListInterface->ElfInput());
 		else
-		//The number of symbols is same as the number of chains in hashtable	
+		//The number of symbols is same as the number of chains in hashtable
 			iNSymbols = iHashTbl->nChains;
 	}
 
@@ -648,7 +650,7 @@ PLUINT32  ElfExecutable::ProcessDynamicEntries(){
 			// check to see if PltRels are included in iRel. If they are
 			// ignore them since we don't care about the distinction
 			if (iRel <= iPltRel && iPltRel < ELF_ENTRY_PTR(Elf32_Rel, iRel, iRelSize))
-				iPltRel = 0;
+				iPltRel = nullptr;
 		}
 		else
 		{
@@ -656,7 +658,7 @@ PLUINT32  ElfExecutable::ProcessDynamicEntries(){
 			// check to see if PltRels are included in iRel.  If they are
 			// ignore them since we don't care about the distinction
 			if (iRela <= iPltRela && iPltRela < ELF_ENTRY_PTR(Elf32_Rela, iRela, iRelaSize))
-				iPltRela = 0;
+				iPltRela = nullptr;
 		}
 	}
 
@@ -678,9 +680,9 @@ void ElfExecutable::ProcessVerInfo() {
 	Elf32_Vernaux	*aNaux;
 	char			*aSoName;
 	char			*aLinkAs;
-	
+
 	aDef = iVersionDef;
-	
+
 	while( aDef ) {
 		aDaux = ELF_ENTRY_PTR( Elf32_Verdaux, aDef, aDef->vd_aux);
 		aLinkAs = ELF_ENTRY_PTR(char, iStringTable, aDaux->vda_name );
@@ -732,9 +734,9 @@ Template Function to process relocations
 @internalComponent
 @released
 */
-template <class T> 
+template <class T>
 void ElfExecutable::ProcessRelocations(T *aElfRel, size_t aSize){
-	if( !aElfRel ) 
+	if( !aElfRel )
 		return;
 
 	T * aElfRelLimit = ELF_ENTRY_PTR(T, aElfRel, aSize);
@@ -746,9 +748,9 @@ void ElfExecutable::ProcessRelocations(T *aElfRel, size_t aSize){
 	Elf32_Word		aAddend;
 
 	while( aElfRel < aElfRelLimit) {
-		
+
 		aType = ELF32_R_TYPE(aElfRel->r_info );
-		
+
 		if(ElfRelocation::ValidRelocEntry(aType)) {
 
 			aSymIdx = ELF32_R_SYM(aElfRel->r_info);
@@ -805,7 +807,7 @@ VersionInfo* ElfExecutable::GetVersionInfo(PLUINT32  aIndex){
 
 
 /**
-This function returns the Dll name in which an imported symbol is 
+This function returns the Dll name in which an imported symbol is
 defined by looking in the version required section.
 @param aSymbolIndex - Index of symbol
 @return Dll name
@@ -840,7 +842,7 @@ This function returns the segment type
 @released
 */
 ESegmentType ElfExecutable::SegmentType(Elf32_Addr aAddr) {
-	
+
 	try {
 		Elf32_Phdr *aHdr = Segment(aAddr);
 		if( !aHdr )
@@ -868,7 +870,7 @@ This function returns the segment type
 @released
 */
 Elf32_Phdr* ElfExecutable::Segment(ESegmentType aType) {
-	
+
 	switch(aType)
 	{
 	case ESegmentRO:
@@ -888,7 +890,7 @@ Function to get segment header
 @released
 */
 Elf32_Phdr* ElfExecutable::Segment(Elf32_Addr aAddr) {
-	
+
 	if(iCodeSegmentHdr) {
 		PLUINT32 aBase = iCodeSegmentHdr->p_vaddr;
 		if( aBase <= aAddr && aAddr < (aBase + iCodeSegmentHdr->p_memsz) ) {
@@ -1037,13 +1039,13 @@ Elf32_Sym* ElfExecutable::FindSymbol(char* aName) {
 		return NULL;
 
 	PLULONG aHashVal = Util::elf_hash((const PLUCHAR*) aName );
-	
+
 	Elf32_Sword* aBuckets = ELF_ENTRY_PTR(Elf32_Sword, iHashTbl, sizeof(Elf32_HashTable) );
 	Elf32_Sword* aChains = ELF_ENTRY_PTR(Elf32_Sword, aBuckets, sizeof(Elf32_Sword)*(iHashTbl->nBuckets) );
 
 	Elf32_Sword aIdx = aHashVal % iHashTbl->nBuckets;
 	aIdx = aBuckets[aIdx];
-	
+
 	char	*aSymName;
 	do {
 		aSymName = ELF_ENTRY_PTR(char, iStringTable, iElfDynSym[aIdx].st_name);
@@ -1079,7 +1081,7 @@ PLUINT32 ElfExecutable::GetSymbolOrdinal( char* aSymName) {
 	if( !aSym )
 		return (PLUINT32)-1;
 	return GetSymbolOrdinal( aSym );
-	
+
 }
 
 /**
@@ -1261,7 +1263,7 @@ Elf32_Word ElfExecutable::EntryPointOffset()
 	}
 	else if (!(iElfHeader->e_entry))
 		throw ELFFormatError(ENTRYPOINTNOTSETERROR, (char*)iParameterListInterface->ElfInput());
-	else 
+	else
 		return iElfHeader->e_entry - iCodeSegmentHdr->p_vaddr;
 }
 
@@ -1272,7 +1274,7 @@ Function to check exception is present in the Elf image.
 @released
 */
 bool ElfExecutable::ExeceptionsPresentP()
-{	
+{
 	size_t nShdrs = iElfHeader->e_shnum;
 	if (nShdrs)
 	{
@@ -1295,7 +1297,7 @@ bool ElfExecutable::ExeceptionsPresentP()
 	}
 	else
 		throw ELFFileError(NEEDSECTIONVIEWERROR, (char*)iParameterListInterface->ElfInput());
-	
+
 	return false;
 }
 
@@ -1322,9 +1324,9 @@ Elf32_Sym * ElfExecutable::LookupStaticSymbol(char * aName) {
 		// find the static symbol table and string table
 		Elf32_Shdr * aShdr = ELF_ENTRY_PTR(Elf32_Shdr, iElfHeader, iElfHeader->e_shoff);
 		char * aShStrTab = ELF_ENTRY_PTR(char, iElfHeader, aShdr[iElfHeader->e_shstrndx].sh_offset);
-		Elf32_Sym * aSymTab = 0;
-		Elf32_Sym * aLim = 0;
-		char * aStrTab = 0;
+		Elf32_Sym * aSymTab = nullptr;
+		Elf32_Sym * aLim = nullptr;
+		char * aStrTab = nullptr;
 		for (PLUINT32 i = 0; i < nShdrs; i++)
 		{
 			if (aShdr[i].sh_type == SHT_SYMTAB)
@@ -1352,7 +1354,7 @@ Elf32_Sym * ElfExecutable::LookupStaticSymbol(char * aName) {
 
 			PLUINT32 aIdx = aHashVal % aHashTbl->nBuckets;
 			aIdx = aBuckets[aIdx];
-			
+
 			char	*aSymName;
 			do {
 				aSymName = ELF_ENTRY_PTR(char, aStrTab, aSymTab[aIdx].st_name);
@@ -1364,10 +1366,10 @@ Elf32_Sym * ElfExecutable::LookupStaticSymbol(char * aName) {
 
 			return NULL;
 		}
-		else */ 
+		else */
 
 		if (aSymTab && aStrTab)
-		{	
+		{
 			for(; aSymTab < aLim; aSymTab++)
 			{
 				if (!aSymTab->st_name) continue;
@@ -1375,7 +1377,7 @@ Elf32_Sym * ElfExecutable::LookupStaticSymbol(char * aName) {
 				if (!strcmp(aSymName, aName))
 					return aSymTab;
 			}
-			return 0;
+			return nullptr;
 		}
 		else
 		{
@@ -1418,7 +1420,7 @@ Function to get fixup location
 */
 Elf32_Word* ElfExecutable::GetFixupLocation(ElfLocalRelocation* aReloc, Elf32_Addr aPlace)
 {
-	Elf32_Phdr * aPhdr = aReloc->ExportTableReloc() ? 
+	Elf32_Phdr * aPhdr = aReloc->ExportTableReloc() ?
 		iCodeSegmentHdr :
 		Segment(aPlace);
 	Elf32_Word offset = aPhdr->p_offset + aPlace - aPhdr->p_vaddr;
@@ -1466,11 +1468,11 @@ ESegmentType ElfExecutable::Segment(Elf32_Sym *aSym)
 			}
 
 		}
-		
+
 		if (aHdr == iCodeSegmentHdr)
 		{
 			return ESegmentRO;
-		} 
+		}
 		else if (aHdr == iDataSegmentHdr)
 		{
 			return ESegmentRW;

@@ -17,17 +17,11 @@
  #ifndef __H_UTL_H__
  #define __H_UTL_H__
 
-#include "e32defwrap.h"
-#include <e32err.h>
+#include "portable.h"
 #include <iostream>
-
-#ifdef __TOOLS2__
 #include <sstream>
 #include <fstream>
 using namespace std;
-#else
-#include <strstream.h>
-#endif
 
  /**
  Convert string to number.
@@ -37,8 +31,8 @@ using namespace std;
  template <class T>
  TInt Val(T& aVal, char* aStr)
  {
- 
- 
+
+
 	T x;
 	#ifdef __TOOLS2__
 	istringstream val(aStr);
@@ -50,7 +44,7 @@ using namespace std;
 		return KErrGeneral;
 	aVal=x;
 	return KErrNone;
-	
+
      /*T x;
      istrstream val(aStr,strlen(aStr));
      val >> x;
@@ -59,15 +53,15 @@ using namespace std;
      aVal=x;
      return KErrNone;*/
  }
- 
- 
+
+
  //enum for decompose flag
  enum TDecomposeFlag
  {
      EUidPresent=1,
      EVerPresent=2
  };
- 
+
  /**
  class for FileNameInfo
  @internalComponent
@@ -76,7 +70,7 @@ using namespace std;
  class TFileNameInfo
  {
      public:
-         TFileNameInfo(const char* aFileName, TBool aLookForUid);
+         TFileNameInfo(const char* aFileName, bool aLookForUid);
      public:
          const char* iFileName;
          TInt iTotalLength;
@@ -86,26 +80,26 @@ using namespace std;
          TUint32 iModuleVersion;
          TUint32 iFlags;
  };
- 
+
  extern char* NormaliseFileName(const char* aName);
- 
- 
- 
- #ifdef __LINUX__ 
+
+
+
+ #ifdef __LINUX__
  // Case insensitive comparison functions are named differently on Linux
- #define stricmp strcasecmp 
- #define strnicmp strncasecmp 
- 
+ #define stricmp strcasecmp
+ #define strnicmp strncasecmp
+
  // Convert the provided string to Uppercase
  char* strupr(char *a);
  #endif // __LINUX__
- 
+
  #endif // __H_UTL_H__
- 
- 
- 
- 
- 
+
+
+
+
+
 
 
 

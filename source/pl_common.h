@@ -14,20 +14,18 @@
 // Implementation of the Class SymbolAttrib for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #if !defined _PL_COMMON_H_
 #define _PL_COMMON_H_
 
-#ifdef _MSC_VER 
+#ifdef _MSC_VER
 	#pragma warning(disable: 4786) // identifier was truncated to '255' characters in the debug information
 	#pragma warning(disable: 4514) // unreferenced inline function has been removed
 	#pragma warning(disable: 4702) // unreachable code
 	#pragma warning(disable: 4710) // function not inlined
 #endif
-
-#include <tools/elfdefs.h>
 
 typedef unsigned long	PLULONG;
 typedef unsigned int	PLUINT32;
@@ -41,8 +39,8 @@ typedef unsigned int	PLMemAddr32;
 typedef unsigned int	PLOffset32;
 typedef unsigned short	PLOffset16;
 
-#define DELETE_PTR(aPtr) delete aPtr; aPtr = NULL;
-#define DELETE_PTR_ARRAY(aPtr) delete[] aPtr; aPtr = NULL;
+#define DELETE_PTR(aPtr) delete aPtr; aPtr = nullptr;
+#define DELETE_PTR_ARRAY(aPtr) delete[] aPtr; aPtr = nullptr;
 
 #define ELF_ENTRY_PTR(ptype, base, offset) \
 	((ptype*)((char*)base + offset))

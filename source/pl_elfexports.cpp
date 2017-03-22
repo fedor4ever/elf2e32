@@ -14,12 +14,13 @@
 // Implementation of the Class ElfExports for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #include "pl_elfexports.h"
 #include "pl_elfexecutable.h"
 #include "pl_dllsymbol.h"
+#include <cstring>
 
 using std::set_difference;
 
@@ -28,7 +29,7 @@ Constructor for class ElfExports
 @internalComponent
 @released
 */
-ElfExports::ElfExports() : iDllName(NULL), iSorted(false), iExportsFilteredP(false){
+ElfExports::ElfExports() : iDllName(nullptr), iSorted(false), iExportsFilteredP(false){
 }
 
 /**
@@ -115,7 +116,7 @@ name or on the ordinal number depending on the usecase.
 @internalComponent
 @released
 */
-void ElfExports::Sort() 
+void ElfExports::Sort()
 {
 	if (!iSorted) {
 		if(iExportsFilteredP) {
@@ -138,8 +139,8 @@ Function to get exports list.
 ElfExports::ExportList & ElfExports::GetExports(bool aSorted)
 {
 	if (aSorted) Sort();
-	
-	if(iExportsFilteredP) 
+
+	if(iExportsFilteredP)
 		return iFilteredExports;
 	else
 		return iExportList;
@@ -176,7 +177,7 @@ void ElfExports::FilterExports()
 	std::sort(iFilteredExports.begin(), iFilteredExports.end(), PtrELFExportNameCompare());
 
 	ExportList aNewList(iExportList.size());
-	ExportList::iterator aNewListBegin = aNewList.begin(); 
+	ExportList::iterator aNewListBegin = aNewList.begin();
 
 	ExportList::iterator aNewListEnd = set_difference(iExportList.begin(), iExportList.end(), \
 		iFilteredExports.begin(), iFilteredExports.end(), aNewListBegin, PtrELFExportNameCompare());
@@ -207,7 +208,7 @@ Function to get Dll name
 @released
 */
 char* ElfExports::DllName()
-{ 
+{
 	return iDllName;
 }
 
@@ -234,7 +235,7 @@ bool ElfExports::PtrELFExportOrdinalCompare::operator()(const Symbol * lhs, cons
 }
 
 /**
-Overloaded operator to compare update symbol attributes that are 
+Overloaded operator to compare update symbol attributes that are
 being compared. The comparision is done on the symbol names.
 @return True if lhs symbol name < rhs symbol name, otherwise false
 @internalComponent
@@ -243,13 +244,13 @@ being compared. The comparision is done on the symbol names.
 bool ElfExports::PtrELFExportNameCompareUpdateAttributes::operator()(const Symbol * lhs, const Symbol * rhs) const
 {
 	int result = strcmp(lhs->SymbolName(), rhs->SymbolName());
-	if (!result) 
+	if (!result)
 	{
 		if (lhs->OrdNum() > 0)
 			((Symbol*)rhs)->SetOrdinal( lhs->OrdNum());
 		else if (rhs->OrdNum() > 0)
 			((Symbol*)lhs)->SetOrdinal( rhs->OrdNum());
-				
+
 		if( ((Symbol*)lhs)->Absent() )
 			((Symbol*)rhs)->SetAbsent(true);
 		else if ( ((Symbol*)rhs)->Absent() )

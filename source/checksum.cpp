@@ -14,11 +14,11 @@
 // Implementation of the checksum for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
+#include <portable.h>
 #include "checksum.h"
-#include "e32imagedefs.h"
 
 typedef unsigned long uint32;
 typedef unsigned short uint16;
@@ -27,7 +27,7 @@ typedef unsigned char uint8;
 /**
 Checksum every other byte
 
-@param aPtr    A pointer to the start of the data to be checksummed. 
+@param aPtr    A pointer to the start of the data to be checksummed.
 
 @internalComponent
 @released
@@ -36,8 +36,8 @@ uint32 checkSum(const void *aPtr)
 {
 
 	const uint8 * pB=(const uint8 *)aPtr;
-	const uint8 * pE=pB+(KMaxCheckedUid*sizeof(TUid));
-	uint8 buf[(KMaxCheckedUid*sizeof(TUid))>>1];
+	const uint8 * pE=pB+(KMaxCheckedUid*KSizeOf_TUID);
+	uint8 buf[(KMaxCheckedUid*KSizeOf_TUID)>>1];
 	uint8 * pT=(&buf[0]);
 	while (pB<pE)
 	{
@@ -45,7 +45,7 @@ uint32 checkSum(const void *aPtr)
 		pB+=2;
 	}
 	unsigned short crc=0;
-	Crc(crc,&buf[0],(KMaxCheckedUid*sizeof(TUid))>>1);
+	Crc(crc,&buf[0],(KMaxCheckedUid*KSizeOf_TUID)>>1);
 	return(crc);
 }
 
@@ -81,11 +81,11 @@ static const uint32 crcTab[256] =
 /**
 Performs a CCITT CRC checksum on the specified data.
 
-On return from this function, the referenced 16 bit integer contains the checksummed 
+On return from this function, the referenced 16 bit integer contains the checksummed
 value.
 
-@param aCrc    A reference to a 16 bit integer to contain the checksummed value. 
-@param aPtr    A pointer to the start of the data to be checksummed. 
+@param aCrc    A reference to a 16 bit integer to contain the checksummed value.
+@param aPtr    A pointer to the start of the data to be checksummed.
 @param aLength The length of the data to be checksummed.
 @internalComponent
 @released
@@ -176,8 +176,8 @@ Performs a CCITT CRC-32 checksum on the specified data.
 On return from this function, the referenced 32 bit integer contains the CRC
 value.
 
-@param aCrc		A reference to a 32 bit integer to contain the CRC value. 
-@param aPtr		A pointer to the start of the data to be checksummed. 
+@param aCrc		A reference to a 32 bit integer to contain the CRC value.
+@param aPtr		A pointer to the start of the data to be checksummed.
 @param aLength	The length of the data to be checksummed.
 @internalComponent
 @released

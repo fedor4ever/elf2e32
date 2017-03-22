@@ -14,15 +14,16 @@
 // Message Implementation Operations for elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 
 #include "messageimplementation.h"
 #include "errorhandler.h"
-#include<iostream>
-#include<stdarg.h>
-#include<string>
+#include <cstring>
+#include <iostream>
+#include <stdarg.h>
+#include <string>
 #include <stdio.h>
 
 using std::endl;
@@ -223,9 +224,9 @@ void MessageImplementation::ReportMessage(int aMessageType, int aMsgIndex,...)
 
 	va_list ap;
 	va_start(ap,aMsgIndex);
-	
+
 	reportMessage=GetMessageString(aMsgIndex);
-	
+
 	if(reportMessage)
 	{
 		String message;
@@ -240,6 +241,7 @@ void MessageImplementation::ReportMessage(int aMessageType, int aMsgIndex,...)
 			case INFORMATION:
 				message = infoMssgPrefix;
 				break;
+            default: break;
 		}
 		mssgIndex = BASEMSSGNO + aMsgIndex;
 		sprintf(mssgNo,"%d",mssgIndex);
@@ -335,7 +337,7 @@ void MessageImplementation::CreateMessageFile(char *aFileName)
 		{
 			fprintf(fptr,"%d,%s\n",i+1,MessageArray[i].message);
 		}
-			
+
 		fclose(fptr);
 	}
 

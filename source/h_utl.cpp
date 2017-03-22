@@ -14,11 +14,12 @@
 // Implementation of the e32 image version for e32 image dump for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <cstring>
 #include "h_utl.h"
 
 /**
@@ -34,7 +35,7 @@ Function to check bracketed hex i.e '{', '}'
 
 @return True if the value passed in is a bracketed hex.
 */
-TBool IsBracketedHex(const char* aTemp, const char* aBrackets, TInt aDigits, TUint32& aValue)
+bool IsBracketedHex(const char* aTemp, const char* aBrackets, TInt aDigits, TUint32& aValue)
 {
 	if (aTemp[0]!=aBrackets[0] || aTemp[1+aDigits]!=aBrackets[1])
 		return 0;
@@ -52,7 +53,7 @@ TBool IsBracketedHex(const char* aTemp, const char* aBrackets, TInt aDigits, TUi
 		x = (x<<4) | (TUint32)c;
 	}
 	aValue = x;
-	
+
 	return 1;
 }
 
@@ -101,9 +102,9 @@ TInt CheckForDecimalVersion(const char* aBegin, const char* aTemp, TUint32& aVal
 	}
 	if (aTemp < aBegin)
 		return 0;
-	
+
 	aValue = (v[1] << 16) | v[0];
-	
+
 	return s0 - aTemp;
 }
 
@@ -136,7 +137,7 @@ char* NormaliseFileName(const char* aName)
 			memcpy(t + nl, aName + f.iExtPos, el);
 		t[tl] = 0;
 	}
-	
+
 	return t;
 }
 
@@ -150,7 +151,7 @@ Constructor for Class TFileNameInfo
 Filename to be parsed
 @param aLookForUid
 */
-TFileNameInfo::TFileNameInfo(const char* aFileName, TBool aLookForUid)
+TFileNameInfo::TFileNameInfo(const char* aFileName, bool aLookForUid)
 {
 	iFileName = aFileName;
 	TInt l = strlen(aFileName);
@@ -165,7 +166,7 @@ TFileNameInfo::TFileNameInfo(const char* aFileName, TBool aLookForUid)
 	for (; s>=iFileName && *s!='.' && *s!='}' && (!aLookForUid || *s!=']'); --s)
 	{
 	}
-	
+
 	if (s<iFileName)
 		return;
 	if (*s == '.')
@@ -181,14 +182,14 @@ TFileNameInfo::TFileNameInfo(const char* aFileName, TBool aLookForUid)
 	}
 	else if (s != iFileName + l)
 		return;
-	
+
 	if (aLookForUid && remain>=10 && IsBracketedHex(s-9, "[]", 8, iUid3))
 	{
 		iFlags |= EUidPresent;
 		remain -= 10;
 		s -= 10;
 	}
-	
+
 	if (remain>=10 && IsBracketedHex(s-9, "{}", 8, iModuleVersion))
 	{
 		iFlags |= EVerPresent;

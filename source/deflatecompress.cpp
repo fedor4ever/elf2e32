@@ -15,11 +15,14 @@
 
 #include <fstream>
 #include <cassert>
+#include <algorithm>
+#include <string.h>
 
-#include "e32imagedefs.h"
 #include "errorhandler.h"
 #include "farray.h"
 #include "huffman.h"
+
+using std::min;
 
 const TInt KDeflateMinLength=3;
 const TInt KDeflateMaxLength=KDeflateMinLength-1 + (1<<KDeflateLengthMag);
@@ -142,11 +145,11 @@ inline HDeflateHash* HDeflateHash::NewLC(TInt aLinks)
 	// Compute the size of the class, including rounding it up to a multiple of 4
 	// bytes.
 
-	unsigned n = sizeof(TInt) * 256 + sizeof(TOffset) * Min(aLinks, KDeflateMaxDistance);
+	unsigned n = sizeof(TInt) * 256 + sizeof(TOffset) * min(aLinks, KDeflateMaxDistance);
 
 	while (n & 0x1f)
 	{
-		n++;	
+		n++;
 	}
 
 	// Allocate the raw memory ...
@@ -182,7 +185,7 @@ Function First
 inline TInt HDeflateHash::First(const TUint8* aPtr,TInt aPos)
 {
 	TInt h=Hash(aPtr);
-	TInt offset=Min(aPos-iHash[h],KDeflateMaxDistance<<1);
+	TInt offset=min(aPos-iHash[h],KDeflateMaxDistance<<1);
 	iHash[h]=aPos;
 	iOffset[aPos&(KDeflateMaxDistance-1)]=TOffset(offset);
 	return offset;
@@ -218,7 +221,7 @@ TInt MDeflater::Match(const TUint8* aPtr,const TUint8* aEnd,TInt aPos,HDeflateHa
 	if (offset>KDeflateMaxDistance)
 		return 0;
 	TInt match=0;
-	aEnd=Min(aEnd,aPtr+KDeflateMaxLength);
+	aEnd=min(aEnd,aPtr+KDeflateMaxLength);
 	TUint8 c=*aPtr;
 	do
 	{
@@ -264,7 +267,7 @@ const TUint8* MDeflater::DoDeflateL(const TUint8* aBase,const TUint8* aEnd,HDefl
 		TInt match=Match(ptr,aEnd,ptr-aBase,aHash);
 // Extra deflation applies two optimisations which double the time taken
 // 1. If we have a match at p, then test for a better match at p+1 before using it
-// 2. When we have a match, add the hash links for all the data which will be skipped 
+// 2. When we have a match, add the hash links for all the data which will be skipped
 		if (match>>16 < prev>>16)
 		{	// use the previous match--it was better
 			TInt len=prev>>16;
@@ -357,7 +360,7 @@ void MDeflater::SegmentL(TInt aLength,TInt aDistance)
 
 /**
 Class TDeflateStats
-This class analyses the data stream to generate the frequency tables 
+This class analyses the data stream to generate the frequency tables
 for the deflation algorithm
 @internalComponent
 @released
@@ -413,7 +416,7 @@ inline TDeflater::TDeflater(TBitOutput& aOutput,const TEncoding& aEncoding)
 /*
 Function LitLenL
 @Leave
-@param aCode 
+@param aCode
 @internalComponent
 @released
 */
@@ -425,7 +428,7 @@ void TDeflater::LitLenL(TInt aCode)
 /*
 Function OffsetL
 @Leave
-@param aCdoe 
+@param aCdoe
 @internalComponent
 @released
 */
@@ -458,10 +461,10 @@ Function DoDeflateL
 */
 void DoDeflateL(const TUint8* aBuf,TInt aLength,TBitOutput& aOutput,TEncoding& aEncoding)
 	{
-// analyse the data for symbol frequency 
+// analyse the data for symbol frequency
 	TDeflateStats analyser(aEncoding);
 	analyser.DeflateL(aBuf,aLength);
-	
+
 // generate the required huffman encodings
 	Huffman::HuffmanL(aEncoding.iLitLen,TEncoding::ELitLens,aEncoding.iLitLen);
 	Huffman::HuffmanL(aEncoding.iDistance,TEncoding::EDistances,aEncoding.iDistance);
@@ -484,7 +487,7 @@ Function DeflateL
 @Leave
 @param aBuf
 @param aLength
-@param aOutput 
+@param aOutput
 @internalComponent
 @released
 */

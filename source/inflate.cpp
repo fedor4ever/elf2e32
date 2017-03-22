@@ -14,7 +14,7 @@
 // Implementation of the Inflater for e32 image dump for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #include "huffman.h"
@@ -22,7 +22,7 @@
 #include <cpudefs.h>
 #include "farray.h"
 #include "errorhandler.h"
-#include<iostream>
+#include <iostream>
 using std::cout;
 
 /*
@@ -31,13 +31,13 @@ Inline constructor for CInflater
 @internalComponent
 @released
 */
-inline CInflater::CInflater(TBitInput& aInput):iBits(&aInput),iEncoding(0),iOut(0)
+inline CInflater::CInflater(TBitInput& aInput):iBits(&aInput),iEncoding(nullptr),iOut(nullptr)
 {
 }
 
 /*
 Function for the 2nd phase construction.
-@param 
+@param
 @internalComponent
 @released
 */
@@ -79,7 +79,7 @@ CInflater::~CInflater()
 
 /*
 Function ReadL
-@Leave 
+@Leave
 @param aBuffer
 @param aLength
 @internalComponent
@@ -126,7 +126,7 @@ void CInflater::InitL()
 	Huffman::InternalizeL(*iBits,iEncoding->iLitLen,KDeflationCodes);
 	// validate the encoding
 	if (!Huffman::IsValid(iEncoding->iLitLen,TEncoding::ELitLens) ||
-		!Huffman::IsValid(iEncoding->iDistance,TEncoding::EDistances))	
+		!Huffman::IsValid(iEncoding->iDistance,TEncoding::EDistances))
 	{
 		throw E32ImageCompressionError(HUFFMANINVALIDCODINGERROR);
 	}
@@ -169,7 +169,7 @@ TInt CInflater::InflateL()
 				iLen=-1;
 				break;
 			}
-		
+
 			// get the extra bits for the code
 			TInt code=val&0xff;
 			if (code>=8)
@@ -208,7 +208,7 @@ TInt CInflater::InflateL()
 			iRptr=from;
 			tree=iEncoding->iLitLen;
 	};
-	
+
 	return out-iOut;
 }
 

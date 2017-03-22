@@ -14,11 +14,11 @@
 // Implementation of the Class Symbol for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
+#include <cstring>
 #include "pl_symbol.h"
-
 
 /**
 This constructor sets the symbol members.
@@ -29,7 +29,7 @@ Symbol::Symbol(char* aName, SymbolType aCodeDataType, char* aExportName, PLUINT3
 			   char* aComment , bool aR3Unused, bool aAbsent, PLUINT32 aSz) :\
 			   iSymbolName(aName), iExportName(aExportName),iSymbolType(aCodeDataType),\
 			    iOrdinalNumber(aOrd),iComment(aComment),iAbsent(aAbsent), iR3Unused(aR3Unused), \
-	        	iSize (aSz) 
+	        	iSize (aSz)
 {
 
 }
@@ -40,8 +40,8 @@ This constructor sets the symbol members.
 @released
 */
 Symbol::Symbol(Symbol& aSymbol, SymbolType aCodeDataType, bool aAbsent)
-			   : iExportName(NULL), \
-		iSymbolType(aCodeDataType),iComment(NULL), iR3Unused(false), iAbsent(aAbsent) 
+			   : iExportName(nullptr), \
+		iSymbolType(aCodeDataType),iComment(nullptr), iAbsent(aAbsent), iR3Unused(false)
 {
 	iSymbolName = new char[strlen(aSymbol.SymbolName()) + 1];
 	strcpy(iSymbolName, aSymbol.SymbolName());
@@ -57,10 +57,10 @@ This copy constructor copies the symbol members from the input symbol.
 Symbol::Symbol(Symbol& aSymbol)
 {
 	memcpy(this, &aSymbol, sizeof(aSymbol));
-	
+
 	iSymbolName = new char[strlen(aSymbol.SymbolName()) + 1];
 	strcpy(iSymbolName, aSymbol.SymbolName());
-	
+
 	if(aSymbol.Comment())
 	{
 		iComment = new char[strlen(aSymbol.Comment()) + 1];
@@ -132,7 +132,7 @@ This function sets the symbol name.
 @internalComponent
 @released
 */
-void Symbol::SetSymbolName(char *aSymbolName) 
+void Symbol::SetSymbolName(char *aSymbolName)
 {
 	iSymbolName = new char[strlen(aSymbolName)+1];
 	strcpy(iSymbolName, aSymbolName);
@@ -186,7 +186,7 @@ This function returns if the symbol is code or a data symbol.
 @internalComponent
 @released
 */
-SymbolType Symbol::CodeDataType() { 
+SymbolType Symbol::CodeDataType() {
 	return iSymbolType;
 }
 
@@ -195,7 +195,7 @@ This function returns if r3unused is true.
 @internalComponent
 @released
 */
-bool Symbol::R3unused() { 
+bool Symbol::R3unused() {
 	return iR3Unused;
 }
 
@@ -204,7 +204,7 @@ This function returns if the symbol is marked absent in the def file.
 @internalComponent
 @released
 */
-bool Symbol::Absent() { 
+bool Symbol::Absent() {
 	return iAbsent;
 }
 
@@ -214,7 +214,7 @@ This function sets the symbol to be absent.
 @internalComponent
 @released
 */
-void Symbol::SetAbsent(bool aAbsent) { 
+void Symbol::SetAbsent(bool aAbsent) {
 	iAbsent = aAbsent;
 }
 
@@ -223,7 +223,7 @@ This function returns the comment against this def file.
 @internalComponent
 @released
 */
-char* Symbol::Comment() { 
+char* Symbol::Comment() {
 	return iComment;
 }
 
@@ -232,7 +232,7 @@ This function returns the symbol is a matching/missing/new symbol in the def fil
 @internalComponent
 @released
 */
-int Symbol::GetSymbolStatus() { 
+int Symbol::GetSymbolStatus() {
 	return  iSymbolStatus;
 }
 
@@ -246,7 +246,7 @@ void Symbol::SetOrdinal(PLUINT32 aOrdinalNum) {
 }
 
 /**
-This function sets the status of the symbol i.e., whether it is 
+This function sets the status of the symbol i.e., whether it is
 a matching/missing/new symbol.
 @internalComponent
 @released
@@ -262,7 +262,7 @@ This function sets the symbol name.
 @released
 */
 void Symbol::SymbolName(char *aSymbolName)
-{ 
+{
 	iSymbolName = aSymbolName;
 }
 /**
@@ -272,7 +272,7 @@ This function sets the export name of the symbol.
 @released
 */
 void Symbol::ExportName(char *aExportName)
-{ 
+{
 	iExportName = aExportName;
 }
 
@@ -283,7 +283,7 @@ This function sets the comment against the symbol.
 @released
 */
 void Symbol::Comment(char *aComment)
-{ 
+{
 	iComment = aComment;
 }
 
@@ -293,7 +293,7 @@ This function sets the symbol type if it is Code or Data symbol.
 @internalComponent
 @released
 */
-void Symbol::CodeDataType(SymbolType aType) 
+void Symbol::CodeDataType(SymbolType aType)
 {
 	iSymbolType = aType;
 }

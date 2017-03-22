@@ -14,7 +14,7 @@
 // Implementation of the Class PolyDllFB Target for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #include "polydll_fb_target.h"
@@ -54,13 +54,13 @@ POLYDLLFBTarget::~POLYDLLFBTarget()
 
 /**
 Function to process the symbols to be exported. In case of Poly DLL, there might be
-predefined symbols passed to '--sydef' option, need to consider them alongwith the 
+predefined symbols passed to '--sydef' option, need to consider them alongwith the
 symbols coming from the ELF file.
- 
+
 @internalComponent
 @released
 */
-void POLYDLLFBTarget::ProcessExports() 
+void POLYDLLFBTarget::ProcessExports()
 {
 	int count = iParameterListInterface->SysDefCount();
 	ParameterListInterface::Sys aSysDefSymbols[10];
@@ -71,8 +71,6 @@ void POLYDLLFBTarget::ProcessExports()
 		aSysDefSymbols[j] = iParameterListInterface->SysDefSymbols(j);
 		j++; i--;
 	}
-
-	typedef SymbolList::iterator Iterator;
 
 	Symbol *aSymbolEntry;
 
@@ -91,14 +89,14 @@ void POLYDLLFBTarget::ProcessExports()
 }
 
 /**
-Function to generate the output E32 image. Incase of an output DEF file, then the 
+Function to generate the output E32 image. Incase of an output DEF file, then the
 DEF file and the corresponding DSO file should be generated.
-  
+
 @internalComponent
 @released
 */
 void POLYDLLFBTarget::GenerateOutput() {
-	
+
 	if( UseCaseBase::DefOutput() ) {
 		WriteDefFile();
 	}

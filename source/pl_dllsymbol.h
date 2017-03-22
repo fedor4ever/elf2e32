@@ -14,13 +14,13 @@
 // Implementation of the Class DllSymbol for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #if !defined(_PL_DLLSYMBOL_H_)
 #define _PL_DLLSYMBOL_H_
 
-#include <tools/elfdefs.h>
+#include <elfdefs.h>
 #include "pl_symbol.h"
 
 /**
@@ -35,7 +35,7 @@ public:
 	DllSymbol(char* aName,SymbolType aType, Elf32_Sym* aElfSym, PLUINT32 aSymbolIndex);
 	DllSymbol(Symbol* aSymbol, SymbolType aType, bool aAbsent);
 	~DllSymbol();
-	
+
 	Elf32_Sym	*iElfSym;
 	/**
 	 * The index of this symbol in the symbol table(required for the hash table while

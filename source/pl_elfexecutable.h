@@ -14,7 +14,7 @@
 // Implementation of the Class ElfExecutable for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #if !defined(_PL_ELFEXECUTABLE_H_)
@@ -23,12 +23,17 @@
 #include "pl_common.h"
 #include <list>
 #include <hash_map>
+#include "elfdefs.h"
 #include "pl_elfimports.h"
 #include "pl_elfrelocations.h"
 #include "pl_elfexports.h"
 
 using std::list;
+#ifndef __GNUC__
 using std::hash_map;
+#else
+using __gnu_cxx::hash_map;
+#endif // __GNUC__
 
 class DllSymbol;
 class Symbol;
@@ -47,7 +52,7 @@ class ElfExecutable
 public:
 	ElfExecutable(ParameterListInterface *aParameterListInterface);
 	virtual ~ElfExecutable();
-	
+
 	PLUINT32 ProcessElfFile(Elf32_Ehdr *aElfHdr);
 	void DumpElfFile(char* aFile);
 
@@ -127,7 +132,7 @@ public:
 	/**
 	 * The static symbol table.
 	 */
-	Elf32_Sym *iSymTab; 
+	Elf32_Sym *iSymTab;
 	char *iStrTab;
 	Elf32_Sym *iLim;
 

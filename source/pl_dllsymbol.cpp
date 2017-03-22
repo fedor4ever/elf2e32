@@ -14,7 +14,7 @@
 // Implementation of the Class DllSymbol for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #include "pl_dllsymbol.h"
@@ -42,9 +42,8 @@ Constructor for class DllSymbol
 @internalComponent
 @released
 */
-DllSymbol::DllSymbol(Symbol* aSymbol, SymbolType aType, bool aAbsent): Symbol(*aSymbol, aType, aAbsent), iElfSym(NULL), iSymbolIndex(0)
-{
-}
+DllSymbol::DllSymbol(Symbol* aSymbol, SymbolType aType, bool aAbsent):
+     Symbol(*aSymbol, aType, aAbsent), iElfSym(nullptr), iSymbolIndex(0){}
 
 /**
 Destructor for class DllSymbol

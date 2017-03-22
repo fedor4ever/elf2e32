@@ -14,12 +14,13 @@
 // Implementation of the Class ElfRelocation for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #if !defined(_PL_ELFRELOCATION_H_)
 #define _PL_ELFRELOCATION_H_
 
+#include "elfdefs.h"
 #include "pl_common.h"
 
 class DllSymbol;

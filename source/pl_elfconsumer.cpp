@@ -14,7 +14,7 @@
 // Implementation of the Class ElfConsumer for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #include "pl_elfconsumer.h"
@@ -22,6 +22,7 @@
 #include "errorhandler.h"
 #include <iostream>
 #include <string>
+#include <string.h>
 
 using std::list;
 using std::cout;
@@ -77,14 +78,14 @@ PLUINT32 ElfConsumer::ReadElfFile(char* aFile){
 	// or less.  We read all the data in individual KMaxWindowsIOSize (32MB) chunks to be safe.
 	PLUINT32 chunkSize = 0;
 	for( PLUINT32 bytesRead = 0; bytesRead < aSz; bytesRead += chunkSize) {
-		
+
 		chunkSize = min(aSz - bytesRead, PLUINT32(KMaxWindowsIOSize));
-		
+
 		if( fread(iMemBlock + bytesRead, chunkSize, 1, aFd) != 1) {
 			throw FileError(FILEREADERROR, aFile);
-		}		
+		}
 	}
-	
+
 	return 0;
 }
 
@@ -98,7 +99,7 @@ Funtion for getting elf symbol list
 */
 int ElfConsumer::GetElfSymbolList(list<Symbol*>& aList){
 
-	if( !iExports ) 
+	if( !iExports )
 		return 0;
 
 	//Get the exported symbols
@@ -136,7 +137,7 @@ PLUINT32 ElfConsumer::ProcessElfFile(){
 	try
 	{
 		ElfExecutable::ProcessElfFile(aElfHdr);
-		
+
 		/* The following is a workaround for the ARM linker problem.
 		 * Linker Problem: ARM linker generates Long ARM to Thumb veneers for which
 		 * relocation entries are not generated.
@@ -147,11 +148,11 @@ PLUINT32 ElfConsumer::ProcessElfFile(){
 		char * aARMCompiler = "ARM Linker, RVCT";
 		int length = strlen(aARMCompiler);
 		char * aCommentSection = ElfExecutable::FindCommentSection();
-   		/* The .comment section in an elf file contains the compiler version information and 
-   		 * it is used to apply the fore mentioned workaround. 
-   		 * Some build tool chains generating elf file output without the .comment section, 
+   		/* The .comment section in an elf file contains the compiler version information and
+   		 * it is used to apply the fore mentioned workaround.
+   		 * Some build tool chains generating elf file output without the .comment section,
    		 * just to save the disk space. In this case the variable aCommentSection gets the NULL value.
-   		 * Solution: This workaround is only applicable for RVCT compiler. So if the .comment section 
+   		 * Solution: This workaround is only applicable for RVCT compiler. So if the .comment section
    		 * is not available in the elf file, then this workaround is no need to be applied.
    		 */
    		if(aCommentSection != NULL)
@@ -194,9 +195,9 @@ PLUINT32 ElfConsumer::ProcessElfFile(){
 
 			if ((*RVCTVersion == '2') && (RVCTMinorVersion == '2') &&
 				(BuildNo < WorkAroundBuildNo))
-			{ 
+			{
 				/* The static symbol table should be processed to identify the veneer symbols.
-				 * Relocation entries should be generated for these symbols if the linker 
+				 * Relocation entries should be generated for these symbols if the linker
 				 * is not generating the same.
 				 */
 				ElfExecutable::FindStaticSymbolTable();
@@ -205,10 +206,10 @@ PLUINT32 ElfConsumer::ProcessElfFile(){
 		}
 		}
 	}
-	catch(ErrorHandler&) 
+	catch(ErrorHandler&)
 	{
 		throw;
-	} 
+	}
 	/*catch(...) // If there are any other unhandled exception,they are handled here.
 	{
 		//Warning to indicate that there had been an exception at this point.

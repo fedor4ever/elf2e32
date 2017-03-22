@@ -14,13 +14,13 @@
 // Huffman Class for deflate and inflate
 // @internalComponent
 // @released
-// 
+//
 //
 
 #ifndef __HUFFMAN_H__
 #define __HUFFMAN_H__
 
-#include "e32defwrap.h"
+#include <portable.h>
 #include <fstream>
 
 /**
@@ -39,6 +39,7 @@ class TBitOutput
 		void WriteL(TUint aValue, TInt aLength);
 		void HuffmanL(TUint aHuffCode);
 		void PadL(TUint aPadding);
+		virtual ~TBitOutput() = default;
 	private:
 		void DoWriteL(TUint aBits, TInt aSize);
 		virtual void OverflowL();
@@ -55,7 +56,7 @@ Set the memory buffer to use for output
 Data will be written to this buffer until it is full, at which point OverflowL() will be
 called. This should handle the data and then can Set() again to reset the buffer for further
 output.
-	
+
 @param "TUint8* aBuf" The buffer for output
 @param "TInt aSize" The size of the buffer in bytes
 @internalComponent
@@ -105,7 +106,8 @@ class TFileOutput : public TBitOutput
 	public:
 		TFileOutput(std::ofstream & os);
 		void FlushL();
-		TUint32 iDataCount; 
+		TUint32 iDataCount;
+		virtual ~TFileOutput() = default;
 	private:
 		void OverflowL();
 	private:
@@ -148,7 +150,7 @@ class TFileInput : public TBitInput
 {
 	public:
 		TFileInput(unsigned char* source,int size);
-		~TFileInput();
+		virtual ~TFileInput();
 	private:
 		void UnderflowL();
 	private:
@@ -183,7 +185,7 @@ class Huffman
 	public:
 		static void HuffmanL(const TUint32 aFrequency[],TInt aNumCodes,TUint32 aHuffman[]);
 		static void Encoding(const TUint32 aHuffman[],TInt aNumCodes,TUint32 aEncodeTable[]);
-		static TBool IsValid(const TUint32 aHuffman[],TInt aNumCodes);
+		static bool IsValid(const TUint32 aHuffman[],TInt aNumCodes);
 		static void ExternalizeL(TBitOutput& aOutput,const TUint32 aHuffman[],TInt aNumCodes);
 		static void Decoding(const TUint32 aHuffman[],TInt aNumCodes,TUint32 aDecodeTree[],TInt aSymbolBase=0);
 		static void InternalizeL(TBitInput& aInput,TUint32 aHuffman[],TInt aNumCodes);

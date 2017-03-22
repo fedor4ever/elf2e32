@@ -14,14 +14,14 @@
 // Implementation of the Class SymbolAttrib for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
-#include <tools/elfdefs.h>
+#include <elfdefs.h>
 #include "pl_common.h"
 
 
-VersionInfo::VersionInfo(): iSOName(0), iLinkAs(0), iVerCategory(VER_CAT_NONE) 
+VersionInfo::VersionInfo(): iSOName(nullptr), iLinkAs(nullptr), iVerCategory(VER_CAT_NONE)
 {}
 
 VersionInfo::~VersionInfo()

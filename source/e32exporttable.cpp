@@ -13,6 +13,7 @@
 // Description:
 //
 
+#include <string.h>
 #include "e32exporttable.h"
 #include "pl_elfexecutable.h"
 #include "pl_elfexports.h"
@@ -52,13 +53,13 @@ void E32ExportTable::CreateExportTable(ElfExecutable * aElfExecutable, ElfExport
 	// The export table starts after the header. NB this is a virtual address in the RO
 	// segment of the E32Image. It is outside the ELF RO segment.
 	Elf32_Addr * aPlace =  ELF_ENTRY_PTR(Elf32_Addr, aROHdr->p_vaddr, aROHdr->p_filesz) + 1;
-	iExportTableAddress = (Elf32_Addr)aPlace;
+	iExportTableAddress = *aPlace;
 	// Tell the E32Image constructor that it must allocate the export table
 	// i.e. copy it from iTable.
 	iAllocateP = true;
 	bool aDelSym;
 	ElfExports::ExportList::iterator first = aExportList.begin();
-	for (PLUINT32 i = 1; i < aSize; i++, first++) 
+	for (PLUINT32 i = 1; i < aSize; i++, first++)
 	{
 		Elf32_Sym * sym;
 
@@ -79,7 +80,7 @@ void E32ExportTable::CreateExportTable(ElfExecutable * aElfExecutable, ElfExport
 		}
 		// set up the pointer
 		iTable[i] = ptr;
-		ElfLocalRelocation * aRel = new ElfLocalRelocation(iElfExecutable, (Elf32_Addr)aPlace++, 0, i, R_ARM_ABS32, NULL, ESegmentRO, sym, aDelSym);														   
+		ElfLocalRelocation * aRel = new ElfLocalRelocation(iElfExecutable, *aPlace++, 0, i, R_ARM_ABS32, NULL, ESegmentRO, sym, aDelSym);
 		aRel->Add();
 
 	}
@@ -96,12 +97,12 @@ size_t E32ExportTable::GetNumExports()
 }
 
 /**
-This function tells the e32 image allocator if space is required to 
+This function tells the e32 image allocator if space is required to
 be allocated for export table.
 @internalComponent
 @released
 */
-bool E32ExportTable::AllocateP(){ 
+bool E32ExportTable::AllocateP(){
 	return iAllocateP;
 }
 
@@ -110,7 +111,7 @@ This function returns the e32 export table size.
 @internalComponent
 @released
 */
-size_t E32ExportTable::GetExportTableSize(){ 
+size_t E32ExportTable::GetExportTableSize(){
 	return iSize;
 }
 
@@ -120,6 +121,6 @@ This function returns e32 export table.
 @released
 */
 unsigned int * E32ExportTable::GetExportTable() {
-	 return iTable; 
+	 return iTable;
 }
 

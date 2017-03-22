@@ -14,7 +14,7 @@
 // Error Handler Operations for elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #ifdef _MSC_VER
@@ -27,6 +27,8 @@
 #include "messagehandler.h"
 #include <iostream>
 #include <stdio.h>
+#include <cstring>
+
 using std::cerr;
 using std::endl;
 
@@ -43,7 +45,7 @@ ErrorHandler::ErrorHandler(int aMessageIndex)
 {
 	char mssgNo[MAXMSSGNOLENGTH];
 	int mssgIndex;
-	
+
 	iMessageIndex=aMessageIndex;
 	iMessage=errMssgPrefix;
 	mssgIndex=BASEMSSGNO+iMessageIndex;
@@ -134,7 +136,7 @@ void ELFFormatError::Report()
 {
 	char *tempMssg;
 	char *errMessage;
-	
+
 	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
 	if(errMessage)
 	{
@@ -180,7 +182,7 @@ void DEFFileError::Report()
 {
 	char *tempMssg;
 	char *errMessage;
-	
+
 	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
 	if(errMessage)
 	{
@@ -459,7 +461,7 @@ void UndefinedSymbolError::Report()
 {
 	char *tempMssg;
 	char *errMessage;
-	
+
 	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
 	if(errMessage)
 	{
@@ -746,7 +748,7 @@ void MessageError::Report()
 {
 	char *tempMssg;
 	char *errMessage;
-	
+
 	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
 	if(errMessage)
 	{
@@ -921,7 +923,7 @@ void ImportRelocationError::Report()
 {
 	char *tempMssg;
 	char *errMessage;
-	
+
 	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
 	if(errMessage)
 	{

@@ -14,7 +14,7 @@
 // Implementation of the Class ParameterManager for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 // This must go before ParameterManager.h
@@ -25,6 +25,7 @@
 #include "parametermanager.h"
 #include "errorhandler.h"
 #include <iostream>
+#include <cstring>
 
 #include "h_utl.h"
 #include "h_ver.h"
@@ -42,22 +43,22 @@ Constructor for the ParameterManager.
 ParameterManager::ParameterManager(int aArgc, char** aArgv) :
 	iArgc(aArgc),
 	iArgv(aArgv),
-	iImageLocation(0), 
-	iImageName(0),
-	iTargetTypeOption(false), 
+	iImageLocation(nullptr),
+	iImageName(nullptr),
+	iTargetTypeOption(false),
 	iDefFileInOption(false),
-	iDefFileOutOption(false), 
-	iFileDumpOption(false),		
-	iDSOFileOutOption(false), 
+	iDefFileOutOption(false),
+	iFileDumpOption(false),
+	iDSOFileOutOption(false),
 	iOutFileOption(false),
 	iElfFileInOption(false),
-	iE32ImageInOption(false),			
+	iE32ImageInOption(false),
 	iLinkAsOption(false),
-	iUid1Option(false), 	
-	iSecureIDOption(false), 
+	iUid1Option(false),
+	iSecureIDOption(false),
 	iVendorIDOption(false),
-	iUID1(0), 
-	iUID2(0), 
+	iUID1(0),
+	iUID2(0),
 	iUID3(0),
 	iSecureID(0),
 	iVendorID(0),
@@ -65,30 +66,30 @@ ParameterManager::ParameterManager(int aArgc, char** aArgv) :
 	iCompressionMethod(KUidCompressionDeflate),
 	iFixedAddress(false),
 	iHeapCommittedSize(0x1000),
-	iHeapReservedSize(0x100000),	
+	iHeapReservedSize(0x100000),
 	iStackCommittedSize(0x2000),
 	iUnfrozen(false),
 	iIgnoreNonCallable(false),
-	iTargetTypeName(ETargetTypeNotSet),	
-	iDefOutput(0),
-	iDSOOutput(0),	
-	iOutFileName(0),
-	iDefInput(0),		
-	iElfInput(0),
-	iE32Input(0),
-	iLinkDLLName(0),
+	iTargetTypeName(ETargetTypeNotSet),
+	iDefOutput(nullptr),
+	iDSOOutput(nullptr),
+	iOutFileName(nullptr),
+	iDefInput(nullptr),
+	iElfInput(nullptr),
+	iE32Input(nullptr),
+	iLinkDLLName(nullptr),
 	iDumpOptions(EDumpDefaults),
-	iFileDumpSubOptions(0),	
+	iFileDumpSubOptions(nullptr),
 	iSysDefOption(false),
-	iLogFileName(0),
+	iLogFileName(nullptr),
 	iLogFileOption(false),
-	iMessageFileName(0),
-	iMessageFileOption(false),		
-	iDumpMessageFileName(0),	
+	iMessageFileName(nullptr),
+	iMessageFileOption(false),
+	iDumpMessageFileName(nullptr),
 	iDumpMessageFileOption(false),
-	iDllDataP(false),	
-	iLibPathList (0),	
-	iSysDefCount (0),	
+	iDllDataP(false),
+	iLibPathList (0),
+	iSysDefCount (0),
 	iPriorityOption(false),
 	iPriorityVal((TProcessPriority)0),
 	iVersion(0x000a0000u),
@@ -105,7 +106,7 @@ ParameterManager::ParameterManager(int aArgc, char** aArgv) :
 	iDataPaged(false),
 	iDataUnpaged(false),
 	iDataDefaultPaged(false),
-	
+
 	iExcludeUnwantedExports(false),
 	iCustomDllTarget(false),
 	iSymNamedLookup(false),
@@ -115,7 +116,7 @@ ParameterManager::ParameterManager(int aArgc, char** aArgv) :
 	iArgumentCount = aArgc;
 	ParamList temp(aArgv, aArgv+aArgc);
 	iParamList = temp;
-	iCapability.iCaps[0] = 0;	
+	iCapability.iCaps[0] = 0;
 	iCapability.iCaps[1] = 0;
 }
 
@@ -147,7 +148,7 @@ static bool IsAllDigits(const char * aArg)
 	{
 		if (!isdigit(*p++)) return false;
 	}
-	return true;	
+	return true;
 }
 
 /**
@@ -167,7 +168,7 @@ static bool IsAllXDigits(const char * aArg)
 	{
 		if (!isxdigit(*p++)) return false;
 	}
-	return true;	
+	return true;
 }
 
 /**
@@ -211,75 +212,75 @@ const char * ParameterManager::iParamShortPrefix = "-";
 const char ParameterManager::iParamEquals = '=';
 
 // Option Map
-const ParameterManager::OptionDesc ParameterManager::iOptions[] = 
+const ParameterManager::OptionDesc ParameterManager::iOptions[] =
 {
-	{ 
-		"definput", 
+	{
+		"definput",
 		(void *)ParameterManager::ParseDefInput,
 		"Input DEF File",
 	},
-	{ 
-		"defoutput", 
+	{
+		"defoutput",
 		(void *)ParameterManager::ParseDefOutput,
 		"Output DEF File",
 	},
-	{ 
-		"elfinput", 
+	{
+		"elfinput",
 		(void *)ParameterManager::ParseElfInput,
 		"Input ELF File",
 	},
-	{ 
-		"output", 
+	{
+		"output",
 		(void *)ParameterManager::ParseOutput,
 		"Output E32 Image",
 	},
-	{ 
-		"dso", 
+	{
+		"dso",
 		(void *)ParameterManager::ParseDSOOutput,
 		"Output import DSO File",
 	},
-	{ 
-		"targettype", 
+	{
+		"targettype",
 		(void *)ParameterManager::ParseTargetTypeName,
 		"Target Type",
 	},
-	{ 
-		"linkas", 
+	{
+		"linkas",
 		(void *)ParameterManager::ParseLinkAs,
 		"name",
 	},
-	{ 
-		"uid1", 
+	{
+		"uid1",
 		(void *)ParameterManager::ParseUID1,
 		"UID 1",
 	},
-	{ 
-		"uid2", 
+	{
+		"uid2",
 		(void *)ParameterManager::ParseUID2,
 		"UID 2",
 	},
-	{ 
-		"uid3", 
+	{
+		"uid3",
 		(void *)ParameterManager::ParseUID3,
 		"UID 3",
 	},
-	{ 
-		"sid", 
+	{
+		"sid",
 		(void *)ParameterManager::ParseSecureId,
 		"Secure ID",
 	},
-	{ 
-		"vid", 
+	{
+		"vid",
 		(void *)ParameterManager::ParseVendorId,
 		"Vendor ID",
 	},
-	{ 
-		"fixedaddress", 
+	{
+		"fixedaddress",
 		(void *)ParameterManager::ParseFixedAddress,
 		"Has fixed address",
 		},
-	{ 
-		"uncompressed", 
+	{
+		"uncompressed",
 		(void *)ParameterManager::ParseUncompressed,
 		"Don't compress output e32image",
 		},
@@ -290,23 +291,23 @@ const ParameterManager::OptionDesc ParameterManager::iOptions[] =
 		\n\t\tinflate  compress image with Inflate algorithm.\
 		\n\t\tbytepair tcompress image with BytePair Pak algorithm."
 	},
-	{ 
-		"heap", 
+	{
+		"heap",
 		(void *)ParameterManager::ParseHeap,
 		"Heap committed and reserved size in bytes(.EXEs only)",
 	},
-	{ 
-		"stack", 
+	{
+		"stack",
 		(void *)ParameterManager::ParseStackCommitted,
 		"Stack size in bytes(.EXEs only)",
 	},
-	{ 
-		"unfrozen", 
+	{
+		"unfrozen",
 		(void *)ParameterManager::ParseUnfrozen,
 		"Don't treat input dot-def file as frozen",
 	},
-	{ 
-		"ignorenoncallable", 
+	{
+		"ignorenoncallable",
 		(void *)ParameterManager::ParseIgnoreNonCallable,
 		"Suppress implicit exports",
 	},
@@ -315,8 +316,8 @@ const ParameterManager::OptionDesc ParameterManager::iOptions[] =
 		(void *)ParameterManager::ParseCapability,
 		"capability option",
 	},
-	{ 
-		"libpath", 
+	{
+		"libpath",
 		(void *)ParameterManager::ParseLibPaths,
 		"A semi-colon separated search path list to locate import DSOs",
 	},
@@ -341,7 +342,7 @@ const ParameterManager::OptionDesc ParameterManager::iOptions[] =
 		"Output Message File",
 	},
 	{
-		"dlldata", 
+		"dlldata",
 		(void *)ParameterManager::ParseAllowDllData,
 		"Allow writable static data in DLL",
 	},
@@ -429,8 +430,8 @@ const ParameterManager::OptionDesc ParameterManager::iOptions[] =
 		(void*)ParameterManager::ParseSmpSafe,
 		"SMP Safe",
 	},
-	{ 
-		"help", 
+	{
+		"help",
 		(void *)ParameterManager::ParamHelp,
 		0,
 	},
@@ -439,8 +440,8 @@ const ParameterManager::OptionDesc ParameterManager::iOptions[] =
 // Map for the short options (abbreviation)
 const ParameterManager::OptionDesc ParameterManager::iShortOptions[] =
 {
-	{ 
-		"h", 
+	{
+		"h",
 		(void *)ParameterManager::ParamHelp,
 		0,
 	},
@@ -499,7 +500,7 @@ void ParameterManager::InitParamParser()
 
 /**
 This function parses the command line options and identifies the input parameters.
-If no options or if --log is the only option passed in, then usage information will 
+If no options or if --log is the only option passed in, then usage information will
 be displayed.
 
 @internalComponent
@@ -516,12 +517,12 @@ void ParameterManager::ParameterAnalyser()
 	ParamList::iterator p = iParamList.begin()+1;
 
 	int OnlyLoggingOption = 0;
-	
+
 	// Have to have some arguments. Otherwise, assume this is a request for --help and display the usage information
 	if (p == iParamList.end())
 	{
 		ParserFn parser = (ParserFn)aHelpDesc->iParser ;
-		parser(this, "help", 0, aHelpDesc);
+		parser(this, "help", nullptr, aHelpDesc);
 	}
 
 	if ( (ArgCount ==1) && (!strncmp(*p,"--log",5)) )
@@ -531,10 +532,10 @@ void ParameterManager::ParameterAnalyser()
 	{
 		int Prefix=0, ShortPrefix=0;
 		ArgCount--;
-		
+
 
 		// Check if the option provided is correct and display help on getting incorrect options
-		try 
+		try
 		{
 			if (!strncmp(*p, iParamPrefix, prefixLen))
 				Prefix = 1;
@@ -543,13 +544,13 @@ void ParameterManager::ParameterAnalyser()
 			else // Option is neither preceeded by '-' or by '--'
 				throw ParameterParserError(OPTIONNAMEERROR,*p);
 		}
-		catch (ErrorHandler& error) 
-		{ 
+		catch (ErrorHandler& error)
+		{
 			error.Report();
 			ParserFn parser = (ParserFn)aHelpDesc->iParser ;
-			parser(this, *p, 0, 0);
+			parser(this, *p, nullptr, nullptr);
 		}
-		
+
 		char *option;
 		const OptionDesc * aDesc;
 		char * optval=NULL;
@@ -580,7 +581,7 @@ void ParameterManager::ParameterAnalyser()
 			}
 			if ( ((p+1) != iParamList.end()) && (**(p+1) != '-') )
 			{
-				pos = 0;
+				pos = nullptr;
 			}
 		}
 		if ( !pos)
@@ -594,7 +595,7 @@ void ParameterManager::ParameterAnalyser()
 				while ( ((p+1) != iParamList.end()) && (**(p+1) != '-') )
 				{
 					end = *(p+1);
-					if (*end == '=') 
+					if (*end == '=')
 					{
 						if ( (*(end+1) != ' ') && (*(end+1) != NULL) )
 							// This is the case where '=' is preceeded by space.
@@ -616,10 +617,10 @@ void ParameterManager::ParameterAnalyser()
   						optval = new char[optionval.length()+1];
   						strcpy(optval, optionval.c_str());
   					}
-				}				
+				}
 			}
 		}
-	
+
 		if (Prefix)
 			aDesc = iOptionMap[aName];
 		else
@@ -632,11 +633,11 @@ void ParameterManager::ParameterAnalyser()
 			if (!aDesc)
 				throw ParameterParserError(OPTIONNAMEERROR,*p);
 		}
-		catch (ErrorHandler& error) 
-		{ 
+		catch (ErrorHandler& error)
+		{
 			error.Report();
 			ParserFn parser = (ParserFn)aHelpDesc->iParser ;
-			parser(this, "help", 0, 0);
+			parser(this, "help", nullptr, nullptr);
 		}
 
 		// If --log is the only option provided, then display the usage information
@@ -644,7 +645,7 @@ void ParameterManager::ParameterAnalyser()
 		{
 			parser(this, (char *)aName.c_str(), optval, aDesc);
 			parser = (ParserFn)aHelpDesc->iParser ;
-			parser(this, "help", 0, 0);
+			parser(this, "help", nullptr, nullptr);
 		}
 
 		parser(this, const_cast<char*>(aName.c_str()), optval, aDesc);
@@ -676,7 +677,7 @@ char * ParameterManager::Path(char * aPathName)
 		return aPath;
 	}
 	else
-		return (char *)0;
+		return nullptr;
 }
 
 
@@ -1114,7 +1115,7 @@ ETargetType ParameterManager::TargetTypeName()
 }
 
 /**
-This function extracts the name of the DLL (that the DSO is to be linked with) 
+This function extracts the name of the DLL (that the DSO is to be linked with)
 that is passed as input through the --linkas option.
 
 @internalComponent
@@ -1182,7 +1183,7 @@ int ParameterManager::DumpOptions()
 }
 
 /**
-This function gets the first UID in a compound identifier (UID type) that is passed as 
+This function gets the first UID in a compound identifier (UID type) that is passed as
 input through the --uid1 option.UID1 differentiates the executables, DLLs and file stores.
 
 @internalComponent
@@ -1197,9 +1198,9 @@ UINT ParameterManager::Uid1()
 
 /**
 This function gets the UID2 that is passed as input through the --uid2 option.
-UID2 differentiates the static interface (shared library) and polymorphic interface 
+UID2 differentiates the static interface (shared library) and polymorphic interface
 (application or plug-in framework) DLLs.
-	
+
 @internalComponent
 @released
 
@@ -1211,10 +1212,10 @@ UINT ParameterManager::Uid2()
 }
 
 /**
-This function gets the UID3 that is passed as input through the --uid3 option. UID3 
-is shared by all objects belonging to a given program, including library DLLs if any, 
+This function gets the UID3 that is passed as input through the --uid3 option. UID3
+is shared by all objects belonging to a given program, including library DLLs if any,
 framework DLLs, and all documents.
-	
+
 @internalComponent
 @released
 
@@ -1521,9 +1522,9 @@ The filename alongwith the absolute path.
 char * ParameterManager::FileName(char * aFileName)
 {
 	string str(aFileName);
-	
-	size_t pos = str.find_last_of(DirectorySeparator());	
-#ifndef __LINUX__ 	
+
+	size_t pos = str.find_last_of(DirectorySeparator());
+#ifndef __LINUX__
 	// Support Unix slashes on Windows when stripping filenames from paths
 	if (pos > str.size())
 		{
@@ -1547,11 +1548,11 @@ This function finds out the directory separator '\' in the path
 */
 char ParameterManager::DirectorySeparator()
 {
-#ifdef __LINUX__ 
+#ifdef __LINUX__
 	return '/';
-#else 
+#else
 	return '\\';
-#endif 
+#endif
 }
 
 /**
@@ -2051,7 +2052,7 @@ The priority value passed to --compressionmethod option
 */
 static bool ParseCompressionMethodArg(UINT & aMethod, const char *aText)
 {
-	
+
 	int i = 0;
 	aMethod = 0;
 	for (;; i++)
@@ -2090,7 +2091,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseCompressionMethod)
 	UINT method;
 	if(!aValue)
 		throw ParameterParserError(NOARGUMENTERROR, "--compressionmethod");
-	
+
 	if(ParseCompressionMethodArg(method, aValue) )
 		aPM->SetCompressionMethod(method);
 	else
@@ -2103,7 +2104,7 @@ from the list of existing method values.
 
 @internalComponent
 @released
-
+*/
 
 
 /**
@@ -2204,7 +2205,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParsePriority)
 }
 
 /**
-This function sets the predefined symbols, at the specified ordinal numbers, that are passed through 
+This function sets the predefined symbols, at the specified ordinal numbers, that are passed through
 --sysdef option.
 
 void ParameterManager::ParseSysDefs(ParameterManager * aPM, char * aOption, char * aValue, void * aDesc)
@@ -2230,8 +2231,8 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseSysDefs)
 	string::iterator p = aSysDefValues.begin();
 
 	int sysdeflength = aSysDefValues.size();
-	
-	int parsesysdef = 1; 
+
+	int parsesysdef = 1;
 
 	int sysdefcount=0;
 
@@ -2239,15 +2240,15 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseSysDefs)
 	{
 
 		int q = 0;
-		unsigned int ordinalnum = 0;
-		char *symbol = 0;
+		size_t ordinalnum = 0;
+		char *symbol = nullptr;
 
-		int nq = aSysDefValues.find_first_of(",", q,sizeof(*p));
+		size_t nq = aSysDefValues.find_first_of(",", q,sizeof(*p));
 		if (nq && (nq != string::npos))
 		{
 			int len = nq;
 			symbol = new char[len+1];
-			memcpy(symbol, p, len);
+			memcpy(symbol, (void*)&p, len); //copy p to symbol todo:rewrite
 			symbol[len] = 0;
 			q = nq+1;
 
@@ -2263,12 +2264,12 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseSysDefs)
 			{
 				if (separator != (unsigned int)(q+1))
 					throw ParameterParserError(MULTIPLESYSDEFERROR, "--sysdef");
-				else 
+				else
 				{
 					sysdeflength -= separator + 1;
 					aSysDefValues = aSysDefValues.substr(separator+1);
 					sysdefcount++;
-				}	
+				}
 			}
 			else
 			{
@@ -2304,7 +2305,8 @@ List of Capability Values allowed
 @param aInvert
 Flag to denote if value can be inverted.
 */
-void ParameterManager::ParseCapability1(const char * aName, const char * aEnd, SCapabilitySet& aCapabilities, bool aInvert)
+void ParameterManager::ParseCapability1(const char * aName, const char * aEnd,
+                       SCapabilitySet& aCapabilities, bool aInvert)
 {
 	int n = aEnd - aName;
 	int i = 0;
@@ -2387,10 +2389,10 @@ void ParameterManager::ParseCapabilitiesArg(SCapabilitySet& aCapabilities, const
 			if (*e == '-' || *e == '+') break;
 		}
 		if (e != b)
-			ParseCapability1(b, e, aCapabilities, invert);
+			ParseCapability1((const char *)*b, (const char *)*e, aCapabilities, invert);
 
 		b = e;
-		
+
 	}
 }
 
@@ -2455,7 +2457,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseHeap)
 	int p = aArg.find_first_of(",");
 	if (p  < 0)
 	{
-		if ( !GetUInt(committed, aValue)) 
+		if ( !GetUInt(committed, aValue))
 			throw InvalidArgumentError(INVALIDARGUMENTERROR, aValue, "heap");
 	}
 	else
@@ -2627,7 +2629,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseUnpaged)
 	{
 		throw InvalidInvocationError(INVALIDINVOCATIONERROR);
 	}
-	
+
 	aPM->SetCodeUnpaged(true);
 }
 
@@ -2657,7 +2659,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseDefaultPaged)
 	{
 		throw InvalidInvocationError(INVALIDINVOCATIONERROR);
 	}
-	
+
 	aPM->SetCodeDefaultPaged(true);
 }
 
@@ -2835,7 +2837,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseDebuggable)
 {
 	INITIALISE_PARAM_PARSER;
 	CheckInput(aValue, "--debuggable");
-	aPM->SetDebuggable(true); 
+	aPM->SetDebuggable(true);
 }
 
 
@@ -2843,7 +2845,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseSmpSafe)
 {
 	INITIALISE_PARAM_PARSER;
 	CheckInput(aValue, "--smpsafe");
-	aPM->SetSmpSafe(true); 
+	aPM->SetSmpSafe(true);
 }
 
 static const ParameterManager::TargetTypeDesc DefaultTargetTypes[] =
@@ -2895,7 +2897,7 @@ static ETargetType IsDefaultTargetType(const char * aArg)
 {
 	for (int i = 0; DefaultTargetTypes[i].iName; i++)
 	{
-		if (aArg && !stricmp(aArg, DefaultTargetTypes[i].iName)) 
+		if (aArg && !stricmp(aArg, DefaultTargetTypes[i].iName))
 			return DefaultTargetTypes[i].iTargetType;
 	}
 	return EInvalidTargetType;
@@ -3001,7 +3003,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParamHelp)
          << endl;
 
 	cerr << "Usage:\t" << "elf2e32" << " [options] [filename]\n" << endl;
-    
+
     cerr << "Options:\n" ;
 
 	const OptionDesc * aHelpDesc = aPM->iOptionMap["help"];
@@ -3010,7 +3012,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParamHelp)
 	{
 		if (aPM->iOptions[i].iName == aHelpDesc->iName)
 		{
-			cerr << '\t' << aPM->iParamPrefix << aPM->iOptions[i].iName 
+			cerr << '\t' << aPM->iParamPrefix << aPM->iOptions[i].iName
 				<< " : This command." << endl;
 		}
 		else
@@ -3020,7 +3022,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParamHelp)
 			cerr << endl;
 		}
 	}
-	
+
 	if (!aDesc)
 		exit(EXIT_FAILURE);
 	else
@@ -3050,8 +3052,8 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseLibPaths)
 	if (!aValue)
 		throw ParameterParserError(NOARGUMENTERROR, "--libpath");
 	string aPathList(aValue);
-	const char* p = aPathList.c_str(); 
-	int n =  strlen(p); 
+	const char* p = aPathList.c_str();
+	int n =  strlen(p);
 	int q = 0;
 	while (n)
 	{
@@ -3237,7 +3239,7 @@ void ParameterManager::SetFileDumpOptions(char * aSetFileDumpOptions)
 			case 'i': iDumpOptions |= EDumpImports; break;
 			case 'a': iDumpOptions |= EDumpAsm; break; //Dump the Assembler code
 			case 't': iDumpOptions |= EDumpSymbols;break;
-			default: 
+			default:
 				iDumpOptions=0;
 				return;
 			}
@@ -3276,7 +3278,7 @@ void ParameterManager::SetDefOutput(char * aSetDefOutput)
 }
 
 /**
-This function sets the name of the DLL (that the DSO is to be linked with) that is passed 
+This function sets the name of the DLL (that the DSO is to be linked with) that is passed
 as input through the --linkas option and sets the flag if the --linkas option is passed in.
 
 @internalComponent
@@ -3439,7 +3441,7 @@ True if --uncompressed is passed in.
 */
 void ParameterManager::SetCompressionMethod(UINT aCompressionMethod)
 {
-	
+
 	iCompressionMethod = aCompressionMethod;
 }
 

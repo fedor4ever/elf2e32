@@ -14,7 +14,7 @@
 // Implementation of the Class PolyDLL Rebuild Target for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #include "polydll_rebuild_target.h"
@@ -22,6 +22,7 @@
 #include "errorhandler.h"
 
 #include <iostream>
+#include <cstring>
 
 using std::list;
 
@@ -40,19 +41,19 @@ Destructor for the POLYDLLRebuildTarget Class
 @internalComponent
 @released
 */
-POLYDLLRebuildTarget::~POLYDLLRebuildTarget() 
+POLYDLLRebuildTarget::~POLYDLLRebuildTarget()
 {
 }
 
 /**
 Function to process the symbols to be exported. In case of Poly DLL, there might be
-predefined symbols passed to '--sydef' option, need to consider them alongwith the 
+predefined symbols passed to '--sydef' option, need to consider them alongwith the
 symbols coming from the DEF file and ELF file.
- 
+
 @internalComponent
 @released
 */
-void POLYDLLRebuildTarget::ProcessExports() 
+void POLYDLLRebuildTarget::ProcessExports()
 {
 	int count = iParameterListInterface->SysDefCount();
 	ParameterListInterface::Sys aSysDefSymbols[10];
@@ -71,7 +72,7 @@ void POLYDLLRebuildTarget::ProcessExports()
 	SymbolList *iSysDefExports = new SymbolList;
 
 	iDefExports = iDefFile->ReadDefFile(iParameterListInterface->DefInput());
-	
+
 	for (int k=0; k < count; k++)
 	{
 		SymbolType aType = SymbolTypeCode;
@@ -98,22 +99,22 @@ void POLYDLLRebuildTarget::ProcessExports()
 		aDefBegin++;
 	}
 
-	if( aMissingSysDefList.size() ) 
+	if( aMissingSysDefList.size() )
 		throw SysDefMismatchError(SYSDEFSMISMATCHERROR, aMissingSysDefList, UseCaseBase::DefInput());
-		
+
 	ValidateExports(iDefExports);
 	CreateExports();
 }
 
 /**
-Function to generate the output E32 image. Incase of an output DEF file, then the 
+Function to generate the output E32 image. Incase of an output DEF file, then the
 DEF file and the corresponding DSO file should be generated.
-  
+
 @internalComponent
 @released
 */
 void POLYDLLRebuildTarget::GenerateOutput() {
-	
+
 	if( UseCaseBase::DefOutput() ) {
 		WriteDefFile();
 	}

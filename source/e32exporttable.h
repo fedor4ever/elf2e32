@@ -14,13 +14,13 @@
 // Class for E32 Export Table implementation of the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #ifndef __E32EXPORTTABLE__
 #define __E32EXPORTTABLE__
 
-#include <tools/elfdefs.h>
+#include <elfdefs.h>
 
 #include "pl_elfexports.h"
 
@@ -33,8 +33,8 @@ class for E32 Export Table
 */
 class E32ExportTable {
  public:
-  E32ExportTable() : 
-	   iElfExecutable(0), iSize(0), iTable(0), iExportTableAddress(0),
+  E32ExportTable() :
+	   iElfExecutable(nullptr), iSize(0), iTable(nullptr), iExportTableAddress(0),
 	   iAllocateP(true), iNumExports(0)
 	   {};
   ~E32ExportTable();

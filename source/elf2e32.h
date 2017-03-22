@@ -14,14 +14,14 @@
 // Implementation of the Header file for Class Elf2E32
 // @internalComponent
 // @released
-// 
+//
 //
 
 #ifndef ELF2E32_H
 #define ELF2E32_H
 
 #include "pl_common.h"
-#include "parametermanager.h"
+#include "parameterlistinterface.h"
 
 class UseCaseBase;
 class ParameterListInterface;

@@ -14,7 +14,7 @@
 // Implementation of the Class DefFile for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #ifndef _DEF_FILE_
@@ -33,7 +33,7 @@ Class for DEF File Handler.
 class DefFile
 {
 	public:
-		DefFile():iSymbolList(NULL){};
+		DefFile():iSymbolList(nullptr){};
 		virtual ~DefFile();
 		SymbolList* ReadDefFile(char *defFile);
 		void WriteDefFile(char *fileName, SymbolList *newSymbolList);
@@ -77,7 +77,7 @@ public:
 	Symbol *iSymbol;
 	int iOffset;
 	DefStates iState;
-	
+
 	char *iFileName;
 	int iLineNum;
 

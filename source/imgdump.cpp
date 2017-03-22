@@ -14,7 +14,7 @@
 // Implementation of the e32 image dump for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #define __REFERENCE_CAPABILITY_NAMES__
@@ -24,12 +24,14 @@
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <portable.h>
+#include <e32capability.h>
 
-#ifdef __LINUX__ 
+#ifdef __LINUX__
     #define VSNPRINTF vsnprintf
-#else 
+#else
     #define VSNPRINTF _vsnprintf
-#endif 
+#endif
 
 using std::cout;
 
@@ -141,11 +143,12 @@ The flags set based on the sub options provided to the program.
 void E32ImageFile::DumpHeader(TInt aDumpFlags)
 {
 	TUint flags = iOrigHdr->iFlags;
-	TUint abi = E32ImageHeader::ABIFromFlags(flags);
-	TUint hdrfmt = E32ImageHeader::HdrFmtFromFlags(flags);
-	TUint impfmt = E32ImageHeader::ImpFmtFromFlags(flags);
-	TUint ept = E32ImageHeader::EptFromFlags(flags);
-	TBool isARM = EFalse;
+	E32ImageHeader hdr;
+	TUint abi = hdr.ABIFromFlags(flags);
+	TUint hdrfmt = hdr.HdrFmtFromFlags(flags);
+	TUint impfmt = hdr.ImpFmtFromFlags(flags);
+	TUint ept = hdr.EptFromFlags(flags);
+	bool isARM = false;
 
 	if(aDumpFlags&EDumpHeader)
 	{
@@ -165,11 +168,11 @@ void E32ImageFile::DumpHeader(TInt aDumpFlags)
 			PrintString("X86 CPU\n");
 			break;
 		case ECpuArmV4:
-			isARM = ETrue;
+			isARM = true;
 			PrintString("ARMV4 CPU\n");
 			break;
 		case ECpuArmV5:
-			isARM = ETrue;
+			isARM = true;
 			PrintString("ARMV5 CPU\n");
 			break;
 		case ECpuMCore:
@@ -182,7 +185,7 @@ void E32ImageFile::DumpHeader(TInt aDumpFlags)
 			PrintString("something or other\n");
 			break;
 		}
-		
+
 		PrintString("Flags:\t%08x\n", flags);
 
 		if (!(flags & KImageDll))
@@ -193,13 +196,13 @@ void E32ImageFile::DumpHeader(TInt aDumpFlags)
 			if (flags & KImageFixedAddressExe)
 				PrintString("Fixed process\n");
 		}
-		
+
 		if (flags & KImageNoCallEntryPoint)
 			PrintString("Entry points are not called\n");
-		
+
 		PrintString("Image header is format %d\n", hdrfmt>>24);
 		TUint compression = iOrigHdr->CompressionType();
-		
+
 		switch (compression)
 		{
 		case KFormatNotCompressed:
@@ -214,7 +217,7 @@ void E32ImageFile::DumpHeader(TInt aDumpFlags)
 		default:
 			PrintString("Image compression type UNKNOWN (%08x)\n", compression);
 		}
-		
+
 		if (compression)
 		{
 			PrintString("Uncompressed size %08x\n", iOrigHdr->UncompressedFileSize());
@@ -224,7 +227,7 @@ void E32ImageFile::DumpHeader(TInt aDumpFlags)
 
 		if (FPU == KImageHWFloat_None)
 			PrintString("Image FPU support : Soft VFP\n");
-		else if (FPU == KImageHWFloat_VFPv2) 
+		else if (FPU == KImageHWFloat_VFPv2)
 			PrintString("Image FPU support : VFPv2\n");
 		else
 			PrintString("Image FPU support : Unknown\n");
@@ -317,7 +320,7 @@ void E32ImageFile::DumpHeader(TInt aDumpFlags)
 				PrintString("No Exception Descriptor\n");
 
 			PrintString("Export Description: Size=%03x, Type=%02x\n", v->iExportDescSize, v->iExportDescType);
-			
+
 			if (v->iExportDescType != KImageHdr_ExpD_NoHoles)
 			{
 				TInt nb = v->iExportDescSize;
@@ -334,9 +337,9 @@ void E32ImageFile::DumpHeader(TInt aDumpFlags)
 				}
 				PrintString("\n");
 			}
-			
+
 			TInt r = CheckExportDescription();
-			
+
 			if (r == KErrNone)
 				PrintString("Export description consistent\n");
 			else if (r == KErrNotSupported)
@@ -347,7 +350,7 @@ void E32ImageFile::DumpHeader(TInt aDumpFlags)
 
 		TUint32 mv = iOrigHdr->ModuleVersion();
 		PrintString("Module Version: %d.%d\n", mv>>16, mv&0xffff);
-		
+
 		if (impfmt == KImageImpFmt_PE)
 		{
 			PrintString("Imports are PE-style\n");
@@ -360,7 +363,7 @@ void E32ImageFile::DumpHeader(TInt aDumpFlags)
 		{
 			PrintString("Imports are PE-style without redundant ordinal lists\n");
 		}
-		
+
 		if (isARM)
 		{
 			if (abi == KImageABI_GCC98r2)
@@ -382,10 +385,10 @@ void E32ImageFile::DumpHeader(TInt aDumpFlags)
 		}
 
 		PrintString("Uids:\t\t%08x %08x %08x (%08x)\n", iOrigHdr->iUid1, iOrigHdr->iUid2, iOrigHdr->iUid3, iOrigHdr->iUidChecksum);
-		
+
 		if (hdrfmt >= KImageHdrFmt_V)
 			PrintString("Header CRC:\t%08x\n", iHdr->iHeaderCrc);
-		
+
 		PrintString("File Size:\t%08x\n", iSize);
 		PrintString("Code Size:\t%08x\n", iOrigHdr->iCodeSize);
 		PrintString("Data Size:\t%08x\n", iOrigHdr->iDataSize);
@@ -403,7 +406,7 @@ void E32ImageFile::DumpHeader(TInt aDumpFlags)
 			PrintString("        Offset  Size  Relocs #Relocs\n");
 
 		PrintString("Code    %06x %06x", OrigCodeOffset(), iOrigHdr->iCodeSize);
-		
+
 		if (iOrigHdr->iCodeRelocOffset)
 		{
 			E32RelocSection *r=(E32RelocSection *)(iData + iOrigHdr->iCodeRelocOffset);
@@ -411,12 +414,12 @@ void E32ImageFile::DumpHeader(TInt aDumpFlags)
 		}
 		else
 			PrintString("              ");
-		
+
 		PrintString("        +%06x (entry pnt)", iOrigHdr->iEntryPoint);
 		PrintString("\n");
 
 		PrintString("Data    %06x %06x", OrigDataOffset(), iOrigHdr->iDataSize);
-		
+
 		if (iOrigHdr->iDataRelocOffset)
 		{
 			E32RelocSection *r=(E32RelocSection *)(iData + iOrigHdr->iDataRelocOffset);
@@ -428,7 +431,7 @@ void E32ImageFile::DumpHeader(TInt aDumpFlags)
 
 		if (iOrigHdr->iExportDirOffset)
 			PrintString("Export  %06x %06x                      (%d entries)\n", OrigExportDirOffset(), iOrigHdr->iExportDirCount*4, iOrigHdr->iExportDirCount);
-		
+
 		if (iOrigHdr->iImportOffset)
 			PrintString("Import  %06x\n", OrigImportOffset());
 	}
@@ -539,7 +542,7 @@ void E32ImageFile::DumpData(TInt aDumpFlags)
 	{
 		PrintString("\nCode (text size=%08x)\n", iOrigHdr->iTextSize);
 		dump((TUint *)(iData + iOrigHdr->iCodeOffset), iOrigHdr->iCodeSize);
-	
+
 		if (iOrigHdr->iCodeRelocOffset)
 			dumprelocs(iData + iOrigHdr->iCodeRelocOffset);
 	}
@@ -548,7 +551,7 @@ void E32ImageFile::DumpData(TInt aDumpFlags)
 	{
 		PrintString("\nData\n");
 		dump((TUint *)(iData + iOrigHdr->iDataOffset), iOrigHdr->iDataSize);
-	
+
 		if (iOrigHdr->iDataRelocOffset)
 			dumprelocs(iData + iOrigHdr->iDataRelocOffset);
 	}
@@ -596,7 +599,7 @@ void E32ImageFile::DumpData(TInt aDumpFlags)
 					TUint impd = *(TUint*)(iData + iOrigHdr->iCodeOffset + impd_offset);
 					TUint ordinal = impd & 0xffff;
 					TUint offset = impd >> 16;
-				
+
 					if (offset)
 						PrintString("%10d offset by %d\n", ordinal, offset);
 					else
@@ -634,7 +637,7 @@ void E32ImageFile::DumpSymbolInfo(E32EpocExpSymInfoHdr *aSymInfoHdr)
 	char *aStrTable = aSymTblBase + aSymInfoHdr->iStringTableOffset;
 	aSymAddrTbl = (TUint*)(aSymTblBase + aSymInfoHdr->iSymbolTblOffset);
 	aSymNameTbl = (char*)(aSymAddrTbl + aSymInfoHdr->iSymCount);
-	
+
 	int aIdx;
 	char *aSymName;
 
@@ -677,12 +680,12 @@ void E32ImageFile::DumpSymbolInfo(E32EpocExpSymInfoHdr *aSymInfoHdr)
 		TUint* aDepOffset =  (TUint*)((char*)aDepTbl - iData);
 
 		const E32ImportSection* isection = (const E32ImportSection*)(iData + iOrigHdr->iImportOffset);
-		
+
 		TInt d;
 
 		/* The import table has offsets to the location (in code section) where the
 		 * import is required. For dependencies pointed by 0th ordinal, this offset
-		 * must be same as the offset of the dependency table entry (relative to 
+		 * must be same as the offset of the dependency table entry (relative to
 		 * the code section).
 		 */
 		bool aZerothFound;
@@ -704,12 +707,12 @@ void E32ImageFile::DumpSymbolInfo(E32EpocExpSymInfoHdr *aSymInfoHdr)
 						TUint impd_offset = *p--;
 						TUint impd = *(TUint*)(iData + iOrigHdr->iCodeOffset + impd_offset);
 						TUint ordinal = impd & 0xffff;
-					
+
 						if (ordinal == 0 )
 						{
-							if( impd_offset == ((TUint)aDepOffset - iOrigHdr->iCodeOffset))
+							if( impd_offset == (*aDepOffset - iOrigHdr->iCodeOffset))
 							{
-								/* The offset in import table is same as the offset of this 
+								/* The offset in import table is same as the offset of this
 								 * dependency entry
 								 */
 								PrintString("\t%s\n", dllname);

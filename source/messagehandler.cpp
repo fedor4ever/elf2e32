@@ -14,13 +14,13 @@
 // Error Message Interface Operations for elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #include "messagehandler.h"
 #include "messageimplementation.h"
 
-Message* MessageHandler::iInstance=0;
+Message* MessageHandler::iInstance=nullptr;
 
 /**
 Function Get Instance of class Message Implementation and initializing messages.
@@ -32,10 +32,10 @@ Function Get Instance of class Message Implementation and initializing messages.
 */
 Message * MessageHandler::GetInstance()
 {
-    if(iInstance == 0)
+    if(iInstance == nullptr)
 	{
 		iInstance = new MessageImplementation();
-		iInstance->InitializeMessages(NULL);
+		iInstance->InitializeMessages(nullptr);
 	}
 	return iInstance;
 }
@@ -61,7 +61,7 @@ Function to call InitializeMessages function of class Message Implementation.
 @released
 
 @param aFileName
-Name of the Message file 
+Name of the Message file
 */
 void MessageHandler::InitializeMessages(char *aFileName)
 {

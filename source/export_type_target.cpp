@@ -14,7 +14,7 @@
 // Implementation of the Class ExexpTarget for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #include "export_type_target.h"
@@ -25,7 +25,7 @@ Constructor for the ExportTypeTarget Class
 @internalComponent
 @released
 */
-ExportTypeTarget::ExportTypeTarget(ParameterListInterface* aParameterListInterface) : ElfFileSupplied(aParameterListInterface), iDefExports(NULL) {
+ExportTypeTarget::ExportTypeTarget(ParameterListInterface* aParameterListInterface) : ElfFileSupplied(aParameterListInterface), iDefExports(nullptr) {
 }
 
 /**
@@ -41,11 +41,11 @@ ExportTypeTarget::~ExportTypeTarget() {
 Function to generate the output E32 image. Since this is a targettype which can have
 export symbols, the output generated can also include DEF File (if any), DSO file and
 and E32 image.
- 
+
 @internalComponent
 @released
 */
-void ExportTypeTarget::GenerateOutput() 
+void ExportTypeTarget::GenerateOutput()
 {
 	WriteDefFile();
 	WriteDSOFile();
@@ -54,7 +54,7 @@ void ExportTypeTarget::GenerateOutput()
 
 /**
 Function to check if the provided input is a DLL.
- 
+
 @internalComponent
 @released
 

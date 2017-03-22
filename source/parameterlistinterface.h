@@ -14,25 +14,25 @@
 // Implementation of the Header file for the ParameterListInterface of the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #ifndef PARAMETERLISTINTERFACE_H
 #define PARAMETERLISTINTERFACE_H
 
-#ifdef _MSC_VER 
+#ifdef _MSC_VER
 #pragma warning(disable: 4786) // identifier was truncated to '255' characters in the debug information
 #pragma warning(disable: 4702) // unreachable code
 #endif
 
 #include <string>
 #include <vector>
-#include "e32imagedefs.h"
+#include <portable.h>
 
 enum ETargetType
 {
 	ETargetTypeNotSet = - 2,
-	EInvalidTargetType = - 1,	
+	EInvalidTargetType = - 1,
 	/** Target type is Library */
 	ELib,
 	/** Target type is DLL */
@@ -137,7 +137,7 @@ This function extracts the target type that is passed as input through the --tar
 */
 	virtual ETargetType TargetTypeName()=0;
 /**
-This function extracts the name of the DLL (that the DSO is to be linked with) 
+This function extracts the name of the DLL (that the DSO is to be linked with)
 that is passed as input through the --linkas option.
 
 @internalComponent
@@ -272,7 +272,7 @@ input options.
 	virtual bool IsDataPaged() = 0;
 	virtual bool IsDataUnpaged() = 0;
 	virtual bool IsDataDefaultPaged() = 0;
-	
+
 	virtual bool ExcludeUnwantedExports() = 0;
 	virtual bool IsCustomDllTarget() = 0;
 	virtual bool SymNamedLookup() = 0;

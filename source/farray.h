@@ -13,15 +13,17 @@
 // Description:
 // @internalComponent
 // @released
-// 
+//
 //
 
 
 #ifndef __FARRAY_H__
 #define __FARRAY_H__
 #include <cassert>
+#include <portable.h>
+#include <string.h>
 
-template <class T,TInt S> 
+template <class T,TInt S>
 class TFixedArray
 // Range checking wrapper+ class for C++ arrays
 // Can be embedded in C-objects, or used on the stack: use Reset() to zero it
@@ -50,7 +52,7 @@ public:
 	inline const T* End() const;
 	//
 protected:
-	inline static TBool InRange(TInt aIndex);
+	inline static bool InRange(TInt aIndex);
 protected:
 	T iRep[S];
 	};
@@ -62,7 +64,7 @@ inline TFixedArray<T,S>::TFixedArray()
 template <class T,TInt S>
 inline void TFixedArray<T,S>::Copy(const T* aList,TInt aLength)
 	{
-	// Never used. 
+	// Never used.
     assert(TUint(aLength)<=TUint(S));
     // HMdem::Copy(iRep,aList,aLength*sizeof(T));
     }
@@ -79,7 +81,7 @@ template <class T,TInt S>
 inline TInt TFixedArray<T,S>::Length() const
 	{return sizeof(T);}
 template <class T,TInt S>
-inline TBool TFixedArray<T,S>::InRange(TInt aIndex)
+inline bool TFixedArray<T,S>::InRange(TInt aIndex)
 	{return TUint(aIndex)<S;}
 template <class T,TInt S>
 inline T& TFixedArray<T,S>::operator[](TInt aIndex)

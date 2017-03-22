@@ -13,14 +13,9 @@
 // Description:
 //
 
+#include <string.h>
+#include <assert.h>
 #include "byte_pair.h"
-
-
-#undef ASSERT
-#define ASSERT(c)	if(!(c))	\
-						{		\
-						__BREAKPOINT()	\
-						}
 
 const TInt MaxBlockSize = 0x1000;
 
@@ -233,8 +228,8 @@ TInt Pak(TUint8* dst, TUint8* src, TInt size)
 				}
 			*out++ = (TUint8)b;
 			}
-		ASSERT(!byteCount);
-		ASSERT(!pairCount);
+		assert(!byteCount);
+		assert(!pairCount);
 		size = out-outStart;
 
 		outToggle ^= 1;
@@ -390,7 +385,7 @@ TInt Unpak(TUint8* dst, TInt dstSize, TUint8* src, TInt srcSize, TUint8*& srcNex
 						goto error;
 					TInt p2 = *src++;
 					LUT0[b] = (TUint8)p1;
-					LUT1[b] = (TUint8)p2;		
+					LUT1[b] = (TUint8)p2;
 					--numTokens;
 					}
 				++b;
@@ -474,13 +469,13 @@ TUint8 UnpakBuffer[MaxBlockSize];
 
 TInt BytePairCompress(TUint8* dst, TUint8* src, TInt size)
 	{
-	ASSERT(size<=MaxBlockSize);
+	assert(size<=MaxBlockSize);
 	TInt compressedSize = Pak(PakBuffer,src,size);
 	TUint8* pakEnd;
 	TInt us = Unpak(UnpakBuffer,MaxBlockSize,PakBuffer,compressedSize,pakEnd);
-	ASSERT(us==size)
-	ASSERT(pakEnd==PakBuffer+compressedSize)
-	ASSERT(!memcmp(src,UnpakBuffer,size))
+	assert(us==size);
+	assert(pakEnd==PakBuffer+compressedSize);
+	assert(!memcmp(src,UnpakBuffer,size));
 	if(compressedSize>=size)
 		return KErrTooBig;
 	memcpy(dst,PakBuffer,compressedSize);

@@ -14,9 +14,10 @@
 // Implementation of the Class ElfImports for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
+#include <cstring>
 #include "pl_elfimports.h"
 #include "pl_elfimportrelocation.h"
 

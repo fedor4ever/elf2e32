@@ -14,7 +14,7 @@
 // Implementation of the Class ElfImportRelocation for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #include "pl_elfimportrelocation.h"
@@ -36,7 +36,7 @@ ElfImportRelocation::ElfImportRelocation(ElfExecutable *aElfExec,PLMemAddr32 aAd
 			PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType, \
 			Elf32_Rel* aRel): \
 			ElfRelocation(aElfExec, aAddr, aAddend, aIndex, aRelType, aRel), \
-			iVerRecord(NULL)
+			iVerRecord(nullptr)
 {
 	iSymbol = &(aElfExec->iElfDynSym[iSymNdx]);
 	iSegment = aElfExec->Segment(iAddr);

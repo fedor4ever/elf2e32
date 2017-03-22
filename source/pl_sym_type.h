@@ -14,13 +14,13 @@
 // Implementation of the enumeration SymbolType for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #if !defined(EA_37C067EA_9B6B_4d95_84A3_ABBE88E7AD8F__INCLUDED_)
 #define EA_37C067EA_9B6B_4d95_84A3_ABBE88E7AD8F__INCLUDED_
 
-#include <tools/elfdefs.h>
+#include <elfdefs.h>
 
 enum SymbolType
 {

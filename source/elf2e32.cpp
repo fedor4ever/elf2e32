@@ -14,9 +14,11 @@
 // Implementation of the Class Elf2E32 for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
+#include "parameterlistinterface.h"
+#include "parametermanager.h"
 #include "elf2e32.h"
 #include "errorhandler.h"
 #include "librarytarget.h"
@@ -35,12 +37,12 @@
 using std::cout;
 using std::endl;
 
-ParameterListInterface * Elf2E32::iInstance=0;
+ParameterListInterface * Elf2E32::iInstance=nullptr;
 
 /**
 Constructor for Elf2E32
 
-@internalComponent 
+@internalComponent
 @released
 
 @param aArgc
@@ -60,7 +62,7 @@ Elf2E32::~Elf2E32()
 }
 
 /**
-This function creates a single instance of the ParameterManager which is derived from 
+This function creates a single instance of the ParameterManager which is derived from
 ParameterListInterface which is the abstract base class.
 
 @internalComponent
@@ -71,12 +73,12 @@ ParameterListInterface which is the abstract base class.
 @param aArgv
  The listing of all the arguments
 
-@return A pointer to the newly created ParameterListInterface object which is the 
+@return A pointer to the newly created ParameterListInterface object which is the
  abstract interface
 */
 ParameterListInterface * Elf2E32::GetInstance(int aArgc, char ** aArgv)
 {
-	if (iInstance == 0)
+	if (!iInstance)
 		iInstance = new ParameterManager(aArgc, aArgv);
 
 	return iInstance;
@@ -85,7 +87,7 @@ ParameterListInterface * Elf2E32::GetInstance(int aArgc, char ** aArgv)
 /**
 This function is to select the appropriate use case based on the input values.
 1. If the input is only DEF file, then the usecase is the Create Library Target.
-   For Library Creation, alongwith the DEF file input, the DSO file option and 
+   For Library Creation, alongwith the DEF file input, the DSO file option and
    the link as option SHOULD be passed. Otherwise, appropriate error message will
    be generated.
 @internalComponent
@@ -125,7 +127,7 @@ UseCaseBase * Elf2E32::SelectUseCase()
 	{
         throw ParameterParserError(NOARGUMENTERROR, "--e32input");
 	}
-	
+
 	iTargetType = iParameterListInterface->TargetTypeName();
 
 //	if (iTargetType == ETargetTypeNotSet) // Will get this warning in build
@@ -279,7 +281,7 @@ void Elf2E32::ValidateE32ImageGeneration(ParameterListInterface *aParameterListI
 
 /**
 This function:
- 1. Calls the ParameterAnalyser() which parses the command line options and extracts the inputs. 
+ 1. Calls the ParameterAnalyser() which parses the command line options and extracts the inputs.
  2. Calls the SelectUseCase() to select the appropriate use case based on the input values.
  3. Calls the Execute() of the selected use case.
 @internalComponent
@@ -291,7 +293,7 @@ This function:
 int Elf2E32::Execute()
 {
 	int result = EXIT_SUCCESS;
-	UseCaseBase * usecase=0;
+	UseCaseBase * usecase=nullptr;
 	bool dumpMessageFileOption;
 	char * dumpMessageFile;
 
@@ -314,7 +316,7 @@ int Elf2E32::Execute()
 			//dumpmessage file name is not provided as input
 			throw ParameterParserError(NOARGUMENTERROR, "--dumpmessagefile");
 		}
-	
+
 		usecase = SelectUseCase();
 		if (usecase)
 		{
@@ -329,16 +331,16 @@ int Elf2E32::Execute()
 			result = EXIT_FAILURE;
 		}
 	}
-	catch(ErrorHandler& error) 
-	{ 
+	catch(ErrorHandler& error)
+	{
 		result = EXIT_FAILURE;
 		error.Report();
-	} 
+	}
 	catch(...) // If there are any other unhandled exception,they are handled here.
 	{
 		result = EXIT_FAILURE;
 		MessageHandler::GetInstance()->ReportMessage(ERROR, POSTLINKERERROR);
-	} 
+	}
 	delete usecase;
 	return result;
 }

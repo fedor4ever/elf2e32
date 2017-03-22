@@ -25,9 +25,11 @@
 
 #include <algorithm>
 #include <iostream>
-#include<hash_set>
+#include <hash_set>
+#include <cstring>
 
 using namespace std;
+using __gnu_cxx::hash_set;
 
 /**
 Constructor for class ElfFileSupplied to initialize members and create instance of class DSOHandler
@@ -35,9 +37,9 @@ Constructor for class ElfFileSupplied to initialize members and create instance 
 @internalComponent
 @released
 */
-ElfFileSupplied::ElfFileSupplied(ParameterListInterface* aParameterListInterface) : UseCaseBase(aParameterListInterface) ,
-	iNumAbsentExports(-1),iExportBitMap(NULL),iE32ImageFile(NULL), iElfExecutable(NULL),  \
-	iExportDescSize(0), iExportDescType(0)
+ElfFileSupplied::ElfFileSupplied(ParameterListInterface* aParameterListInterface) :  \
+    UseCaseBase(aParameterListInterface), iNumAbsentExports(-1),iExportBitMap(nullptr), \
+	iE32ImageFile(nullptr), iElfExecutable(nullptr), iExportDescSize(0), iExportDescType(0)
 {
 	iElfIfc = new DSOHandler(aParameterListInterface);
 }
@@ -60,7 +62,7 @@ Execute Function for the Elf File Supplied use case
 @internalComponent
 @released
 */
-int ElfFileSupplied::Execute() 
+int ElfFileSupplied::Execute()
 {
 	ReadElfFile();
 	iElfIfc->ProcessElfFile();
@@ -85,10 +87,10 @@ Function to read ELF File
 @internalComponent
 @released
 */
-void ElfFileSupplied::ReadElfFile() 
+void ElfFileSupplied::ReadElfFile()
 {
 	char * aElfFileName = UseCaseBase::InputElfFileName();
-	
+
 	iElfIfc->ReadElfFile(aElfFileName);
 	iElfExecutable = iElfIfc->ElfExecutableP();
 }
@@ -98,9 +100,9 @@ Function to process exports
 @internalComponent
 @released
 */
-void ElfFileSupplied::ProcessExports() 
+void ElfFileSupplied::ProcessExports()
 {
-	ValidateExports(NULL);
+	ValidateExports(nullptr);
 	CreateExports();
 }
 
@@ -109,7 +111,7 @@ Function to write DEF File
 @internalComponent
 @released
 */
-void ElfFileSupplied::WriteDefFile() 
+void ElfFileSupplied::WriteDefFile()
 {
 	char * aDEFFileName = UseCaseBase::DefOutput();
 	DefFile deffile;
@@ -126,7 +128,7 @@ void ElfFileSupplied::CreateExports()
 {
 	if (iElfExecutable->iExports || GetNamedSymLookup())
 	{
-		CreateExportTable();	
+		CreateExportTable();
 		CreateExportBitMap();
 	}
 }
@@ -154,7 +156,7 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 
 	PLUINT32 aMaxOrdinal = 0;
 	int len = strlen("_ZTI");
-	
+
 	typedef SymbolList::iterator Iterator;
 
 	Iterator aPos, aEnd;
@@ -176,7 +178,7 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 				else {
 					aDefValidExports.insert(aDefValidExports.end(), *aPos);
 				}
-											
+
 				if( aMaxOrdinal < (*aPos)->OrdNum() ){
 					aMaxOrdinal = (*aPos)->OrdNum();
 				}
@@ -190,8 +192,8 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 		iElfIfc->GetElfExportSymbolList( aElfExports );
 	else if (!aDefExports)
 		return;
-	
-	// REVISIT - return back if elfexports and defexports is NULL 
+
+	// REVISIT - return back if elfexports and defexports is NULL
 
 	aDefValidExports.sort(ElfExports::PtrELFExportNameCompare());
 	aElfExports.sort(ElfExports::PtrELFExportNameCompare());
@@ -231,8 +233,8 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 
 			Iterator aAbsentListEnd = set_intersection(aDefAbsentExports.begin(), aDefAbsentExports.end(), \
 				aElfExports.begin(), aElfExports.end(), aResultPos, ElfExports::PtrELFExportNameCompareUpdateAttributes());
-			
-			while( aResultPos != aAbsentListEnd ) 
+
+			while( aResultPos != aAbsentListEnd )
 			{
 				// intersection set {Absent,ELF_Symbols} is non-empty
 
@@ -255,10 +257,10 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 		bool aIsCustomDll = IsCustomDllTarget();
 		bool aExcludeUnwantedExports = ExcludeUnwantedExports();
 
-		while( aResultPos != aNewListEnd ) 
+		while( aResultPos != aNewListEnd )
 		{
-			
-			if( !(*aResultPos)->Absent() ) 
+
+			if( !(*aResultPos)->Absent() )
 			{
 				/* For a custom dll and for option "--excludeunwantedexports", the new exports should be filtered,
 				 * so that only the exports from the frozen DEF file are considered.
@@ -284,7 +286,7 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 				}
 				(*aResultPos)->SetOrdinal( ++aMaxOrdinal );
 				(*aResultPos)->SetSymbolStatus(New); // Set the symbol Status as NEW
-				iSymList.insert(iSymList.end(), *aResultPos);			
+				iSymList.insert(iSymList.end(), *aResultPos);
 				if(WarnForNewExports())
 					cout << "Elf2e32: Warning: New Symbol " << (*aResultPos)->SymbolName() << " found, export(s) not yet Frozen" << endl;
 			}
@@ -301,7 +303,7 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 
 			Iterator aAbsentListEnd = set_difference(aDefAbsentExports.begin(), aDefAbsentExports.end(), \
 				aElfExports.begin(), aElfExports.end(), aResultPos, ElfExports::PtrELFExportNameCompareUpdateAttributes());
-			
+
 			DllSymbol *aSymbol;
 			bool aAbsent = true;
 			while( aResultPos != aAbsentListEnd  ) {
@@ -325,7 +327,7 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 	aDefAbsentExports.clear();
 	aDefValidExports.clear();
 
-} 
+}
 
 /**
 Function to generate output which is E32 Image file, DEF File and DSO file, if
@@ -333,7 +335,7 @@ exports are available.
 @internalComponent
 @released
 */
-void ElfFileSupplied::GenerateOutput() 
+void ElfFileSupplied::GenerateOutput()
 {
 	if (iElfExecutable->iExports)
 	{
@@ -394,8 +396,8 @@ Function to check image is Dll or not.
 @internalComponent
 @released
 */
-bool ElfFileSupplied::ImageIsDll() 
-{ 
+bool ElfFileSupplied::ImageIsDll()
+{
 	return (iElfExecutable->LookupStaticSymbol("_E32Dll") != NULL);
 }
 
@@ -464,7 +466,7 @@ Function to create export table
 void ElfFileSupplied::CreateExportTable()
 {
 	ElfExports::ExportList aList;
-	
+
 	if(iElfExecutable->iExports)
 		aList = iElfExecutable->GetExportsInOrdinalOrder();
 
@@ -631,7 +633,7 @@ Function to provide a predicate which checks whether a symbol name is unwanted:
 @param aSymbol symbols to be checked if part of static lib
 @internalComponent
 @released
-*/ 
+*/
 int ElfFileSupplied::UnWantedSymbolp(const char * aSymbol)
 {
   static hash_set<const char*, hash<const char*>, eqstr> aSymbolSet;
@@ -649,7 +651,7 @@ int ElfFileSupplied::UnWantedSymbolp(const char * aSymbol)
     = aSymbolSet.find(aSymbol);
   if(it != aSymbolSet.end())
 	return 1;
-  else 
+  else
 	return 0;
 }
 

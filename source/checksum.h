@@ -14,13 +14,13 @@
 // Implementation of the Header file for CheckSum implementation of the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #ifndef CHECKSUM_H
 #define CHECKSUM_H
 
-#include <stddef.h>
+#include <cstddef>
 unsigned long checkSum(const void *aPtr);
 void Crc(unsigned short & aCrc,const void * aPtr,size_t aLength);
 void Crc32(unsigned long & aCrc, const void * aPtr, size_t aLength);

@@ -14,13 +14,13 @@
 // Implementation of the Class DefFile for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 //
 #include <stdio.h>
 #include <iostream>
-#include <stdlib.h>
+#include <string.h>
 
 #include "pl_symbol.h"
 #include "deffile.h"
@@ -29,7 +29,7 @@
 #ifdef __LINUX__
     #include "h_utl.h"
     #define STRUPR strupr
-#else 
+#else
     #define STRUPR _strupr
 #endif
 
@@ -317,8 +317,8 @@ void DefFile::ParseDefFile(char *defFileEntries)
 		    {
 				throw DEFFileError(EXPORTSEXPECTED,iFileName,LineNum,lineToken);
 			}
-		}	
-			
+		}
+
 		// Get Export entries
 		if (!strcmp(MultiLineStatement,"EXPORTS"))
 		{
@@ -390,12 +390,12 @@ This constructor creates an instance of LineToken class.
 @released
 */
 LineToken::LineToken(char* aFileName, int aLineNum, char *aLn, Symbol* aSym) : \
-		iLine(aLn) , iSymbol(aSym) , iOffset(0), iState(EInitState),iFileName(aFileName), iLineNum(aLineNum) 
+		iLine(aLn) , iSymbol(aSym) , iOffset(0), iState(EInitState),iFileName(aFileName), iLineNum(aLineNum)
 {
 }
 
 /**
-This function tokenizes the line and populates a symbol entry 
+This function tokenizes the line and populates a symbol entry
 if there is one.
 Return Value - True, if the current line has a valid def entry.
 @internalComponent
@@ -403,15 +403,15 @@ Return Value - True, if the current line has a valid def entry.
 */
 bool LineToken::Tokenize()
 {
-	while (1) 
+	while (1)
 	{
 		switch( iState )
 		{
 		case EFinalState:
 			return true;
 		case EInitState:
-			if( *(iLine + iOffset) == '\0' || 
-				*(iLine + iOffset) == '\r' || 
+			if( *(iLine + iOffset) == '\0' ||
+				*(iLine + iOffset) == '\r' ||
 				*(iLine + iOffset) == '\n')
 			{
 				/*
@@ -433,7 +433,7 @@ bool LineToken::Tokenize()
 }
 
 /**
-This function parses a line of the def file based on the current 
+This function parses a line of the def file based on the current
 state it is in.
 @internalComponent
 @released
@@ -469,8 +469,8 @@ void LineToken::NextToken()
 		{
 			int aAliasPos = aAlias - (iLine+ iOffset);
 
-			//Check if alias name is also supplied, they should be separated 
-			// by whitespace, i.e., SymbolName=AliasName is valid while, 
+			//Check if alias name is also supplied, they should be separated
+			// by whitespace, i.e., SymbolName=AliasName is valid while,
 			// SymbolName =AliasName is invalid.
 			if( aAliasPos > aCurrentPos)
 			{
@@ -493,14 +493,14 @@ void LineToken::NextToken()
 			aSymbolName[aCurrentPos] = '\0';
 		}
 		iSymbol->SymbolName(aSymbolName);
-		
+
 		IncrOffset(aCurrentPos);
 
 		if(IsWhiteSpace((iLine + iOffset), aCurrentPos))
 		{
 			IncrOffset(aCurrentPos);
 		}
-		
+
 		if(*(iLine+iOffset) == '@')
 		{
 			SetState(EAtSymbol);
@@ -509,7 +509,7 @@ void LineToken::NextToken()
 		else
 		{
 			/*
-			 * The first non-whitespace entry in a line is assumed to be the 
+			 * The first non-whitespace entry in a line is assumed to be the
 			 * symbol name and a symbol name might also have a '@' char. Hence
 			 * there MUST be a whitespace between symbol name and '@'.
 			 */
@@ -523,7 +523,7 @@ void LineToken::NextToken()
 		{
 			IncrOffset(aCurrentPos);
 		}
-		
+
 		SetState(EOrdinal);
 		break;
 	case EOrdinal:
@@ -588,7 +588,7 @@ void LineToken::NextToken()
 
 				/*
 				 * NONAME , DATA, R3UNUSED and ABSENT, all the 3 are optional. But, if more than
-				 * one of them appear, they MUST appear in that order. 
+				 * one of them appear, they MUST appear in that order.
 				 * Else, it is not accepted.
 				 */
 				if( aPrevPatternIndex >= aPatternIdx)
@@ -598,7 +598,7 @@ void LineToken::NextToken()
 				aPrevPatternIndex = aPatternIdx;
 
 				IncrOffset(aCurrentPos);
-				
+
 				if(IsWhiteSpace((iLine + iOffset), aCurrentPos))
 				{
 					IncrOffset(aCurrentPos);
@@ -612,8 +612,8 @@ void LineToken::NextToken()
 					IncrOffset(1);
 					return;
 				}
-				else if( *(iLine + iOffset) == '\0' || 
-						 *(iLine + iOffset) == '\r' || 
+				else if( *(iLine + iOffset) == '\0' ||
+						 *(iLine + iOffset) == '\r' ||
 						 *(iLine + iOffset) == '\n')
 				{
 					SetState(EFinalState);
@@ -634,8 +634,8 @@ void LineToken::NextToken()
 		{
 			IncrOffset(aCurrentPos);
 		}
-		
-	
+
+
 		int aLen = strlen(iLine + iOffset);
 		if( *(iLine + iOffset + aLen - 1 ) == '\n' ||  *(iLine + iOffset + aLen - 1 ) == '\r')
 			aLen -=1;
@@ -654,7 +654,7 @@ void LineToken::NextToken()
 	case EFinalState:
 		return;
 	default:
-		break;	
+		break;
 	}
 }
 
@@ -809,12 +809,12 @@ This function increments the current offset.
 @released
 */
 void LineToken::IncrOffset(int aOff)
-{ 
+{
 	iOffset += aOff;
 }
 
 /**
-This function sets the state of the tokenizer that is parsing 
+This function sets the state of the tokenizer that is parsing
 the line.
 @param aState  - next state
 @internalComponent
@@ -927,7 +927,7 @@ void DefFile::WriteDefFile(char *fileName, SymbolList * newSymbolList)
 				fputs(" R3UNUSED",fptr);
 			if(aSym->Absent())
 				fputs(" ABSENT",fptr);
-				
+
 			if(aSym->Comment()!=NULL)
 			{
 				fputs(" ; ",fptr);

@@ -14,7 +14,7 @@
 // Implementation of e32 image creation and dump for elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #include "pl_elfexecutable.h"
@@ -38,17 +38,18 @@
 #include <vector>
 #include <cassert>
 #include <iostream>
-#ifndef __LINUX__ 
+#ifndef __LINUX__
     #include <io.h>
 #else
     #include <time.h>
-#endif 
+#endif
 #include <time.h>
 #include <stdio.h>
 
 using namespace std;
 
-template <class T> inline T Align(T v, size_t s)
+template <class T>
+inline T Align(T v, size_t s)
 {
 	unsigned int inc = s-1;
 	unsigned int mask = ~inc;
@@ -57,20 +58,12 @@ template <class T> inline T Align(T v, size_t s)
 	return (T)res;
 }
 
-// Need a default constructor for TVersion, but don't want all the other stuff in h_utl.cpp
-/**
-Default constructor for TVersion class.
-@internalComponent
-@released
-*/
-TVersion::TVersion(){}
-
 /**
 Constructor for TVersion class.
 @internalComponent
 @released
 */
-TVersion::TVersion(TInt aMajor, TInt aMinor, TInt aBuild): 
+TVersion::TVersion(TInt aMajor, TInt aMinor, TInt aBuild):
 	iMajor((TInt8)aMajor), iMinor((TInt8)aMinor), iBuild((TInt16)aBuild)
 {
 }
@@ -111,7 +104,7 @@ Constructor for E32ImageChunks class.
 @internalComponent
 @released
 */
-E32ImageChunks::E32ImageChunks(): 
+E32ImageChunks::E32ImageChunks():
 	iOffset(0)
 {
 }
@@ -122,13 +115,13 @@ Destructor for E32ImageChunks class.
 @released
 */
 E32ImageChunks::~E32ImageChunks()
-{	
+{
  	if(iChunks.size())
  	{
  		ChunkList::iterator aItr = iChunks.begin();
  		ChunkList::iterator last = iChunks.end();
  		E32ImageChunkDesc *temp;
- 
+
  		while( aItr != last)
  		{
  			temp = *aItr;
@@ -176,7 +169,7 @@ size_t E32ImageChunks::GetOffset()
 }
 
 /**
-This function sets the current offset pointing to the last chunk that 
+This function sets the current offset pointing to the last chunk that
 was added into the list of chunks.
 @internalComponent
 @released
@@ -192,26 +185,35 @@ Constructor for E32ImageFile class.
 @released
 */
 E32ImageFile::E32ImageFile(const char * aFileName, ElfExecutable * aExecutable, ElfFileSupplied *aUseCase) :
-	iFileName(aFileName), 
-	iE32Image(0),
-	iExportBitMap(0),
-	iElfExecutable(aExecutable), 
-	iData(0),
+	iFileName(aFileName),
+	iE32Image(nullptr),
+	iExportBitMap(nullptr),
+	iElfExecutable(aExecutable),
+	iData(nullptr),
 	iUseCase(aUseCase),
-	iHdr(0),
+	iHdr(nullptr),
 	iHdrSize(sizeof(E32ImageHeaderV)),
-	iImportSection(0), 
+	iImportSection(nullptr),
 	iImportSectionSize(0),
-	iCodeRelocs(0), 
+	iCodeRelocs(nullptr),
 	iCodeRelocsSize(0),
-	iDataRelocs(0), 
+	iDataRelocs(nullptr),
 	iDataRelocsSize(0),
 	iExportOffset(0),
-	iLayoutDone(false), 
+	iLayoutDone(false),
 	iMissingExports(0),
-	iSymNameOffset(0)
-{
-}
+	iSymNameOffset(0) {}
+
+/**
+Constructor for E32ImageFile class.
+@internalComponent
+@released
+*/
+E32ImageFile::E32ImageFile(): E32ImageFile::E32ImageFile(nullptr, nullptr, nullptr){}
+//     iFileName(nullptr), iE32Image(nullptr),iExportBitMap(0),cleanupStack(0),
+//    iData(nullptr),iHdr(nullptr),iImportSection(0), iSize(0), iOrigHdr(nullptr),  iError(0),
+//    iSource(EE32Image), iOrigHdrOffsetAdj(0){};
+
 
 /**
 This function generates the E32 image.
@@ -247,29 +249,29 @@ void E32ImageFile::ProcessImports()
 	ElfImports::ImportMap aImportMap = iElfExecutable->GetImports();
 	ElfImports::ImportMap::iterator p;
 
-	// First set up the string table and record offsets into string table of each 
+	// First set up the string table and record offsets into string table of each
 	// LinkAs name.
 	for (p = aImportMap.begin(); p != aImportMap.end(); p++)
 	{
 		ElfImports::RelocationList & aImports = (*p).second;
 		char* aLinkAs = aImports[0]->iVerRecord->iLinkAs;
 
-		aStrTabOffsets.push_back(aStrTab.size()); // 
+		aStrTabOffsets.push_back(aStrTab.size()); //
 		string s = aLinkAs;
 		aStrTab.insert(aStrTab.end(),s.begin(),s.end());
 		aStrTab.insert(aStrTab.end(),0);
 		aNumDlls++;
 		aNumImports += aImports.size();
 	}
-	
+
 	iNumDlls = aNumDlls;
 	iNumImports = aNumImports;
 
 	// Now we can figure out the size of everything
-	size_t aImportSectionSize = sizeof(E32ImportSection) + 
+	size_t aImportSectionSize = sizeof(E32ImportSection) +
 								(sizeof(E32ImportBlock) * aNumDlls) +
 								(sizeof(unsigned int) * aNumImports);
- 
+
 	vector<Elf32_Word> aImportSection;
 
 	// This is the 'E32ImportSection' header - fill with 0 for the moment
@@ -291,7 +293,7 @@ void E32ImageFile::ProcessImports()
 		//const char * aDSO = FindDSO((*p).first);
 		const char * aDSO = FindDSO(aDsoName);
 
-		aImportSection.push_back(aStrTabOffsets[idx] + aImportSectionSize); 
+		aImportSection.push_back(aStrTabOffsets[idx] + aImportSectionSize);
 		int nImports = aImports.size();
 
 		// Take the additional 0th ordinal import into account
@@ -312,7 +314,7 @@ void E32ImageFile::ProcessImports()
 			ElfImportRelocation * aReloc = *q;
 			char * aSymName = iElfExecutable->GetSymbolName(aReloc->iSymNdx);
 			unsigned int aOrdinal = aElfExecutable.GetSymbolOrdinal(aSymName);
-			
+
 			//check the reloc refers to Code Segment
 			try
 			{
@@ -329,11 +331,12 @@ void E32ImageFile::ProcessImports()
 				aError.Report();
 				exit(EXIT_FAILURE);
 			}
-				
+
 			Elf32_Word aRelocOffset = iElfExecutable->GetRelocationOffset(aReloc);
 			aImportSection.push_back(aRelocOffset);
 
 			Elf32_Word * aRelocPlace = iElfExecutable->GetRelocationPlace(aReloc);
+//todo: wtf??:: empty conditions???
 			if (aOrdinal > 0xFFFF)
 			{
 			}
@@ -347,7 +350,7 @@ void E32ImageFile::ProcessImports()
 			aImportTabEntryPos = aImportSection.size();
 			// Keep track of the location of the entry
 			iImportTabLocations.push_back(aImportTabEntryPos);
-			// Put the entry as 0 now, which shall be updated 
+			// Put the entry as 0 now, which shall be updated
 			aImportSection.push_back(0);
 		}
 
@@ -363,9 +366,9 @@ void E32ImageFile::ProcessImports()
 
 	// Now construct the unified section
 	iImportSectionSize = aTotalSize;
-	iImportSection = (uint32 *)new char[aTotalSize];
-	memset(iImportSection, 0, aTotalSize);
-	memcpy(iImportSection, aImportSection.begin(), aImportSectionSize);
+	iImportSection = (uint32 *)new char[aTotalSize]{0};
+//	memset(iImportSection, 0, aTotalSize);
+	memcpy(iImportSection, (void *)&aImportSection.at(0), aImportSectionSize);
 	char * strTab = ((char *)iImportSection) + aImportSectionSize;
 	memcpy(strTab, aStrTab.data(), aStrTab.size());
 
@@ -453,7 +456,7 @@ void E32ImageFile::ReadInputELFFile(const char * aName, size_t & aFileSize, Elf3
 {
 	ifstream aInput;
 	aInput.open(aName, ifstream::binary|ifstream::in);
-	if (aInput.is_open()) 
+	if (aInput.is_open())
 	{
 		aInput.seekg(0,ios::end);
 		aFileSize = (unsigned int) aInput.tellg();
@@ -461,7 +464,7 @@ void E32ImageFile::ReadInputELFFile(const char * aName, size_t & aFileSize, Elf3
 		aELFFile = (Elf32_Ehdr *)new char [aFileSize];
 		aInput.read((char *)aELFFile, aFileSize);
 		aInput.close();
-	} 
+	}
 	else
 	{
 		throw FileError(FILEOPENERROR,(char*)aName);
@@ -598,7 +601,7 @@ This function returns the E32 interpretation for an Elf relocation type.
 @internalComponent
 @released
 */
-E32ImageFile::uint16 E32ImageFile::GetE32RelocType(ElfRelocation * aReloc)
+uint16 E32ImageFile::GetE32RelocType(ElfRelocation * aReloc)
 {
 	ESegmentType aSegType = aReloc->iSegmentType; // iElfExecutable->SegmentType(aReloc->iSymbol->st_value);
 	switch (aSegType)
@@ -681,7 +684,7 @@ This function initialises the E32 image header fields.
 void E32ImageFile::InitE32ImageHeader()
 {
 	iHdr = iUseCase->AllocateE32ImageHeader();
-	
+
 	iHdr->iUid1 = 0;
 	iHdr->iUid2 = 0;
 	iHdr->iUid3 = 0;
@@ -737,11 +740,11 @@ void E32ImageFile::ComputeE32ImageLayout()
 	iChunks.AddChunk((char *)iHdr, Align(GetExtendedE32ImageHeaderSize(), sizeof(uint32)), 0, "Image Header");
 
 	uint32 endOfHeader = iChunks.GetOffset();
-	
+
 		// Code section
 	iHdr->iCodeOffset = iChunks.GetOffset();
-	iChunks.AddChunk(iElfExecutable->GetRawROSegment(), iElfExecutable->GetROSize(), iHdr->iCodeOffset, "Code Section"); 
-	
+	iChunks.AddChunk(iElfExecutable->GetRawROSegment(), iElfExecutable->GetROSize(), iHdr->iCodeOffset, "Code Section");
+
 	// Exports Next - then we can set up CodeSize
 	// Call out to the use case so it can decide how we do this
 	// record exporttable offset for default case
@@ -773,7 +776,7 @@ void E32ImageFile::ComputeE32ImageLayout()
 		iHdr->iDataOffset = iChunks.GetOffset();
 		iChunks.AddChunk(iElfExecutable->GetRawRWSegment(), iElfExecutable->GetRWSize(), iHdr->iDataOffset, "Data Section");
 	}
-	
+
 	// Import Section
 	if (iImportSectionSize)
 	{
@@ -822,7 +825,7 @@ size_t E32ImageFile::GetE32ImageSize()
 }
 
 /**
-This function creates the export bitmap also replacing the absent symbols 
+This function creates the export bitmap also replacing the absent symbols
 with the entry point functions.
 @internalComponent
 @released
@@ -973,7 +976,7 @@ This function returns the CPU identifier for the E32 image header.
 @internalComponent
 @released
 */
-E32ImageFile::uint16 E32ImageFile::GetCpuIdentifier()
+uint16 E32ImageFile::GetCpuIdentifier()
 {
 	return (uint16)ECpuArmV5;
 }
@@ -983,7 +986,7 @@ This function returns the entry point of the E32 image .
 @internalComponent
 @released
 */
-E32ImageFile::uint32 E32ImageFile::EntryPointOffset()
+uint32 E32ImageFile::EntryPointOffset()
 {
 	return iElfExecutable->EntryPointOffset();
 }
@@ -1043,7 +1046,7 @@ void E32ImageFile::SetUpExceptions()
 		// Set bottom bit so 0 in header slot means an old binary.
 		// The decriptor is always aligned on a 4 byte boundary.
 		iHdr->iExceptionDescriptor = (aSymVaddr - aROBase) | 0x00000001;
-	}	
+	}
 }
 
 /**
@@ -1338,10 +1341,10 @@ TCheckedUid::TCheckedUid(const TUidType& aUidType)
 	}
 
 // needed by E32ImageHeaderV::ValidateHeader...
-void Mem::Crc32(TUint32& aCrc, const TAny* aPtr, TInt aLength)
-	{
-	::Crc32(aCrc, aPtr, aLength);
-	}
+//void Mem::Crc32(TUint32& aCrc, const void* aPtr, TInt aLength)
+//	{
+//	::Crc32(aCrc, aPtr, aLength);
+//	}
 
 /**
 This function updates the CRC of the E32 Image.
@@ -1416,7 +1419,7 @@ bool E32ImageFile::WriteImage(const char * aName)
 	ofstream *os = new ofstream();
 	os->open(aName, ofstream::binary|ofstream::out);
 
-	if (os->is_open()) 
+	if (os->is_open())
 	{
 		uint32 compression = iHdr->CompressionType();
 		if (compression == KUidCompressionDeflate)
@@ -1430,17 +1433,17 @@ bool E32ImageFile::WriteImage(const char * aName)
 		{
 			size_t aHeaderSize = GetExtendedE32ImageHeaderSize();
 			os->write(iE32Image, aHeaderSize);
-			
+
 			// Compress and write out code part
 			int srcStart = GetExtendedE32ImageHeaderSize();
 			CompressPages( (TUint8*)iE32Image + srcStart, iHdr->iCodeSize, *os);
-			
-			
+
+
 			// Compress and write out data part
 			srcStart += iHdr->iCodeSize;
 			int srcLen = GetE32ImageSize() - srcStart;
-			
-			CompressPages((TUint8*)iE32Image + srcStart, srcLen, *os);		
+
+			CompressPages((TUint8*)iE32Image + srcStart, srcLen, *os);
 
 		}
 		else if (compression == 0)
@@ -1448,30 +1451,20 @@ bool E32ImageFile::WriteImage(const char * aName)
 			os->write(iE32Image, GetE32ImageSize()); // image not compressed
 		}
 
-	} 
+	}
 	else
 	{
 		throw FileError(FILEOPENERROR,(char*)aName);
 	}
 	os->close();
-	if(os!=NULL)
+	if(os!=nullptr)
 	{
 	delete os;
-	os = NULL;
+	os = nullptr;
 	}
 	return true;
 }
 
-
-/**
-Constructor for E32ImageFile class.
-@internalComponent
-@released
-*/
-E32ImageFile::E32ImageFile(): iFileName(NULL), iE32Image(NULL),iExportBitMap(0),cleanupStack(0),  iData(NULL),iHdr(NULL),iImportSection(0), iSize(0), iOrigHdr(NULL),  iError(0), iSource(EE32Image), iOrigHdrOffsetAdj(0)  
-{
-	
-};
 
 /**
 Destructor for E32ImageFile class.
@@ -1497,7 +1490,7 @@ E32ImageFile::~E32ImageFile()
  		delete [] aPtr;
  		aPos++;
  	}
-	
+
 }
 
 /**
@@ -1505,7 +1498,7 @@ Adjust the size of allocated data and fix the member data
 @internalComponent
 @released
 */
-void E32ImageFile::Adjust(TInt aSize, TBool aAllowShrink)
+void E32ImageFile::Adjust(TInt aSize, bool aAllowShrink)
 {
 	TInt asize = ((aSize+0x3)&0xfffffffc);
 
@@ -1523,17 +1516,17 @@ void E32ImageFile::Adjust(TInt aSize, TBool aAllowShrink)
 		TInt oldsize = iSize;
 		iSize = asize;
 		iData = (char*)realloc(iData, iSize);
-		
+
 		if (iSize > oldsize)
 			memset(iData+oldsize, 0, iSize-oldsize);
 	}
-	
+
 	if (!iData)
 		iSize = 0;
-	
+
 	if (iHdr && iHdr == iOrigHdr)
 		iHdr = (E32ImageHeaderV*)iData;
-	
+
 	iOrigHdr = (E32ImageHeader*)iData;
 }
 
@@ -1545,28 +1538,28 @@ Read the E32 image.
 */
 TInt E32ImageFile::ReadHeader(ifstream& is)
 {
-	Adjust(sizeof(E32ImageHeader), EFalse);
+	Adjust(sizeof(E32ImageHeader), false);
 	is.read(iData, sizeof(E32ImageHeader));
 	TInt hdrsz = iOrigHdr->TotalSize();
-	
+
 	if (hdrsz > 0x10000)
 		return KErrCorrupt;	// sanity check
-	
+
 	if (hdrsz > (TInt)sizeof(E32ImageHeader))
 	{
-		Adjust(hdrsz, EFalse);
+		Adjust(hdrsz, false);
 		is.read(iData+sizeof(E32ImageHeader), hdrsz-sizeof(E32ImageHeader));
 	}
 
 	TUint32 uncompressedSize;
 	TInt r = iOrigHdr->ValidateHeader(iFileSize,uncompressedSize);
-	
+
 	if (r != KErrNone)
 	{
 		fprintf(stderr, "Integrity check failed %d\n", r);
 		return r;
 	}
-	
+
 	iHdr = (E32ImageHeaderV*)iOrigHdr;
 	return KErrNone;
 }
@@ -1620,7 +1613,7 @@ void E32ImageFile::E32ImageExportBitMap()
 	TUint absentVal = (impfmt == KImageImpFmt_ELF) ? absoluteEntryPoint : iOrigHdr->iEntryPoint;
 	TInt i;
 	iMissingExports = 0;
-	
+
 	for (i=0; i<nexp; ++i)
 	{
 		if (exports[i] == absentVal)
@@ -1629,7 +1622,7 @@ void E32ImageFile::E32ImageExportBitMap()
 			++iMissingExports;
 		}
 	}
-	
+
 	if (hdrfmt < KImageHdrFmt_V && iMissingExports)
 	{
 		fprintf(stderr, "Bad exports\n");
@@ -1647,17 +1640,17 @@ TInt E32ImageFile::CheckExportDescription()
 	TUint hdrfmt = iOrigHdr->HeaderFormat();
 	if (hdrfmt < KImageHdrFmt_V && iMissingExports)
 		return KErrCorrupt;
-	
+
 	if (iHdr->iExportDescType == KImageHdr_ExpD_NoHoles)
 	{
 		return iMissingExports ? KErrCorrupt : KErrNone;
 	}
-	
+
 	TInt nexp = iOrigHdr->iExportDirCount;
 	TInt memsz = (nexp + 7) >> 3;	// size of complete bitmap
 	TInt mbs = (memsz + 7) >> 3;	// size of meta-bitmap
 	TInt eds = iHdr->iExportDescSize;
-	
+
 	if (iHdr->iExportDescType == KImageHdr_ExpD_FullBitmap)
 	{
 		if (eds != memsz)
@@ -1666,20 +1659,20 @@ TInt E32ImageFile::CheckExportDescription()
 			return KErrNone;
 		return KErrCorrupt;
 	}
-	
+
 	if (iHdr->iExportDescType != KImageHdr_ExpD_SparseBitmap8)
 		return KErrNotSupported;
-	
+
 	TInt nbytes = 0;
 	TInt i;
 	for (i=0; i<memsz; ++i)
 		if (iExportBitMap[i] != 0xff)
 			++nbytes;				// number of groups of 8
-	
+
 	TInt exp_extra = mbs + nbytes;
 	if (eds != exp_extra)
 		return KErrCorrupt;
-	
+
 	const TUint8* mptr = iHdr->iExportDesc;
 	const TUint8* gptr = mptr + mbs;
 	for (i=0; i<memsz; ++i)
@@ -1693,7 +1686,7 @@ TInt E32ImageFile::CheckExportDescription()
 		else if (mbit)
 			return KErrCorrupt;
 	}
-	
+
 	return KErrNone;
 }
 
@@ -1713,7 +1706,7 @@ ifstream& operator>>(ifstream& is, E32ImageFile& aImage)
 	aImage.iError = aImage.ReadHeader(is);
 	if (aImage.iError != KErrNone)
 		return is;
-	
+
 	E32ImageHeader* oh = aImage.iOrigHdr;
 	TInt orighdrsz = oh->TotalSize();
 	int remainder = aImage.iSize - orighdrsz;
@@ -1725,27 +1718,27 @@ ifstream& operator>>(ifstream& is, E32ImageFile& aImage)
 	else if (compression == KUidCompressionDeflate)
 	{ //Uncompress
 		aImage.iError = KErrNoMemory;
-		unsigned int uncompsize = ((E32ImageHeaderComp*)aImage.iOrigHdr)->iUncompressedSize;
+		unsigned int uncompsize = ((E32ImageHeaderV*)aImage.iOrigHdr)->iUncompressedSize;
 		aImage.Adjust(uncompsize + orighdrsz);
-		
+
 		if (aImage.iData==NULL)
 			return is;
-		
+
 		oh = aImage.iOrigHdr;
-		
+
 		unsigned char* compressedData = new unsigned char[remainder];
 		if (compressedData==NULL)
 			return is;
-		
+
 		is.read(reinterpret_cast<char *>(compressedData), remainder);
 		unsigned int destsize = uncompsize;
 		InflateUnCompress( compressedData, remainder, (unsigned char*)(aImage.iData + orighdrsz), destsize);
-		
+
 		if (destsize != uncompsize)
 			MessageHandler::GetInstance()->ReportMessage(WARNING, HUFFMANINCONSISTENTSIZEERROR);
-		
+
 		delete [] compressedData;
-		
+
 		if ((TUint)orighdrsz > oh->iCodeOffset)
 		{
 			// need to adjust code offsets in original
@@ -1762,7 +1755,7 @@ ifstream& operator>>(ifstream& is, E32ImageFile& aImage)
 	else if(compression == KUidCompressionBytePair)
 	{ // Uncompress
 		aImage.iError = KErrNoMemory;
-		unsigned int uncompsize = ((E32ImageHeaderComp*)aImage.iOrigHdr)->iUncompressedSize;
+		unsigned int uncompsize = ((E32ImageHeaderV*)aImage.iOrigHdr)->iUncompressedSize;
 		aImage.Adjust(uncompsize + orighdrsz);
 		if (aImage.iData==NULL)
 			return is;
@@ -1772,7 +1765,7 @@ ifstream& operator>>(ifstream& is, E32ImageFile& aImage)
 
 		unsigned int uncompressedCodeSize = DecompressPages((TUint8 *) (aImage.iData + orighdrsz), is);
 
-		
+
 		// Read and decompress data part of the image
 
 		unsigned int uncompressedDataSize = DecompressPages((TUint8 *) (aImage.iData + orighdrsz + uncompressedCodeSize), is);
@@ -1797,32 +1790,32 @@ ifstream& operator>>(ifstream& is, E32ImageFile& aImage)
 
 	return is;
 }
-#ifdef __LINUX__ 
+#ifdef __LINUX__
 #include <sys/stat.h>
 /**
-Simple function uses stdlib fstat to obtain the size of the file. 
+Simple function uses stdlib fstat to obtain the size of the file.
 @param aFileName - e32 image file name
 @internalComponent
 @released
-*/ 
+*/
 int GetFileSize(const char* aFileName) {
     // Open the file the old-fashioned way :-)
-    struct stat fileInfo; 
+    struct stat fileInfo;
     if(stat(aFileName,&fileInfo)!=0) {
         throw FileError(FILEOPENERROR,(char *)aFileName);
     }
     off_t fileSize = fileInfo.st_size;
-    return fileSize; 
+    return fileSize;
 }
-#else 
+#else
 int GetFileSize(const char* aFileName) {
     _finddata_t fileinfo;
 	int ret=_findfirst((char *)aFileName,&fileinfo);
-	if (ret==-1) 
+	if (ret==-1)
 	{
 		throw FileError(FILEOPENERROR,(char *)aFileName);
 	}
-    return fileinfo.size; 
+    return fileinfo.size;
 }
 #endif
 
@@ -1836,7 +1829,7 @@ This function opens the  e32 image file.
 TInt E32ImageFile::Open(const char* aFileName)
 {
 	iFileSize = GetFileSize(aFileName);
-	
+
 	Adjust(iFileSize);
 	ifstream ifile((char *)aFileName, ios::in | ios::binary);
 	if(!ifile.is_open())
@@ -1848,12 +1841,12 @@ TInt E32ImageFile::Open(const char* aFileName)
 
 	if (iError != KErrNone)
 		return iError;
-	
+
 	return KErrNone;
 }
 
 void E32ImageFile::ProcessSymbolInfo() {
-	
+
 	Elf32_Addr aPlace = iUseCase->GetExportTableAddress() - 4;// This location points to 0th ord.
 	// Create a relocation entry for the 0th ordinal.
 	ElfLocalRelocation *aRel = new ElfLocalRelocation(iElfExecutable, aPlace, 0, 0, R_ARM_ABS32, \
@@ -1875,7 +1868,7 @@ void E32ImageFile::ProcessSymbolInfo() {
 	DllSymbol *aSym;
 	TUint aAlign, aNameLen;
 
-	
+
 	char aPad[] = {'\0', '\0', '\0', '\0'};
 
 
@@ -1895,7 +1888,7 @@ void E32ImageFile::ProcessSymbolInfo() {
 			iSymbolNames.append(aPad, aAlign);
 		}
 		//Create a relocation entry...
-		aRel = new ElfLocalRelocation(iElfExecutable, aPlace, 0, 0, R_ARM_ABS32, NULL,\
+		aRel = new ElfLocalRelocation(iElfExecutable, aPlace, 0, 0, R_ARM_ABS32, nullptr,\
 			ESegmentRO, aSym->iElfSym, false);
 		aPlace += sizeof(uint32);
 		aRel->Add();
@@ -1922,7 +1915,7 @@ char* E32ImageFile::CreateSymbolInfo(size_t aBaseOffset) {
 	memcpy(aInfo, (void*)&aSymInf, sizeof(aSymInf));
 
 	TUint aPos = aSymInf.iSymbolTblOffset;
-	memcpy(aInfo+aPos, iSymAddrTab.begin(), iSymAddrTab.size()*sizeof(uint32));
+	memcpy(aInfo+aPos, (void*)&iSymAddrTab.at(0), iSymAddrTab.size()*sizeof(uint32));
 
 	aPos += iSymAddrTab.size()*aSizeofNames;
 	aPos += iSymNameOffTab.size()*aSizeofNames;
@@ -1933,13 +1926,13 @@ char* E32ImageFile::CreateSymbolInfo(size_t aBaseOffset) {
 	if(aSymInf.iFlags & 1)
 		aOffLen=4;
 	while(Iter != iSymNameOffTab.end()){
-		memcpy( ((void*)(aInfo+aPos)), ((void*)Iter), aOffLen);
+		memcpy( ((void*)(aInfo+aPos)), ((void*)&Iter), aOffLen);
 		aPos += aOffLen;
 		Iter++;
 	}
 
 	aPos = aSymInf.iStringTableOffset;
-	memcpy(aInfo+aPos, iSymbolNames.begin(), iSymbolNames.size());
+	memcpy(aInfo+aPos, (void*)&iSymbolNames.at(0), iSymbolNames.size());
 
 	// At the end, the dependencies are listed. They remain zeroes and shall be fixed up
 	// while relocating.

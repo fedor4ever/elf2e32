@@ -14,12 +14,12 @@
 // Implementation of the Class ElfLocalRelocation for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #include "pl_elflocalrelocation.h"
 #include "pl_elfexecutable.h"
-#include "e32imagedefs.h"
+#include <portable.h>
 
 /**
 Constructor for class ElfLocalRelocation
@@ -120,7 +120,7 @@ PLUINT16 ElfLocalRelocation::Fixup()
 		Elf32_Word * aLoc = iElfExec->GetFixupLocation(this, iAddr);
 		Elf32_Word aLocVal = * aLoc;
 
-		if (iRelType == R_ARM_ABS32 || iRelType == R_ARM_GLOB_DAT ) 
+		if (iRelType == R_ARM_ABS32 || iRelType == R_ARM_GLOB_DAT )
 		{
 
 			Elf32_Word aFixedVal = aLocVal + iSymbol->st_value;
@@ -151,7 +151,7 @@ Function for export table relocation
 */
 bool ElfLocalRelocation::ExportTableReloc()
 {
-	return iRel == 0;
+	return iRel == nullptr;
 }
 
 

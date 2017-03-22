@@ -14,13 +14,13 @@
 // Class for inflater
 // @internalComponent
 // @released
-// 
+//
 //
 
 #ifndef __INFLATE_H__
 #define __INFLATE_H__
 
-#include "e32defwrap.h"
+#include "portable.h"
 #include "huffman.h"
 
 
