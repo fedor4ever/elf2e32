@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="elf2e32" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/elf2e32" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-D__TOOLS2__" />
+					<Add directory="%EPOCROOT%/epoc32/include" />
+					<Add directory="source" />
+					<Add directory="include" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/elf2e32" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Winit-self" />
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+			<Add option="-Wno-write-strings" />
+			<Add option="-D__TOOLS2__" />
+			<Add option="-D__REFERENCE_CAPABILITY_NAMES__" />
+			<Add option="-D__INCLUDE_CAPABILITY_NAMES__" />
+			<Add directory="include" />
+		</Compiler>
+		<Unit filename="external/e32image.cpp" />
+		<Unit filename="external/e32imageheaders.h" />
+		<Unit filename="include/cpudefs.h" />
+		<Unit filename="include/e32def_private.h" />
+		<Unit filename="include/elfdefs.h" />
+		<Unit filename="include/h_ver.h" />
+		<Unit filename="include/portable.h" />
+		<Unit filename="source/byte_pair.cpp" />
+		<Unit filename="source/byte_pair.h" />
+		<Unit filename="source/checksum.cpp" />
+		<Unit filename="source/checksum.h" />
+		<Unit filename="source/common.cpp" />
+		<Unit filename="source/deffile.cpp" />
+		<Unit filename="source/deffile.h" />
+		<Unit filename="source/deflatecompress.cpp" />
+		<Unit filename="source/dll_fb_target.cpp" />
+		<Unit filename="source/dll_fb_target.h" />
+		<Unit filename="source/dll_rebuild_target.cpp" />
+		<Unit filename="source/dll_rebuild_target.h" />
+		<Unit filename="source/e32defwrap.h" />
+		<Unit filename="source/e32exporttable.cpp" />
+		<Unit filename="source/e32exporttable.h" />
+		<Unit filename="source/e32imagedefs.h" />
+		<Unit filename="source/e32imagefile.cpp">
+			<Option compiler="gcc" use="0" buildCommand="$compiler $options -save-temps $file" />
+		</Unit>
+		<Unit filename="source/e32imagefile.h" />
+		<Unit filename="source/elf2e32.cpp" />
+		<Unit filename="source/elf2e32.h" />
+		<Unit filename="source/elffilesupplied.cpp" />
+		<Unit filename="source/elffilesupplied.h" />
+		<Unit filename="source/errorhandler.cpp" />
+		<Unit filename="source/errorhandler.h" />
+		<Unit filename="source/exetarget.cpp" />
+		<Unit filename="source/exetarget.h" />
+		<Unit filename="source/exexp_fb_target.cpp" />
+		<Unit filename="source/exexp_fb_target.h" />
+		<Unit filename="source/exexp_rebuild_target.cpp" />
+		<Unit filename="source/exexp_rebuild_target.h" />
+		<Unit filename="source/export_type_fb_target.cpp" />
+		<Unit filename="source/export_type_fb_target.h" />
+		<Unit filename="source/export_type_rebuild_target.cpp" />
+		<Unit filename="source/export_type_rebuild_target.h" />
+		<Unit filename="source/export_type_target.cpp" />
+		<Unit filename="source/export_type_target.h" />
+		<Unit filename="source/farray.h" />
+		<Unit filename="source/filedump.cpp" />
+		<Unit filename="source/filedump.h" />
+		<Unit filename="source/h_utl.cpp" />
+		<Unit filename="source/h_utl.h" />
+		<Unit filename="source/huffman.cpp" />
+		<Unit filename="source/huffman.h" />
+		<Unit filename="source/imgdump.cpp" />
+		<Unit filename="source/inflate.cpp" />
+		<Unit filename="source/inflate.h" />
+		<Unit filename="source/librarytarget.cpp" />
+		<Unit filename="source/librarytarget.h" />
+		<Unit filename="source/main.cpp" />
+		<Unit filename="source/messagehandler.cpp" />
+		<Unit filename="source/messagehandler.h" />
+		<Unit filename="source/messageimplementation.cpp" />
+		<Unit filename="source/messageimplementation.h" />
+		<Unit filename="source/pagedcompress.cpp" />
+		<Unit filename="source/parameterlistinterface.cpp" />
+		<Unit filename="source/parameterlistinterface.h" />
+		<Unit filename="source/parametermanager.cpp" />
+		<Unit filename="source/parametermanager.h" />
+		<Unit filename="source/pl_common.cpp" />
+		<Unit filename="source/pl_common.h" />
+		<Unit filename="source/pl_dllsymbol.cpp" />
+		<Unit filename="source/pl_dllsymbol.h" />
+		<Unit filename="source/pl_dso_handler.cpp" />
+		<Unit filename="source/pl_dso_handler.h" />
+		<Unit filename="source/pl_elfconsumer.cpp" />
+		<Unit filename="source/pl_elfconsumer.h" />
+		<Unit filename="source/pl_elfexecutable.cpp" />
+		<Unit filename="source/pl_elfexecutable.h" />
+		<Unit filename="source/pl_elfexports.cpp" />
+		<Unit filename="source/pl_elfexports.h" />
+		<Unit filename="source/pl_elfimportrelocation.cpp" />
+		<Unit filename="source/pl_elfimportrelocation.h" />
+		<Unit filename="source/pl_elfimports.cpp" />
+		<Unit filename="source/pl_elfimports.h" />
+		<Unit filename="source/pl_elflocalrelocation.cpp" />
+		<Unit filename="source/pl_elflocalrelocation.h" />
+		<Unit filename="source/pl_elfproducer.cpp" />
+		<Unit filename="source/pl_elfproducer.h" />
+		<Unit filename="source/pl_elfrelocation.cpp" />
+		<Unit filename="source/pl_elfrelocation.h" />
+		<Unit filename="source/pl_elfrelocations.cpp" />
+		<Unit filename="source/pl_elfrelocations.h" />
+		<Unit filename="source/pl_sym_type.h" />
+		<Unit filename="source/pl_symbol.cpp" />
+		<Unit filename="source/pl_symbol.h" />
+		<Unit filename="source/polydll_fb_target.cpp" />
+		<Unit filename="source/polydll_fb_target.h" />
+		<Unit filename="source/polydll_rebuild_target.cpp" />
+		<Unit filename="source/polydll_rebuild_target.h" />
+		<Unit filename="source/staticlibsymbols.h" />
+		<Unit filename="source/stdexe_target.cpp" />
+		<Unit filename="source/stdexe_target.h" />
+		<Unit filename="source/usecasebase.cpp" />
+		<Unit filename="source/usecasebase.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
