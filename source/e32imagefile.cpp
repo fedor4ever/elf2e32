@@ -302,10 +302,10 @@ void E32ImageFile::ProcessImports()
 		aImportSection.push_back(nImports);
 
 		size_t aSize;
-		Elf32_Ehdr * aElfFile = 0;
+		Elf32_Ehdr * aElfFile = nullptr;
 		ReadInputELFFile(aDSO, aSize, aElfFile);
 
-		ElfExecutable aElfExecutable(NULL);//(aElfFile, aSize);
+		ElfExecutable aElfExecutable(nullptr);//(aElfFile, aSize);
 		aElfExecutable.ProcessElfFile(aElfFile);
 
 		ElfImports::RelocationList::iterator q;
@@ -693,7 +693,7 @@ void E32ImageFile::InitE32ImageHeader()
 	iHdr->iModuleVersion = 0x00010000u;
 	iHdr->iCompressionType = 0;
 	iHdr->iToolsVersion = TVersion(MajorVersion, MinorVersion, Build);
-	Int64 ltime(timeToInt64(time(0)));
+	Int64 ltime(timeToInt64(time(nullptr)));
 	iHdr->iTimeLo=(uint32)ltime;
 	iHdr->iTimeHi=(uint32)(ltime>>32);
 	iHdr->iFlags = KImageHdrFmt_V;
@@ -1850,7 +1850,7 @@ void E32ImageFile::ProcessSymbolInfo() {
 	Elf32_Addr aPlace = iUseCase->GetExportTableAddress() - 4;// This location points to 0th ord.
 	// Create a relocation entry for the 0th ordinal.
 	ElfLocalRelocation *aRel = new ElfLocalRelocation(iElfExecutable, aPlace, 0, 0, R_ARM_ABS32, \
-		NULL, ESegmentRO, NULL, false);
+		nullptr, ESegmentRO, nullptr, false);
 	aRel->Add();
 
 	aPlace += iUseCase->GetExportTableSize();// aPlace now points to the symInfo

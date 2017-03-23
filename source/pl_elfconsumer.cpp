@@ -37,7 +37,7 @@ Constructor for class ElfConsumer
 */
 ElfConsumer::ElfConsumer(ParameterListInterface *aParameterListInterface) :\
  ElfExecutable(aParameterListInterface) ,\
- iMemBlock(NULL)
+ iMemBlock(nullptr)
 {
 }
 

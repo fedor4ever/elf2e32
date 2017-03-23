@@ -14,7 +14,7 @@
 // Implementation of the Class ElfLocalRelocation for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #if !defined(_PL_ELFLOCALRELOCATION_H)
@@ -37,7 +37,8 @@ public:
 			Elf32_Rel* aRel, bool aVeneerSymbol=false);
 	ElfLocalRelocation(ElfExecutable *aElfExec,PLMemAddr32 aAddr, \
 			PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType, \
-			Elf32_Rel* aRel, ESegmentType aSegmentType, Elf32_Sym* aSym, bool aDelSym, bool aVeneerSymbol=false);
+			Elf32_Rel* aRel, ESegmentType aSegmentType,
+            Elf32_Sym* aSym, bool aDelSym, bool aVeneerSymbol=false);
 	~ElfLocalRelocation();
 	bool IsImportRelocation();
 	void Add();

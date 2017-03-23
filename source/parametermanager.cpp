@@ -433,7 +433,7 @@ const ParameterManager::OptionDesc ParameterManager::iOptions[] =
 	{
 		"help",
 		(void *)ParameterManager::ParamHelp,
-		0,
+		nullptr,
 	},
 };
 
@@ -443,7 +443,7 @@ const ParameterManager::OptionDesc ParameterManager::iShortOptions[] =
 	{
 		"h",
 		(void *)ParameterManager::ParamHelp,
-		0,
+		nullptr,
 	},
 };
 
@@ -2034,7 +2034,7 @@ static const ParameterManager::CompressionMethodDesc MethodNames[] =
 	{ "none", 0},
 	{ "inflate", KUidCompressionDeflate},
 	{ "bytepair", KUidCompressionBytePair},
-	{ 0, 0}
+	{ nullptr, 0}
 };
 
 /**
@@ -2141,7 +2141,7 @@ static const ParameterManager::PriorityValueDesc PriorityNames[] =
 	{ "FileServer", EPriorityFileServer},
 	{ "RealTimeServer", EPriorityRealTimeServer},
 	{ "Supervisor", EPrioritySupervisor},
-	{ 0, (TProcessPriority)0}
+	{ nullptr, (TProcessPriority)0}
 };
 
 /**

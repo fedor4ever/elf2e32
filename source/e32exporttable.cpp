@@ -80,7 +80,7 @@ void E32ExportTable::CreateExportTable(ElfExecutable * aElfExecutable, ElfExport
 		}
 		// set up the pointer
 		iTable[i] = ptr;
-		ElfLocalRelocation * aRel = new ElfLocalRelocation(iElfExecutable, *aPlace++, 0, i, R_ARM_ABS32, NULL, ESegmentRO, sym, aDelSym);
+		ElfLocalRelocation * aRel = new ElfLocalRelocation(iElfExecutable, *aPlace++, 0, i, R_ARM_ABS32, nullptr, ESegmentRO, sym, aDelSym);
 		aRel->Add();
 
 	}
