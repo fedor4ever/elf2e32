@@ -11,33 +11,38 @@
 // Contributors:
 //
 // Description:
-// dll_fb_target.cpp
-// Implementation of the Class ExeTarget for the elf2e32 tool
+// Declaration of Class ExportTypeTarget of the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
-#include "dll_rebuild_target.h"
+#ifndef EXPORT_TYPE_TARGET_H
+#define EXPORT_TYPE_TARGET_H
+
+#include "elffilesupplied.h"
 
 /**
-Constructor for the DLLRebuildTarget Class
+class ExportTypeTarget is dervied from ElfSupplied and handles export type target
 
 @internalComponent
 @released
 */
-DLLRebuildTarget::DLLRebuildTarget(ParameterListInterface* aParameterListInterface) : ExportTypeRebuildTarget(aParameterListInterface) {
-}
+class DLLTarget : public ElfFileSupplied
+{
 
-/**
-Destructor for the DLLRebuildTarget Class
+public:
+	DLLTarget(ParameterManager* aParameterManager);
+	~DLLTarget();
 
-@internalComponent
-@released
-*/
-DLLRebuildTarget::~DLLRebuildTarget() {
-}
+	bool ImageIsDll();
+	void GenerateOutput();
+
+protected:
+	SymbolList *iDefExports;
+
+};
 
 
-
+#endif // EXPORT_TYPE_TARGET_H
 

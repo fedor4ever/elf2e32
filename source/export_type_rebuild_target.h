@@ -14,27 +14,27 @@
 // Declaration of Class ExportTypeRebuildTarget of the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #ifndef EXPORT_TYPE_REBUILD_TARGET_H
 #define EXPORT_TYPE_REBUILD_TARGET_H
 
-#include "export_type_target.h"
+#include "dll_type_target.h"
 
 class DefFile;
 
 /**
-class ExportTypeRebuildTarget is dervied from ExportTypeTarget and handles export type  target rebuilding
+class ExportTypeRebuildTarget is dervied from DLLTarget and handles export type  target rebuilding
 
 @internalComponent
 @released
 */
-class ExportTypeRebuildTarget : public ExportTypeTarget
+class ExportTypeRebuildTarget : public DLLTarget
 {
 
 public:
-	ExportTypeRebuildTarget(ParameterListInterface* aParameterListInterface);
+	ExportTypeRebuildTarget(ParameterManager* aParameterManager);
 	~ExportTypeRebuildTarget();
 
 	void ProcessExports();

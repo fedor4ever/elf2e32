@@ -14,14 +14,14 @@
 // Implementation of the Header file for Class StdExeTarget of the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 
 #ifndef STDEXE_TARGET_H
 #define STDEXE_TARGET_H
 
-#include "export_type_fb_target.h"
+#include "dll_type_target.h"
 
 /**
 This class is derived from the base class ExportTypeFBTarget and is responsible for
@@ -30,11 +30,11 @@ creation of STDEXE Target.
 @internalComponent
 @released
 */
-class StdExeTarget : public ExportTypeFBTarget
+class StdExeTarget : public DLLTarget
 {
 
 public:
-	StdExeTarget(ParameterListInterface* aParameterListInterface);
+	StdExeTarget(ParameterManager* aParameterManager);
 	virtual ~StdExeTarget();
 	bool ImageIsDll();
 	bool AllowDllData();

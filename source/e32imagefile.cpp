@@ -320,7 +320,7 @@ void E32ImageFile::ProcessImports()
 			{
 				if (iElfExecutable->SegmentType(aReloc->iAddr) != ESegmentRO)
 				{
-					throw ImportRelocationError(ILLEGALEXPORTFROMDATASEGMENT, aSymName, iElfExecutable->iParameterListInterface->ElfInput());
+					throw ImportRelocationError(ILLEGALEXPORTFROMDATASEGMENT, aSymName, iElfExecutable->iParameterManager->ElfInput());
 				}
 			}
 			/**This catch block introduced here is to avoid deleting partially constructed object(s).
@@ -432,8 +432,8 @@ const char * E32ImageFile::FindDSO(const char * aName)
 		return aNewDsoName;
 	}
 
-	ParameterListInterface::LibSearchPaths & paths = iUseCase->GetLibSearchPaths();
-	ParameterListInterface::LibSearchPaths::iterator p = paths.begin();
+	ParameterManager::LibSearchPaths & paths = iUseCase->GetLibSearchPaths();
+	ParameterManager::LibSearchPaths::iterator p = paths.begin();
 	for (; p != paths.end(); p++)
 	{
 		string path(*p);

@@ -14,7 +14,7 @@
 // Implementation of the Class StdExeTarget for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #include "stdexe_target.h"
@@ -25,8 +25,8 @@ Constructor for the StdExeTarget Class
 @internalComponent
 @released
 */
-StdExeTarget::StdExeTarget(ParameterListInterface* aParameterListInterface):
-ExportTypeFBTarget(aParameterListInterface)
+StdExeTarget::StdExeTarget(ParameterManager* aParameterManager):
+DLLTarget(aParameterManager)
 {
 }
 
@@ -42,7 +42,7 @@ StdExeTarget::~StdExeTarget(){
 
 /**
 Function to check if the provided input is a DLL.
- 
+
 @internalComponent
 @released
 
@@ -55,7 +55,7 @@ bool StdExeTarget::ImageIsDll()
 
 /**
 Function to check if writable data is allowed.
- 
+
 @internalComponent
 @released
 
@@ -68,7 +68,7 @@ bool StdExeTarget::AllowDllData()
 
 /**
 Function to write E32 image. Here, no def file or Dso file is generated.
- 
+
 @internalComponent
 @released
 

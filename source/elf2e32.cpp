@@ -17,13 +17,10 @@
 //
 //
 
-#include "parameterlistinterface.h"
 #include "parametermanager.h"
 #include "elf2e32.h"
 #include "errorhandler.h"
 #include "librarytarget.h"
-#include "dll_fb_target.h"
-#include "dll_rebuild_target.h"
 #include "exetarget.h"
 #include "polydll_fb_target.h"
 #include "exexp_fb_target.h"
@@ -37,7 +34,7 @@
 using std::cout;
 using std::endl;
 
-ParameterListInterface * Elf2E32::iInstance=nullptr;
+ParameterManager * Elf2E32::iInstance=nullptr;
 
 /**
 Constructor for Elf2E32
@@ -76,7 +73,7 @@ ParameterListInterface which is the abstract base class.
 @return A pointer to the newly created ParameterListInterface object which is the
  abstract interface
 */
-ParameterListInterface * Elf2E32::GetInstance(int aArgc, char ** aArgv)
+ParameterManager * Elf2E32::GetInstance(int aArgc, char ** aArgv)
 {
 	if (!iInstance)
 		iInstance = new ParameterManager(aArgc, aArgv);
@@ -160,9 +157,9 @@ UseCaseBase * Elf2E32::SelectUseCase()
 	{
 	case EDll:
 		if (!deffilein && elfin)
-			iUseCase = new DLLFBTarget(iParameterListInterface);
+			iUseCase = new DLLTarget(iParameterListInterface);
 		else if (deffilein && elfin)
-			iUseCase = new DLLRebuildTarget(iParameterListInterface);
+			iUseCase = new ExportTypeRebuildTarget(iParameterListInterface);
 		else if (!elfin)
 			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--elfinput");
 
@@ -222,21 +219,21 @@ UseCaseBase * Elf2E32::SelectUseCase()
 	return (iUseCase=0x0);
 }
 
-void Elf2E32::ValidateDSOGeneration(ParameterListInterface *aParameterListInterface, ETargetType aTargetType)
+void Elf2E32::ValidateDSOGeneration(ParameterManager* aParameterManager, ETargetType aTargetType)
 {
-	bool dsofileoutoption = aParameterListInterface->DSOFileOutOption();
-	bool linkasoption = aParameterListInterface->LinkAsOption();
-	char * dsofileout = aParameterListInterface->DSOOutput();
-	char * linkas = aParameterListInterface->LinkAsDLLName();
+	bool dsofileoutoption = aParameterManager->DSOFileOutOption();
+	bool linkasoption = aParameterManager->LinkAsOption();
+	char * dsofileout = aParameterManager->DSOOutput();
+	char * linkas = aParameterManager->LinkAsDLLName();
 
 	if (aTargetType != ELib)
 	{
-		bool deffileoutoption = aParameterListInterface->DefFileOutOption();
+		bool deffileoutoption = aParameterManager->DefFileOutOption();
 
 		if (!deffileoutoption)
 			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--defoutput");
 
-		char * deffileout = aParameterListInterface->DefOutput();
+		char * deffileout = aParameterManager->DefOutput();
 		//Incase if the DEF file name is not passed as an input
 		if (!deffileout)
 			throw ParameterParserError(NOARGUMENTERROR,"--defoutput");
@@ -255,18 +252,18 @@ void Elf2E32::ValidateDSOGeneration(ParameterListInterface *aParameterListInterf
 
 }
 
-void Elf2E32::ValidateE32ImageGeneration(ParameterListInterface *aParameterListInterface, ETargetType aTargetType)
+void Elf2E32::ValidateE32ImageGeneration(ParameterManager* aParameterManager, ETargetType aTargetType)
 {
-	bool e32fileoutoption = aParameterListInterface->E32OutOption();
-	char * e32fileout = aParameterListInterface->E32ImageOutput();
+	bool e32fileoutoption = aParameterManager->E32OutOption();
+	char * e32fileout = aParameterManager->E32ImageOutput();
 
 	if (!e32fileoutoption)
 		throw ParameterParserError(NOREQUIREDOPTIONERROR,"--output");
 	else if (!e32fileout)
 		throw ParameterParserError(NOARGUMENTERROR,"--output");
 
-	UINT uid1option = aParameterListInterface->Uid1Option();
-	UINT uid1val = aParameterListInterface->Uid1();
+	UINT uid1option = aParameterManager->Uid1Option();
+	UINT uid1val = aParameterManager->Uid1();
 
 	if (!uid1option) // REVISIT
 		throw ParameterParserError(NOREQUIREDOPTIONERROR,"--uid1");

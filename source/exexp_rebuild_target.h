@@ -14,7 +14,7 @@
 // Declaration of Class ExExpRebuildTarget of the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #ifndef EXEXP_REBUILD_TARGET_H
@@ -32,7 +32,7 @@ class ExExpRebuildTarget : public ExportTypeRebuildTarget
 {
 
 public:
-	ExExpRebuildTarget(ParameterListInterface* aParameterListInterface);
+	ExExpRebuildTarget(ParameterManager* aParameterManager);
 	~ExExpRebuildTarget();
 	bool ImageIsDll();
 	bool AllowDllData();

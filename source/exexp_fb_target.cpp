@@ -14,7 +14,7 @@
 // Implementation of the Class ExexpTarget for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #include "exexp_fb_target.h"
@@ -25,8 +25,8 @@ Constructor for the ExexpFBTarget Class
 @internalComponent
 @released
 */
-ExexpFBTarget::ExexpFBTarget(ParameterListInterface* aParameterListInterface):
-ExportTypeFBTarget(aParameterListInterface)
+ExexpFBTarget::ExexpFBTarget(ParameterManager* aParameterManager):
+DLLTarget(aParameterManager)
 {
 }
 
@@ -42,7 +42,7 @@ ExexpFBTarget::~ExexpFBTarget(){
 
 /**
 Function to check if the provided input is a DLL.
- 
+
 @internalComponent
 @released
 
@@ -55,7 +55,7 @@ bool ExexpFBTarget::ImageIsDll()
 
 /**
 Function to check if writable data is allowed.
- 
+
 @internalComponent
 @released
 

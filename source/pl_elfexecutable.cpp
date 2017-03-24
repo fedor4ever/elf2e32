@@ -22,7 +22,7 @@
 #include "errorhandler.h"
 #include <stdio.h>
 #include <cstring>
-#include "parameterlistinterface.h"
+#include "parametermanager.h"
 #include "pl_elfimportrelocation.h"
 #include "pl_dllsymbol.h"
 #include "messagehandler.h"
@@ -35,7 +35,7 @@ Constructor for class ElfExecutable
 @internalComponent
 @released
 */
-ElfExecutable::ElfExecutable(ParameterListInterface *aParameterListInterface) :\
+ElfExecutable::ElfExecutable(ParameterManager* aParameterManager) :\
 	iElfHeader(nullptr), \
 	iEntryPoint(0),\
 	iProgHeader(nullptr), \
@@ -59,7 +59,7 @@ ElfExecutable::ElfExecutable(ParameterListInterface *aParameterListInterface) :\
 	iDataSegmentHdr (nullptr) ,iDataSegment(nullptr), iDataSegmentSize(0), iDataSegmentIdx(0), \
 	iCodeSegmentHdr (nullptr) , iCodeSegment(nullptr), iCodeSegmentSize(0), iCodeSegmentIdx(0), \
 	iExports (nullptr), \
-	iParameterListInterface(aParameterListInterface),\
+	iParameterManager(aParameterManager),\
 	iPltGotBase(0), iPltGotLimit(0), iStrTabSz(0), iSymEntSz(0), \
 	iPltGot(nullptr), iPltRel(nullptr),iPltRelaSz(0), iPltRela(nullptr), iPltRelSz(0)  \
 
@@ -120,7 +120,7 @@ PLUINT32  ElfExecutable::ProcessElfFile(Elf32_Ehdr *aElfHdr) {
 	if(iElfHeader->e_shstrndx != SHN_UNDEF) {
 
 		if(iElfHeader->e_shstrndx > iElfHeader->e_shnum ) {
-			throw ELFFormatError(ELFSHSTRINDEXERROR,iParameterListInterface->ElfInput());
+			throw ELFFormatError(ELFSHSTRINDEXERROR,iParameterManager->ElfInput());
 		}
 
 		iSectionHdrStrTbl = ELF_ENTRY_PTR(char, iElfHeader, iSections[iElfHeader->e_shstrndx].sh_offset);
@@ -380,7 +380,7 @@ PLUINT32  ElfExecutable::ProcessSymbols(){
 			 * All imported symbols must be informed via the version needed information.
 			 */
 			if( iVerInfo[iVersionTbl[aSymIdx]].iVerCategory != VER_CAT_NEEDED ) {
-				throw UndefinedSymbolError(UNDEFINEDSYMBOLERROR, iParameterListInterface->ElfInput(), aSymName);
+				throw UndefinedSymbolError(UNDEFINEDSYMBOLERROR, iParameterManager->ElfInput(), aSymName);
 			}
 			aDllName = iVerInfo[iVersionTbl[aSymIdx]].iLinkAs;
 			//aSymbol = new DllSymbol( aSymName, aType, &iElfDynSym[aSymIdx], aSymIdx);
@@ -470,22 +470,22 @@ PLUINT32  ElfExecutable::ValidateElfFile() {
 		(iElfHeader->e_ident[EI_MAG1] == ELFMAG1) &&
 		(iElfHeader->e_ident[EI_MAG2] == ELFMAG2) &&
 		(iElfHeader->e_ident[EI_MAG3] == ELFMAG3) ) {
-			throw ELFFormatError(ELFMAGICERROR, iParameterListInterface->ElfInput());
+			throw ELFFormatError(ELFMAGICERROR, iParameterManager->ElfInput());
 	}
 
 	/*32-bit ELF file*/
 	if(iElfHeader->e_ident[EI_CLASS] != ELFCLASS32) {
-		throw ELFFormatError(ELFCLASSERROR, iParameterListInterface->ElfInput());
+		throw ELFFormatError(ELFCLASSERROR, iParameterManager->ElfInput());
 	}
 
 	/* Check if the ELF file is in Little endian format*/
 	if(iElfHeader->e_ident[EI_DATA] != ELFDATA2LSB) {
-		throw ELFFormatError(ELFLEERROR, iParameterListInterface->ElfInput());
+		throw ELFFormatError(ELFLEERROR, iParameterManager->ElfInput());
 	}
 
 	/* The ELF executable must be a DLL or an EXE*/
 	if( iElfHeader->e_type != ET_EXEC && iElfHeader->e_type != ET_DYN) {
-		throw ELFFormatError(ELFEXECUTABLEERROR, iParameterListInterface->ElfInput());
+		throw ELFFormatError(ELFEXECUTABLEERROR, iParameterManager->ElfInput());
 	}
 
 	return 0;
@@ -636,7 +636,7 @@ PLUINT32  ElfExecutable::ProcessDynamicEntries(){
 	{
 		//The number of symbols should be same as the number of chains in hashtable
 		if (iNSymbols && (iNSymbols != iHashTbl->nChains))
-			throw ELFFormatError(SYMBOLCOUNTMISMATCHERROR,(char*)iParameterListInterface->ElfInput());
+			throw ELFFormatError(SYMBOLCOUNTMISMATCHERROR,(char*)iParameterManager->ElfInput());
 		else
 		//The number of symbols is same as the number of chains in hashtable
 			iNSymbols = iHashTbl->nChains;
@@ -1258,11 +1258,11 @@ Elf32_Word ElfExecutable::EntryPointOffset()
 {
 	if (!(iElfHeader->e_entry) && !(iCodeSegmentHdr->p_vaddr))
 	{
-		MessageHandler::GetInstance()->ReportMessage(WARNING, UNDEFINEDENTRYPOINTERROR,(char*)iParameterListInterface->ElfInput());
+		MessageHandler::GetInstance()->ReportMessage(WARNING, UNDEFINEDENTRYPOINTERROR,(char*)iParameterManager->ElfInput());
 		return 0;
 	}
 	else if (!(iElfHeader->e_entry))
-		throw ELFFormatError(ENTRYPOINTNOTSETERROR, (char*)iParameterListInterface->ElfInput());
+		throw ELFFormatError(ENTRYPOINTNOTSETERROR, (char*)iParameterManager->ElfInput());
 	else
 		return iElfHeader->e_entry - iCodeSegmentHdr->p_vaddr;
 }
@@ -1296,7 +1296,7 @@ bool ElfExecutable::ExeceptionsPresentP()
 
 	}
 	else
-		throw ELFFileError(NEEDSECTIONVIEWERROR, (char*)iParameterListInterface->ElfInput());
+		throw ELFFileError(NEEDSECTIONVIEWERROR, (char*)iParameterManager->ElfInput());
 
 	return false;
 }
@@ -1381,12 +1381,12 @@ Elf32_Sym * ElfExecutable::LookupStaticSymbol(char * aName) {
 		}
 		else
 		{
-			throw ELFFileError(NOSTATICSYMBOLSERROR, (char*)iParameterListInterface->ElfInput());
+			throw ELFFileError(NOSTATICSYMBOLSERROR, (char*)iParameterManager->ElfInput());
 		}
 	}
 	else
 	{
-			throw ELFFileError(NOSTATICSYMBOLSERROR, (char*)iParameterListInterface->ElfInput());
+			throw ELFFileError(NOSTATICSYMBOLSERROR, (char*)iParameterManager->ElfInput());
 	}
 }
 

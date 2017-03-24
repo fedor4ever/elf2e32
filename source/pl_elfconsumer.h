@@ -14,7 +14,7 @@
 // Implementation of the Class ElfConsumer for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #if !defined(_PL_ELFCONSUMER_H_)
@@ -37,7 +37,7 @@ ET_EXEC or ET_DYN, it processes the imports(if required) or exports respectively
 class ElfConsumer : public ElfExecutable
 {
 public:
-	ElfConsumer(ParameterListInterface *aParameterListInterface);
+	ElfConsumer(ParameterManager* aParameterManager);
 	virtual ~ElfConsumer();
 	PLUINT32 ReadElfFile(char* aFile);
 	int GetElfSymbolList(list<Symbol*>& aList);

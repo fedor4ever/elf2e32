@@ -14,7 +14,7 @@
 // Implementation of the Class ElfProducer for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #if !defined(_PL_ELFPRODUCER_H_)
@@ -64,9 +64,9 @@ class ElfProducer : public ElfExecutable
 
 	typedef std::list<Symbol*> SymbolList;
 public:
-	ElfProducer(ParameterListInterface *aParameterListInterface);
+	ElfProducer(ParameterManager* aParameterManager);
 	~ElfProducer();
-	
+
 	void SetSymbolList(SymbolList& aSymbolList);
 	void WriteElfFile(char* aDsoFullName,char* aDsoFileName, char* aLinkAs);
 

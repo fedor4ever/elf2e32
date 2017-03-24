@@ -33,15 +33,15 @@ using __gnu_cxx::hash_set;
 
 /**
 Constructor for class ElfFileSupplied to initialize members and create instance of class DSOHandler
-@param aParameterListInterface - Instance of class ParameterListInterface
+@param aParameterManager - Instance of class ParameterManager
 @internalComponent
 @released
 */
-ElfFileSupplied::ElfFileSupplied(ParameterListInterface* aParameterListInterface) :  \
-    UseCaseBase(aParameterListInterface), iNumAbsentExports(-1),iExportBitMap(nullptr), \
+ElfFileSupplied::ElfFileSupplied(ParameterManager* aParameterManager) :  \
+    UseCaseBase(aParameterManager), iNumAbsentExports(-1),iExportBitMap(nullptr), \
 	iE32ImageFile(nullptr), iElfExecutable(nullptr), iExportDescSize(0), iExportDescType(0)
 {
-	iElfIfc = new DSOHandler(aParameterListInterface);
+	iElfIfc = new DSOHandler(aParameterManager);
 }
 
 /**
@@ -339,11 +339,11 @@ void ElfFileSupplied::GenerateOutput()
 {
 	if (iElfExecutable->iExports)
 	{
-		Elf2E32::ValidateDSOGeneration(iParameterListInterface, ETargetTypeNotSet);
+		Elf2E32::ValidateDSOGeneration(iParameterManager, ETargetTypeNotSet);
 		WriteDefFile();
 		WriteDSOFile();
 	}
-	Elf2E32::ValidateE32ImageGeneration(iParameterListInterface, ETargetTypeNotSet);
+	Elf2E32::ValidateE32ImageGeneration(iParameterManager, ETargetTypeNotSet);
 	WriteE32();
 }
 

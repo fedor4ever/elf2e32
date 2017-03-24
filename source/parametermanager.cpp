@@ -29,6 +29,9 @@
 
 #include "h_utl.h"
 #include "h_ver.h"
+
+using std::cout;
+using std::endl;
 /**
 Constructor for the ParameterManager.
 
@@ -1137,7 +1140,7 @@ that is passed as input through the --libpath option.
 
 @return the path if provided as input through --libpath or 0.
 */
-ParameterListInterface::LibSearchPaths& ParameterManager::LibPath()
+ParameterManager::LibSearchPaths& ParameterManager::LibPath()
 {
 	return iLibPathList;
 }
@@ -2880,7 +2883,7 @@ static const ParameterManager::TargetTypeDesc DefaultTargetTypes[] =
 	{ "EXEXP", EExexp},
 	{ "STDEXE", EStdExe},
 	{ "STDDLL", EDll},
-	{ 0, EInvalidTargetType }
+	{ nullptr, EInvalidTargetType }
 };
 
 /**

@@ -14,34 +14,50 @@
 // Implementation of the Header file for Class ParameterManager of the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #if !defined(SYMBIAN_PARAMETERMANAGER_H_)
 #define SYMBIAN_PARAMETERMANAGER_H_
 
-#include "parameterlistinterface.h"
+#include <portable.h>
 #include <vector>
 #include <map>
 #include <string>
+
 
 class UseCaseBase;
 class Symbol;
 
 
+enum ETargetType
+{
+	ETargetTypeNotSet = - 2,
+	EInvalidTargetType = - 1,
+	/** Target type is Library */
+	ELib,
+	/** Target type is DLL */
+	EDll,
+	EExe,
+	EPolyDll,
+	EExexp,
+	EStdExe
+};
+
+typedef unsigned int UINT;
+using std::string;
 
 /**
-This class is derived from ParameterListInterface (the abstract base class). 
+This class is base class.
 
 @internalComponent
 @released
 */
-class ParameterManager : public ParameterListInterface
+class ParameterManager
 {
 
 public:
 
-	typedef std::vector<char *> ParamList;
 
 	struct OptionDesc
 	{
@@ -61,35 +77,35 @@ public:
 		const char * iName;
 		TProcessPriority iPriority;
 	};
-	
+
 	struct CompressionMethodDesc
 	{
 		const char *iMethodName;
 		UINT		iMethodUid;
 	};
 
-	/*struct SysDefs
+	struct SysDefs
 	{
 		int iSysDefOrdinalNum;
 		char * iSysDefSymbolName;
 	};
 
-	typedef struct SysDefs Sys;*/
+	typedef struct SysDefs Sys;
 
-	typedef std::string string;
 	typedef std::less<string> OptionCompare;
 	typedef std::map<string, const OptionDesc *, OptionCompare> OptionMap;
-	typedef vector<char *> LibSearchPaths;
+	typedef std::vector<char *> LibSearchPaths;
+	typedef std::vector<char *> ParamList;
 
 	typedef void (*ParserFn)(ParameterManager *, char *, char *, const OptionDesc *);
 
 
 	#define DECLARE_PARAM_PARSER(name) \
 		static void name(ParameterManager* aPM, char* aOption, char* aValue, void* aDesc)
-	
+
 	#define DEFINE_PARAM_PARSER(name) \
 		void name(ParameterManager * aPM, char * aOption, char* aValue, void * aDesc)
-	
+
 	#define INITIALISE_PARAM_PARSER \
 		aOption = aOption; \
 		aValue = aValue; \
@@ -107,7 +123,7 @@ public:
 	DECLARE_PARAM_PARSER(ParseLogFile);
 	DECLARE_PARAM_PARSER(ParseMessageFile);
 	DECLARE_PARAM_PARSER(ParseDumpMessageFile);
-	
+
 	DECLARE_PARAM_PARSER(ParamHelp);
 	DECLARE_PARAM_PARSER(ParseUID1);
 	DECLARE_PARAM_PARSER(ParseUID2);
@@ -147,7 +163,15 @@ public:
 
 	ParameterManager(int aArgc, char** aArgv);
 	virtual ~ParameterManager();
+
+	/**
+    This function parses the command line options and sets the appropriate values based on the
+    input options.
+    @internalComponent
+    @released
+    */
 	void ParameterAnalyser();
+
 	void SetDefInput(char * aDefInputVal);
 	void SetDSOOutput(char * aDSOOutputVal);
 	void SetElfInput(char * aSetElfInput);
@@ -189,7 +213,7 @@ public:
 	void SetDataPaged(bool);
 	void SetDataUnpaged(bool);
 	void SetDataDefaultPaged(bool);
-	
+
 	void SetExcludeUnwantedExports(bool aVal);
 	void SetCustomDllTarget(bool aVal);
 	void SetSymNamedLookup(bool aVal);
@@ -202,19 +226,86 @@ public:
 	void ParseCommandLine();
 	void RecordImageLocation();
 	char * Path(char * aArg);
+
+	/**
+    This function extracts the target type that is passed as input through the --targettype option.
+    @internalComponent
+    @released
+    @return the name of the input target type if provided as input through --targettype or 0.
+    */
 	ETargetType TargetTypeName();
+
 	ETargetType ValidateTargetType(const char * aTargetType);
+
+	/**
+    This function extracts the path (where the intermediate libraries should be put)
+    that is passed as input through the --libpath option.
+    @internalComponent
+    @released
+    @return the path if provided as input through --libpath or 0.
+    */
 	LibSearchPaths& LibPath();
+
+	/**
+    This function extracts the DEF file name that is passed as input through the --definput option.
+    @internalComponent
+    @released
+    @return the name of the input DEF file if provided as input through --definput or 0.
+    */
 	char * DefInput();
+
+	/**
+    This function extracts the Elf file name that is passed as input through the --dsoin option.
+    @internalComponent
+    @released
+    @return the name of the input Elf file if provided as input through --dsoin or 0.
+    */
 	char * ElfInput();
+
+    /**
+    This function extracts the E32 image name that is passed as input through the --e32dump option.
+    @internalComponent
+    @released
+    @return the name of the input E32 image if provided as input through --e32dump or 0.
+    */
 	char * E32Input();
+
+	/**
+    This function finds out if the --definput option is passed to the program.
+    @internalComponent
+    @released
+    @return True if --definput option is passed in or False.
+    */
 	bool DefFileInOption();
+
 	bool DefFileOutOption();
+
+	/**
+    This function finds out if the --elfinput option is passed to the program.
+    @internalComponent
+    @released
+    @return True if --elfinput option is passed in or False.
+    */
 	bool ElfFileInOption();
 	bool E32ImageInOption();
 	bool FileDumpOption();
+
+	/**
+    This function finds out if the --dso option is passed to the program.
+    @internalComponent
+    @released
+    @return True if --dso option is passed in or False.
+    */
 	bool DSOFileOutOption();
+
 	bool E32OutOption();
+
+	/**
+    This function finds out if the --linkas option is passed to the program.
+    @internalComponent
+    @released
+    @return True if --linkas option is passed in or False.
+    */
 	bool LinkAsOption();
 	bool Uid1Option();
 	bool SecureIdOption();
@@ -230,11 +321,49 @@ public:
 	bool CallEntryPoint();
 	bool FPUOption();
 
+	/**
+    This function extracts the output DEF file name that is passed as input through the --defoutput option.
+    @internalComponent
+    @released
+    @return the name of the output DEF file if provided as input through --defoutput or 0.
+    */
 	char * DefOutput();
+
+	/**
+    This function extracts the DSO file name that is passed as input through the --dso option.
+    @internalComponent
+    @released
+    @return the name of the output DSO file if provided as input through --dso or 0.
+    */
 	char * DSOOutput();
+
+	/**
+    This function extracts the E32 image output that is passed as input through the --output option.
+    @internalComponent
+    @released
+    @return the name of the output E32 image output if provided as input through --output or 0.
+    */
 	char * E32ImageOutput();
+
+    /**
+    This function extracts the name of the DLL (that the DSO is to be linked with)
+    that is passed as input through the --linkas option.
+    @internalComponent
+    @released
+    @return the name of the DLL name to be linked with if provided as input through --linkas or 0.
+    */
 	char * LinkAsDLLName();
+
+	/**
+    This function extracts the filename from the absolute path that is given as input.
+    @internalComponent
+    @released
+    @param aFileName
+    The filename alongwith the absolute path.
+    @return the filename (without the absolute path) for valid input else the filename itself.
+    */
 	char * FileName(char * aArg);
+
 	char * LogFile();
 	char * MessageFile();
 	char * DumpMessageFile();
@@ -242,7 +371,15 @@ public:
 	char * FileDumpSubOptions();
 	int DumpOptions();
 	int SysDefCount();
+
+	/**
+    This function finds out the directory separator '\' in the path
+    @internalComponent
+    @released
+    @return the directory spearator '\'
+    */
 	char DirectorySeparator();
+
 	//int SysDefOrdinalNum();
 	//char * SysDefSymbol();
 	Sys SysDefSymbols(int count);
@@ -301,22 +438,22 @@ private:
 
 	/** To check if the --defoutput (Option to pass the output DEF File name) is passed as input */
 	bool iDefFileOutOption;
-	
+
 	/** To check if the --dump is passed as input */
 	bool iFileDumpOption;
 
 	/** To check if the --dso (Option to pass the output DSO File name) is passed as input */
 	bool iDSOFileOutOption;
-	
+
 	/** To check if the --output (Option to pass the output image name) is passed as input */
 	bool iOutFileOption;
-	
+
 	/** To check if the --elfinput (Option to pass the input Elf File) is passed as input */
 	bool iElfFileInOption;
-	
+
 	/** To check if the --e32input (Option to pass the input E32 File) is passed as input */
 	bool iE32ImageInOption;
-	
+
 	/** To check if the --linkas (Option to pass DLL name to be linked with) is passed as input */
 	bool iLinkAsOption;
 
@@ -330,7 +467,7 @@ private:
 	/** Interface identifier, distinguishes within a type (i.e.within a UID1) */
 	UINT iUID2;
 
-	/** Project identifier, identifies a particular subtype */ 
+	/** Project identifier, identifies a particular subtype */
 	UINT iUID3;
 
 	UINT iSecureID;
@@ -359,7 +496,7 @@ private:
 	static const char * iParamPrefix;
 
 	/** The '=' used for passing the arguments to the command line options for the program */
-	static const char iParamEquals; 
+	static const char iParamEquals;
 
 	/** The list of command line options (with normal prefix '--') that will be accepted by the program */
 	static const OptionDesc iOptions[];
@@ -415,7 +552,7 @@ private:
 	bool iDumpMessageFileOption;
 
 	bool iDllDataP;
-	
+
 	//vector<char*> iLibPathList;
 	LibSearchPaths iLibPathList;
 	SCapabilitySet iCapability;
@@ -431,7 +568,7 @@ private:
 	bool iFPUOption;
 
 	int iArgumentCount;
-	
+
 	bool iCodePaged;
 	bool iCodeUnpaged;
 	bool iCodeDefaultPaged;

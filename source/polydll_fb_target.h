@@ -15,13 +15,13 @@
 // Declaration of Class POLYDLLFBTarget of the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #ifndef POLYDLLFB_TARGET_H
 #define POLYDLLFB_TARGET_H
 
-#include "export_type_fb_target.h"
+#include "dll_type_target.h"
 #include <list>
 
 class Symbol;
@@ -29,17 +29,17 @@ class Symbol;
 typedef std::list<Symbol*> SymbolList;
 
 /**
-This class is derived from the class ExportTypeFBTarget and is responsible for creation of
+This class is derived from the class DLLTarget and is responsible for creation of
 PolyDll first build.
 
 @internalComponent
 @released
 */
-class POLYDLLFBTarget : public ExportTypeFBTarget
+class POLYDLLFBTarget : public DLLTarget
 {
 
 public:
-	POLYDLLFBTarget(ParameterListInterface* aParameterListInterface);
+	POLYDLLFBTarget(ParameterManager* aParameterManager);
 	~POLYDLLFBTarget();
 	void ProcessExports();
 	void GenerateOutput();

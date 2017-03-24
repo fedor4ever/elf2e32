@@ -14,7 +14,7 @@
 // Implementation of the Class DSOHandler for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 
@@ -24,15 +24,15 @@
 
 /**
 Constructor for class DSOHandler
-@param aParameterListInterface - instance of ParameterListInterface 
+@param aParameterListInterface - instance of ParameterListInterface
 @internalComponent
 @released
 */
-DSOHandler::DSOHandler(	ParameterListInterface *aParameterListInterface){
+DSOHandler::DSOHandler(ParameterManager* aParameterManager){
 
-	iParameterListInterface = aParameterListInterface;
-	iElfProducer = new ElfProducer(iParameterListInterface);
-	iElfConsumer = new ElfConsumer(iParameterListInterface);
+	iParameterListInterface = aParameterManager;
+	iElfProducer = new ElfProducer(aParameterManager);
+	iElfConsumer = new ElfConsumer(aParameterManager);
 }
 
 
@@ -91,7 +91,7 @@ PLUINT32 DSOHandler::WriteElfFile(char* aDsoFullName, char* aDSOName, char* aDll
 
 /**
 This operation fetches the list of symbols that are exported from the ELF
-file. This list is used by UseCaseHandler to finalise the export symbols and 
+file. This list is used by UseCaseHandler to finalise the export symbols and
 compare them with those found from the DEF file.
 @internalComponent
 @released
@@ -107,7 +107,7 @@ int DSOHandler::GetElfExportSymbolList(SymbolList& aList){
 
 @internalComponent
 @released
-@param 
+@param
 */
 void DSOHandler::GetImageDetails(/*E32ImageInterface aImageInterface*/){
 
@@ -119,7 +119,7 @@ Function for retuning instance of elf consumer
 @released
 @return return the elf consumer instance
 */
-ElfExecutable * DSOHandler::ElfExecutableP(){ 
+ElfExecutable * DSOHandler::ElfExecutableP(){
 	return iElfConsumer;
 }
 

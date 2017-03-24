@@ -46,8 +46,8 @@ Constructor for class ElfProducer
 @internalComponent
 @released
 */
-ElfProducer::ElfProducer(ParameterListInterface *aParameterListInterface):
-     ElfExecutable(aParameterListInterface) , \
+ElfProducer::ElfProducer(ParameterManager* aParameterManager):
+     ElfExecutable(aParameterManager) , \
 	 iDSONameOffset(0),\
 	 iLinkAsOffset(0),\
 	 iSymbolsList(nullptr),

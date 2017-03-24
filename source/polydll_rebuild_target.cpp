@@ -32,7 +32,7 @@ Constructor for the POLYDLLRebuildTarget Class
 @internalComponent
 @released
 */
-POLYDLLRebuildTarget::POLYDLLRebuildTarget(ParameterListInterface* aParameterListInterface) : ExportTypeRebuildTarget(aParameterListInterface) {
+POLYDLLRebuildTarget::POLYDLLRebuildTarget(ParameterManager* aParameterManager) : ExportTypeRebuildTarget(aParameterManager) {
 }
 
 /**
@@ -55,13 +55,13 @@ symbols coming from the DEF file and ELF file.
 */
 void POLYDLLRebuildTarget::ProcessExports()
 {
-	int count = iParameterListInterface->SysDefCount();
-	ParameterListInterface::Sys aSysDefSymbols[10];
+	int count = iParameterManager->SysDefCount();
+	ParameterManager::Sys aSysDefSymbols[10];
 
 	int j=0, i=count;
 	while (i)
 	{
-		aSysDefSymbols[j] = iParameterListInterface->SysDefSymbols(j);
+		aSysDefSymbols[j] = iParameterManager->SysDefSymbols(j);
 		j++; i--;
 	}
 
@@ -71,7 +71,7 @@ void POLYDLLRebuildTarget::ProcessExports()
 
 	SymbolList *iSysDefExports = new SymbolList;
 
-	iDefExports = iDefFile->ReadDefFile(iParameterListInterface->DefInput());
+	iDefExports = iDefFile->ReadDefFile(iParameterManager->DefInput());
 
 	for (int k=0; k < count; k++)
 	{

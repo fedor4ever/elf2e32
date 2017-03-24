@@ -14,7 +14,7 @@
 // Implementation of the Header file for Class UseCaseBase of the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #ifndef USECASEBASE_H
@@ -22,117 +22,115 @@
 
 #include "pl_symbol.h"
 #include "e32imagefile.h"
-#include "parameterlistinterface.h"
+#include "parametermanager.h"
 
 class E32ImageFile;
 
 /**
 This class is the base class for the use cases. The appropriate usecases like LibraryTarget,
-DLLTarget, EXETarget are derived from this class. 
+DLLTarget, EXETarget are derived from this class.
 
 Other classes like ParameterManager are dependant on this class.
 
 @internalComponent
 @released
 */
-class UseCaseBase
-{
+class UseCaseBase {
 
-public:
-	UseCaseBase(ParameterListInterface* aParameterListInterface);
-	virtual ~UseCaseBase();
-	char * DefInput();
-	char * DSOOutput();
-	char * LinkAsDLLName();
-	char * FileName(char *aFileName);
+    public:
+        UseCaseBase(ParameterManager* aParameterManager);
+        virtual ~UseCaseBase();
+        char * DefInput();
+        char * DSOOutput();
+        char * LinkAsDLLName();
+        char * FileName(char *aFileName);
 
 //const char * DefOutput();
-	char *DefOutput();
+        char *DefOutput();
 
-	char *LogFile();
-	bool LogFileOption();
+        char *LogFile();
+        bool LogFileOption();
 
-char * InputElfFileName();
+        char * InputElfFileName();
 
-const char * OutputDSOFileName();
+        const char * OutputDSOFileName();
 
-const char * OutputE32FileName();
+        const char * OutputE32FileName();
 
-bool AllowDllData();
+        bool AllowDllData();
 
-size_t HeapCommittedSize();
+        size_t HeapCommittedSize();
 
-size_t HeapReservedSize();
+        size_t HeapReservedSize();
 
-size_t StackCommittedSize();
+        size_t StackCommittedSize();
 
-unsigned int GetUid1();
+        unsigned int GetUid1();
 
-unsigned int GetUid2();
+        unsigned int GetUid2();
 
-unsigned int GetUid3();
+        unsigned int GetUid3();
 
-unsigned int GetSecureId();
-bool GetSecureIdOption();
+        unsigned int GetSecureId();
+        bool GetSecureIdOption();
 
-unsigned int GetVendorId();
+        unsigned int GetVendorId();
 
-unsigned int GetVersion();
+        unsigned int GetVersion();
 
-bool GetCallEntryPoints();
+        bool GetCallEntryPoints();
 
-SCapabilitySet GetCapability();
-bool Unfrozen();
+        SCapabilitySet GetCapability();
+        bool Unfrozen();
 
-TProcessPriority GetPriority();
+        TProcessPriority GetPriority();
 
-bool GetFixedAddress();
+        bool GetFixedAddress();
 
-bool GetCompress();
-unsigned int GetCompressionMethod();
+        bool GetCompress();
+        unsigned int GetCompressionMethod();
 
-unsigned int GetFPU();
+        unsigned int GetFPU();
 
-ParameterListInterface::LibSearchPaths &  GetLibSearchPaths();
+        ParameterManager::LibSearchPaths &  GetLibSearchPaths();
 
 
-bool GetIgnoreNonCallable();
+        bool GetIgnoreNonCallable();
 
-char GetDirectorySeparator();
+        char GetDirectorySeparator();
 
-bool IsCodePaged();
-bool IsCodeUnpaged();
-bool IsCodeDefaultPaged();
+        bool IsCodePaged();
+        bool IsCodeUnpaged();
+        bool IsCodeDefaultPaged();
 
-bool IsDataPaged();
-bool IsDataUnpaged();
-bool IsDataDefaultPaged();
+        bool IsDataPaged();
+        bool IsDataUnpaged();
+        bool IsDataDefaultPaged();
 
-bool ExcludeUnwantedExports();
-bool IsCustomDllTarget();
-bool GetNamedSymLookup();
+        bool ExcludeUnwantedExports();
+        bool IsCustomDllTarget();
+        bool GetNamedSymLookup();
 
-bool IsDebuggable();
+        bool IsDebuggable();
 
-bool IsSmpSafe();
+        bool IsSmpSafe();
 
-SymbolType SymbolTypeF(char * aName);
-/**
-This function creates the appropriate target.
+        SymbolType SymbolTypeF(char * aName);
+        /**
+        This function creates the appropriate target.
 
-@internalComponent
-@released
+        @internalComponent
+        @released
 
-@return EXIT_SUCCESS if the generation of the target is successful, else EXIT_FAILURE
-*/
-	virtual int Execute() = 0;
+        @return EXIT_SUCCESS if the generation of the target is successful, else EXIT_FAILURE
+        */
+        virtual int Execute() = 0;
 
-protected:
-	/** Pointer to the ParameterListInterface */
-	ParameterListInterface *iParameterListInterface;
+    protected:
+        ParameterManager *iParameterManager;
 
-	
-};
+
+    };
 
 
 

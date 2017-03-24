@@ -14,14 +14,14 @@
 // Message Implementation Class for elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 
 #ifndef _MESSAGE_IMPLEMENTATION_
 #define _MESSAGE_IMPLEMENTATION_
 
-#ifdef _MSC_VER 
+#ifdef _MSC_VER
 	#pragma warning(disable: 4514) // unreferenced inline function has been removed
 	#pragma warning(disable: 4702) // unreachable code
 	#pragma warning(disable: 4710) // function not inlined
@@ -29,10 +29,8 @@
 #endif
 
 #include<map>
-#include<string>
 
 typedef std::map<int,char*> Map;
-typedef std::string String;
 
 enum { MAXMSSGNOLENGTH=5, BASEMSSGNO=1000 };
 

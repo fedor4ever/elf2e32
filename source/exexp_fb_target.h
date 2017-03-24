@@ -14,14 +14,14 @@
 // Implementation of the Header file for Class Exexp_FB_Target of the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 
 #ifndef EXEXP_FB_TARGET_H
 #define EXEXP_FB_TARGET_H
 
-#include "export_type_fb_target.h"
+#include "dll_type_target.h"
 
 /**
 This class is derived from the base class ExportTypeFBTarget and is responsible for
@@ -30,11 +30,11 @@ creation of EXEXP Target.
 @internalComponent
 @released
 */
-class ExexpFBTarget : public ExportTypeFBTarget
+class ExexpFBTarget : public DLLTarget
 {
 
 public:
-	ExexpFBTarget(ParameterListInterface* aParameterListInterface);
+	ExexpFBTarget(ParameterManager* aParameterManager);
 	virtual ~ExexpFBTarget();
 	bool ImageIsDll();
 	bool AllowDllData();

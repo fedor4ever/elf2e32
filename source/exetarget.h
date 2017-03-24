@@ -14,7 +14,7 @@
 // Implementation of the Header file for Class ExeTarget of the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 
@@ -34,7 +34,7 @@ class ExeTarget : public ElfFileSupplied
 {
 
 public:
-	ExeTarget(ParameterListInterface* aParameterListInterface);
+	ExeTarget(ParameterManager* aParameterManager);
 	virtual ~ExeTarget();
 	void ProcessExports();
 	void GenerateOutput();

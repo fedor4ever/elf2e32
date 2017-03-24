@@ -14,7 +14,7 @@
 // ElfFileSupplied class for elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #ifndef __ELFFILESUPPLIED_H_
@@ -41,7 +41,7 @@ class ElfFileSupplied : public UseCaseBase
 {
 
 public:
-	ElfFileSupplied(ParameterListInterface* aParameterListInterface);
+	ElfFileSupplied(ParameterManager* aParameterManager);
 	~ElfFileSupplied();
 	int Execute();
 

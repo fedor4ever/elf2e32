@@ -476,8 +476,6 @@ struct E32ImportSection {
 //  E32ImportBlock iImportBlock[iDllRefTableCount];
     };
 
-void Crc32(unsigned long & aCrc, const void * aPtr, size_t aLength);
-
 /**
 A block of imports from a single executable.
 These structures are conatined in a images Import Section (E32ImportSection).

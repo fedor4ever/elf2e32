@@ -18,7 +18,7 @@
 //
 
 #include "pl_elfconsumer.h"
-#include "parameterlistinterface.h"
+#include "parametermanager.h"
 #include "errorhandler.h"
 #include <iostream>
 #include <string>
@@ -35,9 +35,8 @@ Constructor for class ElfConsumer
 @internalComponent
 @released
 */
-ElfConsumer::ElfConsumer(ParameterListInterface *aParameterListInterface) :\
- ElfExecutable(aParameterListInterface) ,\
- iMemBlock(nullptr)
+ElfConsumer::ElfConsumer(ParameterManager* aParameterManager) :
+ ElfExecutable(aParameterManager), iMemBlock(nullptr)
 {
 }
 

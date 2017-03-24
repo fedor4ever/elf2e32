@@ -28,14 +28,14 @@
 
 using std::endl;
 using std::cout;
-typedef std::string String;
+using std::string;
 
 char *errorMssgPrefix="elf2e32 : Error: E";
 char *warnMssgPrefix="elf2e32 : Warning: W";
 char *infoMssgPrefix="elf2e32 : Information: I";
 char *colSpace=": ";
 
-enum MessageArraySize{MAX=66};
+constexpr auto MAX=66;
 
 //Messages stored required for the program
 struct EnglishMessage MessageArray[MAX]=
@@ -229,7 +229,7 @@ void MessageImplementation::ReportMessage(int aMessageType, int aMsgIndex,...)
 
 	if(reportMessage)
 	{
-		String message;
+		string message;
 		switch (aMessageType)
 		{
 			case ERROR:

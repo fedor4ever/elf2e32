@@ -14,7 +14,7 @@
 // Implementation of the Class UseCaseBase for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #include <iostream>
@@ -24,9 +24,9 @@
 
 #include "errorhandler.h"
 
-UseCaseBase::UseCaseBase(ParameterListInterface *aParameterListInterface)
+UseCaseBase::UseCaseBase(ParameterManager* aParameterManager)
 {
-	iParameterListInterface = aParameterListInterface;
+	iParameterManager = aParameterManager;
 }
 
 
@@ -45,7 +45,7 @@ This function calls the DefInput() from ParameterManager through the interface.
 */
 char * UseCaseBase::DefInput()
 {
-	return (iParameterListInterface->DefInput());
+	return (iParameterManager->DefInput());
 }
 
 /**
@@ -59,7 +59,7 @@ This function calls the DSOOutput() from ParameterManager through the interface.
 */
 char * UseCaseBase::DSOOutput()
 {
-	return (iParameterListInterface->DSOOutput());
+	return (iParameterManager->DSOOutput());
 }
 
 /**
@@ -73,7 +73,7 @@ This function calls the LinkAsDLLName() from ParameterManager through the interf
 */
 char * UseCaseBase::LinkAsDLLName()
 {
-	return (iParameterListInterface->LinkAsDLLName());
+	return (iParameterManager->LinkAsDLLName());
 }
 
 /**
@@ -90,7 +90,7 @@ The filename alongwith the absolute path.
 */
 char * UseCaseBase::FileName(char * aFileName)
 {
-	return (iParameterListInterface->FileName(aFileName));
+	return (iParameterManager->FileName(aFileName));
 }
 
 /**
@@ -104,7 +104,7 @@ This function calls the DefOutput() from ParameterManager through the interface.
 */
 char * UseCaseBase::DefOutput()
 {
-	return iParameterListInterface->DefOutput();
+	return iParameterManager->DefOutput();
 }
 
 /**
@@ -118,7 +118,7 @@ This function calls the ElfInput() from ParameterManager through the interface.
 */
 char * UseCaseBase::InputElfFileName()
 {
-	return iParameterListInterface->ElfInput();
+	return iParameterManager->ElfInput();
 }
 
 /**
@@ -132,7 +132,7 @@ This function gets DSO file name from the parameter manager
 */
 const char * UseCaseBase::OutputDSOFileName()
 {
-	return iParameterListInterface->DSOOutput();
+	return iParameterManager->DSOOutput();
 }
 
 /**
@@ -146,7 +146,7 @@ This function gets the E32 image file name freom the parameter manager
 */
 const char * UseCaseBase::OutputE32FileName()
 {
-	return iParameterListInterface->E32ImageOutput();
+	return iParameterManager->E32ImageOutput();
 }
 
 /**
@@ -160,7 +160,7 @@ This function returns if data in a DLL is allowed.
 */
 bool UseCaseBase::AllowDllData()
 {
-	return iParameterListInterface->DllDataP();
+	return iParameterManager->DllDataP();
 }
 
 /**
@@ -174,7 +174,7 @@ This function returns committed heap size
 */
 size_t UseCaseBase::HeapCommittedSize()
 {
-	return iParameterListInterface->HeapCommittedSize();
+	return iParameterManager->HeapCommittedSize();
 }
 
 /**
@@ -188,7 +188,7 @@ This function returns reserved heap size
 */
 size_t UseCaseBase::HeapReservedSize()
 {
-	return iParameterListInterface->HeapReservedSize();
+	return iParameterManager->HeapReservedSize();
 }
 
 /**
@@ -202,7 +202,7 @@ This function returns committed stack size
 */
 size_t UseCaseBase::StackCommittedSize()
 {
-	return iParameterListInterface->StackCommittedSize();
+	return iParameterManager->StackCommittedSize();
 }
 
 /**
@@ -216,7 +216,7 @@ This function returns if the def file is unfrozen
 */
 bool UseCaseBase::Unfrozen()
 {
-	return iParameterListInterface->Unfrozen();
+	return iParameterManager->Unfrozen();
 }
 
 /**
@@ -230,7 +230,7 @@ This function returns Uid1
 */
 unsigned int UseCaseBase::GetUid1()
 {
-	return iParameterListInterface->Uid1();
+	return iParameterManager->Uid1();
 }
 
 /**
@@ -244,7 +244,7 @@ This function returns Uid2
 */
 unsigned int UseCaseBase::GetUid2()
 {
-	return iParameterListInterface->Uid2();
+	return iParameterManager->Uid2();
 }
 
 /**
@@ -258,7 +258,7 @@ This function returns Uid3
 */
 unsigned int UseCaseBase::GetUid3()
 {
-	return iParameterListInterface->Uid3();
+	return iParameterManager->Uid3();
 }
 
 /**
@@ -272,7 +272,7 @@ This function returns secure Id
 */
 unsigned int UseCaseBase::GetSecureId()
 {
-	return iParameterListInterface->SecureId();
+	return iParameterManager->SecureId();
 }
 
 /**
@@ -286,7 +286,7 @@ This function returns true if the --sid option is enabled.
 */
 bool UseCaseBase::GetSecureIdOption()
 {
-	return iParameterListInterface->SecureIdOption();
+	return iParameterManager->SecureIdOption();
 }
 
 /**
@@ -300,7 +300,7 @@ This function returns vendor Id
 */
 unsigned int UseCaseBase::GetVendorId()
 {
-	return iParameterListInterface->VendorId();
+	return iParameterManager->VendorId();
 }
 
 /**
@@ -314,7 +314,7 @@ This function returns version
 */
 unsigned int UseCaseBase::GetVersion()
 {
-	return iParameterListInterface->Version();
+	return iParameterManager->Version();
 }
 
 /**
@@ -328,7 +328,7 @@ This function returns call entry point
 */
 bool UseCaseBase::GetCallEntryPoints()
 {
-	return iParameterListInterface->CallEntryPoint();
+	return iParameterManager->CallEntryPoint();
 }
 
 /**
@@ -342,7 +342,7 @@ This function returns capability
 */
 SCapabilitySet UseCaseBase::GetCapability()
 {
-	return iParameterListInterface->Capability();
+	return iParameterManager->Capability();
 }
 
 /**
@@ -356,7 +356,7 @@ This function returns priority
 */
 TProcessPriority UseCaseBase::GetPriority()
 {
-	return iParameterListInterface->Priority();
+	return iParameterManager->Priority();
 }
 
 /**
@@ -370,7 +370,7 @@ This function returns if fixed address is enabled.
 */
 bool UseCaseBase::GetFixedAddress()
 {
-	return iParameterListInterface->FixedAddress();
+	return iParameterManager->FixedAddress();
 }
 
 /**
@@ -384,7 +384,7 @@ This function returns if compression is enabled.
 */
 bool UseCaseBase::GetCompress()
 {
-		return iParameterListInterface->Compress();
+		return iParameterManager->Compress();
 }
 
 /**
@@ -398,7 +398,7 @@ This function returns compression method
 */
 unsigned int UseCaseBase::GetCompressionMethod()
 {
-	return iParameterListInterface->CompressionMethod();
+	return iParameterManager->CompressionMethod();
 }
 
 /**
@@ -412,7 +412,7 @@ This function returns the FPU type.
 */
 unsigned int UseCaseBase::GetFPU()
 {
-	return iParameterListInterface->FPU();
+	return iParameterManager->FPU();
 }
 
 /**
@@ -424,9 +424,9 @@ This function returns the library search path.
 @return libpath
 
 */
-ParameterListInterface::LibSearchPaths &  UseCaseBase::GetLibSearchPaths()
+ParameterManager::LibSearchPaths &  UseCaseBase::GetLibSearchPaths()
 {
-	return iParameterListInterface->LibPath();
+	return iParameterManager->LibPath();
 }
 
 /**
@@ -440,7 +440,7 @@ This function returns the logfile name
 */
 char * UseCaseBase::LogFile()
 {
-	return (iParameterListInterface->LogFile());
+	return (iParameterManager->LogFile());
 }
 
 /**
@@ -454,7 +454,7 @@ This function returns if the logging option is enabled
 */
 bool UseCaseBase::LogFileOption()
 {
-	return (iParameterListInterface->LogFileOption());
+	return (iParameterManager->LogFileOption());
 }
 
 /**
@@ -468,7 +468,7 @@ This function returns if export library is enabled.
 */
 bool UseCaseBase::GetIgnoreNonCallable()
 {
-	return iParameterListInterface->IgnoreNonCallable();
+	return iParameterManager->IgnoreNonCallable();
 }
 
 /**
@@ -482,38 +482,38 @@ This function returns the directory separator
 */
 char UseCaseBase::GetDirectorySeparator()
 {
-	return iParameterListInterface->DirectorySeparator();
+	return iParameterManager->DirectorySeparator();
 }
 
 
 bool UseCaseBase::IsCodePaged()
 {
-	return (iParameterListInterface->IsCodePaged());
+	return (iParameterManager->IsCodePaged());
 }
 
 bool UseCaseBase::IsCodeUnpaged()
 {
-	return (iParameterListInterface->IsCodeUnpaged());
+	return (iParameterManager->IsCodeUnpaged());
 }
 
 bool UseCaseBase::IsCodeDefaultPaged()
 {
-	return (iParameterListInterface->IsCodeDefaultPaged());
+	return (iParameterManager->IsCodeDefaultPaged());
 }
 
 bool UseCaseBase::IsDataPaged()
 {
-	return (iParameterListInterface->IsDataPaged());
+	return (iParameterManager->IsDataPaged());
 }
 
 bool UseCaseBase::IsDataUnpaged()
 {
-	return (iParameterListInterface->IsDataUnpaged());
+	return (iParameterManager->IsDataUnpaged());
 }
 
 bool UseCaseBase::IsDataDefaultPaged()
 {
-	return (iParameterListInterface->IsDataDefaultPaged());
+	return (iParameterManager->IsDataDefaultPaged());
 }
 
 /**
@@ -527,13 +527,13 @@ This function returns whether the debuggable option is enabled or not.
 */
 bool UseCaseBase::IsDebuggable()
 {
-	return (iParameterListInterface->IsDebuggable());
+	return (iParameterManager->IsDebuggable());
 }
 
 
 bool UseCaseBase::IsSmpSafe()
 {
-	return iParameterListInterface->IsSmpSafe();
+	return iParameterManager->IsSmpSafe();
 }
 
 /**
@@ -547,7 +547,7 @@ This function returns if the unwanted exports are to be ignored
 */
 bool UseCaseBase::ExcludeUnwantedExports()
 {
-	return iParameterListInterface->ExcludeUnwantedExports();
+	return iParameterManager->ExcludeUnwantedExports();
 }
 
 /**
@@ -561,7 +561,7 @@ This function returns if the target is a custom dll
 */
 bool UseCaseBase::IsCustomDllTarget()
 {
-	return iParameterListInterface->IsCustomDllTarget();
+	return iParameterManager->IsCustomDllTarget();
 }
 
 /**
@@ -575,6 +575,6 @@ This function returns whether named lookup of symbols is enabled or not.
 */
 bool UseCaseBase::GetNamedSymLookup()
 {
-	return (iParameterListInterface->SymNamedLookup());
+	return (iParameterManager->SymNamedLookup());
 }
 

@@ -14,7 +14,7 @@
 // FileDump Class for elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #ifndef __FILEDUMP_H__
@@ -31,7 +31,7 @@ class FileDump : public UseCaseBase
 {
 
 	public:
-		FileDump(ParameterListInterface* aParameterListInterface);
+		FileDump(ParameterManager* aParameterManager);
 		~FileDump();
 		int Execute();
 	private:

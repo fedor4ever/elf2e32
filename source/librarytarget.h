@@ -14,7 +14,7 @@
 // Implementation of the Header file for Class LibraryTarget of the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 
@@ -41,7 +41,7 @@ class LibraryTarget : public UseCaseBase
 {
 
 public:
-	LibraryTarget(ParameterListInterface* aParameterListInterface);
+	LibraryTarget(ParameterManager* aParameterManager);
 	virtual ~LibraryTarget();
 	int Execute();
 	SymbolList* ReadInputDefFile();

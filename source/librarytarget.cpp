@@ -14,7 +14,7 @@
 // Implementation of the Class LibraryTarget for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #include "librarytarget.h"
@@ -28,10 +28,10 @@ Constructor for the Library Class
 @internalComponent
 @released
 */
-LibraryTarget::LibraryTarget(ParameterListInterface* aParameterListInterface):
-UseCaseBase(aParameterListInterface)
+LibraryTarget::LibraryTarget(ParameterManager* aParameterManager):
+UseCaseBase(aParameterManager)
 {
-	iElfIfc = new DSOHandler(aParameterListInterface);
+	iElfIfc = new DSOHandler(aParameterManager);
 	iDefFile = new DefFile();
 }
 
@@ -51,7 +51,7 @@ LibraryTarget::~LibraryTarget()
 /**
 Execute Function for the library target creation. The symbols are read from the input
 DEF file. The DSO file is generated on passing the symbols.
- 
+
 @internalComponent
 @released
 
@@ -68,7 +68,7 @@ int LibraryTarget::Execute()
 
 /**
 Function to read the symbols from the DEF file.
- 
+
 @internalComponent
 @released
 
@@ -83,7 +83,7 @@ SymbolList* LibraryTarget::ReadInputDefFile()
 
 /**
 Function to generate the output DSO File.
- 
+
 @internalComponent
 @released
 */
@@ -93,5 +93,5 @@ void LibraryTarget::GenerateOutput(SymbolList* aSymList)
 	char * aDSOName = UseCaseBase::DSOOutput();
 	char * aDSOFileName = UseCaseBase::FileName(aDSOName);
 
-	iElfIfc->WriteElfFile( aDSOName, aDSOFileName, aLinkAs, *aSymList);	
+	iElfIfc->WriteElfFile( aDSOName, aDSOFileName, aLinkAs, *aSymList);
 }

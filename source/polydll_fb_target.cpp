@@ -25,7 +25,8 @@ Constructor for the POLYDLLFBTarget Class
 @internalComponent
 @released
 */
-POLYDLLFBTarget::POLYDLLFBTarget(ParameterListInterface* aParameterListInterface) : ExportTypeFBTarget(aParameterListInterface) {
+POLYDLLFBTarget::POLYDLLFBTarget(ParameterManager* aParameterManager) :
+    DLLTarget(aParameterManager) {
 }
 
 /**
@@ -62,13 +63,13 @@ symbols coming from the ELF file.
 */
 void POLYDLLFBTarget::ProcessExports()
 {
-	int count = iParameterListInterface->SysDefCount();
-	ParameterListInterface::Sys aSysDefSymbols[10];
+	int count = iParameterManager->SysDefCount();
+	ParameterManager::Sys aSysDefSymbols[10];
 
 	int j=0, i=count;
 	while (i)
 	{
-		aSysDefSymbols[j] = iParameterListInterface->SysDefSymbols(j);
+		aSysDefSymbols[j] = iParameterManager->SysDefSymbols(j);
 		j++; i--;
 	}
 

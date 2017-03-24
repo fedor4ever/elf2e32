@@ -14,7 +14,7 @@
 // Implementation of the Class ExexpTarget for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #include "export_type_rebuild_target.h"
@@ -26,7 +26,7 @@ Constructor for the ExportTypeRebuildTarget Class
 @internalComponent
 @released
 */
-ExportTypeRebuildTarget::ExportTypeRebuildTarget(ParameterListInterface* aParameterListInterface) : ExportTypeTarget(aParameterListInterface) {
+ExportTypeRebuildTarget::ExportTypeRebuildTarget(ParameterManager* aParameterManager) : DLLTarget(aParameterManager) {
 	iDefFile = new DefFile();
 }
 
@@ -45,13 +45,13 @@ ExportTypeRebuildTarget::~ExportTypeRebuildTarget()
 Function to process the symbols to be exported. The symbols from the DEF File are read
 and passed to ValidateExports() to validate against the symbols present in the ELF file.
 The final list of exports symbols is created.
- 
+
 @internalComponent
 @released
 */
 void ExportTypeRebuildTarget::ProcessExports()
 {
-  	iDefExports = iDefFile->ReadDefFile( iParameterListInterface->DefInput() );
+  	iDefExports = iDefFile->ReadDefFile( iParameterManager->DefInput() );
 
 	ValidateExports(iDefExports);
 	CreateExports();

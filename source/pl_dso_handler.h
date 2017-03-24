@@ -14,7 +14,7 @@
 // Implementation of the Class DSOHandler for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #if !defined(_PL_DSOHANDLER_H_)
@@ -28,7 +28,7 @@ class Symbol;
 class ElfExecutable;
 class ElfProducer;
 class ElfConsumer;
-class ParameterListInterface;
+class ParameterManager;
 
 /**
 This class is for reading the input ELF file. If the input is of type ET_DYN, it
@@ -43,7 +43,7 @@ class DSOHandler
 	typedef std::list<Symbol*>	SymbolList;
 
 public:
-	DSOHandler(	ParameterListInterface *aParameterListInterface);
+	DSOHandler(ParameterManager* aParameterManager);
 	~DSOHandler();
 	PLUINT32 ReadElfFile(char* aElfFile);
 	void ProcessElfFile();
@@ -57,7 +57,7 @@ private:
 	ElfConsumer* iElfConsumer;
 	/** This member is responsible for generating the proxy DSO file. */
 	ElfProducer* iElfProducer;
-	ParameterListInterface *iParameterListInterface;
+	ParameterManager *iParameterListInterface;
 };
 
 

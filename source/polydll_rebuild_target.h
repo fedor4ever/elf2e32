@@ -15,7 +15,7 @@
 // Declaration of Class POLYDLLRebuildTarget of the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #ifndef POLYDLLREBUILD_TARGET_H
@@ -39,7 +39,7 @@ class POLYDLLRebuildTarget : public ExportTypeRebuildTarget
 {
 
 public:
-	POLYDLLRebuildTarget(ParameterListInterface* aParameterListInterface);
+	POLYDLLRebuildTarget(ParameterManager* aParameterManager);
 	~POLYDLLRebuildTarget();
 	void ProcessExports();
 	void GenerateOutput();

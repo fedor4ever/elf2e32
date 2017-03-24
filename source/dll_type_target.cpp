@@ -11,30 +11,30 @@
 // Contributors:
 //
 // Description:
-// Implementation of the Class ExexpTarget for the elf2e32 tool
+// Implementation of the Class DLLTarget for the elf2e32 tool
 // @internalComponent
 // @released
 //
 //
 
-#include "export_type_target.h"
+#include "dll_type_target.h"
 
 /**
-Constructor for the ExportTypeTarget Class
+Constructor for the DLLTarget Class
 
 @internalComponent
 @released
 */
-ExportTypeTarget::ExportTypeTarget(ParameterListInterface* aParameterListInterface) : ElfFileSupplied(aParameterListInterface), iDefExports(nullptr) {
+DLLTarget::DLLTarget(ParameterManager* aParameterManager) : ElfFileSupplied(aParameterManager), iDefExports(nullptr) {
 }
 
 /**
-Destructor for the ExportTypeTarget Class
+Destructor for the DLLTarget Class
 
 @internalComponent
 @released
 */
-ExportTypeTarget::~ExportTypeTarget() {
+DLLTarget::~DLLTarget() {
 }
 
 /**
@@ -45,7 +45,7 @@ and E32 image.
 @internalComponent
 @released
 */
-void ExportTypeTarget::GenerateOutput()
+void DLLTarget::GenerateOutput()
 {
 	WriteDefFile();
 	WriteDSOFile();
@@ -60,7 +60,7 @@ Function to check if the provided input is a DLL.
 
 @result True since Export Type Target is a DLL.
 */
-bool ExportTypeTarget::ImageIsDll()
+bool DLLTarget::ImageIsDll()
 {
 	return true;
 }

@@ -2,6 +2,7 @@
 #include <string.h>
 #include <type_traits>
 #include <portable.h>
+#include "checksum.h"
 
 /**
 Validate this image header.

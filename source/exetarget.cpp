@@ -14,7 +14,7 @@
 // Implementation of the Class ExeTarget for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #include "exetarget.h"
@@ -25,8 +25,8 @@ Constructor for the ExeTarget Class
 @internalComponent
 @released
 */
-ExeTarget::ExeTarget(ParameterListInterface* aParameterListInterface):
-ElfFileSupplied(aParameterListInterface)
+ExeTarget::ExeTarget(ParameterManager* aParameterManager):
+ElfFileSupplied(aParameterManager)
 {
 }
 
@@ -44,7 +44,7 @@ ExeTarget::~ExeTarget()
 Function to process the symbols to be exported. This function is empty since there are no
 exports in case of EXE Target. However, this dummy implementation is included since
 this is a virtual function in ElfFileSuplied Class.
- 
+
 @internalComponent
 @released
 */
@@ -54,7 +54,7 @@ void ExeTarget::ProcessExports()
 
 /**
 Function to generate the output E32 image.
- 
+
 @internalComponent
 @released
 */
@@ -65,7 +65,7 @@ void ExeTarget::GenerateOutput()
 
 /**
 Function to check if the provided input is a DLL.
- 
+
 @internalComponent
 @released
 

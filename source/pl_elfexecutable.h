@@ -27,6 +27,7 @@
 #include "pl_elfimports.h"
 #include "pl_elfrelocations.h"
 #include "pl_elfexports.h"
+#include "parametermanager.h"
 
 using std::list;
 #ifndef __GNUC__
@@ -50,7 +51,7 @@ class ElfExecutable
 {
 
 public:
-	ElfExecutable(ParameterListInterface *aParameterListInterface);
+	ElfExecutable(ParameterManager* aParameterManager);
 	virtual ~ElfExecutable();
 
 	PLUINT32 ProcessElfFile(Elf32_Ehdr *aElfHdr);
@@ -150,7 +151,7 @@ public:
 	ElfImports		iImports;
 	ElfExports		*iExports;
 	ElfRelocations  iLocalRelocations;
-	ParameterListInterface *iParameterListInterface;
+	ParameterManager *iParameterManager;
 	PLUINT32		iPltGotBase;
 	PLUINT32		iPltGotLimit;
 	PLUINT32		iStrTabSz;

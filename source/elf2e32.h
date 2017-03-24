@@ -21,10 +21,10 @@
 #define ELF2E32_H
 
 #include "pl_common.h"
-#include "parameterlistinterface.h"
+#include "parametermanager.h"
 
 class UseCaseBase;
-class ParameterListInterface;
+class ParameterManager;
 /**
 This class gets the single instance of the ParameterManager.
 
@@ -40,22 +40,22 @@ public:
 	virtual ~Elf2E32();
 	UseCaseBase * SelectUseCase();
 	int Execute();
-	static void ValidateDSOGeneration(ParameterListInterface *aParameterListInterface, ETargetType aTargetType);
-	static void ValidateE32ImageGeneration(ParameterListInterface *aParameterListInterface, ETargetType aTargetType);
-	static ParameterListInterface * GetInstance(int aArgc, char ** aArgv);
+	static void ValidateDSOGeneration(ParameterManager* aParameterManager, ETargetType aTargetType);
+	static void ValidateE32ImageGeneration(ParameterManager* aParameterManager, ETargetType aTargetType);
+	static ParameterManager * GetInstance(int aArgc, char ** aArgv);
 
 private:
 
 	ETargetType iTargetType;
 
 	/** Pointer to the ParameterListInterface which is the abstract base class */
-	ParameterListInterface * iParameterListInterface;
+	ParameterManager * iParameterListInterface;
 
 	/** Pointer to the UseCaseBase and says whether the usecase is CreateLibrary or CreateDLL or CreateEXE*/
 	UseCaseBase * iUseCase;
 
 	/** Static Pointer to the ParameterListInterface */
-	static ParameterListInterface * iInstance;
+	static ParameterManager * iInstance;
 };
 
 

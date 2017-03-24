@@ -14,7 +14,7 @@
 // Implementation of the Class ExexpTarget for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #include "exexp_rebuild_target.h"
@@ -25,7 +25,7 @@ Constructor for the ExexpRebuildTarget Class
 @internalComponent
 @released
 */
-ExExpRebuildTarget::ExExpRebuildTarget(ParameterListInterface* aParameterListInterface) : ExportTypeRebuildTarget(aParameterListInterface) {
+ExExpRebuildTarget::ExExpRebuildTarget(ParameterManager* aParameterManager) : ExportTypeRebuildTarget(aParameterManager) {
 }
 
 /**
@@ -39,7 +39,7 @@ ExExpRebuildTarget::~ExExpRebuildTarget() {
 
 /**
 Function to check if the provided input is a DLL.
- 
+
 @internalComponent
 @released
 
@@ -47,12 +47,12 @@ Function to check if the provided input is a DLL.
 */
 bool ExExpRebuildTarget::ImageIsDll()
 {
-	return false; 
+	return false;
 }
 
 /**
 Function to check if writable data is allowed.
- 
+
 @internalComponent
 @released
 
