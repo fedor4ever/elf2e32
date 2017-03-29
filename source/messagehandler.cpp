@@ -23,25 +23,25 @@
 Message* MessageHandler::iInstance=nullptr;
 
 /**
-Function Get Instance of class Message Implementation and initializing messages.
+Function Get Instance of class Message and initializing messages.
 
 @internalComponent
 @released
 
-@return Instance of MessageImplementation
+@return Instance of Message
 */
 Message * MessageHandler::GetInstance()
 {
     if(iInstance == nullptr)
 	{
-		iInstance = new MessageImplementation();
+		iInstance = new Message();
 		iInstance->InitializeMessages(nullptr);
 	}
 	return iInstance;
 }
 
 /**
-Function to call StartLogging function of class Message Implementation.
+Function to call StartLogging function of class Message.
 
 @internalComponent
 @released
@@ -55,7 +55,7 @@ void MessageHandler::StartLogging(char *aFileName)
 }
 
 /**
-Function to call InitializeMessages function of class Message Implementation.
+Function to call InitializeMessages function of class Message.
 
 @internalComponent
 @released
@@ -69,7 +69,7 @@ void MessageHandler::InitializeMessages(char *aFileName)
 }
 
 /**
-Function to delete instance of class MessageImplementation
+Function to delete instance of class Message
 
 @internalComponent
 @released

@@ -19,6 +19,7 @@
 
 //
 #include <stdio.h>
+#include <stdlib.h>
 #include <iostream>
 #include <string.h>
 
@@ -322,7 +323,7 @@ void DefFile::ParseDefFile(char *defFileEntries)
 		// Get Export entries
 		if (!strcmp(MultiLineStatement,"EXPORTS"))
 		{
-			Symbol aSymbol(NULL, SymbolTypeCode);
+			Symbol aSymbol(nullptr, SymbolTypeCode);
 			if( Tokenize(lineToken, LineNum, aSymbol) )
 			{
 				Symbol *newSymbolEntry = new Symbol(aSymbol);

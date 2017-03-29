@@ -14,7 +14,7 @@
 // Error Handler Classes for elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 
@@ -156,7 +156,7 @@ Class for handling Unrecognised Capability Errors.
 class UnrecognisedCapabilityError : public CapabilityError
 {
 	public:
-		UnrecognisedCapabilityError(int aMessageIndex, char * aName);
+		UnrecognisedCapabilityError(int aMessageIndex, String aName);
 		~UnrecognisedCapabilityError();
 		void Report();
 
@@ -321,7 +321,7 @@ public:
 };
 
 /**
-Class for handling Symbol that are passed through --sysdef 
+Class for handling Symbol that are passed through --sysdef
 not matching with the ones in the DEF file.
 @internalComponent
 @released

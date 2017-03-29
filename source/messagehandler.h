@@ -14,7 +14,7 @@
 // Message Handler Class for elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 
@@ -24,7 +24,7 @@
 #include "messageimplementation.h"
 
 /**
-Class for Message Handler which will be used for getting instance of Message Implementationin
+Class for Message Handler which will be used for getting instance of Message
 and start logging, creating message file, initializing messages.
 @internalComponent
 @released

@@ -21,6 +21,7 @@
 #include "pl_dso_handler.h"
 #include "deffile.h"
 #include <iostream>
+#include <stdlib.h>
 
 /**
 Constructor for the Library Class

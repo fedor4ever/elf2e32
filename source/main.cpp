@@ -14,7 +14,7 @@
 // Implementation of the main function for elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 //
@@ -35,7 +35,7 @@ the appropriate target.
 @return EXIT_SUCCESS if the generation of the target is successful, else EXIT_FAILURE
 
 */
-int main(int argc, char** argv) 
+int main(int argc, char** argv)
 {
   Elf2E32 aElf2E32(argc, argv);
   return aElf2E32.Execute();

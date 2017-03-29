@@ -21,8 +21,9 @@
 1489854560 d:\codeblock\elf2e32\source\checksum.h
 	<cstddef>
 
-1489857803 source:d:\codeblock\elf2e32\source\deffile.cpp
+1490445023 source:d:\codeblock\elf2e32\source\deffile.cpp
 	<stdio.h>
+	<stdlib.h>
 	<iostream>
 	<string.h>
 	"pl_symbol.h"
@@ -45,15 +46,15 @@
 1490105540 d:\codeblock\elf2e32\source\deffile.h
 	<list>
 
-1288620836 d:\codeblock\elf2e32\source\errorhandler.h
+1490811274 d:\codeblock\elf2e32\source\errorhandler.h
 	"messagehandler.h"
 	<list>
 	<string>
 
-1288620838 d:\codeblock\elf2e32\source\messagehandler.h
+1490813199 d:\codeblock\elf2e32\source\messagehandler.h
 	"messageimplementation.h"
 
-1490368811 d:\codeblock\elf2e32\source\messageimplementation.h
+1490813026 d:\codeblock\elf2e32\source\messageimplementation.h
 	<map>
 
 1490040414 d:\codeblock\elf2e32\source\h_utl.h
@@ -226,8 +227,8 @@
 1490372543 d:\codeblock\elf2e32\source\dll_rebuild_target.h
 	"export_type_rebuild_target.h"
 
-1490379643 d:\codeblock\elf2e32\source\export_type_rebuild_target.h
-	"export_type_target.h"
+1490385274 d:\codeblock\elf2e32\source\export_type_rebuild_target.h
+	"dll_type_target.h"
 
 1490297742 source:d:\codeblock\elf2e32\source\e32exporttable.cpp
 	<string.h>
@@ -237,12 +238,11 @@
 	"pl_dllsymbol.h"
 	"pl_elflocalrelocation.h"
 
-1490379960 source:d:\codeblock\elf2e32\source\elf2e32.cpp
+1490641232 source:d:\codeblock\elf2e32\source\elf2e32.cpp
 	"parametermanager.h"
 	"elf2e32.h"
 	"errorhandler.h"
 	"librarytarget.h"
-	"dll_rebuild_target.h"
 	"exetarget.h"
 	"polydll_fb_target.h"
 	"exexp_fb_target.h"
@@ -252,7 +252,7 @@
 	"filedump.h"
 	<iostream>
 
-1490383809 d:\codeblock\elf2e32\source\parametermanager.h
+1490628460 d:\codeblock\elf2e32\source\parametermanager.h
 	<portable.h>
 	<vector>
 	<map>
@@ -269,12 +269,12 @@
 1490372808 d:\codeblock\elf2e32\source\exetarget.h
 	"elffilesupplied.h"
 
-1490379792 d:\codeblock\elf2e32\source\polydll_fb_target.h
+1490385244 d:\codeblock\elf2e32\source\polydll_fb_target.h
+	"dll_type_target.h"
 	<list>
-	"export_type_target.h"
 
-1490379850 d:\codeblock\elf2e32\source\exexp_fb_target.h
-	"export_type_target.h"
+1490385264 d:\codeblock\elf2e32\source\exexp_fb_target.h
+	"dll_type_target.h"
 
 1490372840 d:\codeblock\elf2e32\source\exexp_rebuild_target.h
 	"export_type_rebuild_target.h"
@@ -283,13 +283,13 @@
 	"export_type_rebuild_target.h"
 	<list>
 
-1490379921 d:\codeblock\elf2e32\source\stdexe_target.h
-	"export_type_target.h"
+1490385280 d:\codeblock\elf2e32\source\stdexe_target.h
+	"dll_type_target.h"
 
 1490372962 d:\codeblock\elf2e32\source\filedump.h
 	"usecasebase.h"
 
-1490039456 source:d:\codeblock\elf2e32\source\errorhandler.cpp
+1490811539 source:d:\codeblock\elf2e32\source\errorhandler.cpp
 	"errorhandler.h"
 	"messagehandler.h"
 	<iostream>
@@ -397,20 +397,21 @@
 	<portable.h>
 	<e32capability.h>
 
-1490373495 source:d:\codeblock\elf2e32\source\librarytarget.cpp
+1490446351 source:d:\codeblock\elf2e32\source\librarytarget.cpp
 	"librarytarget.h"
 	"pl_dso_handler.h"
 	"deffile.h"
 	<iostream>
+	<stdlib.h>
 
-1288620838 source:d:\codeblock\elf2e32\source\main.cpp
+1490528553 source:d:\codeblock\elf2e32\source\main.cpp
 	"elf2e32.h"
 
-1490122858 source:d:\codeblock\elf2e32\source\messagehandler.cpp
+1490813132 source:d:\codeblock\elf2e32\source\messagehandler.cpp
 	"messagehandler.h"
 	"messageimplementation.h"
 
-1490370309 source:d:\codeblock\elf2e32\source\messageimplementation.cpp
+1490813291 source:d:\codeblock\elf2e32\source\messageimplementation.cpp
 	"messageimplementation.h"
 	"errorhandler.h"
 	<cstring>
@@ -418,6 +419,7 @@
 	<stdarg.h>
 	<string>
 	<stdio.h>
+	<stdlib.h>
 
 1288620840 source:d:\codeblock\elf2e32\source\parameterlistinterface.cpp
 	"parameterlistinterface.h"
@@ -426,13 +428,14 @@
 	<elfdefs.h>
 	"pl_common.h"
 
-1490380562 source:d:\codeblock\elf2e32\source\parametermanager.cpp
+1490810942 source:d:\codeblock\elf2e32\source\parametermanager.cpp
 	<e32capability.h>
 	"pl_common.h"
 	"parametermanager.h"
 	"errorhandler.h"
 	<iostream>
 	<cstring>
+	<stdlib.h>
 	"h_utl.h"
 	"h_ver.h"
 

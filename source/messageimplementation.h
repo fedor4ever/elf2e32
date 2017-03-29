@@ -108,39 +108,11 @@ enum {	FILEOPENERROR=1,
 };
 
 
-/**
-Abstract base Class for Message Implementation.
-@internalComponent
-@released
-*/
 class Message
 {
     public:
-		virtual ~Message(){};
-		// get error string from message file
-		virtual char * GetMessageString(int errorIndex)=0;
-		// display message to output device
-		virtual void Output(const char *aName) =0;
-		// start logging to a file
-		virtual void StartLogging(char *fileName)=0;
-	//	virtual void ReportWarning(int warnIndex,...)=0;
-		virtual void ReportMessage(int aMsgType, int aMsgIndex,...)=0;
-		virtual void CreateMessageFile(char *fileName)=0;
-		virtual void InitializeMessages(char *fileName)=0;
-};
-
-/**
-Class for Message Implementation.
-@internalComponent
-@released
-*/
-class MessageImplementation : public Message
-{
-    public:
-		MessageImplementation();
-		~MessageImplementation();
-
-		//override base class methods
+		Message();
+		~Message();
 		char* GetMessageString(int errorIndex);
 		void Output(const char *aName);
 		void StartLogging(char *fileName);

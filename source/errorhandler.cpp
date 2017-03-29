@@ -144,7 +144,7 @@ void ELFFormatError::Report()
 		sprintf(tempMssg,errMessage,iName.c_str());
 		iMessage+=tempMssg;
 		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete tempMssg;
+		delete[] tempMssg;
 	}
 }
 
@@ -190,7 +190,7 @@ void DEFFileError::Report()
 		sprintf(tempMssg,errMessage,iName.c_str(),iLineNo,iToken.c_str());
 		iMessage+=tempMssg;
 		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete tempMssg;
+		delete[] tempMssg;
 	}
 }
 
@@ -231,7 +231,7 @@ void ParameterParserError::Report()
 		sprintf(tempMssg,errMessage,iName.c_str());
 		iMessage+=tempMssg;
 		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete tempMssg;
+		delete[] tempMssg;
 	}
 }
 
@@ -273,7 +273,7 @@ void InvalidArgumentError::Report()
 		sprintf(tempMssg,errMessage,iValue.c_str(),iOption.c_str());
 		iMessage+=tempMssg;
 		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete tempMssg;
+		delete[] tempMssg;
 	}
 }
 
@@ -356,7 +356,7 @@ UnrecognisedCapabilityError constructor for initializing message index and argum
 @internalComponent
 @released
 */
-UnrecognisedCapabilityError::UnrecognisedCapabilityError(int aMessageIndex, char * aName) : CapabilityError(aMessageIndex), iName(aName)
+UnrecognisedCapabilityError::UnrecognisedCapabilityError(int aMessageIndex, String aName) : CapabilityError(aMessageIndex), iName(aName)
 {
 }
 
@@ -386,7 +386,7 @@ void UnrecognisedCapabilityError::Report()
 		sprintf(tempMssg,errMessage,iName.c_str());
 		iMessage+=tempMssg;
 		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete tempMssg;
+		delete[] tempMssg;
 	}
 }
 
@@ -427,7 +427,7 @@ void ELFFileError::Report()
 		sprintf(tempMssg,errMessage,iName.c_str());
 		iMessage+=tempMssg;
 		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete tempMssg;
+		delete[] tempMssg;
 	}
 }
 
@@ -469,7 +469,7 @@ void UndefinedSymbolError::Report()
 		sprintf(tempMssg,errMessage,iSymbolName.c_str(),iName.c_str());
 		iMessage+=tempMssg;
 		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete tempMssg;
+		delete[] tempMssg;
 	}
 }
 
@@ -525,7 +525,7 @@ void SymbolMissingFromElfError::Report()
 		sprintf(tempMssg,errMessage,iSymbolNames.c_str(),iName.c_str());
 		iMessage+=tempMssg;
 		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete tempMssg;
+		delete[] tempMssg;
 	}
 }
 
@@ -566,7 +566,7 @@ void MemoryAllocationError::Report()
 		sprintf(tempMssg,errMessage,iName.c_str());
 		iMessage+=tempMssg;
 		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete tempMssg;
+		delete[] tempMssg;
 	}
 }
 
@@ -715,7 +715,7 @@ void UnsupportedTargetTypeError::Report()
 		sprintf(tempMssg,errMessage,iName.c_str());
 		iMessage+=tempMssg;
 		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete tempMssg;
+		delete[] tempMssg;
 	}
 }
 
@@ -756,7 +756,7 @@ void MessageError::Report()
 		sprintf(tempMssg,errMessage,iIndexValue);
 		iMessage+=tempMssg;
 		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete tempMssg;
+		delete[] tempMssg;
 	}
 }
 
@@ -848,7 +848,7 @@ void SysDefMismatchError::Report()
 		sprintf(tempMssg,errMessage,iSymbolNames.c_str(),iName.c_str());
 		iMessage+=tempMssg;
 		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete tempMssg;
+		delete[] tempMssg;
 	}
 }
 
@@ -889,7 +889,7 @@ void InvalidE32ImageError::Report()
 		sprintf(tempMssg,errMessage,iName.c_str());
 		iMessage+=tempMssg;
 		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete tempMssg;
+		delete[] tempMssg;
 	}
 }
 
@@ -931,7 +931,7 @@ void ImportRelocationError::Report()
 		sprintf(tempMssg,errMessage,iSymbolName.c_str(),iName.c_str());
 		iMessage+=tempMssg;
 		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete tempMssg;
+		delete[] tempMssg;
 	}
 }
 

@@ -11,13 +11,17 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option parameters='elf2e32 --uid1=0x10000079 --namedlookup --libpath=&quot;D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib&quot; --uid2=0x20004c45 --uid3=0x00000000 --capability=All-Tcb --fpu=softvfp --targettype=STDDLL --definput=&quot;..\..\tests\libcrypto{000a0000}.def&quot; --dso=&quot;..\..\tests\libcrypto{000a0000}.dso&quot; --linkas=&quot;..\..\tests\libcrypto{000a0000}.dll&quot; --defoutput=&quot;..\..\tests\out.def&quot; --elfinput=&quot;..\..\tests\libcrypto.dll&quot; --output=&quot;..\..\tests\libcrypto-2.4.5.dll&quot; ' />
 				<Compiler>
+					<Add option="-g -O0" />
 					<Add option="-g3" />
-					<Add option="-fPIC" />
-					<Add option="-D__TOOLS2__" />
+					<Add option="-fvar-tracking" />
 					<Add directory="source" />
 					<Add directory="include" />
 				</Compiler>
+				<Linker>
+					<Add option="-Wl,--stack,104857600" />
+				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="bin/Release/elf2e32" prefix_auto="1" extension_auto="1" />
@@ -34,12 +38,18 @@
 		</Build>
 		<Compiler>
 			<Add option="-Winit-self" />
+			<Add option="-std=c++14" />
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 			<Add option="-Wno-write-strings" />
 			<Add option="-D__TOOLS2__" />
+			<Add option="-D_CRT_NONSTDC_NO_DEPRECATE" />
 			<Add directory="include" />
 		</Compiler>
+		<Linker>
+			<Add option="-static" />
+			<Add library="../../MinGW/lib/gcc/mingw32/5.3.0/libgcc.a" />
+		</Linker>
 		<Unit filename="include/cpudefs.h" />
 		<Unit filename="include/elfdefs.h" />
 		<Unit filename="include/h_ver.h" />
@@ -51,8 +61,8 @@
 		<Unit filename="source/deffile.cpp" />
 		<Unit filename="source/deffile.h" />
 		<Unit filename="source/deflatecompress.cpp" />
-		<Unit filename="source/dll_rebuild_target.cpp" />
-		<Unit filename="source/dll_rebuild_target.h" />
+		<Unit filename="source/dll_type_target.cpp" />
+		<Unit filename="source/dll_type_target.h" />
 		<Unit filename="source/e32exporttable.cpp" />
 		<Unit filename="source/e32exporttable.h" />
 		<Unit filename="source/e32imagefile.cpp">
@@ -73,8 +83,6 @@
 		<Unit filename="source/exexp_rebuild_target.h" />
 		<Unit filename="source/export_type_rebuild_target.cpp" />
 		<Unit filename="source/export_type_rebuild_target.h" />
-		<Unit filename="source/export_type_target.cpp" />
-		<Unit filename="source/export_type_target.h" />
 		<Unit filename="source/farray.h" />
 		<Unit filename="source/filedump.cpp" />
 		<Unit filename="source/filedump.h" />

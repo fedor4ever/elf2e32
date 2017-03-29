@@ -25,6 +25,7 @@
 #include <stdarg.h>
 #include <string>
 #include <stdio.h>
+#include <stdlib.h>
 
 using std::endl;
 using std::cout;
@@ -114,7 +115,7 @@ Constructor to reset the logging option flag.
 @internalComponent
 @released
 */
-MessageImplementation::MessageImplementation()
+Message::Message()
 {
     iLogging = false;
 }
@@ -124,7 +125,7 @@ Destructor to close log file if logging is enabled and to clear the messaged.
 @internalComponent
 @released
 */
-MessageImplementation::~MessageImplementation()
+Message::~Message()
 {
     if(iLogging)
     {
@@ -143,7 +144,7 @@ Function to Get Message stored in map.
 Index of the Message to be displayed
 @return Message string to be displayed
 */
-char * MessageImplementation::GetMessageString(int aMessageIndex)
+char * Message::GetMessageString(int aMessageIndex)
 {
 	Map::iterator p;
 
@@ -193,7 +194,7 @@ Function to display output and log message in log file if logging is enable.
 @param aString
 Message to be displayed
 */
-void MessageImplementation::Output(const char *aString)
+void Message::Output(const char *aString)
 {
 
     if (iLogging)
@@ -215,7 +216,7 @@ The type of the message, whether it is Error or Warning or Information.
 @param
 The index of the information and the corresponding arguments.
 */
-void MessageImplementation::ReportMessage(int aMessageType, int aMsgIndex,...)
+void Message::ReportMessage(int aMessageType, int aMsgIndex,...)
 {
 	char *reportMessage, *ptr, *tmpMessage;
 	char intStr[16];
@@ -294,7 +295,7 @@ Function to start logging.
 @param aFileName
 Name of the Log file
 */
-void MessageImplementation::StartLogging(char *aFileName)
+void Message::StartLogging(char *aFileName)
 {
 	char logFile[1024];
 	FILE *fptr;
@@ -321,7 +322,7 @@ Function to Create Messages file.
 @param aFileName
 Name of the Message file to be dumped
 */
-void MessageImplementation::CreateMessageFile(char *aFileName)
+void Message::CreateMessageFile(char *aFileName)
 {
 	int i;
 	FILE *fptr;
@@ -353,7 +354,7 @@ If file is not available the put message in map from Message Array structure.
 @param aFileName
 Name of the Message file passed in
 */
-void MessageImplementation::InitializeMessages(char *aFileName)
+void Message::InitializeMessages(char *aFileName)
 {
 	char index[16];
 	char *message, *errStr;
