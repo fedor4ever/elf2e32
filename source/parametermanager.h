@@ -399,7 +399,7 @@ public:
 	bool IgnoreNonCallable();
 	UseCaseBase * SelectUseCase();
 	SCapabilitySet Capability();
-	void ParseCapability1(const char * name, const char * end, SCapabilitySet& aCapabilities, bool invert);
+	void ParseCapability1(string CapabilityList, SCapabilitySet& aCapabilities, bool invert);
 	void ParseCapabilitiesArg(SCapabilitySet& aCapabilities, const char *aText);
 	UINT FPU();
 

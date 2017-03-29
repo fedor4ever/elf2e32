@@ -26,6 +26,7 @@
 #include "errorhandler.h"
 #include <iostream>
 #include <cstring>
+#include <stdlib.h>
 
 #include "h_utl.h"
 #include "h_ver.h"
@@ -536,7 +537,6 @@ void ParameterManager::ParameterAnalyser()
 		int Prefix=0, ShortPrefix=0;
 		ArgCount--;
 
-
 		// Check if the option provided is correct and display help on getting incorrect options
 		try
 		{
@@ -556,7 +556,7 @@ void ParameterManager::ParameterAnalyser()
 
 		char *option;
 		const OptionDesc * aDesc;
-		char * optval=NULL;
+		char * optval=nullptr;
 
 		// Get the option name excluding the prefix, '-' or '--'if (Prefix)
 		if (Prefix)
@@ -2299,21 +2299,24 @@ This function parses the capability value passed to --capability option.
 @internalComponent
 @released
 
-@param aName
-The pointer marking the beginning value passed to the --capability option
-@param aEnd
-The pointer marking the end value passed to the --capability option
+@param aCapName
+That string contains single capability name from value passed to the --capability option
 @param aCapabilities
 List of Capability Values allowed
 @param aInvert
 Flag to denote if value can be inverted.
 */
-void ParameterManager::ParseCapability1(const char * aName, const char * aEnd,
+void ParameterManager::ParseCapability1(string aCapName,
                        SCapabilitySet& aCapabilities, bool aInvert)
 {
-	int n = aEnd - aName;
 	int i = 0;
-	if(n==3 && strnicmp("all",aName,n)==0)
+	if(aCapName.size()==0){
+        if(aInvert)
+            throw CapabilityError(CAPABILITYALLINVERSIONERROR);
+        else return;
+	}
+
+	if(aCapName.size()==3 && !strcmp(aCapName.c_str(),"All"))
 	{
 		if(aInvert)
 			throw CapabilityError(CAPABILITYALLINVERSIONERROR);
@@ -2326,7 +2329,7 @@ void ParameterManager::ParseCapability1(const char * aName, const char * aEnd,
 		return;
 	}
 
-	if(n==4 && strnicmp("none",aName,n)==0)
+	if(aCapName.size()==4 && aCapName.find("none")==0)
 	{
 		if(aInvert)
 			throw CapabilityError(CAPABILITYNONEINVERSIONERROR);
@@ -2338,19 +2341,13 @@ void ParameterManager::ParseCapability1(const char * aName, const char * aEnd,
 	for(i=0; i<ECapability_Limit; i++)
 	{
 		const char* cap = CapabilityNames[i];
-		if(!cap)
-			continue;
-		if((int)strlen(cap)!=n)
-			continue;
-		if(strnicmp(cap,aName,n)!=0)
-			continue;
-		break;
+		if(!strcmp(aCapName.c_str(),cap))
+			break;
 	}
+
 	if(i>=ECapability_Limit)
-	{
-		string aBadCap(aName, aEnd);
-		throw UnrecognisedCapabilityError(UNRECOGNISEDCAPABILITYERROR,"BAD CAP");
-	}
+		throw UnrecognisedCapabilityError(UNRECOGNISEDCAPABILITYERROR, aCapName);
+
 	if(aInvert)
 		aCapabilities[i>>5] &= ~(1<<(i&31));
 	else
@@ -2368,35 +2365,31 @@ List of Capability Values allowed
 @param aText
 Value passed to --capability option.
 */
+
 void ParameterManager::ParseCapabilitiesArg(SCapabilitySet& aCapabilities, const char *aText)
 {
 	string aCapList(aText);
-	string::iterator b = aCapList.begin();
-	string::iterator e = b;
-	bool invert = false;
+    string tmp;
+    bool invert = false;
 
-	while(e != aCapList.end())
+	for(auto x: aCapList)
 	{
-		invert = false;
-		if (*b == '-')
+		if ((x != '+')&&(x != '-'))
 		{
-			invert = true;
-			b++;
+		    tmp.push_back(x);
 		}
-		else if (*b == '+')
-			b++;
-
-		e = b;
-		for (; e != aCapList.end(); e++)
-		{
-			if (*e == '-' || *e == '+') break;
-		}
-		if (e != b)
-			ParseCapability1((const char *)*b, (const char *)*e, aCapabilities, invert);
-
-		b = e;
-
+        else if ((x == '+') || (x == '-'))
+        {
+            if(tmp.empty() && (x == '-'))
+                invert = true;
+            ParseCapability1(tmp, aCapabilities, invert);
+            if(x == '-') invert = true;
+            invert = false;
+            tmp.clear();
+        }
 	}
+	if(!tmp.empty())
+        ParseCapability1(tmp, aCapabilities, false);
 }
 
 /**
