@@ -401,6 +401,7 @@ size and linked section if any)
 @internalComponent
 @released
 */
+/** TODO (fedoe4ever#1#03/30/17): What this mean? why that func empty??? */
 void ElfExecutable::DumpElfFile(char* aFile){
 	aFile = aFile;
 }

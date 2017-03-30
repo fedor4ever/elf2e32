@@ -257,7 +257,7 @@ void Message::ReportMessage(int aMessageType, int aMsgIndex,...)
 			strncpy(tmpMessage, reportMessage, ptr - reportMessage+1);
 			tmpMessage[ptr - reportMessage]='\0';
 			message += tmpMessage;
-			delete tmpMessage;
+			delete[] tmpMessage;
 			ptr++;
 			switch(ptr[0])
 			{
@@ -284,6 +284,7 @@ void Message::ReportMessage(int aMessageType, int aMsgIndex,...)
 		message += reportMessage;
 		Output(message.c_str());
 	}
+	va_end(ap);
 }
 
 /**
@@ -386,11 +387,11 @@ void Message::InitializeMessages(char *aFileName)
 		fclose(fptr);
 
 		lineToken=strtok(messageEntries,"\n");
-		while(lineToken != NULL)
+		while(lineToken != nullptr)
 		{
 			if( lineToken[0] == '\n' || lineToken[0] == '\r' )
 			{
-				lineToken=strtok(NULL,"\n");
+				lineToken=strtok(nullptr,"\n");
 				continue;
 			}
 
@@ -411,7 +412,7 @@ void Message::InitializeMessages(char *aFileName)
 			lineToken=strtok(lineToken+lineLength+1,"\n");
 		}
 
-		delete messageEntries;
+		delete[] messageEntries;
 
 	}
 	else

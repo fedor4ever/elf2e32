@@ -99,14 +99,14 @@ char* DefFile::OpenDefFile(char * defFile)
 	FILE *fptrDef;
 
 	iFileName=defFile;
-	if((fptrDef=fopen(defFile,"rb"))==NULL)
+	if((fptrDef=fopen(defFile,"rb"))== nullptr)
 	{
 		throw FileError(FILEOPENERROR,defFile);
 	}
 
 	fileSize=GetFileSize(fptrDef);
 
-	if((defFileEntries= new char[fileSize+2]) ==NULL)
+	if((defFileEntries= new char[fileSize+2]) == nullptr)
 	{
 		throw MemoryAllocationError(MEMORYALLOCATIONERROR,defFile);
 	}
@@ -114,6 +114,7 @@ char* DefFile::OpenDefFile(char * defFile)
 	//Getting whole file in memory
 	if(!fread(defFileEntries, fileSize, 1, fptrDef))
 	{
+	    delete defFileEntries;
 		throw FileError(FILEREADERROR,defFile);
 	}
 
@@ -155,7 +156,7 @@ void DefFile::ParseDefFile(char *defFileEntries)
 
 
 	lineToken=strtok(defFileEntries,"\n");
-	while(lineToken != NULL)
+	while(lineToken != nullptr)
 	{
 		symbolType=SymbolTypeCode;
 		isComment=false;
@@ -163,16 +164,16 @@ void DefFile::ParseDefFile(char *defFileEntries)
 		aLineLength = strlen(lineToken);
 		LineNum++;
 
-		if (lineToken == NULL || lineToken[0]==13)
+		if (lineToken[0]==13)
 		{
-			lineToken=strtok(NULL,"\n");
+			lineToken=strtok(nullptr,"\n");
 			continue;
 		}
 
 		// comment lines
 		if (lineToken[0] == ';')
 		{
-			lineToken=strtok(NULL,"\n");
+			lineToken=strtok(nullptr,"\n");
 			continue;
 		}
 
@@ -272,7 +273,7 @@ void DefFile::ParseDefFile(char *defFileEntries)
 				case 'E':		// check for multi-line sections starting
 					strcpy(MultiLineStatement, STRUPR(entryType)); // Uppercase token
 					NAMEorLIBRARYallowed = false;
-					lineToken = strtok(NULL, "\n" ); // Get the next line
+					lineToken = strtok(nullptr, "\n" ); // Get the next line
 					continue;
 				case 'N':
 					break;
@@ -296,17 +297,17 @@ void DefFile::ParseDefFile(char *defFileEntries)
 							{
 								throw DEFFileError(NAMELIBRARYNOTCORRECT,iFileName,LineNum,lineToken);
 							}
-							lineToken=strtok(NULL,"\n");
+							lineToken=strtok(nullptr,"\n");
 							continue;
 						}
 						NAMEorLIBRARYallowed = false;
-						lineToken=strtok(NULL,"\n");
+						lineToken=strtok(nullptr,"\n");
 						continue;
 					}
 					continue;
 				case 'I':
 					strcpy(MultiLineStatement, STRUPR(entryType)); // Uppercase token
-					lineToken = strtok(NULL, "\n" ); // Get the next line
+					lineToken = strtok(nullptr, "\n" ); // Get the next line
 					continue;
 				}
 			}
@@ -339,11 +340,11 @@ void DefFile::ParseDefFile(char *defFileEntries)
 				PreviousOrdinal = ordinalNo;
 
 			}
-			lineToken=strtok(NULL,"\n");
+			lineToken=strtok(nullptr,"\n");
 			continue;
 		}
 		else if(strcmp(MultiLineStatement,"")!=0)//For entry other than exports
-			lineToken = strtok(NULL, "\n" ); // Get the next line
+			lineToken = strtok(nullptr, "\n" ); // Get the next line
 
 	}//End of while
 }
@@ -553,7 +554,7 @@ void LineToken::NextToken()
 		{
 		int aPrevPatternIndex, aPatternIdx = 0;
 		aPrevPatternIndex = -1;
-		while (*(iLine + iOffset) != '\n' || *(iLine + iOffset) != '\r')
+		while (*(iLine + iOffset) != '\n' && *(iLine + iOffset) != '\r')
 		{
 			if(IsPattern(iLine+iOffset, aCurrentPos, aPatternIdx) )
 			{

@@ -102,6 +102,8 @@ void POLYDLLRebuildTarget::ProcessExports()
 	if( aMissingSysDefList.size() )
 		throw SysDefMismatchError(SYSDEFSMISMATCHERROR, aMissingSysDefList, UseCaseBase::DefInput());
 
+    delete iSysDefExports;
+    delete aSymbolEntry;
 	ValidateExports(iDefExports);
 	CreateExports();
 }

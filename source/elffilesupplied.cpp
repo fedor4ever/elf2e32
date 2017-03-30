@@ -69,6 +69,7 @@ int ElfFileSupplied::Execute()
 	try
 	{
 		ProcessExports();
+		std::cout << "ElfFileSupplied::Execute()\n";
 	}
 	catch(SymbolMissingFromElfError& aSme)
 	{
@@ -103,6 +104,7 @@ Function to process exports
 void ElfFileSupplied::ProcessExports()
 {
 	ValidateExports(nullptr);
+	std::cout << "ProcessExports()\n";
 	CreateExports();
 }
 
@@ -326,7 +328,7 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 	aElfExports.clear();
 	aDefAbsentExports.clear();
 	aDefValidExports.clear();
-
+	cout << "ElfFileSupplied::ValidateExports()\n";
 }
 
 /**

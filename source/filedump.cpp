@@ -107,7 +107,7 @@ int FileDump::GenerateAsmFile(const char* afileName)//DumpAsm
 
 			if(aSym->Absent())
 			{
-				aItr++;
+				++aItr;
 				continue;
 			}
 
@@ -118,7 +118,7 @@ int FileDump::GenerateAsmFile(const char* afileName)//DumpAsm
 			//export during kernel build
 			fputs(" [DYNAMIC]", fptr);
 			fputs("\n",fptr);
-			aItr++;
+			++aItr;
 		}
 
         // Create a directive section that instructs the linker to make all listed
@@ -135,7 +135,7 @@ int FileDump::GenerateAsmFile(const char* afileName)//DumpAsm
 
 			if ( aSym->Absent() )
 			{
-				aItr++;
+				++aItr;
 				continue;
 			}
 
@@ -145,7 +145,7 @@ int FileDump::GenerateAsmFile(const char* afileName)//DumpAsm
 			fputs(aSym->SymbolName(),fptr);
 			fputs("\\n\"\n", fptr);
 
-			aItr++;
+			++aItr;
 		}
 
 		fputs("\n END\n",fptr);

@@ -14,7 +14,7 @@
 // Implementation of the Class ElfRelocations for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #include "pl_elfrelocations.h"
@@ -46,8 +46,9 @@ ElfRelocations::~ElfRelocations()
 		while( aItr != last)
 		{
 			temp = *aItr;
-			aItr++;
+			++aItr;
 			delete temp;
+			temp = nullptr;
 		}
 		iCodeRelocations.clear();
 	}
@@ -60,8 +61,9 @@ ElfRelocations::~ElfRelocations()
 		while( aItr != last)
 		{
 			temp = *aItr;
-			aItr++;
+			++aItr;
 			delete temp;
+			temp = nullptr;
 		}
 		iDataRelocations.clear();
 	}
@@ -76,7 +78,7 @@ Function for adding Elf local Relocations.
 */
 PLUINT32 ElfRelocations::Add(ElfLocalRelocation* aReloc){
 	if(!aReloc) return 1;
-	
+
 	switch (aReloc->iSegmentType)
 	{
 	case ESegmentRO:
@@ -103,7 +105,7 @@ sorted on the address they refer to.
 */
 ElfRelocations::RelocationList & ElfRelocations::GetCodeRelocations()
 {
-	if (!iCodeSortedP) 
+	if (!iCodeSortedP)
 	{
 		iCodeRelocations.sort(Cmp());
 		iCodeSortedP = true;
@@ -120,7 +122,7 @@ sorted on the address they refer to.
 */
 ElfRelocations::RelocationList & ElfRelocations::GetDataRelocations()
 {
-	if (!iDataSortedP) 
+	if (!iDataSortedP)
 	{
 		iDataRelocations.sort(Cmp());
 		iDataSortedP = true;

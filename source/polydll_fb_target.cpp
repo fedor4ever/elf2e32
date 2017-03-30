@@ -46,8 +46,9 @@ POLYDLLFBTarget::~POLYDLLFBTarget()
 		while( aItr != last)
 		{
 			temp = *aItr;
-			aItr++;
+			++aItr;
 			delete temp;
+			temp = nullptr;
 		}
 		iDefExports->clear();
 	}

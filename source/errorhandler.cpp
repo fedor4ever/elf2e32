@@ -41,12 +41,12 @@ ErrorHandler constructor for doing common thing required for derived class funct
 @internalComponent
 @released
 */
-ErrorHandler::ErrorHandler(int aMessageIndex)
+ErrorHandler::ErrorHandler(int aMessageIndex) :
+    iMessageIndex(aMessageIndex)
 {
 	char mssgNo[MAXMSSGNOLENGTH];
 	int mssgIndex;
 
-	iMessageIndex=aMessageIndex;
 	iMessage=errMssgPrefix;
 	mssgIndex=BASEMSSGNO+iMessageIndex;
 	sprintf(mssgNo,"%d",mssgIndex);
@@ -157,7 +157,8 @@ DEFFileError constructor for initializing message index, argument name and line 
 @internalComponent
 @released
 */
-DEFFileError::DEFFileError(int aMessageIndex, char * aName, int aLineNo,char * aToken) : ErrorHandler(aMessageIndex), iName(aName), iLineNo(aLineNo)
+DEFFileError::DEFFileError(int aMessageIndex, char * aName, int aLineNo,char * aToken) :
+     ErrorHandler(aMessageIndex), iName(aName), iLineNo(aLineNo)
 {
 	iToken=aToken;
 	if(iToken[iToken.size()-1]=='\r')
@@ -490,7 +491,7 @@ SymbolMissingFromElfError::SymbolMissingFromElfError(int aMessageIndex, list<Str
 	while(aItr != last)
 	{
 		iSymbolNames+=*aItr;
-		aItr++;
+		++aItr;
 		if(aItr != last)
 		{
 			iSymbolNames+=",";
@@ -813,7 +814,7 @@ SysDefMismatchError::SysDefMismatchError(int aMessageIndex, list<String> &aSymbo
 	while(aItr != last)
 	{
 		iSymbolNames+=*aItr;
-		aItr++;
+		++aItr;
 		if(aItr != last)
 		{
 			iSymbolNames+=",";

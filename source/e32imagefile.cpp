@@ -1517,6 +1517,8 @@ void E32ImageFile::Adjust(TInt aSize, bool aAllowShrink)
 		iSize = asize;
 		iData = (char*)realloc(iData, iSize);
 
+		if (!iData) throw MemoryAllocationError(MEMORYALLOCATIONERROR, "iData == nullptr");
+
 		if (iSize > oldsize)
 			memset(iData+oldsize, 0, iSize-oldsize);
 	}

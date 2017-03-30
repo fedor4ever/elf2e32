@@ -48,8 +48,9 @@ ElfExports::~ElfExports()
 		while( aItr != last)
 		{
 			temp = *aItr;
-			aItr++;
+			++aItr;
 			delete temp;
+			temp = nullptr;
 		}
 	}
 	iExportList.clear();
@@ -186,7 +187,7 @@ void ElfExports::FilterExports()
 	while (aNewListBegin != aNewListEnd)
 	{
 		iFilteredExports.push_back(*aNewListBegin);
-		aNewListBegin++;
+		++aNewListBegin;
 	}
 }
 

@@ -100,7 +100,7 @@ void ElfProducer::SetSymbolList(SymbolList& aSymbolList){
 				(*aPos)->SetSymbolName(aSymName);
 				delete[] aSymName;
 			}
-			aPos++;
+			++aPos;
 		}
 	}
 	iNSymbols = iSymbolsList->size() + 1;
@@ -186,7 +186,7 @@ void ElfProducer::InitElfContents() {
 		//set version table info...
 		iVersionTbl[aIdx] = DEFAULT_VERSION;
 		AddToHashTable(aSym->SymbolName(), aIdx);
-		aItr++;aIdx++;
+		++aItr;++aIdx;
 	}
 
 	CreateVersionTable();
@@ -551,7 +551,7 @@ void ElfProducer::CreateProgHeader()
 		aSym = *aItr;
 
 		iCodeSectionData[aPos] = aSym->OrdNum();
-		aItr++;aPos++;
+		++aItr;++aPos;
 	}
 
 	//Create program header

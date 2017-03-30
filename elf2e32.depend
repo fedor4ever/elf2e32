@@ -21,7 +21,7 @@
 1489854560 d:\codeblock\elf2e32\source\checksum.h
 	<cstddef>
 
-1490445023 source:d:\codeblock\elf2e32\source\deffile.cpp
+1490813767 source:d:\codeblock\elf2e32\source\deffile.cpp
 	<stdio.h>
 	<stdlib.h>
 	<iostream>
@@ -54,7 +54,7 @@
 1490813199 d:\codeblock\elf2e32\source\messagehandler.h
 	"messageimplementation.h"
 
-1490813026 d:\codeblock\elf2e32\source\messageimplementation.h
+1490814882 d:\codeblock\elf2e32\source\messageimplementation.h
 	<map>
 
 1490040414 d:\codeblock\elf2e32\source\h_utl.h
@@ -238,7 +238,7 @@
 	"pl_dllsymbol.h"
 	"pl_elflocalrelocation.h"
 
-1490641232 source:d:\codeblock\elf2e32\source\elf2e32.cpp
+1490896675 source:d:\codeblock\elf2e32\source\elf2e32.cpp
 	"parametermanager.h"
 	"elf2e32.h"
 	"errorhandler.h"
@@ -289,14 +289,14 @@
 1490372962 d:\codeblock\elf2e32\source\filedump.h
 	"usecasebase.h"
 
-1490811539 source:d:\codeblock\elf2e32\source\errorhandler.cpp
+1490814660 source:d:\codeblock\elf2e32\source\errorhandler.cpp
 	"errorhandler.h"
 	"messagehandler.h"
 	<iostream>
 	<stdio.h>
 	<cstring>
 
-1490374639 source:d:\codeblock\elf2e32\source\elffilesupplied.cpp
+1490882420 source:d:\codeblock\elf2e32\source\elffilesupplied.cpp
 	"elffilesupplied.h"
 	"pl_elfexecutable.h"
 	"errorhandler.h"
@@ -428,7 +428,7 @@
 	<elfdefs.h>
 	"pl_common.h"
 
-1490810942 source:d:\codeblock\elf2e32\source\parametermanager.cpp
+1490897047 source:d:\codeblock\elf2e32\source\parametermanager.cpp
 	<e32capability.h>
 	"pl_common.h"
 	"parametermanager.h"
@@ -438,6 +438,7 @@
 	<stdlib.h>
 	"h_utl.h"
 	"h_ver.h"
+	<unistd.h>
 
 1490122564 source:d:\codeblock\elf2e32\source\pl_dllsymbol.cpp
 	"pl_dllsymbol.h"
@@ -520,7 +521,7 @@
 	<portable.h>
 	"checksum.h"
 
-1490385229 source:d:\codeblock\elf2e32\source\dll_type_target.cpp
+1490880686 source:d:\codeblock\elf2e32\source\dll_type_target.cpp
 	"dll_type_target.h"
 
 1490378863 d:\codeblock\elf2e32\source\dll_type_target.h

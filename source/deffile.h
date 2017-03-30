@@ -33,7 +33,7 @@ Class for DEF File Handler.
 class DefFile
 {
 	public:
-		DefFile():iSymbolList(nullptr){};
+		DefFile(): iFileName(nullptr),iSymbolList(nullptr){};
 		virtual ~DefFile();
 		SymbolList* ReadDefFile(char *defFile);
 		void WriteDefFile(char *fileName, SymbolList *newSymbolList);

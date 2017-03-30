@@ -447,7 +447,7 @@ do_marker:
 	goto next;
 
 error:
-	srcNext = 0;
+	srcNext = nullptr;
 	return KErrCorrupt;
 
 done_s:

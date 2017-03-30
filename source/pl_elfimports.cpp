@@ -94,7 +94,7 @@ PLUINT32 ElfImports::GetImportSize(){
 	while(aItr != iImports.end()) {
 		aList = ((*aItr).second);
 		aSize += aList.size();
-		aItr++;
+		++aItr;
 	}
 	return aSize;
 }
