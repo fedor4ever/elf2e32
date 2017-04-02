@@ -554,7 +554,7 @@ void LineToken::NextToken()
 		{
 		int aPrevPatternIndex, aPatternIdx = 0;
 		aPrevPatternIndex = -1;
-		while (*(iLine + iOffset) != '\n' && *(iLine + iOffset) != '\r')
+		while (*(iLine + iOffset) != '\n' || *(iLine + iOffset) != '\r')
 		{
 			if(IsPattern(iLine+iOffset, aCurrentPos, aPatternIdx) )
 			{
@@ -840,7 +840,7 @@ SymbolList* DefFile::ReadDefFile(char *defFile)
 	defFileEntries=OpenDefFile(defFile);
 	ParseDefFile(defFileEntries);
 
-	delete [] defFileEntries;//Free the memory which was required to read def file
+	delete[] defFileEntries;//Free the memory which was required to read def file
 
 	return iSymbolList;
 
