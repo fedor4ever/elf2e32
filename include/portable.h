@@ -22,7 +22,6 @@ typedef wchar_t __TText;
 #define _FOFF(c,f)   __builtin_offsetof(c,f)
 
 typedef unsigned char TText8;
-typedef TText8 TText;
 typedef signed int TInt;
 typedef unsigned int TUint;
 typedef long long   Int64;
@@ -30,6 +29,7 @@ typedef signed char TInt8;
 typedef unsigned char TUint8;
 typedef short int TInt16;
 typedef unsigned short int TUint16;
+typedef TUint16 TText;
 typedef long int TInt32;
 typedef unsigned long int TUint32;
 typedef unsigned long long  Uint64;
