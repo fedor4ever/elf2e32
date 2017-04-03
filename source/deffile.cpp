@@ -57,7 +57,7 @@ DefFile::~DefFile()
 		while(aItr != last)
 		{
 			temp = *aItr;
-			aItr++;
+			++aItr;
 			delete temp;
 		}
 		iSymbolList->clear();
@@ -114,7 +114,8 @@ char* DefFile::OpenDefFile(char * defFile)
 	//Getting whole file in memory
 	if(!fread(defFileEntries, fileSize, 1, fptrDef))
 	{
-	    delete defFileEntries;
+	    delete[] defFileEntries;
+	    defFileEntries = nullptr;
 		throw FileError(FILEREADERROR,defFile);
 	}
 
@@ -554,7 +555,7 @@ void LineToken::NextToken()
 		{
 		int aPrevPatternIndex, aPatternIdx = 0;
 		aPrevPatternIndex = -1;
-		while (*(iLine + iOffset) != '\n' || *(iLine + iOffset) != '\r')
+		while (*(iLine + iOffset) != '\n' || *(iLine + iOffset) != '\r')// don't touch!
 		{
 			if(IsPattern(iLine+iOffset, aCurrentPos, aPatternIdx) )
 			{
@@ -899,7 +900,7 @@ void DefFile::WriteDefFile(char *fileName, SymbolList * newSymbolList)
 			if(aSym->GetSymbolStatus()==New)
 			{
 				newDefEntry=1;
-				aItr++;
+				++aItr;
 				continue;
 			}
 
@@ -915,14 +916,14 @@ void DefFile::WriteDefFile(char *fileName, SymbolList * newSymbolList)
 			}
 			fputs(aSym->SymbolName(),fptr);
 			fputs(" @ ",fptr);
-			sprintf(ordinal,"%d",aSym->OrdNum());
+			sprintf(ordinal,"%u",aSym->OrdNum());
 			fputs(ordinal,fptr);
 			fputs(" NONAME",fptr);
 			if(aSym->CodeDataType()==SymbolTypeData) {
 				fputs(" DATA",fptr);
 				fputs(" ",fptr);
 				char aSymSize[16];
-				sprintf(aSymSize, "%d", aSym->SymbolSize());
+				sprintf(aSymSize, "%u", aSym->SymbolSize());
 				fputs(aSymSize,fptr);
 			}
 			if(aSym->R3unused())
@@ -936,7 +937,7 @@ void DefFile::WriteDefFile(char *fileName, SymbolList * newSymbolList)
 				fputs(aSym->Comment(),fptr);
 			}
 			fputs("\r\n",fptr);
-			aItr++;
+			++aItr;
 		}
 
 		//This is for writing new def entry in DEF File
@@ -952,7 +953,7 @@ void DefFile::WriteDefFile(char *fileName, SymbolList * newSymbolList)
 				aSym = *aItr;
 				if(aSym->GetSymbolStatus()!=New)
 				{
-					aItr++;
+					++aItr;
 					continue;
 				}
 				fputs("\t",fptr);
@@ -963,7 +964,7 @@ void DefFile::WriteDefFile(char *fileName, SymbolList * newSymbolList)
 				}
 				fputs(aSym->SymbolName(),fptr);
 				fputs(" @ ",fptr);
-				sprintf(ordinal,"%d",aSym->OrdNum());
+				sprintf(ordinal,"%u",aSym->OrdNum());
 				fputs(ordinal,fptr);
 				fputs(" NONAME",fptr);
 
@@ -971,7 +972,7 @@ void DefFile::WriteDefFile(char *fileName, SymbolList * newSymbolList)
 					fputs(" DATA",fptr);
 					fputs(" ",fptr);
 					char aSymSize[16];
-					sprintf(aSymSize, "%d", aSym->SymbolSize());
+					sprintf(aSymSize, "%u", aSym->SymbolSize());
 					fputs(aSymSize,fptr);
 				}
 
@@ -995,7 +996,7 @@ void DefFile::WriteDefFile(char *fileName, SymbolList * newSymbolList)
 					}
 				}
 				fputs("\r\n",fptr);
-				aItr++;
+				++aItr;
 			}
 		}
 		fputs("\r\n",fptr);

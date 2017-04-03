@@ -32,7 +32,7 @@ class ExExpRebuildTarget : public ExportTypeRebuildTarget
 {
 
 public:
-	ExExpRebuildTarget(ParameterManager* aParameterManager);
+	explicit ExExpRebuildTarget(ParameterManager* aParameterManager);
 	~ExExpRebuildTarget();
 	bool ImageIsDll();
 	bool AllowDllData();

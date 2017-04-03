@@ -30,11 +30,11 @@
 #include "parametermanager.h"
 
 using std::list;
-#ifndef __GNUC__
-using std::hash_map;
-#else
-using __gnu_cxx::hash_map;
-#endif // __GNUC__
+//#ifndef __GNUC__
+//using std::hash_map;
+//#else
+//using __gnu_cxx::hash_map;
+//#endif // __GNUC__
 
 class DllSymbol;
 class Symbol;
@@ -49,9 +49,9 @@ This class is for ELF object carrying the elf header, sections, segments.
 */
 class ElfExecutable
 {
-
+PLUINT32 globalcntr;
 public:
-	ElfExecutable(ParameterManager* aParameterManager);
+	explicit ElfExecutable(ParameterManager* aParameterManager);
 	virtual ~ElfExecutable();
 
 	PLUINT32 ProcessElfFile(Elf32_Ehdr *aElfHdr);
@@ -128,7 +128,7 @@ public:
 	 * The dynamic symbol array.
 	 */
 	Elf32_Sym		*iElfDynSym;//The ELF symbol
-	hash_map<PLUINT32, DllSymbol*>	iSymbolTable; //The representation
+//	hash_map<PLUINT32, DllSymbol*>	iSymbolTable; //The representation
 
 	/**
 	 * The static symbol table.

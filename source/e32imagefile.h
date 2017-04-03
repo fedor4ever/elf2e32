@@ -31,12 +31,6 @@ using std::vector;
 #include <iostream>
 using std::ifstream;
 
-enum TFileSource {
-    EE32Image=0,
-    EPeFile=1,
-    EElfFile=2,
-    };
-
 class ELFExecutable;
 class ElfFileSupplied;
 
@@ -257,7 +251,6 @@ class E32ImageFile {
         TInt iSize;
         E32ImageHeader* iOrigHdr;
         TInt iError;
-        TFileSource iSource;
         TUint iOrigHdrOffsetAdj;
         TInt iFileSize;
     };

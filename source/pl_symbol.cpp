@@ -40,8 +40,9 @@ This constructor sets the symbol members.
 @released
 */
 Symbol::Symbol(Symbol& aSymbol, SymbolType aCodeDataType, bool aAbsent)
-			   : iExportName(nullptr), \
-		iSymbolType(aCodeDataType),iComment(nullptr), iAbsent(aAbsent), iR3Unused(false)
+			   : iExportName(nullptr),
+		iSymbolType(aCodeDataType),iComment(nullptr), iAbsent(aAbsent),
+        iR3Unused(false), iSize(0)
 {
 	iSymbolName = new char[strlen(aSymbol.SymbolName()) + 1];
 	strcpy(iSymbolName, aSymbol.SymbolName());
@@ -54,6 +55,7 @@ This copy constructor copies the symbol members from the input symbol.
 @internalComponent
 @released
 */
+/** TODO (Administrator#1#04/03/17): Rewrite to normal copy ctor! */
 Symbol::Symbol(Symbol& aSymbol)
 {
 	memcpy(this, &aSymbol, sizeof(aSymbol));
@@ -134,6 +136,10 @@ This function sets the symbol name.
 */
 void Symbol::SetSymbolName(char *aSymbolName)
 {
+    if(iSymbolName){
+        delete[] iSymbolName;
+        iSymbolName = nullptr;
+    }
 	iSymbolName = new char[strlen(aSymbolName)+1];
 	strcpy(iSymbolName, aSymbolName);
 }

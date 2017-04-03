@@ -43,7 +43,7 @@ class DSOHandler
 	typedef std::list<Symbol*>	SymbolList;
 
 public:
-	DSOHandler(ParameterManager* aParameterManager);
+	explicit DSOHandler(ParameterManager* aParameterManager);
 	~DSOHandler();
 	PLUINT32 ReadElfFile(char* aElfFile);
 	void ProcessElfFile();

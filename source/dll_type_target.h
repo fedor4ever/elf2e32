@@ -32,7 +32,7 @@ class DLLTarget : public ElfFileSupplied
 {
 
 public:
-	DLLTarget(ParameterManager* aParameterManager);
+	explicit DLLTarget(ParameterManager* aParameterManager);
 	~DLLTarget();
 
 	bool ImageIsDll();

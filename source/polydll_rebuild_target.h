@@ -39,7 +39,7 @@ class POLYDLLRebuildTarget : public ExportTypeRebuildTarget
 {
 
 public:
-	POLYDLLRebuildTarget(ParameterManager* aParameterManager);
+	explicit POLYDLLRebuildTarget(ParameterManager* aParameterManager);
 	~POLYDLLRebuildTarget();
 	void ProcessExports();
 	void GenerateOutput();

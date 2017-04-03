@@ -291,15 +291,13 @@ int Elf2E32::Execute()
 {
 	int result = EXIT_SUCCESS;
 	UseCaseBase * usecase=nullptr;
-	bool dumpMessageFileOption;
-	char * dumpMessageFile;
 
 	try
 	{
 		iParameterListInterface->ParameterAnalyser();
 
-		dumpMessageFileOption = iParameterListInterface->DumpMessageFileOption();
-		dumpMessageFile = iParameterListInterface->DumpMessageFile();
+		bool dumpMessageFileOption = iParameterListInterface->DumpMessageFileOption();
+		char * dumpMessageFile = iParameterListInterface->DumpMessageFile();
 
 	 	if(dumpMessageFileOption)
 		{

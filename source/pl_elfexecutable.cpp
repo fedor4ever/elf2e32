@@ -35,33 +35,36 @@ Constructor for class ElfExecutable
 @internalComponent
 @released
 */
-ElfExecutable::ElfExecutable(ParameterManager* aParameterManager) :\
-	iElfHeader(nullptr), \
-	iEntryPoint(0),\
-	iProgHeader(nullptr), \
-	iSONameOffset(0) ,\
-	iSections (nullptr) , \
-	iVersionDef (nullptr) , iVerDefCount(0), \
-	iVersionNeed (nullptr) , iVerNeedCount(0), \
-	iVersionTbl (nullptr) ,iRelSize(0),iRelEntSize(0), \
+ElfExecutable::ElfExecutable(ParameterManager* aParameterManager) :
+	iElfHeader(nullptr),
+	iEntryPoint(0),
+	iProgHeader(nullptr),
+	iSONameOffset(0), iSOName(nullptr),
+	iSections (nullptr) ,
+	iVersionDef (nullptr) , iVerDefCount(0),
+	iVersionNeed (nullptr) , iVerNeedCount(0),
+	iVersionTbl (nullptr) ,iRelSize(0),iRelEntSize(0),
 	iNRelocs(0),
-	iRel (nullptr) ,iRelaSize(0), iRelaEntSize(0), \
+	iRel (nullptr) ,iRelaSize(0), iRelaEntSize(0),
 	iRela(nullptr),
-	iStringTable (nullptr) , \
-	iSectionHdrStrTbl(nullptr), \
-	iVerInfo(nullptr),	iElfDynSym (nullptr), \
-	iSymTab (nullptr), \
-	iStrTab (nullptr), \
-	iLim (nullptr), \
-	iNSymbols(0), \
-	iHashTbl (nullptr) , \
-	iDynSegmentHdr (nullptr) , \
-	iDataSegmentHdr (nullptr) ,iDataSegment(nullptr), iDataSegmentSize(0), iDataSegmentIdx(0), \
-	iCodeSegmentHdr (nullptr) , iCodeSegment(nullptr), iCodeSegmentSize(0), iCodeSegmentIdx(0), \
-	iExports (nullptr), \
-	iParameterManager(aParameterManager),\
-	iPltGotBase(0), iPltGotLimit(0), iStrTabSz(0), iSymEntSz(0), \
-	iPltGot(nullptr), iPltRel(nullptr),iPltRelaSz(0), iPltRela(nullptr), iPltRelSz(0)  \
+	iStringTable (nullptr) ,
+	iSectionHdrStrTbl(nullptr),
+	iVerInfo(nullptr),	iElfDynSym (nullptr),
+	iSymTab (nullptr),
+	iStrTab (nullptr),
+	iLim (nullptr),
+	iNSymbols(0),
+	iHashTbl (nullptr) ,
+	iDynSegmentHdr (nullptr) ,
+	iDataSegmentHdr (nullptr) ,iDataSegment(nullptr),
+	iDataSegmentSize(0), iDataSegmentIdx(0),
+	iCodeSegmentHdr (nullptr) , iCodeSegment(nullptr),
+	iCodeSegmentSize(0), iCodeSegmentIdx(0),
+	iExports (nullptr),
+	iParameterManager(aParameterManager),
+	iPltGotBase(0), iPltGotLimit(0), iStrTabSz(0), iSymEntSz(0),
+	iPltGot(nullptr), iPltRel(nullptr),iPltRelaSz(0), iPltRela(nullptr),
+	iPltRelSz(0), iJmpRelOffset(0)
 
 {
 }
@@ -86,7 +89,7 @@ ElfExecutable::~ElfExecutable()
 	delete iPltRela; */
 
 	iNeeded.clear();
-	iSymbolTable.clear();
+//	iSymbolTable.clear();
 }
 
 
@@ -360,7 +363,7 @@ PLUINT32  ElfExecutable::ProcessSymbols(){
 			aSymbol->SetSymbolSize(iElfDynSym[aSymIdx].st_size);
 
 			//Putting the symbols into a hash table - Used later while processing relocations
-			iSymbolTable[aSymIdx] = aSymbol ;
+			//iSymbolTable[aSymIdx] = aSymbol ;
 			if( !AddToExports( aDllName, aSymbol ))
 			{
 				//Not a valid export... delete it..
@@ -890,8 +893,10 @@ Function to get segment header
 @internalComponent
 @released
 */
+#include <iostream>
 Elf32_Phdr* ElfExecutable::Segment(Elf32_Addr aAddr) {
-
+    globalcntr++;
+    std::cout << globalcntr << "\n";
 	if(iCodeSegmentHdr) {
 		PLUINT32 aBase = iCodeSegmentHdr->p_vaddr;
 		if( aBase <= aAddr && aAddr < (aBase + iCodeSegmentHdr->p_memsz) ) {
@@ -905,6 +910,7 @@ Elf32_Phdr* ElfExecutable::Segment(Elf32_Addr aAddr) {
 		}
 	}
 
+	std::cout << "we failin: " << globalcntr << "\n";
 	throw int(0);
 }
 
@@ -1056,7 +1062,7 @@ Elf32_Sym* ElfExecutable::FindSymbol(char* aName) {
 		aIdx = aChains[aIdx];
 	}while( aIdx > 0 );
 
-	return NULL;
+	return nullptr;
 }
 
 /**

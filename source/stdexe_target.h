@@ -34,7 +34,7 @@ class StdExeTarget : public DLLTarget
 {
 
 public:
-	StdExeTarget(ParameterManager* aParameterManager);
+	explicit StdExeTarget(ParameterManager* aParameterManager);
 	virtual ~StdExeTarget();
 	bool ImageIsDll();
 	bool AllowDllData();

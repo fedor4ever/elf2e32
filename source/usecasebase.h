@@ -38,7 +38,7 @@ Other classes like ParameterManager are dependant on this class.
 class UseCaseBase {
 
     public:
-        UseCaseBase(ParameterManager* aParameterManager);
+        explicit UseCaseBase(ParameterManager* aParameterManager);
         virtual ~UseCaseBase();
         char * DefInput();
         char * DSOOutput();

@@ -47,14 +47,14 @@ Constructor for class ElfProducer
 @released
 */
 ElfProducer::ElfProducer(ParameterManager* aParameterManager):
-     ElfExecutable(aParameterManager) , \
-	 iDSONameOffset(0),\
-	 iLinkAsOffset(0),\
+     ElfExecutable(aParameterManager) ,
+	 iDSONameOffset(0),
+	 iLinkAsOffset(0),
 	 iSymbolsList(nullptr),
-	 iDSODaux(nullptr), \
-	 iDSOBuckets(nullptr), \
-     iDSOChains(nullptr),\
-	 iCodeSectionData(nullptr),\
+	 iDSODaux(nullptr),
+	 iDSOBuckets(nullptr),
+     iDSOChains(nullptr),
+	 iCodeSectionData(nullptr),
 	 iElfFileOffset(0)
 {
 }

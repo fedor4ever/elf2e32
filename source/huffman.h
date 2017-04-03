@@ -23,10 +23,11 @@
 #include <portable.h>
 #include <fstream>
 
-/**
-class Bit Output stream
-@internalComponent
-@released
+/** Bit output stream.
+	Good for writing bit streams for packed, compressed or huffman data algorithms.
+
+	This class must be derived from and OverflowL() reimplemented if the bitstream data
+	cannot be generated into a single memory buffer.
 */
 class TBitOutput
 {
@@ -50,7 +51,7 @@ class TBitOutput
 		TUint8* iEnd;
 };
 
-/*
+/**
 Set the memory buffer to use for output
 
 Data will be written to this buffer until it is full, at which point OverflowL() will be
@@ -59,8 +60,6 @@ output.
 
 @param "TUint8* aBuf" The buffer for output
 @param "TInt aSize" The size of the buffer in bytes
-@internalComponent
-@released
 */
 inline void TBitOutput::Set(TUint8* aBuf,TInt aSize)
 {
@@ -68,27 +67,21 @@ inline void TBitOutput::Set(TUint8* aBuf,TInt aSize)
 	iEnd=aBuf+aSize;
 }
 
-/*
+/**
 Get the current write position in the output buffer
 
 In conjunction with the address of the buffer, which should be known to the caller, this
 describes the data in the bitstream.
-@internalComponent
-@released
 */
 inline const TUint8* TBitOutput::Ptr() const
-{
-	return iPtr;
-}
+{return iPtr;}
 
-/*
+/**
 Get the number of bits that are buffered
 
 This reports the number of bits that have not yet been written into the output buffer.It will
 always lie in the range 0..7. Use PadL() to pad the data out to the next byte and write it to
 the buffer.
-@internalComponent
-@released
 */
 inline TInt TBitOutput::BufferedBits() const
 {
@@ -104,7 +97,7 @@ class TFileOutput : public TBitOutput
 {
 	enum {KBufSize=0x1000};
 	public:
-		TFileOutput(std::ofstream & os);
+		explicit TFileOutput(std::ofstream & os);
 		void FlushL();
 		TUint32 iDataCount;
 		virtual ~TFileOutput() = default;

@@ -41,7 +41,7 @@ class ElfFileSupplied : public UseCaseBase
 {
 
 public:
-	ElfFileSupplied(ParameterManager* aParameterManager);
+	explicit ElfFileSupplied(ParameterManager* aParameterManager);
 	~ElfFileSupplied();
 	int Execute();
 

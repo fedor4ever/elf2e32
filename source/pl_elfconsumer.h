@@ -37,7 +37,7 @@ ET_EXEC or ET_DYN, it processes the imports(if required) or exports respectively
 class ElfConsumer : public ElfExecutable
 {
 public:
-	ElfConsumer(ParameterManager* aParameterManager);
+	explicit ElfConsumer(ParameterManager* aParameterManager);
 	virtual ~ElfConsumer();
 	PLUINT32 ReadElfFile(char* aFile);
 	int GetElfSymbolList(list<Symbol*>& aList);

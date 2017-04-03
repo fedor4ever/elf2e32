@@ -95,15 +95,20 @@ void POLYDLLRebuildTarget::ProcessExports()
 	{
 		if (strcmp((*aBegin)->SymbolName(), (*aDefBegin)->SymbolName()))
 			aMissingSysDefList.push_back((*aBegin)->SymbolName());
-		aBegin++;
-		aDefBegin++;
+		++aBegin;
+		++aDefBegin;
 	}
 
 	if( aMissingSysDefList.size() )
+    {
+        delete iSysDefExports;
 		throw SysDefMismatchError(SYSDEFSMISMATCHERROR, aMissingSysDefList, UseCaseBase::DefInput());
+    }
 
     delete iSysDefExports;
+    iSysDefExports = nullptr;
     delete aSymbolEntry;
+    aSymbolEntry = nullptr;
 	ValidateExports(iDefExports);
 	CreateExports();
 }

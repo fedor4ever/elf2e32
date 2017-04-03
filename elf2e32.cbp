@@ -11,14 +11,11 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters='elf2e32 --definput=&quot;..\..\tests\libcryptou.def&quot; --dso=..\..\tests\libcrypto.dso --linkas=libcrypto{000a0000}.dll ' />
+				<Option parameters=' --uid1=0x10000079 --namedlookup --libpath=&quot;D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib&quot; --uid2=0x20004c45 --uid3=0x00000000 --capability=All-TCB --fpu=softvfp --targettype=STDDLL --definput=&quot;tests\libcryptou.def&quot; --dso=&quot;tests\libcrypto{000a0000}.dso&quot; --linkas=&quot;tests\libcrypto{000a0000}.dll&quot; --defoutput=&quot;tests\out.def&quot; --elfinput=&quot;tests\libcrypto.dll&quot; --output=&quot;tests\libcrypto-2.4.5.dll&quot; ' />
 				<Compiler>
 					<Add option="-g -O0" />
 					<Add option="-g3" />
 					<Add option="-fvar-tracking" />
-					<Add option="-ggdb" />
-					<Add option="-gdwarf-4" />
-					<Add option="-fno-eliminate-unused-debug-types" />
 					<Add directory="source" />
 					<Add directory="include" />
 				</Compiler>
@@ -45,7 +42,6 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 			<Add option="-Wno-write-strings" />
-			<Add option="-Wno-invalid-offsetof" />
 			<Add option="-D__TOOLS2__" />
 			<Add option="-D_CRT_NONSTDC_NO_DEPRECATE" />
 			<Add directory="include" />

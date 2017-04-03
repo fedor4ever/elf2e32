@@ -41,7 +41,7 @@ class LibraryTarget : public UseCaseBase
 {
 
 public:
-	LibraryTarget(ParameterManager* aParameterManager);
+	explicit LibraryTarget(ParameterManager* aParameterManager);
 	virtual ~LibraryTarget();
 	int Execute();
 	SymbolList* ReadInputDefFile();

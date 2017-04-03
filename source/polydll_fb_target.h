@@ -39,7 +39,7 @@ class POLYDLLFBTarget : public DLLTarget
 {
 
 public:
-	POLYDLLFBTarget(ParameterManager* aParameterManager);
+	explicit POLYDLLFBTarget(ParameterManager* aParameterManager);
 	~POLYDLLFBTarget();
 	void ProcessExports();
 	void GenerateOutput();

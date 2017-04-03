@@ -88,7 +88,7 @@ Class TDeflateStats
 class TDeflateStats : public MDeflater
 {
 	public:
-		inline TDeflateStats(TEncoding& aEncoding);
+		explicit inline TDeflateStats(TEncoding& aEncoding);
 	private:
 		// from MDeflater
 		void LitLenL(TInt aCode);

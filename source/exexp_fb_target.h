@@ -34,14 +34,11 @@ class ExexpFBTarget : public DLLTarget
 {
 
 public:
-	ExexpFBTarget(ParameterManager* aParameterManager);
+	explicit ExexpFBTarget(ParameterManager* aParameterManager);
 	virtual ~ExexpFBTarget();
 	bool ImageIsDll();
 	bool AllowDllData();
-
 };
-
-
 
 #endif // EXEXP_FB_TARGET_H
 

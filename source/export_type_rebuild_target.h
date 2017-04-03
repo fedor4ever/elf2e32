@@ -32,18 +32,13 @@ class ExportTypeRebuildTarget is dervied from DLLTarget and handles export type 
 */
 class ExportTypeRebuildTarget : public DLLTarget
 {
-
 public:
-	ExportTypeRebuildTarget(ParameterManager* aParameterManager);
+	explicit ExportTypeRebuildTarget(ParameterManager* aParameterManager);
 	~ExportTypeRebuildTarget();
-
 	void ProcessExports();
-
 protected:
 	DefFile *iDefFile;
-
 };
-
 
 #endif // EXPORT_TYPE_REBUILD_TARGET_H
 

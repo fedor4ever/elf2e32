@@ -36,9 +36,9 @@ Base class from which all other error handler classes are derived from.
 class ErrorHandler
 {
 	public:
-		ErrorHandler(int aMessageIndex);
-		virtual ~ErrorHandler();
-		virtual void Report() =0;
+	explicit ErrorHandler(int aMessageIndex);
+	virtual ~ErrorHandler();
+	virtual void Report() =0;
 
 		String iMessage;
 		int iMessageIndex;
@@ -130,9 +130,9 @@ Base class for E32Image Compression Errors.
 class E32ImageCompressionError : public ErrorHandler
 {
 	public:
-		E32ImageCompressionError(int aMessageIndex);
-		virtual ~E32ImageCompressionError();
-		void Report();
+	explicit E32ImageCompressionError(int aMessageIndex);
+	virtual ~E32ImageCompressionError();
+	void Report();
 };
 
 /**
@@ -143,9 +143,9 @@ Base class for Capability Errors.
 class CapabilityError : public ErrorHandler
 {
 	public:
-		CapabilityError(int aMessageIndex);
-		virtual ~CapabilityError();
-		void Report();
+	explicit CapabilityError(int aMessageIndex);
+	virtual ~CapabilityError();
+	void Report();
 };
 
 /**
@@ -246,7 +246,7 @@ Class for handling E32 Image Errors.
 class E32ImageError : public ErrorHandler
 {
 public:
-	E32ImageError(int aMessageIndex);
+	explicit E32ImageError(int aMessageIndex);
 	~E32ImageError();
 	void Report();
 };
@@ -259,7 +259,7 @@ Class for handling Invalid Invocation Errors.
 class InvalidInvocationError : public ErrorHandler
 {
 public:
-	InvalidInvocationError(int aMessageIndex);
+	explicit InvalidInvocationError(int aMessageIndex);
 	~InvalidInvocationError();
 	void Report();
 };
@@ -272,7 +272,7 @@ Base class for handling Target Type Errors.
 class TargetTypeError : public ErrorHandler
 {
 public:
-	TargetTypeError(int aMessageIndex);
+	explicit TargetTypeError(int aMessageIndex);
 	~TargetTypeError();
 	void Report();
 };
@@ -315,7 +315,7 @@ Class for handling No Message File Errors.
 class NoMessageFileError : public ErrorHandler
 {
 public:
-	NoMessageFileError(int aMessageIndex);
+	explicit NoMessageFileError(int aMessageIndex);
 	~NoMessageFileError();
 	void Report();
 };

@@ -29,15 +29,13 @@ class for dumping e32image file or dumping asm file
 */
 class FileDump : public UseCaseBase
 {
-
-	public:
-		FileDump(ParameterManager* aParameterManager);
-		~FileDump();
-		int Execute();
-	private:
-		int DumpE32Image(const char * fileName);
-		int GenerateAsmFile(const char* afileName);//DumpAsm
+public:
+    explicit FileDump(ParameterManager* aParameterManager);
+    ~FileDump();
+    int Execute();
+private:
+    int DumpE32Image(const char * fileName);
+    int GenerateAsmFile(const char* afileName);//DumpAsm
 };
 
 #endif
-

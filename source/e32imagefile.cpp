@@ -125,8 +125,9 @@ E32ImageChunks::~E32ImageChunks()
  		while( aItr != last)
  		{
  			temp = *aItr;
- 			aItr++;
+ 			++aItr;
  			delete temp;
+ 			temp = nullptr;
  		}
  	}
 }
@@ -193,6 +194,8 @@ E32ImageFile::E32ImageFile(const char * aFileName, ElfExecutable * aExecutable, 
 	iUseCase(aUseCase),
 	iHdr(nullptr),
 	iHdrSize(sizeof(E32ImageHeaderV)),
+	iNumDlls(0),
+	iNumImports(0),
 	iImportSection(nullptr),
 	iImportSectionSize(0),
 	iCodeRelocs(nullptr),
@@ -202,7 +205,8 @@ E32ImageFile::E32ImageFile(const char * aFileName, ElfExecutable * aExecutable, 
 	iExportOffset(0),
 	iLayoutDone(false),
 	iMissingExports(0),
-	iSymNameOffset(0) {}
+	iSymNameOffset(0),
+	iOrigHdr(0) {}
 
 /**
 Constructor for E32ImageFile class.
@@ -1487,7 +1491,7 @@ E32ImageFile::~E32ImageFile()
  	while( aPos != cleanupStack.end() )
  	{
  		aPtr = *aPos;
- 		delete [] aPtr;
+ 		delete[] aPtr;
  		aPos++;
  	}
 
@@ -1894,7 +1898,7 @@ void E32ImageFile::ProcessSymbolInfo() {
 			ESegmentRO, aSym->iElfSym, false);
 		aPlace += sizeof(uint32);
 		aRel->Add();
-		aIter++;
+		++aIter;
 	}
 }
 
@@ -1930,7 +1934,7 @@ char* E32ImageFile::CreateSymbolInfo(size_t aBaseOffset) {
 	while(Iter != iSymNameOffTab.end()){
 		memcpy( ((void*)(aInfo+aPos)), ((void*)&Iter), aOffLen);
 		aPos += aOffLen;
-		Iter++;
+		++Iter;
 	}
 
 	aPos = aSymInf.iStringTableOffset;
@@ -1951,7 +1955,7 @@ char* E32ImageFile::CreateSymbolInfo(size_t aBaseOffset) {
 		aLocation = (aImportTab + *aIter);
 		*aLocation = aOffset;
 		aOffset += sizeof(uint32);
-		aIter++;
+		++aIter;
 	}
 
 	return aInfo;

@@ -54,10 +54,11 @@ ElfImports::~ElfImports()
 			while( aItr1 != last1)
 			{
 				temp = *aItr1;
-				aItr1++;
+				++aItr1;
 				delete temp;
+				temp = nullptr;
 			}
-			aItr++;
+			++aItr;
 			rlistTemp->clear();
 		}
 	}

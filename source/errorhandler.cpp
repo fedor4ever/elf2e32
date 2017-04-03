@@ -91,13 +91,10 @@ Function to report File Errors.
 */
 void FileError::Report()
 {
-	char *tempMssg;
-	char *errMessage;
-
-	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
+	char *errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
 	if(errMessage)
 	{
-		tempMssg = new char[strlen(errMessage)+strlen(iName.c_str())];
+		char *tempMssg = new char[strlen(errMessage)+strlen(iName.c_str())];
 		sprintf(tempMssg,errMessage,iName.c_str());
 		iMessage+=tempMssg;
 		MessageHandler::GetInstance()->Output(iMessage.c_str());
@@ -134,13 +131,10 @@ Function to report ELF Format Errors.
 */
 void ELFFormatError::Report()
 {
-	char *tempMssg;
-	char *errMessage;
-
-	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
+	char *errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
 	if(errMessage)
 	{
-		tempMssg = new char[strlen(errMessage)+strlen(iName.c_str())];
+		char *tempMssg = new char[strlen(errMessage)+strlen(iName.c_str())];
 		sprintf(tempMssg,errMessage,iName.c_str());
 		iMessage+=tempMssg;
 		MessageHandler::GetInstance()->Output(iMessage.c_str());

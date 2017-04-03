@@ -64,7 +64,7 @@ class ElfProducer : public ElfExecutable
 
 	typedef std::list<Symbol*> SymbolList;
 public:
-	ElfProducer(ParameterManager* aParameterManager);
+	explicit ElfProducer(ParameterManager* aParameterManager);
 	~ElfProducer();
 
 	void SetSymbolList(SymbolList& aSymbolList);
@@ -91,9 +91,6 @@ private:
 
 	/** The export Symbol list*/
 	SymbolList		*iSymbolsList;
-
-	/** The number of export Symbols*/
-	PLUINT32		iNSymbols;
 
 	/** The proxy DSO full file name*/
 	String			iDsoFullName;

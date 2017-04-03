@@ -1,5 +1,19 @@
 elf2e32 --uid1=0x10000079 --namedlookup --libpath="D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib" --uid2=0x20004c45 --uid3=0x00000000 --capability=All-TCB --fpu=softvfp --targettype=STDDLL --definput="..\..\tests\libcrypto.def" --dso="..\..\tests\libcrypto{000a0000}.dso" --linkas="..\..\tests\libcrypto{000a0000}.dll" --defoutput="..\..\tests\out.def" --elfinput="..\..\tests\libcrypto.dll" --output="..\..\tests\libcrypto-2.4.5.dll"
 
-elf2e32 --definput="..\..\tests\libcryptou.def" --dso=..\..\tests\libcrypto.dso --linkas=libcrypto{000a0000}.dll
+elf2e32 --definput=C:\ISO\vs2015_community\elf2e32\tests\libcryptou.def --dso=C:\ISO\vs2015_community\elf2e32\tests\libcrypto.dso --linkas=C:\ISO\vs2015_community\elf2e32\tests\libcrypto{000a0000}.dll
 
-elf2e32 --capability=All-TCB --definput="..\..\tests\libcryptou.def" --defoutput="..\..\tests\out.def" --elfinput="..\..\tests\libcrypto.dll" --output="..\..\tests\libcrypto-2.4.5.dll" --libpath="D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib" --linkas="..\..\tests\libcrypto{000a0000}.dll" --dso="..\..\tests\libcrypto{000a0000}.dso" --fpu=softvfp --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --namedlookup --uid1=0x10000079
+elf2e32 --capability=All-TCB --definput="..\tests\libcryptou.def" --defoutput="..\tests\out.def" --elfinput="..\tests\libcrypto.dll" --output="..\tests\libcrypto-2.4.5.dll" --libpath="D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib" --linkas="..\tests\libcrypto{000a0000}.dll" --dso="..\tests\libcrypto{000a0000}.dso" --fpu=softvfp --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --namedlookup --uid1=0x10000079
+
+elf2e32 --capability=All-TCB --definput="tests\libcryptou.def" --defoutput="tests\out.def" --elfinput="tests\libcrypto.dll" --output="tests\libcrypto-2.4.5.dll" --libpath="D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib" --linkas="tests\libcrypto{000a0000}.dll" --dso="tests\libcrypto{000a0000}.dso" --fpu=softvfp --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --namedlookup --uid1=0x10000079
+
+e:\elf2e32\source\e32imagefile.cpp(1518): warning C6308: 'realloc' might return null pointer: assigning null pointer to 'iData', which is passed as an argument to 'realloc', will cause the original memory block to be leaked.
+e:\elf2e32\source\e32imagefile.cpp(1521): warning C6387: 'iData+oldsize' could be '0':  this does not adhere to the specification for the function 'memset'. 
+e:\elf2e32\source\e32imagefile.cpp(1915): warning C6386: Buffer overrun while writing to 'aInfo':  the writable size is 'aSize*1' bytes, but '28' bytes might be written.
+e:\elf2e32\source\messageimplementation.cpp(260): warning C6283: 'tmpMessage' is allocated with array new [], but deleted with scalar delete.
+e:\elf2e32\source\messageimplementation.cpp(414): warning C6283: 'messageEntries' is allocated with array new [], but deleted with scalar delete.
+e:\elf2e32\source\messageimplementation.cpp(379): warning C6386: Buffer overrun while writing to 'messageEntries':  the writable size is '(fileSize+2)*1' bytes, but '4294967295' bytes might be written.
+e:\elf2e32\source\pl_elfproducer.cpp(179): warning C6386: Buffer overrun while writing to 'this->iElfDynSym':  the writable size is 'iNSymbols*16' bytes, but '32' bytes might be written.
+e:\elf2e32\source\pl_elfproducer.cpp(187): warning C6386: Buffer overrun while writing to 'this->iVersionTbl':  the writable size is 'iNSymbols*2' bytes, but '4' bytes might be written.
+e:\elf2e32\source\pl_elfproducer.cpp(383): warning C6385: Reading invalid data from 'this->iSections':  the readable size is '_Old_2`40' bytes, but '80' bytes may be read.
+========== Rebuild All: 1 succeeded, 0 failed, 0 skipped ==========
+

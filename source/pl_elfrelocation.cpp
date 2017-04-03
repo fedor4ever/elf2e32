@@ -14,7 +14,7 @@
 // Implementation of the Class ElfRelocation for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #include "pl_elfrelocation.h"
@@ -33,10 +33,11 @@ Constructor for class ElfRelocation
 @internalComponent
 @released
 */
-ElfRelocation::ElfRelocation(ElfExecutable *aElfExec, PLMemAddr32 aAddr, \
-			PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType, \
-			Elf32_Rel* aRel) : iAddr(aAddr), iAddend(aAddend), \
-			iSymNdx(aIndex), iRelType(aRelType), iRel(aRel),  iElfExec(aElfExec)
+ElfRelocation::ElfRelocation(ElfExecutable *aElfExec, PLMemAddr32 aAddr,
+			PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,
+			Elf32_Rel* aRel) : iAddr(aAddr), iAddend(aAddend),
+			iSymNdx(aIndex), iRelType(aRelType), iRel(aRel),
+			iSymbol{nullptr},iElfExec(aElfExec), iSegment{nullptr}
 {
 }
 
@@ -87,7 +88,7 @@ handled by the postlinker.
 @released
 */
 bool ElfRelocation::ValidRelocEntry(PLUCHAR aType) {
-	
+
 	switch(aType)
 	{
 	case R_ARM_ABS32:

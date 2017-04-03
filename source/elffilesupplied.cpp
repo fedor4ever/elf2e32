@@ -25,11 +25,9 @@
 
 #include <algorithm>
 #include <iostream>
-#include <hash_set>
 #include <cstring>
 
-using namespace std;
-using __gnu_cxx::hash_set;
+using std::cout;
 
 /**
 Constructor for class ElfFileSupplied to initialize members and create instance of class DSOHandler
@@ -184,7 +182,7 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 				if( aMaxOrdinal < (*aPos)->OrdNum() ){
 					aMaxOrdinal = (*aPos)->OrdNum();
 				}
-				aPos++;
+				++aPos;
 			}
 		}
 
@@ -215,14 +213,14 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 			// {Valid_DEF - ELF_Symbols} is non empty
 			(*aResultPos)->SetSymbolStatus(Missing); // Set the symbol Status as Missing
 			aMissingSymNameList.push_back((*aResultPos)->SymbolName());
-			aResultPos++;
+			++aResultPos;
 			//throw error
 		}
 		if( aMissingSymNameList.size() ) {
 			if (!Unfrozen())
 				throw SymbolMissingFromElfError(SYMBOLMISSINGFROMELFERROR, aMissingSymNameList, UseCaseBase::InputElfFileName());
 			else
-				cout << "Elf2e32: Warning: " << aMissingSymNameList.size() << " Frozen Export(s) missing from the ELF file" << endl;
+				cout << "Elf2e32: Warning: " << aMissingSymNameList.size() << " Frozen Export(s) missing from the ELF file" << "\n";
 		}
 	}
 
@@ -241,8 +239,8 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 				// intersection set {Absent,ELF_Symbols} is non-empty
 
 				iSymList.insert(iSymList.end(), *aResultPos);
-				cout << "Elf2e32: Warning: Symbol " << (*aResultPos)->SymbolName() << " absent in the DEF file, but present in the ELF file" << endl;
-				aResultPos++;
+				cout << "Elf2e32: Warning: Symbol " << (*aResultPos)->SymbolName() << " absent in the DEF file, but present in the ELF file" << "\n";
+				++aResultPos;
 			}
 		}
 	}
@@ -271,7 +269,7 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 				{
 					iElfExecutable->iExports->ExportsFilteredP(true);
 					iElfExecutable->iExports->iFilteredExports.insert(iElfExecutable->iExports->iFilteredExports.end(),(DllSymbol *)(*aResultPos));
-					aResultPos++;
+					++aResultPos;
 					continue;
 				}
 				if (aIgnoreNonCallable)
@@ -282,7 +280,7 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 					{
 						iElfExecutable->iExports->ExportsFilteredP(true);
 						iElfExecutable->iExports->iFilteredExports.insert(iElfExecutable->iExports->iFilteredExports.end(),(DllSymbol *)(*aResultPos));
-						aResultPos++;
+						++aResultPos;
 						continue;
 					}
 				}
@@ -290,9 +288,9 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 				(*aResultPos)->SetSymbolStatus(New); // Set the symbol Status as NEW
 				iSymList.insert(iSymList.end(), *aResultPos);
 				if(WarnForNewExports())
-					cout << "Elf2e32: Warning: New Symbol " << (*aResultPos)->SymbolName() << " found, export(s) not yet Frozen" << endl;
+					cout << "Elf2e32: Warning: New Symbol " << (*aResultPos)->SymbolName() << " found, export(s) not yet Frozen" << "\n";
 			}
-			aResultPos++;
+			++aResultPos;
 		}
 	}
 
@@ -314,7 +312,7 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 				iElfExecutable->iExports->Add(iElfExecutable->iSOName, aSymbol);
 				//aElfExports.insert(aElfExports.end(), (Symbol*)aSymbol);
 				iSymList.insert(iSymList.end(), (Symbol*)aSymbol);
-				aResultPos++;
+				++aResultPos;
 			}
 			aElfExports.sort(ElfExports::PtrELFExportOrdinalCompare());
 			iSymList.sort(ElfExports::PtrELFExportOrdinalCompare());
@@ -328,7 +326,6 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 	aElfExports.clear();
 	aDefAbsentExports.clear();
 	aDefValidExports.clear();
-	cout << "ElfFileSupplied::ValidateExports()\n";
 }
 
 /**
@@ -575,8 +572,7 @@ Function to get symbol type based on the encoded names.
 SymbolType ElfFileSupplied::SymbolTypeF(char * aName)
 {
 	size_t prefixLength = strlen("_ZTV");
-	bool classImpedimenta = false;
-	classImpedimenta = !strncmp(aName, "_ZTV", prefixLength) ||
+	bool classImpedimenta = !strncmp(aName, "_ZTV", prefixLength) ||
 					   !strncmp(aName, "_ZTI", prefixLength) ||
 					   !strncmp(aName, "_ZTS", prefixLength) ;
 
@@ -638,22 +634,12 @@ Function to provide a predicate which checks whether a symbol name is unwanted:
 */
 int ElfFileSupplied::UnWantedSymbolp(const char * aSymbol)
 {
-  static hash_set<const char*, hash<const char*>, eqstr> aSymbolSet;
-  int symbollistsize=sizeof(Unwantedruntimesymbols)/sizeof(Unwantedruntimesymbols[0]);
-  static bool FLAG=false;
-  while(!FLAG)
-  {
-	for(int i=0;i<symbollistsize;i++)
+	int symbollistsize = sizeof(Unwantedruntimesymbols) / sizeof(Unwantedruntimesymbols[0]);
+	for (int i = 0; i<symbollistsize; i++)
 	{
-		aSymbolSet.insert(Unwantedruntimesymbols[i]);
+		if (strstr(Unwantedruntimesymbols[i], aSymbol))
+			return 1;
 	}
-	FLAG=true;
-  }
-  hash_set<const char*, hash<const char*>, eqstr>::const_iterator it
-    = aSymbolSet.find(aSymbol);
-  if(it != aSymbolSet.end())
-	return 1;
-  else
 	return 0;
 }
 

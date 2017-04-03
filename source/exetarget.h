@@ -34,7 +34,7 @@ class ExeTarget : public ElfFileSupplied
 {
 
 public:
-	ExeTarget(ParameterManager* aParameterManager);
+	explicit ExeTarget(ParameterManager* aParameterManager);
 	virtual ~ExeTarget();
 	void ProcessExports();
 	void GenerateOutput();
