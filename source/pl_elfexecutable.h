@@ -55,7 +55,6 @@ public:
 	virtual ~ElfExecutable();
 
 	PLUINT32 ProcessElfFile(Elf32_Ehdr *aElfHdr);
-	void DumpElfFile(char* aFile);
 
 	PLUINT32 ProcessSymbols();
 	ElfImports::ImportMap GetImports();

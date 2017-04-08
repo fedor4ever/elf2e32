@@ -398,19 +398,6 @@ PLUINT32  ElfExecutable::ProcessSymbols(){
 }
 
 /**
-This function Dump all the sections with their section details (i.e., the section name, type,
-size and linked section if any)
-@param aFile - ELF file name
-@internalComponent
-@released
-*/
-/** TODO (fedoe4ever#1#03/30/17): What this mean? why that func empty??? */
-void ElfExecutable::DumpElfFile(char* aFile){
-	aFile = aFile;
-}
-
-
-/**
 This function adds exports into the export list
 @param aDll - Dll name
 @param aSymbol - Symbol

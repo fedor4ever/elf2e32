@@ -650,7 +650,7 @@ void ParameterManager::ParameterAnalyser()
 			parser = (ParserFn)aHelpDesc->iParser ;
 			parser(this, "help", nullptr, nullptr);
 		}
-
+		if (aName.back() == '\n') aName.pop_back();
 		parser(this, const_cast<char*>(aName.c_str()), optval, aDesc);
 	}
 }
@@ -2378,18 +2378,16 @@ void ParameterManager::ParseCapabilitiesArg(SCapabilitySet& aCapabilities, const
 		{
 		    tmp.push_back(x);
 		}
-        else if ((x == '+') || (x == '-'))
+        if ((x == '+') || (x == '-'))
         {
-            if(tmp.empty() && (x == '-'))
-                invert = true;
             ParseCapability1(tmp, aCapabilities, invert);
-            if(x == '-') invert = true;
             invert = false;
+            if(x == '-') invert = true;
             tmp.clear();
         }
 	}
 	if(!tmp.empty())
-        ParseCapability1(tmp, aCapabilities, false);
+        ParseCapability1(tmp, aCapabilities, invert);
 }
 
 /**

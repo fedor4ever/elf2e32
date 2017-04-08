@@ -62,7 +62,7 @@ export info in the iExports member (from the iInputElfFile member of ElfConsumer
 PLUINT32 ElfConsumer::ReadElfFile(char* aFile){
 	FILE*	aFd;
 
-	if( (aFd = fopen(aFile,"rb")) == NULL) {
+	if( (aFd = fopen(aFile,"rb")) == nullptr) {
 		throw FileError(FILEOPENERROR, aFile);
 	}
 

@@ -148,7 +148,7 @@ UseCaseBase * Elf2E32::SelectUseCase()
 			iTargetType = ELib;
 		}
 		else if (dumpMessageFileOption)
-			return NULL;
+			return nullptr;
 		else
 			throw InvalidInvocationError(INVALIDINVOCATIONERROR); //REVISIT
 	}

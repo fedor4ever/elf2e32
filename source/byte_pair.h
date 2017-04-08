@@ -24,6 +24,5 @@ using std::ostream;
 TInt BytePairCompress(TUint8* dst, TUint8* src, TInt size);
 TInt Pak(TUint8* dst, TUint8* src, TInt size);
 TInt Unpak(TUint8* dst, TInt dstSize, TUint8* src, TInt srcSize, TUint8*& srcNext);
-void BytePairCompress(char * bytes, TInt size, ostream &os);
 
 #endif
