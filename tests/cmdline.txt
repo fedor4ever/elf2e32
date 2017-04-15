@@ -1,10 +1,13 @@
-elf2e32 --uid1=0x10000079 --namedlookup --libpath="D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib" --uid2=0x20004c45 --uid3=0x00000000 --capability=All-TCB --fpu=softvfp --targettype=STDDLL --definput="..\..\tests\libcrypto.def" --dso="..\..\tests\libcrypto{000a0000}.dso" --linkas="..\..\tests\libcrypto{000a0000}.dll" --defoutput="..\..\tests\out.def" --elfinput="..\..\tests\libcrypto.dll" --output="..\..\tests\libcrypto-2.4.5.dll"
+#direct run in console
+elf2e32 --uid1=0x10000079 --namedlookup --libpath="D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib" --uid2=0x20004c45 --uid3=0x00000000 --capability=All-TCB --fpu=softvfp --targettype=STDDLL --definput="..\..\tests\libcrypto.def" --dso="..\..\tests\libcrypto{000a0000}.dso" --linkas="..\..\tests\libcrypto{000a0000}.dll" --defoutput="..\..\tests\out.def" --elfinput="..\..\tests\libcrypto.dll" --output="..\..\tests\libcrypto-2.4.5.dll" --dlldata
 
-elf2e32 --definput=C:\ISO\vs2015_community\elf2e32\tests\libcryptou.def --dso=C:\ISO\vs2015_community\elf2e32\tests\libcrypto.dso --linkas=C:\ISO\vs2015_community\elf2e32\tests\libcrypto{000a0000}.dll
+elf2e32 --definput=elf2e32\tests\libcryptou.def --dso=elf2e32\tests\libcrypto.dso --linkas=elf2e32\tests\libcrypto{000a0000}.dll
 
-elf2e32 --capability=All-TCB --definput="..\tests\libcryptou.def" --defoutput="..\tests\out.def" --elfinput="..\tests\libcrypto.dll" --output="..\tests\libcrypto-2.4.5.dll" --libpath="D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib" --linkas="..\tests\libcrypto{000a0000}.dll" --dso="..\tests\libcrypto{000a0000}.dso" --fpu=softvfp --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --namedlookup --uid1=0x10000079
+#vs15 run options
+elf2e32 --capability=All-TCB --definput="..\tests\libcryptou.def" --defoutput="..\tests\out.def" --elfinput="..\tests\libcrypto.dll" --output="..\tests\libcrypto-2.4.5.dll" --libpath="D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib" --linkas="..\tests\libcrypto{000a0000}.dll" --dso="..\tests\libcrypto{000a0000}.dso" --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --namedlookup --dlldata
 
-elf2e32 --capability=All-TCB --definput="tests\libcryptou.def" --defoutput="tests\out.def" --elfinput="tests\libcrypto.dll" --output="tests\libcrypto-2.4.5.dll" --libpath="D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib" --linkas="tests\libcrypto{000a0000}.dll" --dso="tests\libcrypto{000a0000}.dso" --fpu=softvfp --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --namedlookup --uid1=0x10000079
+#codeblock run options
+elf2e32 --capability=All-TCB --definput="tests\libcryptou.def" --defoutput="tests\out.def" --elfinput="tests\libcrypto.dll" --output="tests\libcrypto-2.4.5.dll" --libpath="D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib" --linkas="tests\libcrypto{000a0000}.dll" --dso="tests\libcrypto{000a0000}.dso" --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --namedlookup --dlldata
 
 e:\elf2e32\source\e32imagefile.cpp(1518): warning C6308: 'realloc' might return null pointer: assigning null pointer to 'iData', which is passed as an argument to 'realloc', will cause the original memory block to be leaked.
 e:\elf2e32\source\e32imagefile.cpp(1521): warning C6387: 'iData+oldsize' could be '0':  this does not adhere to the specification for the function 'memset'. 
