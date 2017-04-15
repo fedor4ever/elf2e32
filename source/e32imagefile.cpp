@@ -1344,12 +1344,6 @@ TCheckedUid::TCheckedUid(const TUidType& aUidType)
     iCheck = ((TE32ImageUids*)this)->Check();
 	}
 
-// needed by E32ImageHeaderV::ValidateHeader...
-//void Mem::Crc32(TUint32& aCrc, const void* aPtr, TInt aLength)
-//	{
-//	::Crc32(aCrc, aPtr, aLength);
-//	}
-
 /**
 This function updates the CRC of the E32 Image.
 @internalComponent
@@ -1379,10 +1373,9 @@ void E32ImageFile::AllocateE32Image()
 	memset(iE32Image, 0, aImageSize);
 
 	E32ImageChunks::ChunkList aChunkList = iChunks.GetChunks();
-	E32ImageChunks::ChunkList::iterator p;
-	for(p = aChunkList.begin(); p != aChunkList.end(); p++)
+	for(auto p: aChunkList)
 	{
-		(*p)->Write(iE32Image);
+		p->Write(iE32Image);
 	}
 
 	E32ImageHeaderV* header = (E32ImageHeaderV*)iE32Image;
@@ -1870,35 +1863,42 @@ void E32ImageFile::ProcessSymbolInfo() {
 	// Donot disturb the internal list sorting.
 	ElfExports::ExportList aList = iElfExecutable->iExports->GetExports(false);
 
-	ElfExports::ExportList::iterator aIter = aList.begin();
-	DllSymbol *aSym;
 	TUint aAlign, aNameLen;
 
 
 	char aPad[] = {'\0', '\0', '\0', '\0'};
+	std::cout << "aList.size() is: " << aList.size() << "\n";
 
 
-	while ( aIter != aList.end() ) {
-		aSym = *aIter;
-		iSymAddrTab.push_back(aSym->iElfSym->st_value);
+	int i = 0;
+	for(auto x: aList){
+        if(!x->iElfSym)
+            std::cout << "nullptr at pos: " << i << "\n";
+        i++;
+	}
+
+/** TODO (Administrator#1#04/15/17): The nullptr iElfSym position corresponds to the Absent function in def file */
+	for(auto x: aList ) {
+		if(!x->iElfSym) continue;
+
+		iSymAddrTab.push_back(x->iElfSym->st_value);
 		// The symbol names always start at a 4-byte aligned offset.
 		iSymNameOffset = iSymbolNames.size() >> 2;
 		iSymNameOffTab.push_back(iSymNameOffset);
 
-		iSymbolNames += aSym->SymbolName();
+		iSymbolNames += x->SymbolName();
 		iSymbolNames += '\0';
 		aNameLen = iSymbolNames.size();
 		aAlign = Align(aNameLen, sizeof(int));
-		aAlign = aAlign - aNameLen;
+		aAlign -= aNameLen;
 		if(aAlign % 4){
 			iSymbolNames.append(aPad, aAlign);
 		}
 		//Create a relocation entry...
-		aRel = new ElfLocalRelocation(iElfExecutable, aPlace, 0, 0, R_ARM_ABS32, nullptr,\
-			ESegmentRO, aSym->iElfSym, false);
+		aRel = new ElfLocalRelocation(iElfExecutable, aPlace, 0, 0, R_ARM_ABS32, nullptr,
+			ESegmentRO, x->iElfSym, false);
 		aPlace += sizeof(uint32);
 		aRel->Add();
-		++aIter;
 	}
 }
 
@@ -1927,14 +1927,12 @@ char* E32ImageFile::CreateSymbolInfo(size_t aBaseOffset) {
 	aPos += iSymNameOffTab.size()*aSizeofNames;
 	aPos = Align(aPos, sizeof(uint32));
 
-	std::vector<uint32>::iterator Iter = iSymNameOffTab.begin();
 	TInt aOffLen = 2;
 	if(aSymInf.iFlags & 1)
 		aOffLen=4;
-	while(Iter != iSymNameOffTab.end()){
-		memcpy( ((void*)(aInfo+aPos)), ((void*)&Iter), aOffLen);
+	for(auto x: iSymNameOffTab){
+		memcpy( ((void*)(aInfo+aPos)), ((void*)&x), aOffLen);
 		aPos += aOffLen;
-		++Iter;
 	}
 
 	aPos = aSymInf.iStringTableOffset;
@@ -1947,15 +1945,13 @@ char* E32ImageFile::CreateSymbolInfo(size_t aBaseOffset) {
 	uint32 *aLocation, aOffset;
 	uint32 *aImportTab = iImportSection;
 
-	std::vector<int>::iterator aIter = iImportTabLocations.begin();
 	aOffset = aBaseOffset - iHdr->iCodeOffset;// This gives the offset of syminfo table base
 										// wrt the code section start
 	aOffset += aSymInf.iDepDllZeroOrdTableOffset; // This points to the ordinal zero offset table now
-	while( aIter != iImportTabLocations.end()) {
-		aLocation = (aImportTab + *aIter);
+	for(auto x: iImportTabLocations) {
+		aLocation = (aImportTab + x);
 		*aLocation = aOffset;
 		aOffset += sizeof(uint32);
-		++aIter;
 	}
 
 	return aInfo;

@@ -883,7 +883,7 @@ Function to get segment header
 #include <iostream>
 Elf32_Phdr* ElfExecutable::Segment(Elf32_Addr aAddr) {
     globalcntr++;
-    std::cout << globalcntr << "\n";
+  //  std::cout << globalcntr << "\n";
 	if(iCodeSegmentHdr) {
 		PLUINT32 aBase = iCodeSegmentHdr->p_vaddr;
 		if( aBase <= aAddr && aAddr < (aBase + iCodeSegmentHdr->p_memsz) ) {
@@ -898,7 +898,9 @@ Elf32_Phdr* ElfExecutable::Segment(Elf32_Addr aAddr) {
 	}
 
 	std::cout << "we failin: " << globalcntr << "\n";
-	throw int(0);
+	/** TODO (Administrator#1#04/09/17): Deall with unsetted segment header */
+//throw int(0);
+    return nullptr;
 }
 
 /**
