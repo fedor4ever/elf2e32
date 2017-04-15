@@ -31,7 +31,6 @@
 #include "h_utl.h"
 #include "h_ver.h"
 
-using std::cout;
 using std::endl;
 /**
 Constructor for the ParameterManager.
@@ -650,7 +649,6 @@ void ParameterManager::ParameterAnalyser()
 			parser = (ParserFn)aHelpDesc->iParser ;
 			parser(this, "help", nullptr, nullptr);
 		}
-		if (aName.back() == '\n') aName.pop_back();
 		parser(this, const_cast<char*>(aName.c_str()), optval, aDesc);
 	}
 }

@@ -153,7 +153,7 @@ Constructor for class TFileOutput
 @internalComponent
 @released
 */
-TFileOutput::TFileOutput(std::ofstream & os):iOutStream(os)
+TFileOutput::TFileOutput(std::ofstream & os): iDataCount(0), iOutStream(os)
 {
 	Set(iBuf,KBufSize);
 }
@@ -176,7 +176,7 @@ Function to write out the contents of the buffer
 */
 void TFileOutput::FlushL()
 {
-	TInt len=Ptr()-iBuf;
+	auto len=Ptr()-iBuf;
 	if (len)
 	{
 		iOutStream.write(reinterpret_cast<char *>(iBuf), len); // write extended header
@@ -735,9 +735,9 @@ Construct a bit stream input object
 Following construction the bit stream is ready for reading bits, but will
 immediately call UnderflowL() as the input buffer is empty.
 */
-TBitInput::TBitInput():iCount(0),iRemain(0)
+TBitInput::TBitInput()
 {
-
+	Set(nullptr, 0, 0);
 }
 
 /**

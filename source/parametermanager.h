@@ -431,10 +431,10 @@ private:
 	char * iImageName;
 
 	/** To check if the --targettypeoption (Option to pass the target type of the final image) is provided */
-	 bool iTargetTypeOption;
+	bool iTargetTypeOption;
 
 	/** To check if the --definput (Option to pass the input DEF File) is passed as input */
-	 bool iDefFileInOption;
+	bool iDefFileInOption;
 
 	/** To check if the --defoutput (Option to pass the output DEF File name) is passed as input */
 	bool iDefFileOutOption;

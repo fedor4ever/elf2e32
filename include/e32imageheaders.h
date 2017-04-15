@@ -29,13 +29,13 @@
 class TBitInput
 	{
 public:
-	IMPORT_C TBitInput();
-	IMPORT_C TBitInput(const TUint8* aPtr, TInt aLength, TInt aOffset=0);
-	IMPORT_C void Set(const TUint8* aPtr, TInt aLength, TInt aOffset=0);
+	TBitInput();
+	TBitInput(const TUint8* aPtr, TInt aLength, TInt aOffset=0);
+	void Set(const TUint8* aPtr, TInt aLength, TInt aOffset=0);
 //
-	IMPORT_C TUint ReadL();
-	IMPORT_C TUint ReadL(TInt aSize);
-	IMPORT_C TUint HuffmanL(const TUint32* aTree);
+	TUint ReadL();
+	TUint ReadL(TInt aSize);
+	TUint HuffmanL(const TUint32* aTree);
 private:
 	virtual void UnderflowL();
 private:
@@ -59,20 +59,19 @@ private:
 	This allows the encoding to be stored compactly as a table of code lengths
 */
 class Huffman
-	{
+{
 public:
 	enum {KMaxCodeLength=27};
 	enum {KMetaCodes=KMaxCodeLength+1};
 	enum {KMaxCodes=0x8000};
 public:
-	IMPORT_C static void HuffmanL(const TUint32 aFrequency[],TInt aNumCodes,TUint32 aHuffman[]);
-	IMPORT_C static void Encoding(const TUint32 aHuffman[],TInt aNumCodes,TUint32 aEncodeTable[]);
-	IMPORT_C static void Decoding(const TUint32 aHuffman[],TInt aNumCodes,TUint32 aDecodeTree[],TInt aSymbolBase=0);
-	IMPORT_C static TBool IsValid(const TUint32 aHuffman[],TInt aNumCodes);
-//
-	IMPORT_C static void ExternalizeL(TBitOutput& aOutput,const TUint32 aHuffman[],TInt aNumCodes);
-	IMPORT_C static void InternalizeL(TBitInput& aInput,TUint32 aHuffman[],TInt aNumCodes);
-	};
+	static void HuffmanL(const TUint32 aFrequency[],TInt aNumCodes,TUint32 aHuffman[]);
+	static void Encoding(const TUint32 aHuffman[],TInt aNumCodes,TUint32 aEncodeTable[]);
+	static bool IsValid(const TUint32 aHuffman[],TInt aNumCodes);
+	static void ExternalizeL(TBitOutput& aOutput,const TUint32 aHuffman[],TInt aNumCodes);
+	static void Decoding(const TUint32 aHuffman[],TInt aNumCodes,TUint32 aDecodeTree[],TInt aSymbolBase=0);
+	static void InternalizeL(TBitInput& aInput,TUint32 aHuffman[],TInt aNumCodes);
+};
 
 
 enum TCpu
@@ -119,7 +118,14 @@ const TUint16 KTextRelocType            = (TUint16)0x1000;
 const TUint16 KDataRelocType            = (TUint16)0x2000;
 const TUint16 KInferredRelocType        = (TUint16)0x3000;
 */
-class RFile;
+
+
+struct SSecurityInfo {
+    TUint32 iSecureId;
+    TUint32 iVendorId;
+    SCapabilitySet iCaps;   // Capabilities re. platform security
+    };
+
 class E32ImageHeader
 	{
 public:
@@ -131,6 +137,9 @@ public:
 			return KImageABI_EABI;
 		return KImageABI_GCC98r2;
 		}
+/**
+Extract entrypoint format from aFlags.
+*/
 	inline static TUint EptFromFlags(TUint aFlags)
 		{
 		if (aFlags&KImageHdrFmtMask)
@@ -168,6 +177,9 @@ public:
 		return 0x00000000u;
 		}
 	inline TInt TotalSize() const;
+/**
+	Return total size of file after decompression, or -1 if file not compressed.
+*/
 	inline TInt UncompressedFileSize() const;
 	inline TUint HeaderFormat() const
 		{ return HdrFmtFromFlags(iFlags); }
@@ -179,10 +191,13 @@ public:
 		{ return ABIFromFlags(iFlags); }
 	inline void GetSecurityInfo(SSecurityInfo& aInfo) const;
 	inline TCpu CpuIdentifier() const;
+/**
+	Return #iProcessPriority.
+*/
 	inline TProcessPriority ProcessPriority() const;
 	inline TUint32 ExceptionDescriptor() const;
 	TInt IntegrityCheck(TInt aFileSize);
-	E32ImageHeader(E32ImageHeader*& aHdr, RFile& aFile);
+	//inline TInt ValidateHeader(TInt aFileSize, TUint32& aUncompressedSize) const;
 public:
 	TUint32	iUid1;
 	TUint32	iUid2;
@@ -235,11 +250,12 @@ public:
 								// For other formats this is file size - total header size
 	};
 
-// export description type
-const TUint	KImageHdr_ExpD_NoHoles			=0x00;	// no holes, all exports present
-const TUint	KImageHdr_ExpD_FullBitmap		=0x01;	// full bitmap present
-const TUint	KImageHdr_ExpD_SparseBitmap8	=0x02;	// sparse bitmap present, granularity 8
-const TUint	KImageHdr_ExpD_Xip				=0xff;	// XIP file
+// export description type E32ImageHeaderV::iExportDescType
+const TUint	KImageHdr_ExpD_NoHoles			=0x00;	///< no holes, all exports present
+const TUint	KImageHdr_ExpD_FullBitmap		=0x01;	///< full bitmap present at E32ImageHeaderV::iExportDesc
+const TUint	KImageHdr_ExpD_SparseBitmap8	=0x02;	///< sparse bitmap present at E32ImageHeaderV::iExportDesc, granularity 8
+const TUint	KImageHdr_ExpD_Xip				=0xff;	///< XIP file
+
 
 
 inline TInt E32ImageHeader::TotalSize() const
@@ -294,6 +310,20 @@ inline TUint32 E32ImageHeader::ExceptionDescriptor() const
 	return 0;
 	}
 
+/* TInt E32ImageHeader::ValidateHeader(TInt aFileSize, TUint32& aUncompressedSize) const {
+    // check file is big enough for any header...
+    if(TUint(aFileSize)<sizeof(*this)) return KErrCorrupt;
+    TUint hdrfmt = HeaderFormat();
+    if(hdrfmt==KImageHdrFmt_V)
+        return ((E32ImageHeaderV*)this)->ValidateHeader(aFileSize,aUncompressedSize);
+
+    return KErrNotSupported; // header format unrecognised
+    } */
+
+/**
+A block of imports from a single executable.
+These structures are conatined in a images Import Section (E32ImportSection).
+*/
 class E32ImportBlock
 	{
 public:
@@ -301,11 +331,15 @@ public:
 	inline TInt Size(TUint aImpFmt) const;
 	inline const TUint* Imports() const;	// import list if present
 public:
-	TUint32	iOffsetOfDllName;	// offset of name of dll importing from
-	TInt	iNumberOfImports;	// no of imports from this dll
+	TUint32	iOffsetOfDllName;	///< Offset from start of import section for a NUL terminated executable (DLL or EXE) name.
+	TUint	iNumberOfImports;	///< Number of imports from this executable.
 //	TUint	iImport[iNumberOfImports];	// list of imported ordinals, omitted in PE2 import format
 	};
 
+/**
+Return size of this import block.
+@param aImpFmt Import format as obtained from image header.
+*/
 inline TInt E32ImportBlock::Size(TUint aImpFmt) const
 	{
 	TInt r = sizeof(E32ImportBlock);
@@ -314,6 +348,10 @@ inline TInt E32ImportBlock::Size(TUint aImpFmt) const
 	return r;
 	}
 
+/**
+Return pointer to import block which immediately follows this one.
+@param aImpFmt Import format as obtained from image header.
+*/
 inline const E32ImportBlock* E32ImportBlock::NextBlock(TUint aImpFmt) const
 	{
 	const E32ImportBlock* next = this + 1;
@@ -322,11 +360,21 @@ inline const E32ImportBlock* E32ImportBlock::NextBlock(TUint aImpFmt) const
 	return next;
 	}
 
+/**
+Return address of first import in this block.
+For import format KImageImpFmt_ELF, imports are list of code section offsets.
+For import format KImageImpFmt_PE, imports are a list of imported ordinals.
+For import format KImageImpFmt_PE2, the import list is not present and should not be accessed.
+*/
 inline const TUint* E32ImportBlock::Imports() const
 	{
 	return (const TUint*)(this + 1);
 	}
-
+/**
+Header for the Import Section in an image, as referenced by E32ImageHeader::iImportOffset.
+Immediately following this structure are an array of E32ImportBlock structures.
+The number of these is given by E32ImageHeader::iDllRefTableCount.
+*/
 class E32ImportSection
 	{
 public:
@@ -368,7 +416,7 @@ public:
 
 const TInt KDeflationCodes=TEncoding::ELitLens+TEncoding::EDistances;
 
-NONSHARABLE_CLASS(CInflater) : public CBase
+CInflater : public CBase
 	{
 public:
 	enum {EBufSize = 0x800, ESafetyZone=8};
@@ -395,22 +443,22 @@ private:
 void DeflateL(const TUint8* aBuf, TInt aLength, TBitOutput& aOutput);
 
 
-NONSHARABLE_CLASS(TFileInput) : public TBitInput
-	{
- 	enum {KBufSize=KInflateWindowSize};
+/**
+Class derived from TBitInput
+@internalComponent
+@released
+*/
+TFileInput : public TBitInput
+{
 public:
-	TFileInput(RFile& aFile);
-	void Cancel();
+	TFileInput(unsigned char* source,int size);
+	virtual ~TFileInput();
 private:
 	void UnderflowL();
 private:
-	RFile& iFile;
-	TRequestStatus iStat;
 	TUint8* iReadBuf;
-	TPtr8 iPtr;
-	TUint8 iBuf1[KBufSize];
-	TUint8 iBuf2[KBufSize];
-	};
+	TInt iSize;
+};
 
 class TFileNameInfo
 	{

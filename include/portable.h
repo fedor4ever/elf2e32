@@ -20,6 +20,9 @@ typedef wchar_t __TText;
 
 #ifdef __GNUC__
 #define _FOFF(c,f)   __builtin_offsetof(c,f)
+#else
+#define  _FOFF(c,f) offsetof(c,f)
+#endif // __GNUC__
 
 typedef unsigned char TText8;
 typedef signed int TInt;
@@ -135,7 +138,7 @@ class TUid {
 //  IMPORT_C TBool operator!=(const TUid& aUid) const;
 //  IMPORT_C TUidName Name() const;
 #endif
-    static inline TUid Uid(TInt aUid) {
+    static inline TUid Uid(TUint aUid) {
         TUid uid= {aUid};
         return uid;
         }
@@ -294,8 +297,8 @@ class E32EpocExpSymInfoHdr {
 
 class TVersion {
     public:
-        IMPORT_C TVersion() {}
-        IMPORT_C TVersion(TInt aMajor,TInt aMinor,TInt aBuild);
+        TVersion(TInt aMajor,TInt aMinor,TInt aBuild);
+        TVersion(): TVersion(0,0,0) {}
         //IMPORT_C TVersionName Name() const;
     public:
         TInt8 iMajor; //The major version number.
@@ -483,7 +486,7 @@ These structures are conatined in a images Import Section (E32ImportSection).
 class E32ImportBlock {
     public:
         inline const E32ImportBlock* NextBlock(TUint aImpFmt) const;
-        inline TInt Size(TUint aImpFmt) const;
+        inline size_t Size(TUint aImpFmt) const;
         inline const TUint* Imports() const;    // import list if present
     public:
         TUint32 iOffsetOfDllName;           ///< Offset from start of import section for a NUL terminated executable (DLL or EXE) name.
@@ -495,8 +498,8 @@ class E32ImportBlock {
 Return size of this import block.
 @param aImpFmt Import format as obtained from image header.
 */
-inline TInt E32ImportBlock::Size(TUint aImpFmt) const {
-    TInt r = sizeof(E32ImportBlock);
+inline size_t E32ImportBlock::Size(TUint aImpFmt) const {
+	size_t r = sizeof(E32ImportBlock);
     if(aImpFmt!=KImageImpFmt_PE2)
         r += iNumberOfImports * sizeof(TUint);
     return r;
@@ -627,6 +630,5 @@ typedef struct TExceptionDescriptor {
 #endif // 0
 #ifdef __MINGW32__
 #endif // __MINGW32__
-#endif // __GNUC__
 
 #endif // __portable__

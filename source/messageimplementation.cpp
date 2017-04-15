@@ -118,6 +118,8 @@ Constructor to reset the logging option flag.
 Message::Message()
 {
     iLogging = false;
+    iLogFileName = nullptr;
+    iLogPtr = nullptr;
 }
 
 /**
@@ -276,6 +278,7 @@ void Message::ReportMessage(int aMessageType, int aMsgIndex,...)
 				case '%':
 					message += ptr[0];
 					reportMessage = ptr;
+					break;
 				default:
 					break;
 			}

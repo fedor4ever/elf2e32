@@ -67,7 +67,6 @@ int ElfFileSupplied::Execute()
 	try
 	{
 		ProcessExports();
-		std::cout << "ElfFileSupplied::Execute()\n";
 	}
 	catch(SymbolMissingFromElfError& aSme)
 	{
@@ -414,6 +413,7 @@ E32ImageHeaderV * ElfFileSupplied::AllocateE32ImageHeader()
 	}
 
 	int nexp = GetNumExports();
+	cout << "numexports: " << nexp << "\n";
 	size_t memsz = (nexp + 7) >> 3;	// size of complete bitmap
 	size_t mbs = (memsz + 7) >> 3;	// size of meta-bitmap
 	size_t nbytes = 0;
