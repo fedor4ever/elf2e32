@@ -24,7 +24,7 @@
 #include "dll_type_target.h"
 
 /**
-This class is derived from the base class ExportTypeFBTarget and is responsible for
+This class is derived from the base class DLLTarget and is responsible for
 creation of STDEXE Target.
 
 @internalComponent
@@ -36,14 +36,9 @@ class StdExeTarget : public DLLTarget
 public:
 	explicit StdExeTarget(ParameterManager* aParameterManager);
 	virtual ~StdExeTarget();
-	bool ImageIsDll();
-	bool AllowDllData();
 	void GenerateOutput();
 	bool WarnForNewExports();
 };
 
 
-
 #endif // STDEXE_TARGET_H
-
-

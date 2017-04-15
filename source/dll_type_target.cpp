@@ -58,9 +58,10 @@ Function to check if the provided input is a DLL.
 @internalComponent
 @released
 
-@result True since Export Type Target is a DLL.
+@result True for DLL Type Targets.
 */
 bool DLLTarget::ImageIsDll()
 {
-	return true;
+	return ((iParameterManager->TargetTypeName() == EDll)||
+	(iParameterManager->TargetTypeName() == EPolyDll));
 }

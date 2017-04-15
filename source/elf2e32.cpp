@@ -23,8 +23,6 @@
 #include "librarytarget.h"
 #include "exetarget.h"
 #include "polydll_fb_target.h"
-#include "exexp_fb_target.h"
-#include "exexp_rebuild_target.h"
 #include "polydll_rebuild_target.h"
 #include "stdexe_target.h"
 #include "filedump.h"
@@ -156,15 +154,15 @@ UseCaseBase * Elf2E32::SelectUseCase()
 	switch (iTargetType)
 	{
 	case EDll:
+		ValidateDSOGeneration(iParameterListInterface, iTargetType);
+		ValidateE32ImageGeneration(iParameterListInterface, iTargetType);
+
 		if (!deffilein && elfin)
 			iUseCase = new DLLTarget(iParameterListInterface);
 		else if (deffilein && elfin)
 			iUseCase = new ExportTypeRebuildTarget(iParameterListInterface);
 		else if (!elfin)
 			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--elfinput");
-
-		ValidateDSOGeneration(iParameterListInterface, iTargetType);
-		ValidateE32ImageGeneration(iParameterListInterface, iTargetType);
 		return iUseCase;
 	case ELib:
 		if (deffilein)
@@ -200,9 +198,9 @@ UseCaseBase * Elf2E32::SelectUseCase()
 		return iUseCase;
 	case EExexp:
 	       	if (!deffilein && elfin)
-                iUseCase = new ExexpFBTarget(iParameterListInterface);
+                iUseCase = new DLLTarget(iParameterListInterface);
 			else if (deffilein && elfin)
-				iUseCase = new ExExpRebuildTarget(iParameterListInterface);
+				iUseCase = new ExportTypeRebuildTarget(iParameterListInterface);
 			else if (!elfin)
 				throw ParameterParserError(NOREQUIREDOPTIONERROR,"--elfinput");
 

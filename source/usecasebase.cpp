@@ -160,7 +160,14 @@ This function returns if data in a DLL is allowed.
 */
 bool UseCaseBase::AllowDllData()
 {
-	return iParameterManager->DllDataP();
+	if(((iParameterManager->TargetTypeName() == EDll)||
+			(iParameterManager->TargetTypeName() == EPolyDll)) &&
+			iParameterManager->DllDataP()) return true;
+	else if((iParameterManager->TargetTypeName() == EExe) ||
+			(iParameterManager->TargetTypeName() == EExexp) ||
+			(iParameterManager->TargetTypeName() == EStdExe)) return true;
+	//true ExExpRebuildTarget,ExexpFBTarget, ExExpRebuildTarget, StdExeTarget
+	return false;
 }
 
 /**

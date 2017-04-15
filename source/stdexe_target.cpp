@@ -41,32 +41,6 @@ StdExeTarget::~StdExeTarget(){
 }
 
 /**
-Function to check if the provided input is a DLL.
-
-@internalComponent
-@released
-
-@result False since StdExe Target is an Exe.
-*/
-bool StdExeTarget::ImageIsDll()
-{
-	return false;
-}
-
-/**
-Function to check if writable data is allowed.
-
-@internalComponent
-@released
-
-@result True, since STDEXE targets can have writable data
-*/
-bool StdExeTarget::AllowDllData()
-{
-	return true;
-}
-
-/**
 Function to write E32 image. Here, no def file or Dso file is generated.
 
 @internalComponent

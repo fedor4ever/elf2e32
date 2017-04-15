@@ -11,7 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters=' --uid1=0x10000079 --namedlookup --libpath=&quot;D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib&quot; --uid2=0x20004c45 --uid3=0x00000000 --capability=All-TCB --fpu=softvfp --targettype=STDDLL --definput=&quot;tests\libcryptou.def&quot; --dso=&quot;tests\libcrypto{000a0000}.dso&quot; --linkas=&quot;tests\libcrypto{000a0000}.dll&quot; --defoutput=&quot;tests\out.def&quot; --elfinput=&quot;tests\libcrypto.dll&quot; --output=&quot;tests\libcrypto-2.4.5.dll&quot; ' />
+				<Option parameters=' --dlldata --capability=All-TCB --definput=&quot;tests\libcryptou.def&quot; --defoutput=&quot;tests\out.def&quot; --elfinput=&quot;tests\libcrypto.dll&quot; --output=&quot;tests\libcrypto-2.4.5.dll&quot; --libpath=&quot;D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib&quot; --linkas=&quot;tests\libcrypto{000a0000}.dll&quot; --dso=&quot;tests\libcrypto{000a0000}.dso&quot; --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --namedlookup' />
 				<Compiler>
 					<Add option="-g -O0" />
 					<Add option="-g3" />
@@ -51,6 +51,7 @@
 			<Add library="../../MinGW/lib/gcc/mingw32/5.3.0/libgcc.a" />
 		</Linker>
 		<Unit filename="include/cpudefs.h" />
+		<Unit filename="include/e32imageheaders.h" />
 		<Unit filename="include/elfdefs.h" />
 		<Unit filename="include/h_ver.h" />
 		<Unit filename="include/portable.h" />
