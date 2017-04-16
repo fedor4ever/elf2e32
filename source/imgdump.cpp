@@ -295,7 +295,7 @@ void E32ImageFile::DumpHeader(TInt aDumpFlags)
 			TInt i;
 			for(i=0; i<ECapability_Limit; i++)
 				if(v->iS.iCaps[i>>5]&(1<<(i&31)))
-					PrintString("              %s\n", CapabilityNames[i]);
+					PrintString("\t\t%s\n", CapabilityNames[i]);
 			PrintString("\n");
 		}
 	}

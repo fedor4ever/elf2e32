@@ -39,32 +39,14 @@ ElfRelocations::~ElfRelocations()
 {
 	if(iCodeRelocations.size())
 	{
-		RelocationList::iterator aItr = iCodeRelocations.begin();
-		RelocationList::iterator last = iCodeRelocations.end();
-		ElfLocalRelocation *temp;
+		for(auto x: iCodeRelocations) delete x;
 
-		while( aItr != last)
-		{
-			temp = *aItr;
-			++aItr;
-			delete temp;
-			temp = nullptr;
-		}
 		iCodeRelocations.clear();
 	}
 	if(iDataRelocations.size())
 	{
-		RelocationList::iterator aItr = iDataRelocations.begin();
-		RelocationList::iterator last = iDataRelocations.end();
-		ElfLocalRelocation *temp;
+		for(auto x: iCodeRelocations) delete x;
 
-		while( aItr != last)
-		{
-			temp = *aItr;
-			++aItr;
-			delete temp;
-			temp = nullptr;
-		}
 		iDataRelocations.clear();
 	}
 }

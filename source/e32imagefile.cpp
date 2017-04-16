@@ -40,8 +40,6 @@
 #include <iostream>
 #ifndef __LINUX__
     #include <io.h>
-#else
-    #include <time.h>
 #endif
 #include <time.h>
 #include <stdio.h>
@@ -118,17 +116,7 @@ E32ImageChunks::~E32ImageChunks()
 {
  	if(iChunks.size())
  	{
- 		ChunkList::iterator aItr = iChunks.begin();
- 		ChunkList::iterator last = iChunks.end();
- 		E32ImageChunkDesc *temp;
-
- 		while( aItr != last)
- 		{
- 			temp = *aItr;
- 			++aItr;
- 			delete temp;
- 			temp = nullptr;
- 		}
+ 		for(auto x: iChunks) delete x;
  	}
 }
 
@@ -206,7 +194,11 @@ E32ImageFile::E32ImageFile(const char * aFileName, ElfExecutable * aExecutable, 
 	iLayoutDone(false),
 	iMissingExports(0),
 	iSymNameOffset(0),
-	iOrigHdr(0) {}
+	iSize(0),
+	iOrigHdr(0),
+	iError(0),
+	iOrigHdrOffsetAdj(0),
+	iFileSize(0){}
 
 /**
 Constructor for E32ImageFile class.
@@ -214,10 +206,6 @@ Constructor for E32ImageFile class.
 @released
 */
 E32ImageFile::E32ImageFile(): E32ImageFile::E32ImageFile(nullptr, nullptr, nullptr){}
-//     iFileName(nullptr), iE32Image(nullptr),iExportBitMap(0),cleanupStack(0),
-//    iData(nullptr),iHdr(nullptr),iImportSection(0), iSize(0), iOrigHdr(nullptr),  iError(0),
-//    iSource(EE32Image), iOrigHdrOffsetAdj(0){};
-
 
 /**
 This function generates the E32 image.
@@ -288,11 +276,10 @@ void E32ImageFile::ProcessImports()
 	}
 	// Now fill in the E32ImportBlocks
 	int idx = 0;
-	char * aDsoName;
 	for (p = aImportMap.begin(); p != aImportMap.end(); p++, idx++)
 	{
 		ElfImports::RelocationList & aImports = (*p).second;
-		aDsoName = aImports[0]->iVerRecord->iSOName;
+		char * aDsoName = aImports[0]->iVerRecord->iSOName;
 
 		//const char * aDSO = FindDSO((*p).first);
 		const char * aDSO = FindDSO(aDsoName);
@@ -301,8 +288,8 @@ void E32ImageFile::ProcessImports()
 		int nImports = aImports.size();
 
 		// Take the additional 0th ordinal import into account
-		if( aNamedLookup )
-			nImports++;
+		if( aNamedLookup ) nImports++;
+
 		aImportSection.push_back(nImports);
 
 		size_t aSize;
@@ -531,10 +518,9 @@ void E32ImageFile::CreateRelocations(ElfRelocations::RelocationList & aRelocList
 
 		int page = -1;
 		int pagesize = sizeof(E32RelocPageDesc);
-		ElfRelocations::RelocationList::iterator r;
-		for (r = aRelocList.begin(); r != aRelocList.end(); r++)
+		for (auto r: aRelocList)
 		{
-			ElfLocalRelocation * aReloc = *r;
+			ElfLocalRelocation * aReloc = r;
 			int p = aReloc->iAddr & 0xfffff000;
 			if (page != p)
 			{
@@ -870,9 +856,9 @@ void E32ImageFile::AddExportDescription()
 	size_t mbs = (memsz + 7) >> 3;	// size of meta-bitmap
 	size_t nbytes = 0;
 	unsigned int i;
-	for (i=0; i<memsz; ++i)
-		if (iExportBitMap[i] != 0xff)
-			++nbytes;				// number of groups of 8
+	for (i=0; i<memsz; ++i){
+		if (iExportBitMap[i] != 0xff) ++nbytes; // number of groups of 8
+	}
 	uint8 edt = KImageHdr_ExpD_FullBitmap;
 	uint32 extra_space = memsz - 1;
 	if (mbs + nbytes < memsz)
@@ -1485,7 +1471,7 @@ E32ImageFile::~E32ImageFile()
  	{
  		aPtr = *aPos;
  		delete[] aPtr;
- 		aPos++;
+ 		++aPos;
  	}
 
 }

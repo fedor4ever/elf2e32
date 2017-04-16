@@ -36,10 +36,10 @@ char *warnMssgPrefix="elf2e32 : Warning: W";
 char *infoMssgPrefix="elf2e32 : Information: I";
 char *colSpace=": ";
 
-constexpr auto MAX=66;
+constexpr auto MessageArraySize=66;
 
 //Messages stored required for the program
-struct EnglishMessage MessageArray[MAX]=
+struct EnglishMessage MessageArray[MessageArraySize]=
 {
 	{FILEOPENERROR,"Could not open file : %s."},
 	{FILEREADERROR,"Could not read file : %s."},
@@ -152,7 +152,7 @@ char * Message::GetMessageString(int aMessageIndex)
 
 	if(iMessage.empty())
 	{
-		if(aMessageIndex <= MAX)
+		if(aMessageIndex <= MessageArraySize)
 		{
 			return MessageArray[aMessageIndex-1].message;
 		}
@@ -166,7 +166,7 @@ char * Message::GetMessageString(int aMessageIndex)
 		p=iMessage.find(aMessageIndex);
 		if(p == iMessage.end())
 		{
-			if(aMessageIndex <= MAX)
+			if(aMessageIndex <= MessageArraySize)
 			{
 				return MessageArray[aMessageIndex-1].message;
 			}
@@ -176,7 +176,7 @@ char * Message::GetMessageString(int aMessageIndex)
 			}
 		}
 
-		if(aMessageIndex <= MAX)
+		if(aMessageIndex <= MessageArraySize)
 		{
 			return p->second;
 		}
@@ -338,7 +338,7 @@ void Message::CreateMessageFile(char *aFileName)
 	}
 	else
 	{
-		for(i=0;i<MAX;i++)
+		for(i=0;i<MessageArraySize;i++)
 		{
 			fprintf(fptr,"%d,%s\n",i+1,MessageArray[i].message);
 		}
@@ -420,7 +420,7 @@ void Message::InitializeMessages(char *aFileName)
 	}
 	else
 	{
-		for(i=0;i<MAX;i++)
+		for(i=0;i<MessageArraySize;i++)
 		{
 			errStr = new char[strlen(MessageArray[i].message) + 1];
 			strcpy(errStr, MessageArray[i].message);

@@ -78,13 +78,14 @@ PLUINT32 ElfConsumer::ReadElfFile(char* aFile){
 	PLUINT32 chunkSize = 0;
 	for( PLUINT32 bytesRead = 0; bytesRead < aSz; bytesRead += chunkSize) {
 
-		chunkSize = min(aSz - bytesRead, PLUINT32(KMaxWindowsIOSize));
+		chunkSize = (min)(aSz - bytesRead, PLUINT32(KMaxWindowsIOSize));
 
 		if( fread(iMemBlock + bytesRead, chunkSize, 1, aFd) != 1) {
+            fclose(aFd);
 			throw FileError(FILEREADERROR, aFile);
 		}
 	}
-
+    fclose(aFd);
 	return 0;
 }
 
@@ -98,8 +99,7 @@ Funtion for getting elf symbol list
 */
 int ElfConsumer::GetElfSymbolList(list<Symbol*>& aList){
 
-	if( !iExports )
-		return 0;
+	if( !iExports ) return 0;
 
 	//Get the exported symbols
 	vector<DllSymbol*> aTmpList = iExports->GetExports(true);
@@ -108,7 +108,7 @@ int ElfConsumer::GetElfSymbolList(list<Symbol*>& aList){
 	List::iterator aItr = aTmpList.begin();
 	while( aItr != aTmpList.end() ){
 		aList.push_back((Symbol*) (*aItr));
-		aItr++;
+		++aItr;
 	}
 	aTmpList.clear();
 	return aList.size();
