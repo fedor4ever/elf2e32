@@ -14,7 +14,7 @@
 // Implementation of the Class ElfExports for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #if !defined(_PL_ELFEXPORTS_H_)
@@ -29,13 +29,12 @@ using std::vector;
 using std::binary_function;
 
 class ElfExecutable;
-class DllSymbol;
 class Symbol;
 
 /**
 This class is for exports coming from elf file.
 (Corresponding to the exported symbols defined in the given DLL. These exports are filtered
-by individual targets as per their requirements(relating to class impedimenta). While 
+by individual targets as per their requirements(relating to class impedimenta). While
 processing these exports, they are also to update the ordinal numbers before these exports
 are written into the dso file.
 @internalComponent
@@ -45,41 +44,41 @@ class ElfExports
 {
 
 public:
-	typedef std::vector<DllSymbol*>	ExportList;
+	typedef std::vector<Symbol*>	ExportList;
 
-	
-	struct PtrELFExportNameCompare : 
+
+	struct PtrELFExportNameCompare :
 		binary_function<const Symbol *, const Symbol *, bool>
 	{
 		bool operator()(const Symbol * lhs, const Symbol * rhs) const;
 	};
 
-	struct PtrELFExportOrdinalCompare : 
+	struct PtrELFExportOrdinalCompare :
 		binary_function<const Symbol *, const Symbol *, bool>
 	{
 		bool operator()(const Symbol * lhs, const Symbol * rhs) const;
 	};
 
-	struct PtrELFExportNameCompareUpdateAttributes : 
+	struct PtrELFExportNameCompareUpdateAttributes :
 		binary_function<const Symbol *, const Symbol *, bool>
 	{
 		bool operator()(const Symbol * lhs, const Symbol * rhs) const;
 	};
-	
+
 
 	ElfExports();
 	~ElfExports();
-	
-	bool ValidExportP(ElfExecutable * aExecutable, DllSymbol * aSym);
+
+	bool ValidExportP(ElfExecutable * aExecutable, Symbol * aSym);
 	void FilterExports();
-	DllSymbol* Add(char *aDll, ElfExecutable * aExecutable, DllSymbol *aSym);
-	void Add(char *aDll, DllSymbol *aSym);
+	Symbol* Add(char *aDll, ElfExecutable * aExecutable, Symbol *aSym);
+	void Add(char *aDll, Symbol *aSym);
 	void Sort();
-	void ExportsFilteredP(bool aExportsFilteredP) 
+	void ExportsFilteredP(bool aExportsFilteredP)
 	{
 		iExportsFilteredP = aExportsFilteredP;
 	}
-	bool ExportsFilteredP() {return iExportsFilteredP;} 
+	bool ExportsFilteredP() {return iExportsFilteredP;}
 
 	char* DllName();
 	ExportList& GetExports(bool) ;

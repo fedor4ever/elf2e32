@@ -19,7 +19,7 @@
 #include "pl_dso_handler.h"
 #include "deffile.h"
 #include "pl_elfexports.h"
-#include "pl_dllsymbol.h"
+#include "pl_symbol.h"
 #include "elf2e32.h"
 #include "staticlibsymbols.h"
 
@@ -267,7 +267,7 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 				if ((aIsCustomDll || aExcludeUnwantedExports) && UnWantedSymbolp((*aResultPos)->SymbolName()))
 				{
 					iElfExecutable->iExports->ExportsFilteredP(true);
-					iElfExecutable->iExports->iFilteredExports.insert(iElfExecutable->iExports->iFilteredExports.end(),(DllSymbol *)(*aResultPos));
+					iElfExecutable->iExports->iFilteredExports.insert(iElfExecutable->iExports->iFilteredExports.end(),(Symbol *)(*aResultPos));
 					++aResultPos;
 					continue;
 				}
@@ -278,7 +278,7 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 					    (!strncmp("_ZTV", (*aResultPos)->SymbolName(), len)))
 					{
 						iElfExecutable->iExports->ExportsFilteredP(true);
-						iElfExecutable->iExports->iFilteredExports.insert(iElfExecutable->iExports->iFilteredExports.end(),(DllSymbol *)(*aResultPos));
+						iElfExecutable->iExports->iFilteredExports.insert(iElfExecutable->iExports->iFilteredExports.end(),(Symbol *)(*aResultPos));
 						++aResultPos;
 						continue;
 					}
@@ -303,11 +303,10 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 			Iterator aAbsentListEnd = set_difference(aDefAbsentExports.begin(), aDefAbsentExports.end(), \
 				aElfExports.begin(), aElfExports.end(), aResultPos, ElfExports::PtrELFExportNameCompareUpdateAttributes());
 
-			DllSymbol *aSymbol;
-			bool aAbsent = true;
+			Symbol *aSymbol;
 			while( aResultPos != aAbsentListEnd  ) {
 				//aElfExports.insert(aElfExports.end(), *aResultPos);
-				aSymbol = new DllSymbol( *aResultPos, SymbolTypeCode, aAbsent);
+				aSymbol = new Symbol( *(*aResultPos), SymbolTypeCode, true);
 				iElfExecutable->iExports->Add(iElfExecutable->iSOName, aSymbol);
 				//aElfExports.insert(aElfExports.end(), (Symbol*)aSymbol);
 				iSymList.insert(iSymList.end(), (Symbol*)aSymbol);

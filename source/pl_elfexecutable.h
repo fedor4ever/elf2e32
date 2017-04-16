@@ -36,7 +36,6 @@ using std::list;
 //using __gnu_cxx::hash_map;
 //#endif // __GNUC__
 
-class DllSymbol;
 class Symbol;
 class ElfRelocations;
 class ElfExports;
@@ -59,7 +58,7 @@ public:
 	PLUINT32 ProcessSymbols();
 	ElfImports::ImportMap GetImports();
 	ElfExports* GetExports();
-	DllSymbol* AddToExports(char* aDll, DllSymbol* aSymbol);
+	Symbol* AddToExports(char* aDll, Symbol* aSymbol);
 	void AddToImports(ElfImportRelocation* aReloc);
 	PLUINT32 AddToRelocations(ElfRelocation* aReloc);
 	void AddToLocalRelocations(ElfRelocation* aReloc);
@@ -127,7 +126,6 @@ public:
 	 * The dynamic symbol array.
 	 */
 	Elf32_Sym		*iElfDynSym;//The ELF symbol
-//	hash_map<PLUINT32, DllSymbol*>	iSymbolTable; //The representation
 
 	/**
 	 * The static symbol table.

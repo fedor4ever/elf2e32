@@ -23,11 +23,7 @@
 #include <stdio.h>
 
 #include <fstream>
-#ifdef __TOOLS2__
 #include <sstream>
-#else
-#include <strstream.h>
-#endif
 
 #include <string>
 #include <vector>

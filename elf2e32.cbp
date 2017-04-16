@@ -11,7 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters=' --dlldata --capability=All-TCB --definput=&quot;tests\libcryptou.def&quot; --defoutput=&quot;tests\out.def&quot; --elfinput=&quot;tests\libcrypto.dll&quot; --output=&quot;tests\libcrypto-2.4.5.dll&quot; --libpath=&quot;D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib&quot; --linkas=&quot;tests\libcrypto{000a0000}.dll&quot; --dso=&quot;tests\libcrypto{000a0000}.dso&quot; --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --namedlookup' />
+				<Option parameters=' --dlldata --capability=All-TCB --definput=&quot;tests\libcryptou.def&quot; --defoutput=&quot;tests\out.def&quot; --elfinput=&quot;tests\libcrypto.dll&quot; --output=&quot;tests\libcrypto-2.4.5.dll&quot; --libpath=&quot;D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib&quot; --linkas=&quot;tests\libcrypto{000a0000}.dll&quot; --dso=&quot;tests\libcrypto{000a0000}.dso&quot; --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL' />
 				<Compiler>
 					<Add option="-g -O0" />
 					<Add option="-g3" />
@@ -28,6 +28,7 @@
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option parameters=' --dlldata --elfinput=tests\libcrypto.dll --output=tests\libcrypto-2.4.5.dll --defoutput=tests\out.def --dso=tests\out.dso --linkas=tests\libcrypto{000a0000}.dll --uid1=0x10000079 --uid2=0x00000000 --uid3=0x00000000 --libpath=&quot;D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib&quot; --fpu=softvfp --capability=All-TCB --targettype=STDDLL' />
 				<Compiler>
 					<Add option="-O2" />
 				</Compiler>
@@ -78,10 +79,6 @@
 		<Unit filename="source/errorhandler.h" />
 		<Unit filename="source/exetarget.cpp" />
 		<Unit filename="source/exetarget.h" />
-		<Unit filename="source/exexp_fb_target.cpp" />
-		<Unit filename="source/exexp_fb_target.h" />
-		<Unit filename="source/exexp_rebuild_target.cpp" />
-		<Unit filename="source/exexp_rebuild_target.h" />
 		<Unit filename="source/export_type_rebuild_target.cpp" />
 		<Unit filename="source/export_type_rebuild_target.h" />
 		<Unit filename="source/farray.h" />
@@ -106,8 +103,6 @@
 		<Unit filename="source/parametermanager.h" />
 		<Unit filename="source/pl_common.cpp" />
 		<Unit filename="source/pl_common.h" />
-		<Unit filename="source/pl_dllsymbol.cpp" />
-		<Unit filename="source/pl_dllsymbol.h" />
 		<Unit filename="source/pl_dso_handler.cpp" />
 		<Unit filename="source/pl_dso_handler.h" />
 		<Unit filename="source/pl_elfconsumer.cpp" />

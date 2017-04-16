@@ -158,7 +158,7 @@ inline HDeflateHash* HDeflateHash::NewLC(TInt aLinks)
 	// ... And create the object in that memory.
 	return new(p) HDeflateHash;
 #else
-	return new(new char[_FOFF(HDeflateHash,iOffset[Min(aLinks,KDeflateMaxDistance)])]) HDeflateHash;
+	return new(new char[_FOFF(HDeflateHash,iOffset[(min)(aLinks,KDeflateMaxDistance)])]) HDeflateHash;
 #endif
 }
 

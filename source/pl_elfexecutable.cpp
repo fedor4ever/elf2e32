@@ -24,7 +24,7 @@
 #include <cstring>
 #include "parametermanager.h"
 #include "pl_elfimportrelocation.h"
-#include "pl_dllsymbol.h"
+#include "pl_symbol.h"
 #include "messagehandler.h"
 #include "pl_elflocalrelocation.h"
 
@@ -339,7 +339,7 @@ Function to process Elf symbols
 */
 PLUINT32  ElfExecutable::ProcessSymbols(){
 	PLUINT32	aSymIdx = 0;
-	DllSymbol	*aSymbol;
+	Symbol	*aSymbol;
 	char		*aDllName;
 	char		*aSymName, *aNewSymName;
 	SymbolType	aType;
@@ -359,7 +359,7 @@ PLUINT32  ElfExecutable::ProcessSymbols(){
 			aDllName = iVerInfo[iVersionTbl[aSymIdx]].iLinkAs;
 			aNewSymName = new char[strlen(aSymName)+1];
 			strcpy(aNewSymName, aSymName);
-			aSymbol = new DllSymbol( aNewSymName, aType, &iElfDynSym[aSymIdx], aSymIdx);
+			aSymbol = new Symbol( aNewSymName, aType, &iElfDynSym[aSymIdx], aSymIdx);
 			aSymbol->SetSymbolSize(iElfDynSym[aSymIdx].st_size);
 
 			//Putting the symbols into a hash table - Used later while processing relocations
@@ -405,7 +405,7 @@ This function adds exports into the export list
 @internalComponent
 @released
 */
-DllSymbol* ElfExecutable::AddToExports(char* aDll, DllSymbol* aSymbol){
+Symbol* ElfExecutable::AddToExports(char* aDll, Symbol* aSymbol){
 	if( !iExports ) {
 		iExports = new ElfExports();
 	}

@@ -107,8 +107,7 @@ void POLYDLLRebuildTarget::ProcessExports()
 
     delete iSysDefExports;
     iSysDefExports = nullptr;
-    delete aSymbolEntry;
-    aSymbolEntry = nullptr;
+    if(aSymbolEntry) delete aSymbolEntry;
 	ValidateExports(iDefExports);
 	CreateExports();
 }

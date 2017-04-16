@@ -29,7 +29,6 @@
 #include "pl_elflocalrelocation.h"
 #include "pl_elfimports.h"
 #include "elffilesupplied.h"
-#include "pl_dllsymbol.h"
 #include "h_ver.h"
 #include "checksum.h"
 #include "errorhandler.h"
@@ -1923,6 +1922,8 @@ char* E32ImageFile::CreateSymbolInfo(size_t aBaseOffset) {
 
 	aPos = aSymInf.iStringTableOffset;
 	memcpy(aInfo+aPos, (void*)&iSymbolNames.at(0), iSymbolNames.size());
+
+    /** TODO (Administrator#5#04/16/17): Unfinished code?!!! */
 
 	// At the end, the dependencies are listed. They remain zeroes and shall be fixed up
 	// while relocating.

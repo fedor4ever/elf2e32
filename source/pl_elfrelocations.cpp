@@ -25,7 +25,7 @@ Constructor for class ElfRelocations
 @internalComponent
 @released
 */
-ElfRelocations::ElfRelocations() : \
+ElfRelocations::ElfRelocations() :
 	iCodeSortedP(false), iDataSortedP(false)
 {
 }

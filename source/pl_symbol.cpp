@@ -25,24 +25,19 @@ This constructor sets the symbol members.
 @internalComponent
 @released
 */
-Symbol::Symbol(char* aName, SymbolType aCodeDataType, char* aExportName, PLUINT32	aOrd, \
-			   char* aComment , bool aR3Unused, bool aAbsent, PLUINT32 aSz) :\
-			   iSymbolName(aName), iExportName(aExportName),iSymbolType(aCodeDataType),\
-			    iOrdinalNumber(aOrd),iComment(aComment),iAbsent(aAbsent), iR3Unused(aR3Unused), \
-	        	iSize (aSz)
-{
-
-}
+Symbol::Symbol(char* aName, SymbolType aCodeDataType, char* aExportName, PLUINT32	aOrd,
+	char* aComment , bool aR3Unused, bool aAbsent, PLUINT32 aSz) :
+	iSymbolName(aName), iExportName(aExportName),iSymbolType(aCodeDataType),
+	iOrdinalNumber(aOrd),iComment(aComment),iAbsent(aAbsent), iR3Unused(aR3Unused),
+	iSize (aSz) {}
 
 /**
 This constructor sets the symbol members.
 @internalComponent
 @released
 */
-Symbol::Symbol(Symbol& aSymbol, SymbolType aCodeDataType, bool aAbsent)
-			   : iExportName(nullptr),
-		iSymbolType(aCodeDataType),iComment(nullptr), iAbsent(aAbsent),
-        iR3Unused(false), iSize(0)
+Symbol::Symbol(Symbol& aSymbol, SymbolType aCodeDataType, bool aAbsent):
+		iSymbolType(aCodeDataType), iAbsent(aAbsent)
 {
 	iSymbolName = new char[strlen(aSymbol.SymbolName()) + 1];
 	strcpy(iSymbolName, aSymbol.SymbolName());
@@ -50,15 +45,35 @@ Symbol::Symbol(Symbol& aSymbol, SymbolType aCodeDataType, bool aAbsent)
 }
 
 /**
+Constructor for class Symbol
+@param aName - symbol name
+@param aType - symbol type
+@param aElfSym - elf symbol
+@param aSymbolIndex - index in the symbol table
+@internalComponent
+@released
+*/
+Symbol::Symbol(char* aName, SymbolType aType, Elf32_Sym* aElfSym,
+    PLUINT32 aSymbolIndex): iSymbolName(aName), iSymbolType(aType),
+     iElfSym(aElfSym), iSymbolIndex(aSymbolIndex)
+{}
+
+/**
 This copy constructor copies the symbol members from the input symbol.
 @param aSymbol - The symbol from which the members are to be copied.
 @internalComponent
 @released
 */
-/** TODO (Administrator#1#04/03/17): Rewrite to normal copy ctor! */
 Symbol::Symbol(Symbol& aSymbol)
 {
-	memcpy(this, &aSymbol, sizeof(aSymbol));
+	iElfSym = aSymbol.iElfSym;
+	iSymbolIndex = aSymbol.iSymbolIndex;
+	iSymbolStatus = aSymbol.iSymbolStatus;
+	iSymbolType = aSymbol.iSymbolType;
+	iOrdinalNumber = aSymbol.iOrdinalNumber;
+	iAbsent = aSymbol.iAbsent;
+	iR3Unused = aSymbol.iR3Unused;
+	iSize= aSymbol.iSize;
 
 	iSymbolName = new char[strlen(aSymbol.SymbolName()) + 1];
 	strcpy(iSymbolName, aSymbol.SymbolName());
@@ -81,8 +96,9 @@ This constructor sets the symbol members.
 @internalComponent
 @released
 */
-Symbol::Symbol(int symbolStatus,char *name,char *exportName,int ordinalNo,bool r3unused,bool absent,int symbolType,char *comment, PLUINT32 aSz)\
-	:iSize (aSz)
+Symbol::Symbol(int symbolStatus,char *name,char *exportName,
+            int ordinalNo,bool r3unused,bool absent,int symbolType,char *comment, PLUINT32 aSz)
+            :iSize (aSz)
 {
 	if(symbolStatus==0)
 	{

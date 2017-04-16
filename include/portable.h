@@ -242,7 +242,7 @@ class TCapabilitySet {
     };
 
 struct SCapabilitySet {
-    enum {ENCapW=2};
+    const static short ENCapW=2;
 
     inline void AddCapability(TCapability aCap1) {
         ((TCapabilitySet*)this)->AddCapability(aCap1);

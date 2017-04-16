@@ -102,9 +102,9 @@ int ElfConsumer::GetElfSymbolList(list<Symbol*>& aList){
 	if( !iExports ) return 0;
 
 	//Get the exported symbols
-	vector<DllSymbol*> aTmpList = iExports->GetExports(true);
+	vector<Symbol*> aTmpList = iExports->GetExports(true);
 
-	typedef vector<DllSymbol*> List;
+	typedef vector<Symbol*> List;
 	List::iterator aItr = aTmpList.begin();
 	while( aItr != aTmpList.end() ){
 		aList.push_back((Symbol*) (*aItr));

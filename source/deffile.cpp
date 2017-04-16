@@ -146,7 +146,6 @@ void DefFile::ParseDefFile(char *defFileEntries)
 	char MultiLineStatement[1024]="";
 	bool NAMEorLIBRARYallowed=true;
 	int LineNum = 0;
-	bool isComment;
 
 	char *lineToken;
 	int aLineLength = 0, width = 0;
@@ -160,7 +159,6 @@ void DefFile::ParseDefFile(char *defFileEntries)
 	while(lineToken != nullptr)
 	{
 		symbolType=SymbolTypeCode;
-		isComment=false;
 		entryType[0]='\0';
 		aLineLength = strlen(lineToken);
 		LineNum++;

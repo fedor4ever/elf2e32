@@ -19,7 +19,7 @@
 
 #include "pl_elfexports.h"
 #include "pl_elfexecutable.h"
-#include "pl_dllsymbol.h"
+#include "pl_symbol.h"
 #include <cstring>
 
 using std::set_difference;
@@ -43,7 +43,7 @@ ElfExports::~ElfExports()
 	{
 		ExportList::iterator aItr = iExportList.begin();
 		ExportList::iterator last = iExportList.end();
-		DllSymbol *temp;
+		Symbol *temp;
 
 		while( aItr != last)
 		{
@@ -61,12 +61,12 @@ ElfExports::~ElfExports()
 This function validates exported symbols. The typeinfo name strings
 are not valid export symbols and are discarded.
 @param aExecutable - Instance of class ElfExecutable
-@param aSym	- DllSymbol
+@param aSym	- Symbol
 @return True if symbol is valid, otherwise false
 @internalComponent
 @released
 */
-bool ElfExports::ValidExportP(ElfExecutable * aExecutable, DllSymbol * aSym)
+bool ElfExports::ValidExportP(ElfExecutable * aExecutable, Symbol * aSym)
 {
 	char * aSymName = aExecutable->GetSymbolName(aSym->iSymbolIndex);
 	int result = strncmp(aSymName, "_ZTS", strlen("_ZTS"));
@@ -78,11 +78,11 @@ This function adds export symbols into exports list.
 @param aDll - Dll name
 @param aExecutable - Instance of class ElfExecutable
 @param aSym - Dll symbol
-@return Dll Symbol if its valid, otherwise NULL
+@return Dll Symbol if its valid, otherwise nullptr
 @internalComponent
 @released
 */
-DllSymbol* ElfExports::Add(char *aDll, ElfExecutable * aExecutable, DllSymbol *aSym)
+Symbol* ElfExports::Add(char *aDll, ElfExecutable * aExecutable, Symbol *aSym)
 {
 	if (ValidExportP(aExecutable, aSym))
 	{
@@ -93,7 +93,7 @@ DllSymbol* ElfExports::Add(char *aDll, ElfExecutable * aExecutable, DllSymbol *a
 		iSorted = false;
 		return aSym;
 	}
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -103,7 +103,7 @@ Function to add elf exports
 @internalComponent
 @released
 */
-void ElfExports::Add(char *aDll, DllSymbol *aSym)
+void ElfExports::Add(char *aDll, Symbol *aSym)
 {
 	if( !iDllName )
 		iDllName = aDll;

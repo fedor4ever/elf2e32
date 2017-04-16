@@ -18,7 +18,7 @@
 //
 
 #include "pl_elfproducer.h"
-#include "pl_dllsymbol.h"
+#include "pl_symbol.h"
 #include <stdio.h>
 #include <string>
 #include <cstring>

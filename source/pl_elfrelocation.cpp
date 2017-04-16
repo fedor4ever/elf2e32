@@ -20,7 +20,7 @@
 #include "pl_elfrelocation.h"
 #include "pl_elfimportrelocation.h"
 #include "pl_elflocalrelocation.h"
-#include "pl_dllsymbol.h"
+#include "pl_symbol.h"
 
 /**
 Constructor for class ElfRelocation
@@ -69,7 +69,7 @@ ElfRelocation* ElfRelocation::NewRelocEntry(ElfExecutable *aElfExec, PLMemAddr32
 				PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType, \
 				void* aRel, bool aImportRel)
 {
-	ElfRelocation	*aReloc = NULL;
+	ElfRelocation	*aReloc = nullptr;
 	if(aImportRel)
 		aReloc = new ElfImportRelocation(aElfExec, aAddr, aAddend, aIndex, aRelType, (Elf32_Rel*)aRel);
 	else

@@ -17,8 +17,8 @@
 #include "e32exporttable.h"
 #include "pl_elfexecutable.h"
 #include "pl_elfexports.h"
-#include "pl_dllsymbol.h"
 #include "pl_elflocalrelocation.h"
+#include "pl_symbol.h"
 
 /**
 Destructor for E32ExportTable class.

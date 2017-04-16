@@ -40,8 +40,8 @@ public:
 	virtual ~ElfRelocation();
 
 	static bool ValidRelocEntry(PLUCHAR aType);
-	static ElfRelocation* NewRelocEntry( ElfExecutable *aElfExec, PLMemAddr32 aAddr, \
-		PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,\
+	static ElfRelocation* NewRelocEntry( ElfExecutable *aElfExec, PLMemAddr32 aAddr,
+		PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,
 		void* aRel, bool aImportRel);
 
 	virtual bool IsImportRelocation() =0;
