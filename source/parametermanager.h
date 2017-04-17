@@ -44,7 +44,7 @@ enum ETargetType
 	EStdExe
 };
 
-typedef unsigned int UINT;
+typedef uint32_t UINT;
 using std::string;
 
 /**
@@ -392,16 +392,16 @@ public:
 	bool FixedAddress();
 	bool Compress();
 	UINT CompressionMethod();
-	size_t HeapCommittedSize();
-	size_t HeapReservedSize();
-	size_t StackCommittedSize();
+	uint32_t HeapCommittedSize();
+	uint32_t HeapReservedSize();
+	uint32_t StackCommittedSize();
 	bool Unfrozen();
 	bool IgnoreNonCallable();
 	UseCaseBase * SelectUseCase();
 	SCapabilitySet Capability();
 	void ParseCapability1(string CapabilityList, SCapabilitySet& aCapabilities, bool invert);
 	void ParseCapabilitiesArg(SCapabilitySet& aCapabilities, const char *aText);
-	UINT FPU();
+	uint32_t FPU();
 
 	bool IsCodePaged();
 	bool IsCodeUnpaged();
@@ -425,41 +425,41 @@ private:
 	char ** iArgv;
 
 	/** REVISIT */
-	char * iImageLocation;
+	char * iImageLocation = nullptr;
 
 	/** REVISIT */
-	char * iImageName;
+	char * iImageName = nullptr;
 
 	/** To check if the --targettypeoption (Option to pass the target type of the final image) is provided */
-	bool iTargetTypeOption;
+	bool iTargetTypeOption = false;
 
 	/** To check if the --definput (Option to pass the input DEF File) is passed as input */
-	bool iDefFileInOption;
+	bool iDefFileInOption = false;
 
 	/** To check if the --defoutput (Option to pass the output DEF File name) is passed as input */
-	bool iDefFileOutOption;
+	bool iDefFileOutOption = false;
 
 	/** To check if the --dump is passed as input */
-	bool iFileDumpOption;
+	bool iFileDumpOption = false;
 
 	/** To check if the --dso (Option to pass the output DSO File name) is passed as input */
-	bool iDSOFileOutOption;
+	bool iDSOFileOutOption = false;
 
 	/** To check if the --output (Option to pass the output image name) is passed as input */
-	bool iOutFileOption;
+	bool iOutFileOption = false;
 
 	/** To check if the --elfinput (Option to pass the input Elf File) is passed as input */
-	bool iElfFileInOption;
+	bool iElfFileInOption = false;
 
 	/** To check if the --e32input (Option to pass the input E32 File) is passed as input */
-	bool iE32ImageInOption;
+	bool iE32ImageInOption = false;
 
 	/** To check if the --linkas (Option to pass DLL name to be linked with) is passed as input */
-	bool iLinkAsOption;
+	bool iLinkAsOption = false;
 
-	bool iUid1Option;
-	bool iSecureIDOption;
-	bool iVendorIDOption;
+	bool iUid1Option = false;
+	bool iSecureIDOption = false;
+	bool iVendorIDOption = false;
 
 	/** System level identifier, identifies the general type of a Symbian OS object */
 	UINT iUID1;
@@ -479,9 +479,9 @@ private:
 
 	bool iFixedAddress;
 
-	size_t iHeapCommittedSize;
-	size_t iHeapReservedSize;
-	size_t iStackCommittedSize;
+	uint32_t iHeapCommittedSize;
+	uint32_t iHeapReservedSize;
+	uint32_t iStackCommittedSize;
 	bool iUnfrozen;
 	bool iIgnoreNonCallable;
 
@@ -511,7 +511,7 @@ private:
 	OptionMap iShortOptionMap;
 
 	/** The usecase that is selected, could either be LibraryTarget or DLLTarget or EXETarget */
-	UseCaseBase *iUseCase;
+	UseCaseBase *iUseCase = nullptr;
 
 	/** Target Type that is passed as input to the --targettype option */
 	ETargetType iTargetTypeName;
@@ -538,7 +538,7 @@ private:
 	char * iLinkDLLName;
 
 	/** Path name of the intermediate libraries passed as input to the --libpath option */
-	char * iLibPath;
+	char * iLibPath = nullptr;
 
 	int iDumpOptions;
 	char *iFileDumpSubOptions;
@@ -569,13 +569,13 @@ private:
 
 	int iArgumentCount;
 
-	bool iCodePaged;
-	bool iCodeUnpaged;
-	bool iCodeDefaultPaged;
+	bool iCodePaged			= false;
+	bool iCodeUnpaged		= false;
+	bool iCodeDefaultPaged	= false;
 
-	bool iDataPaged;
-	bool iDataUnpaged;
-	bool iDataDefaultPaged;
+	bool iDataPaged			= false;
+	bool iDataUnpaged		= false;
+	bool iDataDefaultPaged	= false;
 
 	bool iExcludeUnwantedExports;
 	bool iCustomDllTarget;

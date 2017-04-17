@@ -36,9 +36,8 @@ Constructor for class ElfConsumer
 @released
 */
 ElfConsumer::ElfConsumer(ParameterManager* aParameterManager) :
- ElfExecutable(aParameterManager), iMemBlock(nullptr)
-{
-}
+ ElfExecutable(aParameterManager)
+{}
 
 
 /**

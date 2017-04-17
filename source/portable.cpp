@@ -64,7 +64,7 @@ TInt E32ImageHeaderV::ValidateHeader(TInt aFileSize, TUint32& aUncompressedSize)
 	// check iHeaderCrc...
 	TUint32 supplied_crc = iHeaderCrc;
 	((E32ImageHeaderV*)this)->iHeaderCrc = KImageCrcInitialiser;
-	TUint32 crc = 0;
+	uint32_t crc = 0;
 	Crc32(crc, this, headerSize);
 	((E32ImageHeaderV*)this)->iHeaderCrc = supplied_crc;
 	if(crc!=supplied_crc)

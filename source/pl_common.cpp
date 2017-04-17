@@ -20,22 +20,15 @@
 #include <elfdefs.h>
 #include "pl_common.h"
 
-
-VersionInfo::VersionInfo(): iSOName(nullptr), iLinkAs(nullptr), iVerCategory(VER_CAT_NONE)
-{}
-
-VersionInfo::~VersionInfo()
-{}
-
 /**
 hash function for ELF symbols
 @param name
 @internalComponent
 @released
 */
-unsigned long Util::elf_hash(const unsigned char *name)
+uint32_t elf_hash(const unsigned char *name)
 {
-	unsigned long h, g;
+	uint32_t h, g;
 	for (h = 0; *name != 0; ++name)
 	{
 		h = (h << 4) + *name;

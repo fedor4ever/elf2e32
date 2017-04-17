@@ -46,14 +46,14 @@ void E32ExportTable::CreateExportTable(ElfExecutable * aElfExecutable, ElfExport
 	iNumExports = aExportList.size();
 	size_t aSize = iNumExports + 1;
 	iSize = aSize * sizeof(MemAddr);
-	iTable = new unsigned int[aSize];
+	iTable = new uint32_t[aSize];
 	// Set up header
 	iTable[0] = aExportList.size();
 	Elf32_Phdr * aROHdr = aElfExecutable->iCodeSegmentHdr;
 	// The export table starts after the header. NB this is a virtual address in the RO
 	// segment of the E32Image. It is outside the ELF RO segment.
 	Elf32_Addr * aPlace =  ELF_ENTRY_PTR(Elf32_Addr, aROHdr->p_vaddr, aROHdr->p_filesz) + 1;
-	iExportTableAddress = (size_t)aPlace;
+	iExportTableAddress = (uint64_t)aPlace;
 	// Tell the E32Image constructor that it must allocate the export table
 	// i.e. copy it from iTable.
 	iAllocateP = true;
@@ -63,7 +63,7 @@ void E32ExportTable::CreateExportTable(ElfExecutable * aElfExecutable, ElfExport
 	{
 		Elf32_Sym * sym;
 
-		unsigned int ptr;
+		uint32_t ptr;
 		if ((*first)->Absent())
 		{
 			ptr = aElfExecutable->iEntryPoint;
@@ -80,7 +80,8 @@ void E32ExportTable::CreateExportTable(ElfExecutable * aElfExecutable, ElfExport
 		}
 		// set up the pointer
 		iTable[i] = ptr;
-		ElfLocalRelocation * aRel = new ElfLocalRelocation(iElfExecutable, iExportTableAddress, 0, i, R_ARM_ABS32, nullptr, ESegmentRO, sym, aDelSym);
+		ElfLocalRelocation * aRel = new ElfLocalRelocation(iElfExecutable,
+                iExportTableAddress, 0, i, R_ARM_ABS32, nullptr, ESegmentRO, sym, aDelSym);
 	    aPlace++;
 		aRel->Add();
 	}
@@ -120,7 +121,7 @@ This function returns e32 export table.
 @internalComponent
 @released
 */
-unsigned int * E32ExportTable::GetExportTable() {
+uint32_t * E32ExportTable::GetExportTable() {
 	 return iTable;
 }
 

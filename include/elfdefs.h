@@ -17,15 +17,16 @@
 
 #ifndef __ELFDEFS_H__
 #define __ELFDEFS_H__
+#include <cstdint>
 
 
 // ARMELF 3.1.2
 // Data Representation
-typedef unsigned int Elf32_Addr;     //Unsigned program address
-typedef unsigned short Elf32_Half;   //Unsigned medium integer
-typedef unsigned int Elf32_Off;      //Unsigned file offset
-typedef signed int Elf32_Sword;      //Signed large integer
-typedef unsigned int Elf32_Word;     //Unsigned large integer
+typedef uint32_t Elf32_Addr;     //Unsigned program address
+typedef uint16_t Elf32_Half;   //Unsigned medium integer
+typedef uint32_t Elf32_Off;      //Unsigned file offset
+typedef int32_t Elf32_Sword;      //Signed large integer
+typedef uint32_t Elf32_Word;     //Unsigned large integer
 typedef unsigned char UChar;         //Unsigned small integer
 
 typedef char* MemAddr;

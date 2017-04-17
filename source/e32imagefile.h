@@ -92,8 +92,8 @@ Class E32ImageFile for fields of an E32 image.
 class E32ImageFile {
     public:
         struct E32RelocPageDesc {
-            uint32 aOffset;
-            uint32 aSize;
+        	uint32_t aOffset;
+            uint32_t aSize;
             };
 
 //public:
@@ -204,7 +204,7 @@ class E32ImageFile {
         E32ImageFile();
         TInt ReadHeader(ifstream& is);
         TInt Open(const char* aFileName);
-        void Adjust(TInt aSize, bool aAllowShrink=true);
+        void Adjust(int32_t aSize, bool aAllowShrink=true);
 
         TUint TextOffset();
         TUint DataOffset();
@@ -252,7 +252,7 @@ class E32ImageFile {
         E32ImageHeader* iOrigHdr;
         TInt iError;
         TUint iOrigHdrOffsetAdj;
-        TInt iFileSize;
+        TInt iFileSize = 0;
     };
 
 ifstream &operator>>(ifstream &is, E32ImageFile &aImage);

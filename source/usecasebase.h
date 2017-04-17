@@ -59,24 +59,24 @@ class UseCaseBase {
 
         bool AllowDllData();
 
-        size_t HeapCommittedSize();
+        uint32_t HeapCommittedSize();
 
-        size_t HeapReservedSize();
+        uint32_t HeapReservedSize();
 
-        size_t StackCommittedSize();
+        uint32_t StackCommittedSize();
 
-        unsigned int GetUid1();
+        uint32_t GetUid1();
 
-        unsigned int GetUid2();
+        uint32_t GetUid2();
 
-        unsigned int GetUid3();
+        uint32_t GetUid3();
 
-        unsigned int GetSecureId();
+        uint32_t GetSecureId();
         bool GetSecureIdOption();
 
-        unsigned int GetVendorId();
+        uint32_t GetVendorId();
 
-        unsigned int GetVersion();
+        uint32_t GetVersion();
 
         bool GetCallEntryPoints();
 
@@ -88,9 +88,9 @@ class UseCaseBase {
         bool GetFixedAddress();
 
         bool GetCompress();
-        unsigned int GetCompressionMethod();
+        uint32_t GetCompressionMethod();
 
-        unsigned int GetFPU();
+        uint32_t GetFPU();
 
         ParameterManager::LibSearchPaths &  GetLibSearchPaths();
 

@@ -212,7 +212,7 @@ void ElfProducer::CreateVersionTable()
 	iVersionDef[0].vd_ndx = 1;
 	iVersionDef[0].vd_cnt = 1;
 	iVersionDef[0].vd_flags = 1;
-	iVersionDef[0].vd_hash = Util::elf_hash((const PLUCHAR*) iDSOName.c_str());
+	iVersionDef[0].vd_hash = elf_hash((const PLUCHAR*) iDSOName.c_str());
 	iVersionDef[0].vd_version = 1;
 
 	iVersionDef[0].vd_aux = sizeof(Elf32_Verdef);
@@ -229,7 +229,7 @@ void ElfProducer::CreateVersionTable()
 	iVersionDef[1].vd_ndx = DEFAULT_VERSION;
 	iVersionDef[1].vd_cnt = 1;
 	iVersionDef[1].vd_flags = 0;
-	iVersionDef[1].vd_hash = Util::elf_hash((const PLUCHAR*)iLinkAs.c_str());
+	iVersionDef[1].vd_hash = elf_hash((const PLUCHAR*)iLinkAs.c_str());
 	iVersionDef[1].vd_version = 1;
 
 	iVersionDef[1].vd_aux = sizeof(Elf32_Verdef);
@@ -278,7 +278,7 @@ void ElfProducer::AddToHashTable(const char* aSymName, PLUINT32 aIndex)
 {
 	Elf32_Sword	aNullPtr = 0;
 
-	PLULONG	aHash = Util::elf_hash((PLUCHAR*)aSymName);
+	PLULONG	aHash = elf_hash((PLUCHAR*)aSymName);
 	PLUINT32  aBIdx = aHash % iHashTbl->nBuckets;
 
 	if(iDSOBuckets[aBIdx] == aNullPtr)

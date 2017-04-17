@@ -179,7 +179,7 @@ This function returns committed heap size
 @return committed heap size
 
 */
-size_t UseCaseBase::HeapCommittedSize()
+uint32_t UseCaseBase::HeapCommittedSize()
 {
 	return iParameterManager->HeapCommittedSize();
 }
@@ -193,7 +193,7 @@ This function returns reserved heap size
 @return reserved heap size
 
 */
-size_t UseCaseBase::HeapReservedSize()
+uint32_t UseCaseBase::HeapReservedSize()
 {
 	return iParameterManager->HeapReservedSize();
 }
@@ -207,7 +207,7 @@ This function returns committed stack size
 @return committed stack size
 
 */
-size_t UseCaseBase::StackCommittedSize()
+uint32_t UseCaseBase::StackCommittedSize()
 {
 	return iParameterManager->StackCommittedSize();
 }

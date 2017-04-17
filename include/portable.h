@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <cstdio>
 #include <e32capability.h>
+#include <cstdint>
 
 #ifndef __TText_defined
 typedef wchar_t __TText;
@@ -25,18 +26,18 @@ typedef wchar_t __TText;
 #endif // __GNUC__
 
 typedef unsigned char TText8;
-typedef signed int TInt;
-typedef unsigned int TUint;
-typedef long long   Int64;
+typedef int32_t		TInt;
+typedef uint32_t	TUint;
+typedef uint64_t	Int64;
 typedef signed char TInt8;
 typedef unsigned char TUint8;
-typedef short int TInt16;
-typedef unsigned short int TUint16;
-typedef TUint16 TText;
-typedef long int TInt32;
-typedef unsigned long int TUint32;
-typedef unsigned long long  Uint64;
-typedef Uint64  TUint64;
+typedef int16_t		TInt16;
+typedef uint16_t	TUint16;
+typedef TUint16		TText;
+typedef int32_t		TInt32;
+typedef uint32_t	TUint32;
+typedef uint64_t	Uint64;
+typedef Uint64		TUint64;
 
 const TInt KErrNone=0;
 const TInt KErrGeneral=(-2);
@@ -91,7 +92,7 @@ enum TCpu {
     ECpuUnknown=0, ECpuX86=0x1000, ECpuArmV4=0x2000, ECpuArmV5=0x2001, ECpuArmV6=0x2002, ECpuMCore=0x4000
     };
 
-const TInt KOrdinalBase=1;
+const TInt  KOrdinalBase=1;
 const TUint KImageDll               = 0x00000001u;
 const TUint KImageNoCallEntryPoint  = 0x00000002u;
 const TUint KImageFixedAddressExe   = 0x00000004u;
@@ -170,10 +171,9 @@ at that offset.
 
 A value of all zeros (0x0000) is ignored. (Used for padding structure to 4 byte alignment).
 */
-class E32RelocBlock {
-    public:
-        TUint32 iPageOffset; ///< Offset, in bytes, for the page being relocated; relative to the section start. Always a multiple of the page size: 4096 bytes.
-        TUint32 iBlockSize;  ///< Size, in bytes, for this block structure. Always a multiple of 4.
+struct E32RelocBlock {
+	TUint32 iPageOffset; ///< Offset, in bytes, for the page being relocated; relative to the section start. Always a multiple of the page size: 4096 bytes.
+	TUint32 iBlockSize;  ///< Size, in bytes, for this block structure. Always a multiple of 4.
 // TUint16 iEntry[]
     };
 
@@ -190,15 +190,15 @@ const TUid KExecutableImageUid= {KExecutableImageUidValue};
 
 class TCheckedUid {
     public:
-//  IMPORT_C TCheckedUid();
-        IMPORT_C TCheckedUid(const TUidType& aUidType);
-//  IMPORT_C TCheckedUid(const TDesC8& aPtr);
-//  IMPORT_C void Set(const TUidType& aUidType);
-//  IMPORT_C void Set(const TDesC8& aPtr);
-//  IMPORT_C TPtrC8 Des() const;
-//  inline const TUidType& UidType() const;
+//  TCheckedUid();
+	TCheckedUid(const TUidType& aUidType);
+//  TCheckedUid(const TDesC8& aPtr);
+//  void Set(const TUidType& aUidType);
+//  void Set(const TDesC8& aPtr);
+//  TPtrC8 Des() const;
+//  const TUidType& UidType() const;
 //protected:
-//  IMPORT_C TUint Check() const;
+//  TUint Check() const;
     private:
         TUidType iType;
         TUint iCheck;
@@ -486,7 +486,7 @@ These structures are conatined in a images Import Section (E32ImportSection).
 class E32ImportBlock {
     public:
         inline const E32ImportBlock* NextBlock(TUint aImpFmt) const;
-        inline size_t Size(TUint aImpFmt) const;
+        inline uint32_t Size(TUint aImpFmt) const;
         inline const TUint* Imports() const;    // import list if present
     public:
         TUint32 iOffsetOfDllName;           ///< Offset from start of import section for a NUL terminated executable (DLL or EXE) name.
@@ -498,8 +498,8 @@ class E32ImportBlock {
 Return size of this import block.
 @param aImpFmt Import format as obtained from image header.
 */
-inline size_t E32ImportBlock::Size(TUint aImpFmt) const {
-	size_t r = sizeof(E32ImportBlock);
+inline uint32_t E32ImportBlock::Size(TUint aImpFmt) const {
+	uint32_t r = sizeof(E32ImportBlock);
     if(aImpFmt!=KImageImpFmt_PE2)
         r += iNumberOfImports * sizeof(TUint);
     return r;

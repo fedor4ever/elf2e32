@@ -45,7 +45,7 @@ public:
 	PLUINT32 ProcessElfFile();
 
 private:
-	char*		iMemBlock;
+	char*		iMemBlock = nullptr;
 };
 
 

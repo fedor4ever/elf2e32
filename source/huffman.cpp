@@ -916,3 +916,7 @@ void TBitInput::UnderflowL()
 	throw E32ImageCompressionError(HUFFMANBUFFEROVERFLOWERROR);
 }
 
+TBitInput::~TBitInput()
+{
+	if(!iPtr) delete iPtr;
+}

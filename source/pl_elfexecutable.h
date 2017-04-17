@@ -22,7 +22,6 @@
 
 #include "pl_common.h"
 #include <list>
-#include <hash_map>
 #include "elfdefs.h"
 #include "pl_elfimports.h"
 #include "pl_elfrelocations.h"
@@ -48,7 +47,7 @@ This class is for ELF object carrying the elf header, sections, segments.
 */
 class ElfExecutable
 {
-PLUINT32 globalcntr;
+PLUINT32 globalcntr = 0;
 public:
 	explicit ElfExecutable(ParameterManager* aParameterManager);
 	virtual ~ElfExecutable();
@@ -74,9 +73,9 @@ public:
 
 	Elf32_Word GetROBase();
 	Elf32_Word GetRWBase();
-	size_t GetROSize();
-	size_t GetRWSize();
-	size_t GetBssSize();
+	uint32_t GetROSize();
+	uint32_t GetRWSize();
+	uint32_t GetBssSize();
 	MemAddr GetRawROSegment();
 	MemAddr GetRawRWSegment();
 	Elf32_Word EntryPointOffset();
@@ -92,74 +91,74 @@ public:
 	/**
 	 * The elf header pointer which points to the base of the file records
 	 */
-	Elf32_Ehdr	*iElfHeader;
-	Elf32_Addr	iEntryPoint;
+	Elf32_Ehdr	*iElfHeader = nullptr;
+	Elf32_Addr	iEntryPoint = 0;
 	/**
 	 * The dynamic program header of the elf file
 	 */
-	Elf32_Phdr	*iProgHeader;
+	Elf32_Phdr	*iProgHeader = nullptr;
 
-	PLUINT32	iSONameOffset;
-	char		*iSOName;
+	PLUINT32	iSONameOffset = 0;
+	char		*iSOName = nullptr;
 	/**
 	 * This member points to the base of the section header table.
 	 */
-	Elf32_Shdr		*iSections;
-	Elf32_Verdef	*iVersionDef;
-	PLUINT32		iVerDefCount;
-	Elf32_Verneed	*iVersionNeed;
-	PLUINT32		iVerNeedCount;
-	Elf32_Half		*iVersionTbl;
-	PLUINT32		iRelSize;
-	PLUINT32		iRelEntSize;
-	PLUINT32		iNRelocs;
-	Elf32_Rel		*iRel;
-	PLUINT32		iRelaSize;
-	PLUINT32		iRelaEntSize;
-	Elf32_Rela		*iRela;
-	char			*iStringTable;
-	char			*iSectionHdrStrTbl;
+	Elf32_Shdr		*iSections = nullptr;
+	Elf32_Verdef	*iVersionDef = nullptr;
+	PLUINT32		iVerDefCount = 0;
+	Elf32_Verneed	*iVersionNeed = nullptr;
+	PLUINT32		iVerNeedCount = 0;
+	Elf32_Half		*iVersionTbl = nullptr;
+	PLUINT32		iRelSize = 0;
+	PLUINT32		iRelEntSize = 0;
+	PLUINT32		iNRelocs = 0;
+	Elf32_Rel		*iRel = nullptr;
+	PLUINT32		iRelaSize = 0;
+	PLUINT32		iRelaEntSize = 0;
+	Elf32_Rela		*iRela = nullptr;
+	char			*iStringTable = nullptr;
+	char			*iSectionHdrStrTbl = nullptr;
 
 	list<char*>		iNeeded;
-	VersionInfo		*iVerInfo;
+	VersionInfo		*iVerInfo = nullptr;
 	/**
 	 * The dynamic symbol array.
 	 */
-	Elf32_Sym		*iElfDynSym;//The ELF symbol
+	Elf32_Sym		*iElfDynSym = nullptr;//The ELF symbol
 
 	/**
 	 * The static symbol table.
 	 */
-	Elf32_Sym *iSymTab;
-	char *iStrTab;
-	Elf32_Sym *iLim;
+	Elf32_Sym *iSymTab = nullptr;
+	char *iStrTab = nullptr;
+	Elf32_Sym *iLim = nullptr;
 
-	PLUINT32		iNSymbols;
-	Elf32_HashTable	*iHashTbl;
-	Elf32_Phdr		*iDynSegmentHdr;
-	Elf32_Phdr		*iDataSegmentHdr;
-	MemAddr			iDataSegment;
-	size_t			iDataSegmentSize;
-	PLUINT32		iDataSegmentIdx;
-	Elf32_Phdr		*iCodeSegmentHdr;
-	MemAddr			iCodeSegment;
-	size_t			iCodeSegmentSize;
-	PLUINT32		iCodeSegmentIdx;
+	PLUINT32		iNSymbols = 0;
+	Elf32_HashTable	*iHashTbl = nullptr;
+	Elf32_Phdr		*iDynSegmentHdr = nullptr;
+	Elf32_Phdr		*iDataSegmentHdr = nullptr;
+	MemAddr			iDataSegment = nullptr;
+	uint32_t			iDataSegmentSize = 0;
+	PLUINT32		iDataSegmentIdx = 0;
+	Elf32_Phdr		*iCodeSegmentHdr = nullptr;
+	MemAddr			iCodeSegment = nullptr;
+	uint32_t			iCodeSegmentSize = 0;
+	PLUINT32		iCodeSegmentIdx = 0;
 	ElfImports		iImports;
-	ElfExports		*iExports;
+	ElfExports		*iExports = nullptr;
 	ElfRelocations  iLocalRelocations;
 	ParameterManager *iParameterManager;
-	PLUINT32		iPltGotBase;
-	PLUINT32		iPltGotLimit;
-	PLUINT32		iStrTabSz;
-	PLUINT32		iSymEntSz;
-	Elf32_Word		*iPltGot;
-	PLUINT32		iPltRelType;
-	Elf32_Rel		*iPltRel;
-	PLUINT32		iPltRelaSz;
-	Elf32_Rela		*iPltRela;
-	PLUINT32		iPltRelSz;
-	PLUINT32		iJmpRelOffset;
+	PLUINT32		iPltGotBase = 0;
+	PLUINT32		iPltGotLimit = 0;
+	PLUINT32		iStrTabSz = 0;
+	PLUINT32		iSymEntSz = 0;
+	Elf32_Word		*iPltGot = nullptr;
+	PLUINT32		iPltRelType = 0;
+	Elf32_Rel		*iPltRel = nullptr;
+	PLUINT32		iPltRelaSz = 0;
+	Elf32_Rela		*iPltRela = nullptr;
+	PLUINT32		iPltRelSz = 0;
+	PLUINT32		iJmpRelOffset = 0;
 
 	PLUINT32	ValidateElfFile();
 	PLUINT32	ProcessDynamicEntries();

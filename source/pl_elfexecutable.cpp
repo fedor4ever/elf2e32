@@ -36,38 +36,7 @@ Constructor for class ElfExecutable
 @released
 */
 ElfExecutable::ElfExecutable(ParameterManager* aParameterManager) :
-	iElfHeader(nullptr),
-	iEntryPoint(0),
-	iProgHeader(nullptr),
-	iSONameOffset(0), iSOName(nullptr),
-	iSections (nullptr) ,
-	iVersionDef (nullptr) , iVerDefCount(0),
-	iVersionNeed (nullptr) , iVerNeedCount(0),
-	iVersionTbl (nullptr) ,iRelSize(0),iRelEntSize(0),
-	iNRelocs(0),
-	iRel (nullptr) ,iRelaSize(0), iRelaEntSize(0),
-	iRela(nullptr),
-	iStringTable (nullptr) ,
-	iSectionHdrStrTbl(nullptr),
-	iVerInfo(nullptr),	iElfDynSym (nullptr),
-	iSymTab (nullptr),
-	iStrTab (nullptr),
-	iLim (nullptr),
-	iNSymbols(0),
-	iHashTbl (nullptr) ,
-	iDynSegmentHdr (nullptr) ,
-	iDataSegmentHdr (nullptr) ,iDataSegment(nullptr),
-	iDataSegmentSize(0), iDataSegmentIdx(0),
-	iCodeSegmentHdr (nullptr) , iCodeSegment(nullptr),
-	iCodeSegmentSize(0), iCodeSegmentIdx(0),
-	iExports (nullptr),
-	iParameterManager(aParameterManager),
-	iPltGotBase(0), iPltGotLimit(0), iStrTabSz(0), iSymEntSz(0),
-	iPltGot(nullptr), iPltRel(nullptr),iPltRelaSz(0), iPltRela(nullptr),
-	iPltRelSz(0), iJmpRelOffset(0)
-
-{
-}
+	iParameterManager(aParameterManager) {}
 
 
 /**
@@ -1032,9 +1001,9 @@ This function finds symbol using the hash table
 */
 Elf32_Sym* ElfExecutable::FindSymbol(char* aName) {
 	if(!aName )
-		return NULL;
+		return nullptr;
 
-	PLULONG aHashVal = Util::elf_hash((const PLUCHAR*) aName );
+	PLULONG aHashVal = elf_hash((const PLUCHAR*) aName );
 
 	Elf32_Sword* aBuckets = ELF_ENTRY_PTR(Elf32_Sword, iHashTbl, sizeof(Elf32_HashTable) );
 	Elf32_Sword* aChains = ELF_ENTRY_PTR(Elf32_Sword, aBuckets, sizeof(Elf32_Sword)*(iHashTbl->nBuckets) );
@@ -1213,7 +1182,7 @@ Function to get RO segment size
 @internalComponent
 @released
 */
-size_t ElfExecutable::GetROSize()
+uint32_t ElfExecutable::GetROSize()
 {
 	return iCodeSegmentHdr->p_filesz;
 }
@@ -1224,7 +1193,7 @@ Function to get RW segment size
 @internalComponent
 @released
 */
-size_t ElfExecutable::GetRWSize()
+uint32_t ElfExecutable::GetRWSize()
 {
 	if (iDataSegmentHdr)
 		return iDataSegmentHdr->p_filesz;;
@@ -1237,7 +1206,7 @@ Function to get Bss segment size
 @internalComponent
 @released
 */
-size_t ElfExecutable::GetBssSize()
+uint32_t ElfExecutable::GetBssSize()
 {
 	if (iDataSegmentHdr)
 		return iDataSegmentHdr->p_memsz - iDataSegmentHdr->p_filesz;

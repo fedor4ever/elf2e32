@@ -20,8 +20,6 @@
 #include <portable.h>
 #include "checksum.h"
 
-typedef unsigned long uint32;
-typedef unsigned short uint16;
 typedef unsigned char uint8;
 
 /**
@@ -32,7 +30,7 @@ Checksum every other byte
 @internalComponent
 @released
 */
-uint32 checkSum(const void *aPtr)
+uint32_t checkSum(const void *aPtr)
 {
 
 	const uint8 * pB=(const uint8 *)aPtr;
@@ -44,13 +42,13 @@ uint32 checkSum(const void *aPtr)
 		*pT++=(*pB);
 		pB+=2;
 	}
-	unsigned short crc=0;
+	uint16_t crc=0;
 	Crc(crc,&buf[0],(KMaxCheckedUid*KSizeOf_TUID)>>1);
 	return(crc);
 }
 
 //crc table
-static const uint32 crcTab[256] =
+static const uint32_t crcTab[256] =
     {
 	0x0000,0x1021,0x2042,0x3063,0x4084,0x50a5,0x60c6,0x70e7,0x8108,0x9129,0xa14a,
 	0xb16b,0xc18c,0xd1ad,0xe1ce,0xf1ef,0x1231,0x0210,0x3273,0x2252,0x52b5,0x4294,
@@ -90,19 +88,19 @@ value.
 @internalComponent
 @released
 */
-void Crc(unsigned short & aCrc,const void * aPtr,size_t aLength)
+void Crc(unsigned short & aCrc,const void * aPtr, uint32_t aLength)
 {
 
 	const uint8 * pB=(const uint8 *)aPtr;
 	const uint8 * pE=pB+aLength;
-	uint32 crc=aCrc;
+	uint32_t crc=aCrc;
     while (pB<pE)
 		crc=(crc<<8)^crcTab[((crc>>8)^*pB++)&0xff];
 	aCrc=(unsigned short)crc;
 }
 
 //crc table
-static const uint32 CrcTab32[256] =
+static const uint32_t CrcTab32[256] =
 	{
 	0x00000000, 0x77073096, 0xee0e612c, 0x990951ba,
 	0x076dc419, 0x706af48f, 0xe963a535, 0x9e6495a3,
@@ -182,11 +180,11 @@ value.
 @internalComponent
 @released
 */
-void Crc32(unsigned long & aCrc, const void * aPtr, size_t aLength)
+void Crc32(uint32_t & aCrc, const void * aPtr, uint32_t aLength)
 {
 	const uint8 * p = (const uint8 *)aPtr;
 	const uint8 * q = p + aLength;
-	unsigned long crc = aCrc;
+	uint32_t crc = aCrc;
 	while (p < q)
 		crc = (crc >> 8) ^ CrcTab32[(crc ^ *p++) & 0xff];
 	aCrc = crc;

@@ -196,8 +196,7 @@ E32ImageFile::E32ImageFile(const char * aFileName, ElfExecutable * aExecutable, 
 	iSize(0),
 	iOrigHdr(0),
 	iError(0),
-	iOrigHdrOffsetAdj(0),
-	iFileSize(0){}
+	iOrigHdrOffsetAdj(0){}
 
 /**
 Constructor for E32ImageFile class.
@@ -1341,7 +1340,7 @@ void E32ImageFile::UpdateHeaderCrc()
 	TInt hdrsz = GetExtendedE32ImageHeaderSize();
 	iHdr->iUncompressedSize = iChunks.GetOffset() - Align(GetExtendedE32ImageHeaderSize(), sizeof(uint32));
 	iHdr->iHeaderCrc = KImageCrcInitialiser;
-	uint32 crc = 0;
+	uint32_t crc = 0;
 	Crc32(crc, iHdr, hdrsz);
 	iHdr->iHeaderCrc = crc;
 }
@@ -1365,8 +1364,8 @@ void E32ImageFile::AllocateE32Image()
 
 	E32ImageHeaderV* header = (E32ImageHeaderV*)iE32Image;
 	TInt headerSize = header->TotalSize();
-	if(KErrNone!=header->ValidateWholeImage(iE32Image+headerSize,GetE32ImageSize()-headerSize))
-		throw InvalidE32ImageError(VALIDATIONERROR, (char*)iUseCase->OutputE32FileName());
+//	if(KErrNone!=header->ValidateWholeImage(iE32Image+headerSize,GetE32ImageSize()-headerSize))
+//		throw InvalidE32ImageError(VALIDATIONERROR, (char*)iUseCase->OutputE32FileName());
 }
 
 /**
@@ -1480,9 +1479,9 @@ Adjust the size of allocated data and fix the member data
 @internalComponent
 @released
 */
-void E32ImageFile::Adjust(TInt aSize, bool aAllowShrink)
+void E32ImageFile::Adjust(int32_t aSize, bool aAllowShrink)
 {
-	TInt asize = ((aSize+0x3)&0xfffffffc);
+	int32_t asize = ((aSize+0x3)&0xfffffffc);
 
 	if (asize == iSize)
 		return;
@@ -1495,7 +1494,7 @@ void E32ImageFile::Adjust(TInt aSize, bool aAllowShrink)
 	}
 	else if (aAllowShrink || asize > iSize)
 	{
-		TInt oldsize = iSize;
+		int32_t oldsize = iSize;
 		iSize = asize;
 		iData = (char*)realloc(iData, iSize);
 

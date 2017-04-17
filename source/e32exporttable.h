@@ -42,14 +42,14 @@ class E32ExportTable {
   size_t GetNumExports();
   bool AllocateP();
   size_t GetExportTableSize();
-  unsigned int * GetExportTable();
+  uint32_t * GetExportTable();
 
  public:
   ElfExecutable * iElfExecutable;
   size_t iSize;
-  unsigned int * iTable;
+  uint32_t * iTable;
   // NB. This a virtual address (within the RO segment).
-  size_t iExportTableAddress;
+  uint32_t iExportTableAddress;
   // True if the postlinker must allocate the export table in the E32Image.
   // This should only be false for custom built ELF executables.
   bool iAllocateP;

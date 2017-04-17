@@ -21,9 +21,9 @@
 #define CHECKSUM_H
 
 #include <cstddef>
-unsigned long checkSum(const void *aPtr);
-void Crc(unsigned short & aCrc,const void * aPtr,size_t aLength);
-void Crc32(unsigned long & aCrc, const void * aPtr, size_t aLength);
+uint32_t checkSum(const void *aPtr);
+void Crc(uint16_t & aCrc,const void * aPtr,uint32_t aLength);
+void Crc32(uint32_t & aCrc, const void * aPtr, uint32_t aLength);
 
 #endif // CHECKSUM_H
 

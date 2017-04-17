@@ -20,6 +20,8 @@
 #if !defined _PL_COMMON_H_
 #define _PL_COMMON_H_
 
+#include <cstdint>
+
 #ifdef _MSC_VER
 	#pragma warning(disable: 4786) // identifier was truncated to '255' characters in the debug information
 	#pragma warning(disable: 4514) // unreferenced inline function has been removed
@@ -27,17 +29,17 @@
 	#pragma warning(disable: 4710) // function not inlined
 #endif
 
-typedef unsigned long	PLULONG;
-typedef unsigned int	PLUINT32;
-typedef unsigned short	PLUINT16;
+typedef uint32_t	PLULONG;
+typedef uint32_t	PLUINT32;
+typedef uint16_t	PLUINT16;
 typedef unsigned char	PLUCHAR;
-typedef	int				PLINT32;
-typedef short			PLINT16;
+typedef	int32_t			PLINT32;
+typedef int16_t			PLINT16;
 typedef unsigned char	PLUINT8;
 typedef char			PLCHAR;
-typedef unsigned int	PLMemAddr32;
-typedef unsigned int	PLOffset32;
-typedef unsigned short	PLOffset16;
+typedef uint32_t	PLMemAddr32;
+typedef uint32_t	PLOffset32;
+typedef uint16_t	PLOffset16;
 
 #define DELETE_PTR(aPtr) delete aPtr; aPtr = nullptr;
 #define DELETE_PTR_ARRAY(aPtr) delete[] aPtr; aPtr = nullptr;
@@ -53,28 +55,17 @@ enum VER_CATEGORY{
 
 };
 
-/**
-Class for general utility
-@internalComponent
-@released
-*/class Util {
-public:
-	static unsigned long elf_hash(const unsigned char *name);
-};
+uint32_t elf_hash(const unsigned char *name);
 
 /**
-class for Version info
+struct for Version info
 @internalComponent
 @released
 */
-class VersionInfo {
-public:
-	VersionInfo();
-	~VersionInfo();
-
-	char*	iSOName;
-	char*	iLinkAs;
-	char	iVerCategory;
+struct VersionInfo {
+	char*	iSOName = nullptr;
+	char*	iLinkAs = nullptr;
+	char	iVerCategory = VER_CAT_NONE;
 };
 
 //enum for e32 dump flag and dumping asm file flag

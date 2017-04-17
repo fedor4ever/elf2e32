@@ -34,10 +34,10 @@ Constructor for class ElfRelocation
 @released
 */
 ElfRelocation::ElfRelocation(ElfExecutable *aElfExec, PLMemAddr32 aAddr,
-			PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,
-			Elf32_Rel* aRel) : iAddr(aAddr), iAddend(aAddend),
-			iSymNdx(aIndex), iRelType(aRelType), iRel(aRel),
-			iSymbol{nullptr},iElfExec(aElfExec), iSegment{nullptr}
+		PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,
+		Elf32_Rel* aRel) : iAddr(aAddr), iAddend(aAddend),
+		iSymNdx(aIndex), iRelType(aRelType), iRel(aRel),
+		iElfExec(aElfExec)
 {
 }
 

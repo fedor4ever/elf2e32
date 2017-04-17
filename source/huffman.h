@@ -125,6 +125,7 @@ class TBitInput
 		TUint ReadL();
 		TUint ReadL(TInt aSize);
 		TUint HuffmanL(const TUint32* aTree);
+		virtual ~TBitInput();
 	private:
 		virtual void UnderflowL();
 	private:

@@ -46,20 +46,6 @@ Constructor for the ParameterManager.
 ParameterManager::ParameterManager(int aArgc, char** aArgv) :
 	iArgc(aArgc),
 	iArgv(aArgv),
-	iImageLocation(nullptr),
-	iImageName(nullptr),
-	iTargetTypeOption(false),
-	iDefFileInOption(false),
-	iDefFileOutOption(false),
-	iFileDumpOption(false),
-	iDSOFileOutOption(false),
-	iOutFileOption(false),
-	iElfFileInOption(false),
-	iE32ImageInOption(false),
-	iLinkAsOption(false),
-	iUid1Option(false),
-	iSecureIDOption(false),
-	iVendorIDOption(false),
 	iUID1(0),
 	iUID2(0),
 	iUID3(0),
@@ -101,14 +87,6 @@ ParameterManager::ParameterManager(int aArgc, char** aArgv) :
 	iFPU(0),
 	iFPUOption(false),
 	iArgumentCount(0),
-
-	iCodePaged(false),
-	iCodeUnpaged(false),
-	iCodeDefaultPaged(false),
-
-	iDataPaged(false),
-	iDataUnpaged(false),
-	iDataDefaultPaged(false),
 
 	iExcludeUnwantedExports(false),
 	iCustomDllTarget(false),
@@ -1327,7 +1305,7 @@ This function extracts the heap commited size passed as input to --heap option.
 
 @return the heap commited size passed as input to --heap option.
 */
-size_t ParameterManager::HeapCommittedSize()
+uint32_t ParameterManager::HeapCommittedSize()
 {
  	return iHeapCommittedSize;
 }
@@ -1340,7 +1318,7 @@ This function extracts the heap reserved size passed as input to --heap option.
 
 @return the heap reserved size passed as input to --heap option.
 */
-size_t ParameterManager::HeapReservedSize()
+uint32_t ParameterManager::HeapReservedSize()
 {
  	return iHeapReservedSize;
 }
@@ -1353,7 +1331,7 @@ This function extracts the stack commited size passed as input to --stack option
 
 @return the stack commited size passed as input to --stack option.
 */
-size_t ParameterManager::StackCommittedSize()
+uint32_t ParameterManager::StackCommittedSize()
 {
  	return iStackCommittedSize;
 }
