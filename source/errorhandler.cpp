@@ -35,6 +35,9 @@ using std::endl;
 char *errMssgPrefix="elf2e32 : Error: E";
 char *colonSpace=": ";
 
+void ErrorReport(ErrorHandler *handle);
+void ErrorReport2(ErrorHandler *handle);
+
 /**
 ErrorHandler constructor for doing common thing required for derived class functions.
 @param aMessageIndex - Message Index
@@ -71,18 +74,8 @@ FileError constructor for initializing message index and argument name.
 @internalComponent
 @released
 */
-FileError:: FileError(int aMessageIndex, char * aName) : ErrorHandler(aMessageIndex), iName(aName)
-{
-}
-
-/**
-FileError destructor.
-@internalComponent
-@released
-*/
-FileError:: ~FileError()
-{
-}
+FileError:: FileError(int aMessageIndex, char * aName) :
+		ErrorHandler(aMessageIndex) {iName = aName;}
 
 /**
 Function to report File Errors.
@@ -91,15 +84,7 @@ Function to report File Errors.
 */
 void FileError::Report()
 {
-	char *errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
-	if(errMessage)
-	{
-		char *tempMssg = new char[strlen(errMessage)+strlen(iName.c_str())];
-		sprintf(tempMssg,errMessage,iName.c_str());
-		iMessage+=tempMssg;
-		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete[] tempMssg;
-	}
+	ErrorReport(this);
 }
 
 /**
@@ -109,20 +94,8 @@ ELFFormatError constructor for initializing message index and argument name.
 @internalComponent
 @released
 */
-ELFFormatError::ELFFormatError(int aMessageIndex, char * aName) : ErrorHandler(aMessageIndex), iName(aName)
-{
-
-}
-
-/**
-ELFFormatError destructor.
-@internalComponent
-@released
-*/
-ELFFormatError::~ELFFormatError()
-{
-
-}
+ELFFormatError::ELFFormatError(int aMessageIndex, char * aName) :
+		ErrorHandler(aMessageIndex) {iName = aName;}
 
 /**
 Function to report ELF Format Errors.
@@ -131,15 +104,7 @@ Function to report ELF Format Errors.
 */
 void ELFFormatError::Report()
 {
-	char *errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
-	if(errMessage)
-	{
-		char *tempMssg = new char[strlen(errMessage)+strlen(iName.c_str())];
-		sprintf(tempMssg,errMessage,iName.c_str());
-		iMessage+=tempMssg;
-		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete[] tempMssg;
-	}
+	ErrorReport(this);
 }
 
 /**
@@ -152,20 +117,12 @@ DEFFileError constructor for initializing message index, argument name and line 
 @released
 */
 DEFFileError::DEFFileError(int aMessageIndex, char * aName, int aLineNo,char * aToken) :
-     ErrorHandler(aMessageIndex), iName(aName), iLineNo(aLineNo)
+     ErrorHandler(aMessageIndex), iLineNo(aLineNo)
 {
+    iName = aName;
 	iToken=aToken;
 	if(iToken[iToken.size()-1]=='\r')
 		iToken[iToken.size()-1]='\0';
-}
-
-/**
-DEFFileError destructor.
-@internalComponent
-@released
-*/
-DEFFileError::~DEFFileError()
-{
 }
 
 /**
@@ -175,18 +132,7 @@ Function to report DEF File Errors.
 */
 void DEFFileError::Report()
 {
-	char *tempMssg;
-	char *errMessage;
-
-	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
-	if(errMessage)
-	{
-		tempMssg = new char[strlen(errMessage)+5+strlen(iName.c_str())+strlen(iToken.c_str())];
-		sprintf(tempMssg,errMessage,iName.c_str(),iLineNo,iToken.c_str());
-		iMessage+=tempMssg;
-		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete[] tempMssg;
-	}
+	ErrorReport(this);
 }
 
 /**
@@ -196,18 +142,8 @@ ParameterParserError constructor for initializing message index and argument nam
 @internalComponent
 @released
 */
-ParameterParserError::ParameterParserError(int aMessageIndex, char * aName) : ErrorHandler(aMessageIndex), iName(aName)
-{
-}
-
-/**
-ParameterParserError destructor.
-@internalComponent
-@released
-*/
-ParameterParserError::~ParameterParserError()
-{
-}
+ParameterParserError::ParameterParserError(int aMessageIndex, char * aName) :
+		ErrorHandler(aMessageIndex) {iName = aName;}
 
 /**
 Function to report Parameter Parser Error.
@@ -216,18 +152,7 @@ Function to report Parameter Parser Error.
 */
 void ParameterParserError::Report()
 {
-	char *tempMssg;
-	char *errMessage;
-	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
-
-	if(errMessage)
-	{
-		tempMssg = new char[strlen(errMessage)+strlen(iName.c_str())];
-		sprintf(tempMssg,errMessage,iName.c_str());
-		iMessage+=tempMssg;
-		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete[] tempMssg;
-	}
+	ErrorReport(this);
 }
 
 /**
@@ -238,18 +163,9 @@ InvalidArgumentError constructor for initializing message index, argument value 
 @internalComponent
 @released
 */
-InvalidArgumentError::InvalidArgumentError(int aMessageIndex, const char * aValue, char * aOption) : ErrorHandler(aMessageIndex), iValue(aValue), iOption(aOption)
-{
-}
-
-/**
-InvalidArgumentError destructor.
-@internalComponent
-@released
-*/
-InvalidArgumentError::~InvalidArgumentError()
-{
-}
+InvalidArgumentError::InvalidArgumentError(int aMessageIndex,
+		const char * aValue, char * aOption) :
+			ErrorHandler(aMessageIndex), iValue(aValue), iOption(aOption) {}
 
 /**
 Function to report Invalid Argument Error.
@@ -258,18 +174,7 @@ Function to report Invalid Argument Error.
 */
 void InvalidArgumentError::Report()
 {
-	char *tempMssg;
-	char *errMessage;
-	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
-
-	if(errMessage)
-	{
-		tempMssg = new char[strlen(errMessage)+strlen(iValue.c_str())+strlen(iOption.c_str())];
-		sprintf(tempMssg,errMessage,iValue.c_str(),iOption.c_str());
-		iMessage+=tempMssg;
-		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete[] tempMssg;
-	}
+	ErrorReport(this);
 }
 
 /**
@@ -278,18 +183,8 @@ E32ImageCompressionError constructor for initializing message index.
 @internalComponent
 @released
 */
-E32ImageCompressionError::E32ImageCompressionError(int aMessageIndex) : ErrorHandler(aMessageIndex)
-{
-}
-
-/**
-E32ImageCompressionError destructor.
-@internalComponent
-@released
-*/
-E32ImageCompressionError::~E32ImageCompressionError()
-{
-}
+E32ImageCompressionError::E32ImageCompressionError(int aMessageIndex) :
+		ErrorHandler(aMessageIndex) {}
 
 /**
 Function to report E32 Image Compression Error.
@@ -298,14 +193,7 @@ Function to report E32 Image Compression Error.
 */
 void E32ImageCompressionError::Report()
 {
-	char *errMessage;
-
-	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
-	if(errMessage)
-	{
-		iMessage+=errMessage;
-		MessageHandler::GetInstance()->Output(iMessage.c_str());
-	}
+	ErrorReport2(this);
 }
 
 /**
@@ -314,18 +202,7 @@ CapabilityError constructor for initializing message index.
 @internalComponent
 @released
 */
-CapabilityError::CapabilityError(int aMessageIndex) : ErrorHandler(aMessageIndex)
-{
-}
-
-/**
-CapabilityError destructor.
-@internalComponent
-@released
-*/
-CapabilityError::~CapabilityError()
-{
-}
+CapabilityError::CapabilityError(int aMessageIndex) : ErrorHandler(aMessageIndex) {}
 
 /**
 Function to report Capability Error.
@@ -334,14 +211,7 @@ Function to report Capability Error.
 */
 void CapabilityError::Report()
 {
-	char *errMessage;
-
-	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
-	if(errMessage)
-	{
-		iMessage+=errMessage;
-		MessageHandler::GetInstance()->Output(iMessage.c_str());
-	}
+	ErrorReport2(this);
 }
 
 /**
@@ -351,18 +221,8 @@ UnrecognisedCapabilityError constructor for initializing message index and argum
 @internalComponent
 @released
 */
-UnrecognisedCapabilityError::UnrecognisedCapabilityError(int aMessageIndex, String aName) : CapabilityError(aMessageIndex), iName(aName)
-{
-}
-
-/**
-UnrecognisedCapabilityError destructor.
-@internalComponent
-@released
-*/
-UnrecognisedCapabilityError::~UnrecognisedCapabilityError()
-{
-}
+UnrecognisedCapabilityError::UnrecognisedCapabilityError(int aMessageIndex,
+		string aName) : CapabilityError(aMessageIndex) {iName = aName;}
 
 /**
 Function to report Unrecognised Capability Error.
@@ -371,18 +231,7 @@ Function to report Unrecognised Capability Error.
 */
 void UnrecognisedCapabilityError::Report()
 {
-	char *tempMssg;
-	char *errMessage;
-
-	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
-	if(errMessage)
-	{
-		tempMssg = new char[strlen(errMessage)+strlen(iName.c_str())];
-		sprintf(tempMssg,errMessage,iName.c_str());
-		iMessage+=tempMssg;
-		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete[] tempMssg;
-	}
+	ErrorReport(this);
 }
 
 /**
@@ -392,18 +241,8 @@ ELFFileError constructor for initializing message index and argument name.
 @internalComponent
 @released
 */
-ELFFileError::ELFFileError(int aMessageIndex, const char * aName) : ErrorHandler(aMessageIndex), iName(aName)
-{
-}
-
-/**
-ELFFileError destructor.
-@internalComponent
-@released
-*/
-ELFFileError::~ELFFileError()
-{
-}
+ELFFileError::ELFFileError(int aMessageIndex, const char * aName) :
+		ErrorHandler(aMessageIndex) {iName = aName;}
 
 /**
 Function to report ELF File Error.
@@ -412,18 +251,7 @@ Function to report ELF File Error.
 */
 void ELFFileError::Report()
 {
-	char *tempMssg;
-	char *errMessage;
-
-	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
-	if(errMessage)
-	{
-		tempMssg = new char[strlen(errMessage)+strlen(iName.c_str())];
-		sprintf(tempMssg,errMessage,iName.c_str());
-		iMessage+=tempMssg;
-		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete[] tempMssg;
-	}
+	ErrorReport(this);
 }
 
 /**
@@ -434,18 +262,9 @@ UndefinedSymbolError constructor for initializing message index, argument name a
 @internalComponent
 @released
 */
-UndefinedSymbolError::UndefinedSymbolError(int aMessageIndex, char * aName, char *aSymbolName) : ELFFileError(aMessageIndex,aName), iSymbolName(aSymbolName)
-{
-}
-
-/**
-UndefinedSymbolError destructor.
-@internalComponent
-@released
-*/
-UndefinedSymbolError::~UndefinedSymbolError()
-{
-}
+UndefinedSymbolError::UndefinedSymbolError(int aMessageIndex,
+		char * aName, char *aSymbolName) :
+			ELFFileError(aMessageIndex,aName) {iSymbolName = aSymbolName;}
 
 /**
 Function to report Undefined Symbol Error.
@@ -454,18 +273,7 @@ Function to report Undefined Symbol Error.
 */
 void UndefinedSymbolError::Report()
 {
-	char *tempMssg;
-	char *errMessage;
-
-	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
-	if(errMessage)
-	{
-		tempMssg = new char[strlen(errMessage)+strlen(iSymbolName.c_str())+strlen(iName.c_str())];
-		sprintf(tempMssg,errMessage,iSymbolName.c_str(),iName.c_str());
-		iMessage+=tempMssg;
-		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete[] tempMssg;
-	}
+	ErrorReport(this);
 }
 
 /**
@@ -476,31 +284,23 @@ SymbolMissingFromElfError constructor for initializing message index, symbol nam
 @internalComponent
 @released
 */
-SymbolMissingFromElfError::SymbolMissingFromElfError(int aMessageIndex, list<String> &aSymbolList, const char * aName) : ELFFileError(aMessageIndex,aName)
+SymbolMissingFromElfError::SymbolMissingFromElfError(int aMessageIndex,
+		list<string> &aSymbolList, const char * aName) :
+				ELFFileError(aMessageIndex,aName)
 {
 
-	std::list<String>::iterator aItr = aSymbolList.begin();
-	std::list<String>::iterator last = aSymbolList.end();
+	std::list<string>::iterator aItr = aSymbolList.begin();
+	std::list<string>::iterator last = aSymbolList.end();
 
 	while(aItr != last)
 	{
-		iSymbolNames+=*aItr;
+		iSymbolName+=*aItr;
 		++aItr;
 		if(aItr != last)
 		{
-			iSymbolNames+=",";
+			iSymbolName+=",";
 		}
 	}
-
-}
-
-/**
-SymbolMissingFromElfError destructor.
-@internalComponent
-@released
-*/
-SymbolMissingFromElfError::~SymbolMissingFromElfError()
-{
 }
 
 /**
@@ -510,18 +310,7 @@ Function to report Symbol Missing From Elf Error.
 */
 void SymbolMissingFromElfError::Report()
 {
-	char *tempMssg;
-	char *errMessage;
-
-	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
-	if(errMessage)
-	{
-		tempMssg = new char[strlen(errMessage)+strlen(iSymbolNames.c_str())+strlen(iName.c_str())];
-		sprintf(tempMssg,errMessage,iSymbolNames.c_str(),iName.c_str());
-		iMessage+=tempMssg;
-		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete[] tempMssg;
-	}
+	ErrorReport(this);
 }
 
 /**
@@ -531,18 +320,8 @@ MemoryAllocationError constructor for initializing message index and argument na
 @internalComponent
 @released
 */
-MemoryAllocationError::MemoryAllocationError(int aMessageIndex, char * aName) : ErrorHandler(aMessageIndex), iName(aName)
-{
-}
-
-/**
-MemoryAllocationError destructor.
-@internalComponent
-@released
-*/
-MemoryAllocationError::~MemoryAllocationError()
-{
-}
+MemoryAllocationError::MemoryAllocationError(int aMessageIndex, char * aName) :
+		ErrorHandler(aMessageIndex) {iName = aName;}
 
 /**
 Function to report Memory Allocation Error.
@@ -551,18 +330,7 @@ Function to report Memory Allocation Error.
 */
 void MemoryAllocationError::Report()
 {
-	char *tempMssg;
-	char *errMessage;
-
-	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
-	if(errMessage)
-	{
-		tempMssg = new char[strlen(errMessage)+strlen(iName.c_str())];
-		sprintf(tempMssg,errMessage,iName.c_str());
-		iMessage+=tempMssg;
-		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete[] tempMssg;
-	}
+	ErrorReport(this);
 }
 
 /**
@@ -571,18 +339,7 @@ E32ImageError constructor for initializing message index.
 @internalComponent
 @released
 */
-E32ImageError::E32ImageError(int aMessageIndex) : ErrorHandler(aMessageIndex)
-{
-}
-
-/**
-E32ImageError destructor.
-@internalComponent
-@released
-*/
-E32ImageError::~E32ImageError()
-{
-}
+E32ImageError::E32ImageError(int aMessageIndex) : ErrorHandler(aMessageIndex) {}
 
 /**
 Function to report E32 Image Error.
@@ -591,14 +348,7 @@ Function to report E32 Image Error.
 */
 void E32ImageError::Report()
 {
-	char *errMessage;
-
-	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
-	if(errMessage)
-	{
-		iMessage+=errMessage;
-		MessageHandler::GetInstance()->Output(iMessage.c_str());
-	}
+	ErrorReport2(this);
 }
 
 /**
@@ -607,18 +357,8 @@ InvalidInvocationError constructor for initializing message index.
 @internalComponent
 @released
 */
-InvalidInvocationError::InvalidInvocationError(int aMessageIndex) : ErrorHandler(aMessageIndex)
-{
-}
-
-/**
-InvalidInvocationError destructor.
-@internalComponent
-@released
-*/
-InvalidInvocationError::~InvalidInvocationError()
-{
-}
+InvalidInvocationError::InvalidInvocationError(int aMessageIndex) :
+		ErrorHandler(aMessageIndex) {}
 
 /**
 Function to report Invalid Invocation Error.
@@ -627,14 +367,7 @@ Function to report Invalid Invocation Error.
 */
 void InvalidInvocationError::Report()
 {
-	char *errMessage;
-
-	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
-	if(errMessage)
-	{
-		iMessage+=errMessage;
-		MessageHandler::GetInstance()->Output(iMessage.c_str());
-	}
+	ErrorReport2(this);
 }
 
 /**
@@ -643,18 +376,7 @@ TargetTypeError constructor for initializing message index.
 @internalComponent
 @released
 */
-TargetTypeError::TargetTypeError(int aMessageIndex) : ErrorHandler(aMessageIndex)
-{
-}
-
-/**
-TargetTypeError destructor.
-@internalComponent
-@released
-*/
-TargetTypeError::~TargetTypeError()
-{
-}
+TargetTypeError::TargetTypeError(int aMessageIndex) : ErrorHandler(aMessageIndex) {}
 
 /**
 Function to report Target Type Error.
@@ -663,14 +385,7 @@ Function to report Target Type Error.
 */
 void TargetTypeError::Report()
 {
-	char *errMessage;
-
-	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
-	if(errMessage)
-	{
-		iMessage+=errMessage;
-		MessageHandler::GetInstance()->Output(iMessage.c_str());
-	}
+	ErrorReport2(this);
 }
 
 /**
@@ -680,18 +395,8 @@ UnsupportedTargetTypeError constructor for initializing message index and argume
 @internalComponent
 @released
 */
-UnsupportedTargetTypeError::UnsupportedTargetTypeError(int aMessageIndex, char * aName) : TargetTypeError(aMessageIndex), iName(aName)
-{
-}
-
-/**
-UnsupportedTargetTypeError destructor.
-@internalComponent
-@released
-*/
-UnsupportedTargetTypeError::~UnsupportedTargetTypeError()
-{
-}
+UnsupportedTargetTypeError::UnsupportedTargetTypeError(int aMessageIndex, char * aName) :
+		TargetTypeError(aMessageIndex) {iName = aName;}
 
 /**
 Function to report Unsupported Target Type Error.
@@ -700,18 +405,7 @@ Function to report Unsupported Target Type Error.
 */
 void UnsupportedTargetTypeError::Report()
 {
-	char *tempMssg;
-	char *errMessage;
-
-	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
-	if(errMessage)
-	{
-		tempMssg = new char[strlen(errMessage)+strlen(iName.c_str())];
-		sprintf(tempMssg,errMessage,iName.c_str());
-		iMessage+=tempMssg;
-		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete[] tempMssg;
-	}
+	ErrorReport(this);
 }
 
 /**
@@ -721,18 +415,8 @@ MessageError constructor for initializing message index and index value.
 @internalComponent
 @released
 */
-MessageError::MessageError(int aMessageIndex, int aIndexValue) : ErrorHandler(aMessageIndex), iIndexValue(aIndexValue)
-{
-}
-
-/**
-MessageError destructor.
-@internalComponent
-@released
-*/
-MessageError::~MessageError()
-{
-}
+MessageError::MessageError(int aMessageIndex, int aIndexValue) :
+		ErrorHandler(aMessageIndex), iIndexValue(aIndexValue) {}
 
 /**
 Function to report Message Errors.
@@ -741,18 +425,7 @@ Function to report Message Errors.
 */
 void MessageError::Report()
 {
-	char *tempMssg;
-	char *errMessage;
-
-	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
-	if(errMessage)
-	{
-		tempMssg = new char[strlen(errMessage)+5];
-		sprintf(tempMssg,errMessage,iIndexValue);
-		iMessage+=tempMssg;
-		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete[] tempMssg;
-	}
+	ErrorReport(this);
 }
 
 /**
@@ -761,18 +434,7 @@ NoMessageFileError constructor for initializing message index.
 @internalComponent
 @released
 */
-NoMessageFileError::NoMessageFileError(int aMessageIndex) : ErrorHandler(aMessageIndex)
-{
-}
-
-/**
-NoMessageFileError destructor.
-@internalComponent
-@released
-*/
-NoMessageFileError::~NoMessageFileError()
-{
-}
+NoMessageFileError::NoMessageFileError(int aMessageIndex) : ErrorHandler(aMessageIndex) {}
 
 /**
 Function to report No Message File Error.
@@ -781,14 +443,7 @@ Function to report No Message File Error.
 */
 void NoMessageFileError::Report()
 {
-	char *errMessage;
-
-	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
-	if(errMessage)
-	{
-		iMessage+=errMessage;
-		MessageHandler::GetInstance()->Output(iMessage.c_str());
-	}
+	ErrorReport2(this);
 }
 
 /**
@@ -799,11 +454,13 @@ SysDefMismatchError constructor for initializing message index, symbol name list
 @internalComponent
 @released
 */
-SysDefMismatchError::SysDefMismatchError(int aMessageIndex, list<String> &aSymbolList, const char * aName) : ErrorHandler(aMessageIndex), iName(aName)
+SysDefMismatchError::SysDefMismatchError(int aMessageIndex,
+             list<string> &aSymbolList, const char * aName) :
+                 ErrorHandler(aMessageIndex)
 {
-
-	std::list<String>::iterator aItr = aSymbolList.begin();
-	std::list<String>::iterator last = aSymbolList.end();
+    iName = aName;
+	std::list<string>::iterator aItr = aSymbolList.begin();
+	std::list<string>::iterator last = aSymbolList.end();
 
 	while(aItr != last)
 	{
@@ -818,33 +475,13 @@ SysDefMismatchError::SysDefMismatchError(int aMessageIndex, list<String> &aSymbo
 }
 
 /**
-SysDefMismatchError destructor.
-@internalComponent
-@released
-*/
-SysDefMismatchError::~SysDefMismatchError()
-{
-}
-
-/**
 Function to report SysDef Mismatch Error.
 @internalComponent
 @released
 */
 void SysDefMismatchError::Report()
 {
-	char *tempMssg;
-	char *errMessage;
-
-	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
-	if(errMessage)
-	{
-		tempMssg = new char[strlen(errMessage)+strlen(iSymbolNames.c_str())+strlen(iName.c_str())];
-		sprintf(tempMssg,errMessage,iSymbolNames.c_str(),iName.c_str());
-		iMessage+=tempMssg;
-		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete[] tempMssg;
-	}
+	ErrorReport(this);
 }
 
 /**
@@ -854,18 +491,8 @@ InvalidE32ImageError constructor for initializing message index and argument nam
 @internalComponent
 @released
 */
-InvalidE32ImageError::InvalidE32ImageError(int aMessageIndex, char * aName) : ErrorHandler(aMessageIndex), iName(aName)
-{
-}
-
-/**
-InvalidE32ImageError destructor.
-@internalComponent
-@released
-*/
-InvalidE32ImageError::~InvalidE32ImageError()
-{
-}
+InvalidE32ImageError::InvalidE32ImageError(int aMessageIndex, char * aName) :
+		ErrorHandler(aMessageIndex) {iName = aName;}
 
 /**
 Function to report Invalid E32 Image Error.
@@ -874,18 +501,7 @@ Function to report Invalid E32 Image Error.
 */
 void InvalidE32ImageError::Report()
 {
-	char *tempMssg;
-	char *errMessage;
-
-	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
-	if(errMessage)
-	{
-		tempMssg = new char[strlen(errMessage)+strlen(iName.c_str())];
-		sprintf(tempMssg,errMessage,iName.c_str());
-		iMessage+=tempMssg;
-		MessageHandler::GetInstance()->Output(iMessage.c_str());
-		delete[] tempMssg;
-	}
+	ErrorReport(this);
 }
 
 /**
@@ -896,18 +512,9 @@ ImportRelocationError constructor for initializing message index, argument name 
 @internalComponent
 @released
 */
-ImportRelocationError::ImportRelocationError(int aMessageIndex, char * aName, char *aSymbolName) : ELFFileError(aMessageIndex,aName), iSymbolName(aSymbolName)
-{
-}
-
-/**
-ImportRelocationError destructor.
-@internalComponent
-@released
-*/
-ImportRelocationError::~ImportRelocationError()
-{
-}
+ImportRelocationError::ImportRelocationError(int aMessageIndex,
+		char * aName, char *aSymbolName) : ELFFileError(aMessageIndex,aName)
+{iSymbolName = aSymbolName;}
 
 /**
 Function to report Import Relocations references to Data Segment Error
@@ -916,18 +523,29 @@ Function to report Import Relocations references to Data Segment Error
 */
 void ImportRelocationError::Report()
 {
-	char *tempMssg;
-	char *errMessage;
+	ErrorReport(this);
+}
 
-	errMessage=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
+void ErrorReport(ErrorHandler *handle)
+{
+	char *errMessage=MessageHandler::GetInstance()->GetMessageString(handle->iMessageIndex);
 	if(errMessage)
 	{
-		tempMssg = new char[strlen(errMessage)+strlen(iSymbolName.c_str())+strlen(iName.c_str())];
-		sprintf(tempMssg,errMessage,iSymbolName.c_str(),iName.c_str());
-		iMessage+=tempMssg;
-		MessageHandler::GetInstance()->Output(iMessage.c_str());
+		char *tempMssg = new char[strlen(errMessage)+strlen(handle->iName.c_str())];
+		sprintf(tempMssg,errMessage,handle->iName.c_str());
+		handle->iMessage+=tempMssg;
+		MessageHandler::GetInstance()->Output(handle->iMessage);
 		delete[] tempMssg;
 	}
 }
 
+void ErrorReport2(ErrorHandler *handle)
+{
+	char *errMessage=MessageHandler::GetInstance()->GetMessageString(handle->iMessageIndex);
+	if(errMessage)
+	{
+		handle->iMessage+=errMessage;
+		MessageHandler::GetInstance()->Output(handle->iMessage);
+	}
+}
 

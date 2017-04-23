@@ -165,7 +165,7 @@ PLUINT32 ElfConsumer::ProcessElfFile(){
 			 * "<MajorVersion>.<MinorVersion> [Build <BuildNumber>]"
 			 * Example: "2.2 [Build 616]"
 			 */
-			String Version(RVCTVersion);
+			string Version(RVCTVersion);
 			size_t pos = Version.find_last_of(' ');
 			size_t size = Version.size();
 			if (pos < size)

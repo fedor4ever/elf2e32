@@ -196,15 +196,15 @@ Function to display output and log message in log file if logging is enable.
 @param aString
 Message to be displayed
 */
-void Message::Output(const char *aString)
+void Message::Output(const string &aInfo)
 {
 
     if (iLogging)
     {
-		fputs(aString,iLogPtr);
+		fputs(aInfo.c_str(),iLogPtr);
 		fputs("\n",iLogPtr);
     }
-	cout << aString << endl;
+	cout << aInfo << endl;
 }
 
 /**
@@ -285,7 +285,7 @@ void Message::ReportMessage(int aMessageType, int aMsgIndex,...)
 			ptr=strchr(reportMessage,'%');
 		}
 		message += reportMessage;
-		Output(message.c_str());
+		Output(message);
 	}
 	va_end(ap);
 }

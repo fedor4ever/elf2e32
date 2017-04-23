@@ -3046,7 +3046,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseTargetTypeName)
 {
 	INITIALISE_PARAM_PARSER;
 	aPM->SetTargetTypeName(aPM->ValidateTargetType(aValue));
-	if(strcmp(aValue, "STDDLL")==0) SetUID2(0x20004C45);
+	if(strcmp(aValue, "STDDLL")==0) aPM->SetUID2(0x20004C45);
 }
 
 /**

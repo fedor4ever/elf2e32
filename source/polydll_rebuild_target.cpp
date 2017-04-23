@@ -89,7 +89,7 @@ void POLYDLLRebuildTarget::ProcessExports()
 	Iterator aDefBegin = iDefExports->begin();
 	Iterator aDefEnd = iDefExports->end();
 
-	std::list<String> aMissingSysDefList;
+	std::list<string> aMissingSysDefList;
 
 	while ((aDefBegin != aDefEnd) && (aBegin != aEnd))
 	{

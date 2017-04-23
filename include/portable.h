@@ -6,6 +6,8 @@
 #include <e32capability.h>
 #include <cstdint>
 
+static_assert(sizeof(char) == 1, "Wrong char size! Must be 1!");
+
 #ifndef __TText_defined
 typedef wchar_t __TText;
 #define __TText_defined

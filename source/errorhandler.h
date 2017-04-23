@@ -26,7 +26,7 @@
 #include <string>
 
 using std::list;
-typedef std::string String;
+using std::string;
 
 /**
 Base class from which all other error handler classes are derived from.
@@ -35,13 +35,14 @@ Base class from which all other error handler classes are derived from.
 */
 class ErrorHandler
 {
-	public:
+public:
 	explicit ErrorHandler(int aMessageIndex);
 	virtual ~ErrorHandler();
 	virtual void Report() =0;
 
-		String iMessage;
-		int iMessageIndex;
+	string iMessage;
+	int iMessageIndex;
+	string iName;
 };
 
 /**
@@ -51,12 +52,10 @@ Base class for File Errors.
 */
 class FileError : public ErrorHandler
 {
-	public:
-		FileError(int aMessageIndex, char * aName);
-		virtual ~FileError();
-		void Report();
-
-		String iName;
+public:
+	FileError(int aMessageIndex, char * aName);
+	virtual ~FileError(){}
+	void Report();
 };
 
 /**
@@ -66,12 +65,10 @@ Base class for ELFFormat Errors.
 */
 class ELFFormatError : public ErrorHandler
 {
-	public:
-		ELFFormatError(int aMessageIndex, char * aName);
-		virtual ~ELFFormatError();
-		void Report();
-
-		String iName;
+public:
+	ELFFormatError(int aMessageIndex, char * aName);
+	virtual ~ELFFormatError(){}
+	void Report();
 };
 
 /**
@@ -81,14 +78,13 @@ Base class for DEF File Errors.
 */
 class DEFFileError : public ErrorHandler
 {
-	public:
-		DEFFileError(int aMessageIndex, char * aName, int aLineNo,char * aToken);
-		virtual ~DEFFileError();
-		void Report();
+public:
+	DEFFileError(int aMessageIndex, char * aName, int aLineNo,char * aToken);
+	virtual ~DEFFileError(){}
+	void Report();
 
-		String iName;
-		int iLineNo;
-		String iToken;
+	int iLineNo;
+	string iToken;
 };
 
 /**
@@ -98,12 +94,10 @@ Base class for Parameter Parser Errors.
 */
 class ParameterParserError : public ErrorHandler
 {
-	public:
-		ParameterParserError(int aMessageIndex, char * aName);
-		virtual ~ParameterParserError();
-		void Report();
-
-		String iName;
+public:
+	ParameterParserError(int aMessageIndex, char * aName);
+	virtual ~ParameterParserError(){}
+	void Report();
 };
 
 /**
@@ -113,13 +107,13 @@ Class for Invalid Argument Errors.
 */
 class InvalidArgumentError : public ErrorHandler
 {
-	public:
-		InvalidArgumentError(int aMessageIndex, const char * aValue, char * aOption);
-		virtual ~InvalidArgumentError();
-		void Report();
+public:
+	InvalidArgumentError(int aMessageIndex, const char * aValue, char * aOption);
+	virtual ~InvalidArgumentError(){}
+	void Report();
 
-		String iValue;
-		String iOption;
+	string iValue;
+	string iOption;
 };
 
 /**
@@ -129,9 +123,9 @@ Base class for E32Image Compression Errors.
 */
 class E32ImageCompressionError : public ErrorHandler
 {
-	public:
+public:
 	explicit E32ImageCompressionError(int aMessageIndex);
-	virtual ~E32ImageCompressionError();
+	virtual ~E32ImageCompressionError(){}
 	void Report();
 };
 
@@ -142,9 +136,9 @@ Base class for Capability Errors.
 */
 class CapabilityError : public ErrorHandler
 {
-	public:
+public:
 	explicit CapabilityError(int aMessageIndex);
-	virtual ~CapabilityError();
+	virtual ~CapabilityError(){}
 	void Report();
 };
 
@@ -155,12 +149,10 @@ Class for handling Unrecognised Capability Errors.
 */
 class UnrecognisedCapabilityError : public CapabilityError
 {
-	public:
-		UnrecognisedCapabilityError(int aMessageIndex, String aName);
-		~UnrecognisedCapabilityError();
-		void Report();
-
-		String iName;
+public:
+	UnrecognisedCapabilityError(int aMessageIndex, string aName);
+	virtual ~UnrecognisedCapabilityError(){}
+	void Report();
 };
 
 /**
@@ -170,12 +162,11 @@ Base class for ELF File Errors.
 */
 class ELFFileError : public ErrorHandler
 {
-	public:
-		ELFFileError(int aMessageIndex, const char * aName);
-		virtual ~ELFFileError();
-		void Report();
-
-		String iName;
+public:
+	ELFFileError(int aMessageIndex, const char * aName);
+	virtual ~ELFFileError(){}
+	void Report();
+	string iSymbolName;
 };
 
 /**
@@ -187,10 +178,8 @@ class UndefinedSymbolError : public ELFFileError
 {
 public:
 	UndefinedSymbolError(int aMessageIndex, char * aName, char *aSymbolName);
-	~UndefinedSymbolError();
+	virtual ~UndefinedSymbolError(){}
 	void Report();
-
-	String iSymbolName;
 };
 
 /**
@@ -202,10 +191,8 @@ class ImportRelocationError : public ELFFileError
 {
 public:
 	ImportRelocationError(int aMessageIndex, char * aName, char *aSymbolName);
-	~ImportRelocationError();
+	virtual ~ImportRelocationError(){}
 	void Report();
-
-	String iSymbolName;
 };
 
 /**
@@ -215,12 +202,10 @@ Class for handling Symbol Missing From Elf Errors.
 */
 class SymbolMissingFromElfError : public ELFFileError
 {
-	public:
-		SymbolMissingFromElfError(int aMessageIndex, list<String> &aSymbolList, const char * aName);
-		virtual ~SymbolMissingFromElfError();
-		void Report();
-
-		String iSymbolNames;
+public:
+	SymbolMissingFromElfError(int aMessageIndex, list<string> &aSymbolList, const char * aName);
+	virtual ~SymbolMissingFromElfError(){}
+	void Report();
 };
 
 /**
@@ -230,12 +215,10 @@ Class for handling Memory Allocation Errors.
 */
 class MemoryAllocationError : public ErrorHandler
 {
-	public:
-		MemoryAllocationError(int aMessageIndex, char * aName);
-		virtual ~MemoryAllocationError();
-		void Report();
-
-		String iName;
+public:
+	MemoryAllocationError(int aMessageIndex, char * aName);
+	virtual ~MemoryAllocationError(){}
+	void Report();
 };
 
 /**
@@ -247,7 +230,7 @@ class E32ImageError : public ErrorHandler
 {
 public:
 	explicit E32ImageError(int aMessageIndex);
-	~E32ImageError();
+	virtual ~E32ImageError(){}
 	void Report();
 };
 
@@ -260,7 +243,7 @@ class InvalidInvocationError : public ErrorHandler
 {
 public:
 	explicit InvalidInvocationError(int aMessageIndex);
-	~InvalidInvocationError();
+	virtual ~InvalidInvocationError(){}
 	void Report();
 };
 
@@ -273,7 +256,7 @@ class TargetTypeError : public ErrorHandler
 {
 public:
 	explicit TargetTypeError(int aMessageIndex);
-	~TargetTypeError();
+	virtual ~TargetTypeError(){}
 	void Report();
 };
 
@@ -286,10 +269,8 @@ class UnsupportedTargetTypeError : public TargetTypeError
 {
 public:
 	UnsupportedTargetTypeError(int aMessageIndex, char * aName);
-	~UnsupportedTargetTypeError();
+	virtual ~UnsupportedTargetTypeError(){}
 	void Report();
-
-	String iName;
 };
 
 /**
@@ -301,7 +282,7 @@ class MessageError : public ErrorHandler
 {
 public:
 	MessageError(int aMessageIndex, int aIndexValue);
-	~MessageError();
+	virtual ~MessageError(){}
 	void Report();
 
 	int iIndexValue;
@@ -316,7 +297,7 @@ class NoMessageFileError : public ErrorHandler
 {
 public:
 	explicit NoMessageFileError(int aMessageIndex);
-	~NoMessageFileError();
+	virtual ~NoMessageFileError(){}
 	void Report();
 };
 
@@ -328,13 +309,12 @@ not matching with the ones in the DEF file.
 */
 class SysDefMismatchError : public ErrorHandler
 {
-	public:
-		SysDefMismatchError(int aMessageIndex, list<String> &aSymbolList, const char * aName);
-		virtual ~SysDefMismatchError();
-		void Report();
+public:
+	SysDefMismatchError(int aMessageIndex, list<string> &aSymbolList, const char * aName);
+	virtual ~SysDefMismatchError(){}
+	void Report();
 
-		String iName;
-		String iSymbolNames;
+	string iSymbolNames;
 };
 
 /**
@@ -344,12 +324,10 @@ Class for handling Invalid E32 Image Error
 */
 class InvalidE32ImageError : public ErrorHandler
 {
-	public:
-		InvalidE32ImageError(int aMessageIndex, char * aName);
-		virtual ~InvalidE32ImageError();
-		void Report();
-
-		String iName;
+public:
+	InvalidE32ImageError(int aMessageIndex, char * aName);
+	virtual ~InvalidE32ImageError(){}
+	void Report();
 };
 
 #endif

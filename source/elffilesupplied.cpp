@@ -207,7 +207,7 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 		Iterator aMissingListEnd = set_difference(aDefValidExports.begin(), aDefValidExports.end(), \
 			aElfExports.begin(), aElfExports.end(), aResultPos, ElfExports::PtrELFExportNameCompareUpdateAttributes());
 
-		std::list<String> aMissingSymNameList;
+		std::list<string> aMissingSymNameList;
 		while (aResultPos != aMissingListEnd) {
 			// {Valid_DEF - ELF_Symbols} is non empty
 			(*aResultPos)->SetSymbolStatus(Missing); // Set the symbol Status as Missing

@@ -9,7 +9,7 @@
 	<ostream>
 	<portable.h>
 
-1492883336 d:\codeblock\elf2e32\include\portable.h
+1492949898 d:\codeblock\elf2e32\include\portable.h
 	<cstddef>
 	<cstdio>
 	<e32capability.h>
@@ -49,7 +49,7 @@
 1490901154 d:\codeblock\elf2e32\source\deffile.h
 	<list>
 
-1491250174 d:\codeblock\elf2e32\source\errorhandler.h
+1492964671 d:\codeblock\elf2e32\source\errorhandler.h
 	"messagehandler.h"
 	<list>
 	<string>
@@ -57,10 +57,11 @@
 1490813199 d:\codeblock\elf2e32\source\messagehandler.h
 	"messageimplementation.h"
 
-1490814882 d:\codeblock\elf2e32\source\messageimplementation.h
+1492966391 d:\codeblock\elf2e32\source\messageimplementation.h
+	<string>
 	<map>
 
-1490040414 d:\codeblock\elf2e32\source\h_utl.h
+1492960728 d:\codeblock\elf2e32\source\h_utl.h
 	"portable.h"
 	<iostream>
 	<sstream>
@@ -119,7 +120,7 @@
 	"pl_elfexecutable.h"
 	<string>
 
-1492716721 source:d:\codeblock\elf2e32\source\pl_elfconsumer.cpp
+1492966966 source:d:\codeblock\elf2e32\source\pl_elfconsumer.cpp
 	"pl_elfconsumer.h"
 	"parametermanager.h"
 	"errorhandler.h"
@@ -287,14 +288,14 @@
 1491249062 d:\codeblock\elf2e32\source\filedump.h
 	"usecasebase.h"
 
-1491249290 source:d:\codeblock\elf2e32\source\errorhandler.cpp
+1492966915 source:d:\codeblock\elf2e32\source\errorhandler.cpp
 	"errorhandler.h"
 	"messagehandler.h"
 	<iostream>
 	<stdio.h>
 	<cstring>
 
-1492938754 source:d:\codeblock\elf2e32\source\elffilesupplied.cpp
+1492966405 source:d:\codeblock\elf2e32\source\elffilesupplied.cpp
 	"elffilesupplied.h"
 	"pl_elfexecutable.h"
 	"errorhandler.h"
@@ -407,7 +408,7 @@
 	"messagehandler.h"
 	"messageimplementation.h"
 
-1492716305 source:d:\codeblock\elf2e32\source\messageimplementation.cpp
+1492965730 source:d:\codeblock\elf2e32\source\messageimplementation.cpp
 	"messageimplementation.h"
 	"errorhandler.h"
 	<cstring>
@@ -424,7 +425,7 @@
 	<elfdefs.h>
 	"pl_common.h"
 
-1492891795 source:d:\codeblock\elf2e32\source\parametermanager.cpp
+1492966954 source:d:\codeblock\elf2e32\source\parametermanager.cpp
 	<e32capability.h>
 	"pl_common.h"
 	"parametermanager.h"
@@ -438,7 +439,7 @@
 1490122564 source:d:\codeblock\elf2e32\source\pl_dllsymbol.cpp
 	"pl_dllsymbol.h"
 
-1492716721 source:d:\codeblock\elf2e32\source\pl_elfexecutable.cpp
+1492966984 source:d:\codeblock\elf2e32\source\pl_elfexecutable.cpp
 	"pl_elfexecutable.h"
 	"errorhandler.h"
 	<stdio.h>

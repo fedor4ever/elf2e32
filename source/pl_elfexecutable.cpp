@@ -1419,8 +1419,8 @@ ESegmentType ElfExecutable::Segment(Elf32_Sym *aSym)
 				(iDataSegmentHdr && aSym->st_value == (iDataSegmentHdr->p_vaddr + iDataSegmentHdr->p_memsz)) )
 			{
 				//If Symbol is a $$Limit symbol, then consider the open boundary.
-				String limitstr = iStringTable + aSym->st_name;
-				if (limitstr.rfind("$$Limit",limitstr.length()) != String::npos)
+				string limitstr = iStringTable + aSym->st_name;
+				if (limitstr.rfind("$$Limit",limitstr.length()) != string::npos)
 				{
 					aHdr = SegmentFromAbs(aSym->st_value);
 					limitSymbolFound = true;

@@ -31,27 +31,13 @@ using namespace std;
  template <class T>
  TInt Val(T& aVal, char* aStr)
  {
-
-
 	T x;
-	#ifdef __TOOLS2__
 	istringstream val(aStr);
-	#else
-	istrstream val(aStr,strlen(aStr));
-	#endif
 	val >> x;
 	if (!val.eof() || val.fail())
 		return KErrGeneral;
 	aVal=x;
 	return KErrNone;
-
-     /*T x;
-     istrstream val(aStr,strlen(aStr));
-     val >> x;
-     if (!val.eof() || val.fail())
-         return KErrGeneral;
-     aVal=x;
-     return KErrNone;*/
  }
 
 

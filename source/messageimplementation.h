@@ -28,7 +28,8 @@
 	#pragma warning(disable: 4786) // identifier was truncated to '255' characters in the debug information
 #endif
 
-#include<map>
+#include <string>
+#include <map>
 
 typedef std::map<int,char*> Map;
 
@@ -114,7 +115,7 @@ class Message
 		Message();
 		~Message();
 		char* GetMessageString(int errorIndex);
-		void Output(const char *aName);
+		void Output(const std::string &aInfo);
 		void StartLogging(char *fileName);
 	//	void ReportWarning(int warnIndex,...);
 		void ReportMessage(int aMsgType, int aMsgIndex,...);
