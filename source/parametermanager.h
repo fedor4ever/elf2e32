@@ -58,6 +58,7 @@ class ParameterManager
 
 public:
 
+	void CheckOptions();
 
 	struct OptionDesc
 	{
@@ -314,7 +315,7 @@ public:
 	bool LogFileOption();
 	bool MessageFileOption();
 	bool DumpMessageFileOption();
-	bool DllDataP();
+	bool HasDllData();
 	TProcessPriority Priority();
 	bool PriorityOption();
 	bool VersionOption();
@@ -445,9 +446,6 @@ private:
 	/** To check if the --dso (Option to pass the output DSO File name) is passed as input */
 	bool iDSOFileOutOption = false;
 
-	/** To check if the --output (Option to pass the output image name) is passed as input */
-	bool iOutFileOption = false;
-
 	/** To check if the --elfinput (Option to pass the input Elf File) is passed as input */
 	bool iElfFileInOption = false;
 
@@ -457,7 +455,6 @@ private:
 	/** To check if the --linkas (Option to pass DLL name to be linked with) is passed as input */
 	bool iLinkAsOption = false;
 
-	bool iUid1Option = false;
 	bool iSecureIDOption = false;
 	bool iVendorIDOption = false;
 
@@ -551,7 +548,7 @@ private:
 	char * iDumpMessageFileName;
 	bool iDumpMessageFileOption;
 
-	bool iDllDataP;
+	bool iDllData;
 
 	//vector<char*> iLibPathList;
 	LibSearchPaths iLibPathList;

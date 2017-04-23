@@ -162,7 +162,7 @@ bool UseCaseBase::AllowDllData()
 {
 	if(((iParameterManager->TargetTypeName() == EDll)||
 			(iParameterManager->TargetTypeName() == EPolyDll)) &&
-			iParameterManager->DllDataP()) return true;
+			iParameterManager->HasDllData()) return true;
 	else if((iParameterManager->TargetTypeName() == EExe) ||
 			(iParameterManager->TargetTypeName() == EExexp) ||
 			(iParameterManager->TargetTypeName() == EStdExe)) return true;

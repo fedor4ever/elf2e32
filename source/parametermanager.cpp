@@ -32,6 +32,8 @@
 #include "h_ver.h"
 
 using std::endl;
+void ValidateDSOGeneration(ParameterManager *param);
+
 /**
 Constructor for the ParameterManager.
 
@@ -76,7 +78,7 @@ ParameterManager::ParameterManager(int aArgc, char** aArgv) :
 	iMessageFileOption(false),
 	iDumpMessageFileName(nullptr),
 	iDumpMessageFileOption(false),
-	iDllDataP(false),
+	iDllData(false),
 	iLibPathList (0),
 	iSysDefCount (0),
 	iPriorityOption(false),
@@ -748,7 +750,7 @@ This function finds out if the --output option is passed to the program.
 */
 bool ParameterManager::E32OutOption()
 {
-	return iOutFileOption;
+	return (iOutFileName != nullptr);
 }
 
 /**
@@ -762,20 +764,6 @@ This function finds out if the --linkas option is passed to the program.
 bool ParameterManager::LinkAsOption()
 {
 	return iLinkAsOption;
-}
-
-
-/**
-This function finds out if the --UID1 option is passed to the program.
-
-@internalComponent
-@released
-
-@return True if --UID1 option is passed in or False.
-*/
-bool ParameterManager::Uid1Option()
-{
-	return iUid1Option;
 }
 
 /**
@@ -918,9 +906,9 @@ This function finds out if the --dlldata option is passed to the program.
 
 @return True if --dlldata option is passed in or False.
 */
-bool ParameterManager::DllDataP()
+bool ParameterManager::HasDllData()
 {
- 	return iDllDataP;
+ 	return iDllData;
 }
 
 /**
@@ -1003,12 +991,12 @@ bool ParameterManager::FPUOption()
 
 
 /**
-This function extracts the DEF file name that is passed as input through the --definput option.
+This function returns the DEF file name that is passed as input through the --definput option.
 
 @internalComponent
 @released
 
-@return the name of the input DEF file if provided as input through --definput or 0.
+@return the name of the input DEF file if provided as input through --definput or nullptr.
 */
 char * ParameterManager::DefInput()
 {
@@ -1021,7 +1009,7 @@ This function extracts the Elf file name that is passed as input through the --e
 @internalComponent
 @released
 
-@return the name of the input Elf file if provided as input through --elfinput or 0.
+@return the name of the input Elf file if provided as input through --elfinput or nullptr.
 */
 char * ParameterManager::ElfInput()
 {
@@ -1034,7 +1022,7 @@ This function extracts the E32 image name that is passed as input through the --
 @internalComponent
 @released
 
-@return the name of the input E32 image if provided as input through --e32input or 0.
+@return the name of the input E32 image if provided as input through --e32input or nullptr.
 */
 char * ParameterManager::E32Input()
 {
@@ -1047,7 +1035,7 @@ This function extracts the output DEF file name that is passed as input through 
 @internalComponent
 @released
 
-@return the name of the output DEF file if provided as input through --defoutput or 0.
+@return the name of the output DEF file if provided as input through --defoutput or nullptr.
 */
 char * ParameterManager::DefOutput()
 {
@@ -1060,7 +1048,7 @@ This function extracts the DSO file name that is passed as input through the --d
 @internalComponent
 @released
 
-@return the name of the output DSO file if provided as input through --dso or 0.
+@return the name of the output DSO file if provided as input through --dso or nullptr.
 */
 char * ParameterManager::DSOOutput()
 {
@@ -1073,7 +1061,7 @@ This function extracts the E32 image output that is passed as input through the 
 @internalComponent
 @released
 
-@return the name of the output E32 image output if provided as input through --output or 0.
+@return the name of the output E32 image output if provided as input through --output or nullptr.
 */
 char * ParameterManager::E32ImageOutput()
 {
@@ -1086,7 +1074,7 @@ This function extracts the target type that is passed as input through the --tar
 @internalComponent
 @released
 
-@return the name of the input target type if provided as input through --targettype or 0.
+@return the name of the input target type if provided as input through --targettype or nullptr.
 */
 ETargetType ParameterManager::TargetTypeName()
 {
@@ -1100,7 +1088,7 @@ that is passed as input through the --linkas option.
 @internalComponent
 @released
 
-@return the name of the DLL name to be linked with if provided as input through --linkas or 0.
+@return the name of the DLL name to be linked with if provided as input through --linkas or nullptr.
 */
 char * ParameterManager::LinkAsDLLName()
 {
@@ -1481,6 +1469,182 @@ bool ParameterManager::IsDebuggable()
 	return iDebuggable;
 }
 
+/** \brief Verifies and correct wrong input options
+ * This function correct multiple conflict opions
+ * like --datapaging with different params,
+ * also fix wrong uid1 for exe and dll
+ *
+ */
+void ParameterManager::CheckOptions()
+{
+	unsigned check = IsCodePaged() + IsCodeUnpaged() +
+		IsCodeDefaultPaged();
+	if (check > 1)
+	{
+		cerr << "********************\n";
+		cerr << "Multiple code paging params set!\n";
+		cerr << "Use only one: paged, unpaged or default!!!\n";
+		cerr << "Treat as --codepaging=default!\n";
+		cerr << "********************\n";
+		SetCodeDefaultPaged(true);
+		SetCodePaged(false);
+		SetCodeUnpaged(false);
+	}
+
+	check = IsDataPaged() + IsDataUnpaged() + IsDataDefaultPaged();
+	if (check > 1)
+	{
+		cerr << "********************\n";
+		cerr << "Multiple data paging params set!\n";
+		cerr << "Use only one: paged, unpaged or default!!!\n";
+		cerr << "Treat as --datapaging=default!\n";
+		cerr << "********************\n";
+		SetDataDefaultPaged(true);
+		SetDataPaged(false);
+		SetDataUnpaged(false);
+	}
+
+	switch(iTargetTypeName)
+	{
+	case ETargetTypeNotSet:
+		break;
+	case EInvalidTargetType:
+		break;
+	case ELib:
+		ValidateDSOGeneration(this);
+		if (!DefInput())
+			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--definput");
+		break;
+	case EDll:
+		if (!ElfInput())
+			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--elfinput");
+		if (!DefFileOutOption())
+			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--defoutput");
+		if (!DefOutput())
+			throw ParameterParserError(NOARGUMENTERROR,"--defoutput");
+		if (!E32ImageOutput())
+			throw ParameterParserError(NOARGUMENTERROR,"--output");
+
+		ValidateDSOGeneration(this);
+		if((iUID1 != KDynamicLibraryUidValue) && (iUID2 != 0x20004C45))
+		{
+			if(iUID1 != 0){
+				cerr << "********************\n";
+				cerr << "Wrong UID1\n";
+				cerr << "Set uid1 to KDynamicLibraryUidValue\n";
+				cerr << "********************\n";
+			}
+			SetUID1(KDynamicLibraryUidValue);
+		}
+		if(!iUID2)
+		{
+			cerr << "********************\n";
+			cerr << "missed value for UID2\n";
+			cerr << "Set uid1 to KDynamicLibraryUidValue\n";
+			cerr << "********************\n";
+			SetUID1(KSharedLibraryUidValue);
+		}
+		if(!iUID3) cerr << "Missed --uid3 option!\n";
+		break;
+
+	case EExe:
+		if (!ElfInput())
+			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--elfinput");
+		if (!DefOutput())
+			throw ParameterParserError(NOARGUMENTERROR,"--defoutput");
+		if (!E32ImageOutput())
+			throw ParameterParserError(NOARGUMENTERROR,"--output");
+		if(iUID1 != KExecutableImageUidValue)
+		{
+			if(iUID1 != 0){
+				cerr << "********************\n";
+				cerr << "Wrong UID1\n";
+				cerr << "Set uid1 to KExecutableImageUidValue\n";
+				cerr << "********************\n";
+			}
+			SetUID1(KExecutableImageUidValue);
+		}
+		if(!iUID3) cerr << "Missed --uid3 option!\n";
+		break;
+	case EPolyDll:
+		if (!ElfInput())
+			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--elfinput");
+		if (!DefFileOutOption())
+			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--defoutput");
+		if (!DefOutput())
+			throw ParameterParserError(NOARGUMENTERROR,"--defoutput");
+		if (!E32ImageOutput())
+			throw ParameterParserError(NOARGUMENTERROR,"--output");
+		if(iUID1 != KDynamicLibraryUidValue)
+		{
+			if(iUID1 != 0){
+				cerr << "********************\n";
+				cerr << "Wrong UID1\n";
+				cerr << "Set uid1 to KDynamicLibraryUidValue\n";
+				cerr << "********************\n";
+			}
+			SetUID1(KDynamicLibraryUidValue);
+		}
+		if(!iUID3) cerr << "Missed --uid2 option!\n";
+		if(!iUID3) cerr << "Missed --uid3 option!\n";
+		break;
+	case EExexp:
+		if (!ElfInput())
+			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--elfinput");
+		if (!DefFileOutOption())
+			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--defoutput");
+		if (!DefOutput())
+			throw ParameterParserError(NOARGUMENTERROR,"--defoutput");
+		if (!E32ImageOutput())
+			throw ParameterParserError(NOARGUMENTERROR,"--output");
+		ValidateDSOGeneration(this);
+
+		if(iUID1 != KExecutableImageUidValue)
+		{
+			if(iUID1 != 0){
+				cerr << "********************\n";
+				cerr << "Wrong UID1\n";
+				cerr << "Set uid1 to KExecutableImageUidValue\n";
+				cerr << "********************\n";
+			}
+			SetUID1(KExecutableImageUidValue);
+		}
+		if(!iUID2) cerr << "Missed --uid2 option!\n";
+		if(!iUID3) cerr << "Missed --uid3 option!\n";
+		break;
+	case EStdExe:
+		if (!ElfInput())
+			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--elfinput");
+		if (!DefOutput())
+			throw ParameterParserError(NOARGUMENTERROR,"--defoutput");
+		if (!E32ImageOutput())
+			throw ParameterParserError(NOARGUMENTERROR,"--output");
+		if(iUID1 != KExecutableImageUidValue)
+        {
+            if(iUID1 != 0)
+            {
+                cerr << "********************\n";
+                cerr << "Wrong UID1\n";
+                cerr << "Set uid1 to KExecutableImageUidValue\n";
+                cerr << "********************\n";
+            }
+            SetUID1(KExecutableImageUidValue);
+        }
+		if(iUID2 != 0x20004C45)
+		{
+			cerr << "********************\n";
+			cerr << "Wrong UID1\n";
+			cerr << "Set uid1 to KExecutableImageUidValue\n";
+			cerr << "********************\n";
+			SetUID2(0x20004C45);
+		}
+
+		if(!iUID3) cerr << "Missed --uid3 option!\n";
+		break;
+	default:
+		break;
+	}
+}
 
 bool ParameterManager::IsSmpSafe()
 {
@@ -2633,7 +2797,6 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseDefaultPaged)
 	aPM->SetCodeDefaultPaged(true);
 }
 
-
 /**
 @internalComponent
 @released
@@ -2656,29 +2819,12 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseCodePaging)
     }
 	else
     {
-        throw InvalidArgumentError(INVALIDARGUMENTERROR, aValue, aOption);
-    }
-
-	// Check that we haven't been given conflicting options.
-
-    unsigned check = 0;
-
-    if ( aPM->IsCodePaged() )
-    {
-        check++;
-    }
-    if ( aPM->IsCodeUnpaged() )
-    {
-        check++;
-    }
-    if ( aPM->IsCodeDefaultPaged() )
-    {
-        check++;
-    }
-
-    if (check > 1)
-    {
-		throw InvalidInvocationError(INVALIDINVOCATIONERROR);
+		cerr << "********************\n";
+		cerr << "Code paging option not set!\n";
+		cerr << "Use param paged, unpaged or defaultpaged\n";
+		cerr << "Treat as --codepaging=default!\n";
+		cerr << "********************\n";
+		aPM->SetCodeDefaultPaged(true);
     }
 }
 
@@ -2691,45 +2837,27 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseDataPaging)
 	INITIALISE_PARAM_PARSER;
 
 	if (strnicmp(aValue, "paged", 5)==0)
-    {
-        aPM->SetDataPaged(true);
-    }
+	{
+		aPM->SetDataPaged(true);
+	}
 	else if (strnicmp(aValue, "unpaged", 7)==0)
-    {
-        aPM->SetDataUnpaged(true);
-    }
+	{
+		aPM->SetDataUnpaged(true);
+	}
 	else if (strnicmp(aValue, "default", 7)==0)
-    {
-        aPM->SetDataDefaultPaged(true);
-    }
+	{
+		aPM->SetDataDefaultPaged(true);
+	}
 	else
-    {
-        throw InvalidArgumentError(INVALIDARGUMENTERROR, aValue, aOption);
-    }
-
-	// Check that we haven't been given conflicting options.
-
-    unsigned check = 0;
-
-    if ( aPM->IsDataPaged() )
-    {
-        check++;
-    }
-    if ( aPM->IsDataUnpaged() )
-    {
-        check++;
-    }
-    if ( aPM->IsDataDefaultPaged() )
-    {
-        check++;
-    }
-
-    if (check > 1)
-    {
-		throw InvalidInvocationError(INVALIDINVOCATIONERROR);
-    }
+	{
+		cerr << "********************\n";
+		cerr << "Data paging option not set!\n";
+		cerr << "Use paged, unpaged or defaultpaged\n";
+		cerr << "Treat as --datapaging=default!\n";
+		cerr << "********************\n";
+		aPM->SetDataDefaultPaged(true);
+	}
 }
-
 
 /**
 This function sets the iExcludeUnwantedExports flag if --excludeunwantedexports option is passed to the program.
@@ -2918,6 +3046,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseTargetTypeName)
 {
 	INITIALISE_PARAM_PARSER;
 	aPM->SetTargetTypeName(aPM->ValidateTargetType(aValue));
+	if(strcmp(aValue, "STDDLL")==0) SetUID1(0x20004C45);
 }
 
 /**
@@ -3228,7 +3357,6 @@ Name of the output E32 image output if provided as input through --output or 0.
 */
 void ParameterManager::SetE32Output(char * aSetE32Output)
 {
-	iOutFileOption = true;
 	iOutFileName = aSetE32Output;
 }
 
@@ -3456,7 +3584,6 @@ UID1 passed to '--uid1' option.
 */
 void  ParameterManager::SetUID1(UINT aUID1)
 {
-	iUid1Option = true;
 	iUID1 = aUID1;
 }
 
@@ -3589,7 +3716,7 @@ void ParameterManager::SetIgnoreNonCallable(bool aVal)
 }
 
 /**
-This function sets iDllDataP if --dlldata is passed in.
+This function sets iDllData if --dlldata is passed in.
 
 @internalComponent
 @released
@@ -3599,7 +3726,7 @@ True if --dlldata is passed in.
 */
 void ParameterManager::SetDllDataP(bool anewVal)
 {
-	iDllDataP = anewVal;
+	iDllData = anewVal;
 }
 
 /**
@@ -3699,4 +3826,26 @@ void ParameterManager::SetDebuggable(bool aVal)
 void ParameterManager::SetSmpSafe(bool aVal)
 {
 	iSmpSafe = aVal;
+}
+
+//Internal support functions
+
+void ValidateDSOGeneration(ParameterManager *param)
+{
+	bool dsofileoutoption = param->DSOFileOutOption();
+	bool linkasoption = param->LinkAsOption();
+	char * dsofileout = param->DSOOutput();
+	char * linkas	  = param->LinkAsDLLName();
+
+	if (dsofileoutoption && !dsofileout)
+		throw ParameterParserError(NOARGUMENTERROR, "--dso");
+	else if (linkasoption && !linkas)
+		throw ParameterParserError(NOFILENAMEERROR,"--linkas");
+	else if (!dsofileoutoption && !linkasoption)
+		throw ParameterParserError(NOREQUIREDOPTIONERROR,"--dso, --linkas");
+	else if (!dsofileoutoption)
+		throw ParameterParserError(NOREQUIREDOPTIONERROR,"--dso");
+	else if (!linkasoption)
+		throw ParameterParserError(NOREQUIREDOPTIONERROR,"--linkas");
+
 }

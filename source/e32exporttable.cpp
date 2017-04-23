@@ -59,7 +59,7 @@ void E32ExportTable::CreateExportTable(ElfExecutable * aElfExecutable, ElfExport
 	iAllocateP = true;
 	bool aDelSym;
 	ElfExports::ExportList::iterator first = aExportList.begin();
-	for (PLUINT32 i = 1; i < aSize; i++, first++)
+	for (uint32_t i = 1; i < aSize; i++, first++)
 	{
 		Elf32_Sym * sym;
 

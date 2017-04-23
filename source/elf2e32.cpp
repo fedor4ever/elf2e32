@@ -154,62 +154,29 @@ UseCaseBase * Elf2E32::SelectUseCase()
 	switch (iTargetType)
 	{
 	case EDll:
-		ValidateDSOGeneration(iParameterListInterface, iTargetType);
-		ValidateE32ImageGeneration(iParameterListInterface, iTargetType);
-
-		if (!deffilein && elfin)
+		if (!deffilein)
 			iUseCase = new DLLTarget(iParameterListInterface);
-		else if (deffilein && elfin)
+		else if (deffilein)
 			iUseCase = new ExportTypeRebuildTarget(iParameterListInterface);
-		else if (!elfin)
-			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--elfinput");
 		return iUseCase;
 	case ELib:
-		if (deffilein)
-		{
-			ValidateDSOGeneration(iParameterListInterface, iTargetType);
-			return iUseCase = new LibraryTarget(iParameterListInterface);
-		}
-		else
-		{
-			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--definput");
-		}
-		break;
+        return iUseCase = new LibraryTarget(iParameterListInterface);
 	case EExe:
-		if (elfin)
-		{
-			iUseCase = new ExeTarget(iParameterListInterface);
-			ValidateE32ImageGeneration(iParameterListInterface, iTargetType);
-		}
-		else
-		{
-			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--elfinput");
-		}
-		return iUseCase;
+		return iUseCase = new ExeTarget(iParameterListInterface);
 	case EPolyDll:
-		if (!deffilein && elfin)
+		if (!deffilein)
 			iUseCase = new POLYDLLFBTarget(iParameterListInterface);
-		else if (deffilein && elfin)
+		else if (deffilein)
 			iUseCase = new POLYDLLRebuildTarget(iParameterListInterface);
-		else if (!elfin)
-			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--elfinput");
-
-		ValidateE32ImageGeneration(iParameterListInterface, iTargetType);
 		return iUseCase;
 	case EExexp:
-	       	if (!deffilein && elfin)
-                iUseCase = new DLLTarget(iParameterListInterface);
-			else if (deffilein && elfin)
-				iUseCase = new ExportTypeRebuildTarget(iParameterListInterface);
-			else if (!elfin)
-				throw ParameterParserError(NOREQUIREDOPTIONERROR,"--elfinput");
-
-		ValidateDSOGeneration(iParameterListInterface,iTargetType);
-		ValidateE32ImageGeneration(iParameterListInterface, iTargetType);
+		if (!deffilein)
+			iUseCase = new DLLTarget(iParameterListInterface);
+		else if (deffilein)
+			iUseCase = new ExportTypeRebuildTarget(iParameterListInterface);
 		return iUseCase;
 	case EStdExe:
-		iUseCase = new StdExeTarget(iParameterListInterface);
-		return iUseCase;
+		return iUseCase = new StdExeTarget(iParameterListInterface);
 	default:
 		throw InvalidInvocationError(INVALIDINVOCATIONERROR);
 	}
@@ -217,66 +184,10 @@ UseCaseBase * Elf2E32::SelectUseCase()
 	return (iUseCase=0x0);
 }
 
-void Elf2E32::ValidateDSOGeneration(ParameterManager* aParameterManager, ETargetType aTargetType)
-{
-	bool dsofileoutoption = aParameterManager->DSOFileOutOption();
-	bool linkasoption = aParameterManager->LinkAsOption();
-	char * dsofileout = aParameterManager->DSOOutput();
-	char * linkas = aParameterManager->LinkAsDLLName();
-
-	if (aTargetType != ELib)
-	{
-		bool deffileoutoption = aParameterManager->DefFileOutOption();
-
-		if (!deffileoutoption)
-			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--defoutput");
-
-		char * deffileout = aParameterManager->DefOutput();
-		//Incase if the DEF file name is not passed as an input
-		if (!deffileout)
-			throw ParameterParserError(NOARGUMENTERROR,"--defoutput");
-	}
-
-	if (dsofileoutoption && !dsofileout)
-		throw ParameterParserError(NOARGUMENTERROR, "--dso");
-	else if (linkasoption && !linkas)
-		throw ParameterParserError(NOFILENAMEERROR,"--linkas");
-	else if (!dsofileoutoption && !linkasoption)
-		throw ParameterParserError(NOREQUIREDOPTIONERROR,"--dso, --linkas");
-	else if (!dsofileoutoption)
-		throw ParameterParserError(NOREQUIREDOPTIONERROR,"--dso");
-	else if (!linkasoption)
-		throw ParameterParserError(NOREQUIREDOPTIONERROR,"--linkas");
-
-}
-
-void Elf2E32::ValidateE32ImageGeneration(ParameterManager* aParameterManager, ETargetType aTargetType)
-{
-	bool e32fileoutoption = aParameterManager->E32OutOption();
-	char * e32fileout = aParameterManager->E32ImageOutput();
-
-	if (!e32fileoutoption)
-		throw ParameterParserError(NOREQUIREDOPTIONERROR,"--output");
-	else if (!e32fileout)
-		throw ParameterParserError(NOARGUMENTERROR,"--output");
-
-	UINT uid1option = aParameterManager->Uid1Option();
-	UINT uid1val = aParameterManager->Uid1();
-
-	if (!uid1option) // REVISIT
-		throw ParameterParserError(NOREQUIREDOPTIONERROR,"--uid1");
-	else if (uid1option && !uid1val)
-		throw ParameterParserError(NOARGUMENTERROR,"--uid1");
-	else if (aTargetType == EDll && uid1val != 0x10000079)
-		cout << "UID1 should be set to 0x10000079 for DLL Generation" << endl;
-	else if (aTargetType == EExe && uid1val != 0x1000007A)
-		cout << "UID1 should be set to 0x1000007A for EXE Generation" << endl;
-
-}
-
 /**
 This function:
  1. Calls the ParameterAnalyser() which parses the command line options and extracts the inputs.
+ 2. Calls the CheckOptions() to find and fix wrong input options
  2. Calls the SelectUseCase() to select the appropriate use case based on the input values.
  3. Calls the Execute() of the selected use case.
 @internalComponent
@@ -293,6 +204,7 @@ int Elf2E32::Execute()
 	try
 	{
 		iParameterListInterface->ParameterAnalyser();
+		iParameterListInterface->CheckOptions();
 
 		bool dumpMessageFileOption = iParameterListInterface->DumpMessageFileOption();
 		char * dumpMessageFile = iParameterListInterface->DumpMessageFile();

@@ -40,8 +40,6 @@ public:
 	virtual ~Elf2E32();
 	UseCaseBase * SelectUseCase();
 	int Execute();
-	static void ValidateDSOGeneration(ParameterManager* aParameterManager, ETargetType aTargetType);
-	static void ValidateE32ImageGeneration(ParameterManager* aParameterManager, ETargetType aTargetType);
 	static ParameterManager * GetInstance(int aArgc, char ** aArgv);
 
 private:

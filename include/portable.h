@@ -62,6 +62,13 @@ const TUint KFormatNotCompressed=0;
 const TUint KUidCompressionDeflate=0x101F7AFC;
 const TUint KUidCompressionBytePair=0x102822AA;
 
+//UID1:
+const TUint KDynamicLibraryUidValue=0x10000079;
+const TUint KExecutableImageUidValue=0x1000007a; //All executable targets have
+//UID2:
+const TUint KUidApp              = 0x100039CE; //should be specified by GUI applications only
+const TUint KSharedLibraryUidValue=0x1000008d;
+
 const TUint KCodeSegIdOffset = 12;
 const TUint KImageCodeUnpaged   = 0x00000100u; ///< Executable image should not be demand paged. Exclusive with KImageCodePaged,
 const TUint KImageCodePaged    = 0x00000200u; ///< Executable image should be demand paged. Exclusive with KImageCodeUnpaged
@@ -183,8 +190,6 @@ struct TUidType {
     TUid iUid[KMaxCheckedUid];
     };
 
-const TInt KDynamicLibraryUidValue=0x10000079;
-const TInt KExecutableImageUidValue=0x1000007a;
 const TUid KDynamicLibraryUid= {KDynamicLibraryUidValue};
 const TUid KExecutableImageUid= {KExecutableImageUidValue};
 

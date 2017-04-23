@@ -964,7 +964,7 @@ This function returns the CPU identifier for the E32 image header.
 @internalComponent
 @released
 */
-uint16 E32ImageFile::GetCpuIdentifier()
+uint16_t E32ImageFile::GetCpuIdentifier()
 {
 	return (uint16)ECpuArmV5;
 }
@@ -974,7 +974,7 @@ This function returns the entry point of the E32 image .
 @internalComponent
 @released
 */
-uint32 E32ImageFile::EntryPointOffset()
+uint32_t E32ImageFile::EntryPointOffset()
 {
 	return iElfExecutable->EntryPointOffset();
 }

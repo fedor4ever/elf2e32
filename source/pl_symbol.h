@@ -82,7 +82,8 @@ public:
 	PLUINT32		iSymbolIndex = 0;
 
 private:
-	SymbolStatus iSymbolStatus = Missing; //should fail if not init!!!
+/** TODO (Administrator#1#04/20/17): Find why and where this used unitialized!!!! */
+	SymbolStatus iSymbolStatus;// = Missing; /*should fail if not init!!! */
 	char*		iSymbolName = nullptr;
 	char*		iExportName = nullptr;
 	SymbolType	iSymbolType = SymbolTypeNotDefined; //should fail if not init!!!

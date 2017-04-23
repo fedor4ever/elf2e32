@@ -336,11 +336,9 @@ void ElfFileSupplied::GenerateOutput()
 {
 	if (iElfExecutable->iExports)
 	{
-		Elf2E32::ValidateDSOGeneration(iParameterManager, ETargetTypeNotSet);
 		WriteDefFile();
 		WriteDSOFile();
 	}
-	Elf2E32::ValidateE32ImageGeneration(iParameterManager, ETargetTypeNotSet);
 	WriteE32();
 }
 

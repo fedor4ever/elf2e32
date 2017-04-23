@@ -130,8 +130,8 @@ class E32ImageFile {
 
         virtual void AllocateE32Image();
         virtual void FinalizeE32Image();
-        virtual uint16 GetCpuIdentifier();
-        virtual uint32 EntryPointOffset();
+        virtual uint16_t GetCpuIdentifier();
+        virtual uint32_t EntryPointOffset();
 
         enum EEntryPointStatus {
             EEntryPointOK,
@@ -194,11 +194,11 @@ class E32ImageFile {
 
         // This table carries the byte offsets in the import table entries corresponding
         // to the 0th ordinal entry of static dependencies.
-        std::vector<int>    iImportTabLocations;
-        std::vector<uint32> iSymAddrTab;
-        std::vector<uint32> iSymNameOffTab;
+        std::vector<int32_t>    iImportTabLocations;
+        std::vector<uint32_t> iSymAddrTab;
+        std::vector<uint32_t> iSymNameOffTab;
         std::string         iSymbolNames;
-        uint32              iSymNameOffset;
+        uint32_t            iSymNameOffset;
 
     public:
         E32ImageFile();
