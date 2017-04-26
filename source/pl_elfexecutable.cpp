@@ -22,6 +22,7 @@
 #include "errorhandler.h"
 #include <stdio.h>
 #include <cstring>
+#include <iostream>
 #include "parametermanager.h"
 #include "pl_elfimportrelocation.h"
 #include "pl_symbol.h"
@@ -31,7 +32,7 @@
 
 /**
 Constructor for class ElfExecutable
-@param aParameterListInterface - Instance of class ParameterListInterface
+@param aParameterManager - Instance of class ParameterManager
 @internalComponent
 @released
 */
@@ -185,7 +186,6 @@ char* ElfExecutable::FindCommentSection()
 {
 	size_t nShdrs = iElfHeader->e_shnum;
 	char *aCommentSection = ".comment";
-	char *aComment;
 
 	if (nShdrs)
 	{
@@ -198,13 +198,13 @@ char* ElfExecutable::FindCommentSection()
 				int length = strlen(aCommentSection);
 				if (!strncmp(aSectionName, aCommentSection, length))
 				{
-					aComment = ELF_ENTRY_PTR(char, iElfHeader, iSections[i].sh_offset);
+					char *aComment = ELF_ENTRY_PTR(char, iElfHeader, iSections[i].sh_offset);
 					return aComment;
 				}
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -308,9 +308,8 @@ Function to process Elf symbols
 */
 PLUINT32  ElfExecutable::ProcessSymbols(){
 	PLUINT32	aSymIdx = 0;
-	Symbol	*aSymbol;
 	char		*aDllName;
-	char		*aSymName, *aNewSymName;
+	char		*aSymName;
 	SymbolType	aType;
 
 	while( aSymIdx < iNSymbols ) {
@@ -326,9 +325,9 @@ PLUINT32  ElfExecutable::ProcessSymbols(){
 
 			aSymName = ELF_ENTRY_PTR(char, iStringTable, iElfDynSym[aSymIdx].st_name );
 			aDllName = iVerInfo[iVersionTbl[aSymIdx]].iLinkAs;
-			aNewSymName = new char[strlen(aSymName)+1];
+			char *aNewSymName = new char[strlen(aSymName)+1];
 			strcpy(aNewSymName, aSymName);
-			aSymbol = new Symbol( aNewSymName, aType, &iElfDynSym[aSymIdx], aSymIdx);
+			Symbol *aSymbol = new Symbol( aNewSymName, aType, &iElfDynSym[aSymIdx], aSymIdx);
 			aSymbol->SetSymbolSize(iElfDynSym[aSymIdx].st_size);
 
 			//Putting the symbols into a hash table - Used later while processing relocations
@@ -634,14 +633,10 @@ void ElfExecutable::ProcessVerInfo() {
 	PLUINT32 aSz = iVerNeedCount + iVerDefCount + 1;
 	iVerInfo = new VersionInfo[aSz];
 
-	Elf32_Verdef	*aDef;
+	Elf32_Verdef	*aDef = iVersionDef;
 	Elf32_Verdaux	*aDaux;
-	Elf32_Verneed	*aNeed;
-	Elf32_Vernaux	*aNaux;
 	char			*aSoName;
 	char			*aLinkAs;
-
-	aDef = iVersionDef;
 
 	while( aDef ) {
 		aDaux = ELF_ENTRY_PTR( Elf32_Verdaux, aDef, aDef->vd_aux);
@@ -657,10 +652,10 @@ void ElfExecutable::ProcessVerInfo() {
 		aDef = ELF_ENTRY_PTR(Elf32_Verdef, aDef, aDef->vd_next);
 	}
 
-	aNeed = iVersionNeed;
+	Elf32_Verneed *aNeed = iVersionNeed;
 
 	while( aNeed ) {
-		aNaux = ELF_ENTRY_PTR(Elf32_Vernaux, aNeed, aNeed->vn_aux);
+		Elf32_Vernaux *aNaux = ELF_ENTRY_PTR(Elf32_Vernaux, aNeed, aNeed->vn_aux);
 		aLinkAs = ELF_ENTRY_PTR(char, iStringTable, aNaux->vna_name);
 		aSoName = ELF_ENTRY_PTR(char, iStringTable, aNeed->vn_file);
 
@@ -701,22 +696,16 @@ void ElfExecutable::ProcessRelocations(T *aElfRel, size_t aSize){
 
 	T * aElfRelLimit = ELF_ENTRY_PTR(T, aElfRel, aSize);
 
-	PLUINT32		aSymIdx;
-	PLUCHAR			aType;
-	ElfRelocation	*aRel;
-	bool			aImported;
-	Elf32_Word		aAddend;
-
 	while( aElfRel < aElfRelLimit) {
 
-		aType = ELF32_R_TYPE(aElfRel->r_info );
+		PLUCHAR aType = ELF32_R_TYPE(aElfRel->r_info );
 
 		if(ElfRelocation::ValidRelocEntry(aType)) {
 
-			aSymIdx = ELF32_R_SYM(aElfRel->r_info);
-			aImported = ImportedSymbol( &iElfDynSym[aSymIdx] );
-			aAddend = Addend(aElfRel);
-			aRel = ElfRelocation::NewRelocEntry(this, aElfRel->r_offset, aAddend, \
+			PLUINT32 aSymIdx = ELF32_R_SYM(aElfRel->r_info);
+			bool aImported = ImportedSymbol( &iElfDynSym[aSymIdx] );
+			Elf32_Word aAddend = Addend(aElfRel);
+			ElfRelocation *aRel = ElfRelocation::NewRelocEntry(this, aElfRel->r_offset, aAddend,
 				aSymIdx, aType, aElfRel, aImported);
 
 			if(aRel) {
@@ -735,11 +724,9 @@ This function finds the addend associated with a relocation entry.
 @released
 */
 Elf32_Word ElfExecutable::Addend(Elf32_Rel* aRel) {
-	PLUINT32 aOffset;
-	Elf32_Word	*aAddendPlace;
 	Elf32_Phdr  *aHdr = Segment(aRel->r_offset);
-	aOffset = aHdr->p_offset + aRel->r_offset - aHdr->p_vaddr;
-	aAddendPlace = ELF_ENTRY_PTR(Elf32_Word, iElfHeader, aOffset);
+	PLUINT32 aOffset = aHdr->p_offset + aRel->r_offset - aHdr->p_vaddr;
+	Elf32_Word	*aAddendPlace = ELF_ENTRY_PTR(Elf32_Word, iElfHeader, aOffset);
 	return *aAddendPlace;
 }
 
@@ -777,7 +764,7 @@ defined by looking in the version required section.
 char* ElfExecutable::SymbolDefinedInDll(PLUINT32  aSymbolIndex){
 
 	VersionInfo *aVInfo = GetVersionInfo(aSymbolIndex);
-	return aVInfo ? aVInfo->iLinkAs : NULL;
+	return aVInfo ? aVInfo->iLinkAs : nullptr;
 }
 
 /**
@@ -801,9 +788,10 @@ This function returns the segment type
 @internalComponent
 @released
 */
-ESegmentType ElfExecutable::SegmentType(Elf32_Addr aAddr) {
+ESegmentType ElfExecutable::SegmentType(Elf32_Addr aAddr) { // sometimes got zero arg
 
 	try {
+
 		Elf32_Phdr *aHdr = Segment(aAddr);
 		if( !aHdr )
 			return ESegmentUndefined;
@@ -849,7 +837,6 @@ Function to get segment header
 @internalComponent
 @released
 */
-#include <iostream>
 Elf32_Phdr* ElfExecutable::Segment(Elf32_Addr aAddr) {
     globalcntr++;
   //  std::cout << globalcntr << "\n";
@@ -866,8 +853,8 @@ Elf32_Phdr* ElfExecutable::Segment(Elf32_Addr aAddr) {
 		}
 	}
 
-	std::cout << "we failin: " << globalcntr << "\n";
-	/** TODO (Administrator#1#04/09/17): Deall with unsetted segment header */
+	std::cout << "we failin: " << (globalcntr-1) << "\n";
+	/** TODO (Administrator#1#04/09/17): Deal with unsetted segment header */
 //throw int(0);
     return nullptr;
 }
@@ -1386,8 +1373,8 @@ Function to get fixup location
 Elf32_Word* ElfExecutable::GetFixupLocation(ElfLocalRelocation* aReloc, Elf32_Addr aPlace)
 {
 	Elf32_Phdr * aPhdr = aReloc->ExportTableReloc() ?
-		iCodeSegmentHdr :
-		Segment(aPlace);
+		iCodeSegmentHdr : Segment(aPlace);
+
 	Elf32_Word offset = aPhdr->p_offset + aPlace - aPhdr->p_vaddr;
 	return ELF_ENTRY_PTR(Elf32_Word, iElfHeader, offset);
 }

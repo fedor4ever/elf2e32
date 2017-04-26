@@ -29,17 +29,13 @@
 #include "parametermanager.h"
 
 using std::list;
-//#ifndef __GNUC__
-//using std::hash_map;
-//#else
-//using __gnu_cxx::hash_map;
-//#endif // __GNUC__
 
 class Symbol;
 class ElfRelocations;
 class ElfExports;
 class ParameterListInterface;
 class ElfLocalRelocation;
+static PLUINT32 globalcntr = 0;
 /**
 This class is for ELF object carrying the elf header, sections, segments.
 @internalComponent
@@ -47,7 +43,6 @@ This class is for ELF object carrying the elf header, sections, segments.
 */
 class ElfExecutable
 {
-PLUINT32 globalcntr = 0;
 public:
 	explicit ElfExecutable(ParameterManager* aParameterManager);
 	virtual ~ElfExecutable();
@@ -162,88 +157,86 @@ public:
 
 	PLUINT32	ValidateElfFile();
 	PLUINT32	ProcessDynamicEntries();
-	void	ProcessRelocations();
+	void		ProcessRelocations();
 	template <class T> void	ProcessRelocations(T *aElfRel, size_t aSize);
 
 	VersionInfo* GetVersionInfo(PLUINT32 aIndex);
 	char*		SymbolDefinedInDll(PLUINT32 aSymbolIndex);
-	void SetVersionRecord( ElfRelocation* aReloc );
+	void 		SetVersionRecord( ElfRelocation* aReloc );
 
 /** This function says if the Symbol is a global symbol
 @return It returns true if the Symbol is a global one.
 @param aSym The reference to the Symbol whose attribute is being checked
 */
-bool GlobalSymbol(Elf32_Sym* aSym);
+	bool GlobalSymbol(Elf32_Sym* aSym);
 
 /** This function says if the Symbol is Exported
 @return It returns true if the Symbol is an exported one.
 @param aSym The reference to the Symbol whose attribute is being checked
 */
-bool ExportedSymbol(Elf32_Sym* aSym);
+	bool ExportedSymbol(Elf32_Sym* aSym);
 
 /** This function says if the Symbol is Imported
 @return It returns true if the Symbol is an imported one.
 @param aSym The reference to the Symbol whose attribute is being checked
 */
-bool ImportedSymbol(Elf32_Sym* aSym);
+	bool ImportedSymbol(Elf32_Sym* aSym);
 
 /** This function says if the Symbol is a Code Symbol
 @return It returns true if the Symbol is of Code type.
 @param aSym The reference to the Symbol whose attribute is being checked
 */
-bool FunctionSymbol(Elf32_Sym* aSym);
+	bool FunctionSymbol(Elf32_Sym* aSym);
 
 /** This function says if the Symbol is a Data Symbol
 @return It returns true if the Symbol is of Data type.
 @param aSym The reference to the Symbol whose attribute is being checked
 */
-bool DataSymbol(Elf32_Sym* aSym);
+	bool DataSymbol(Elf32_Sym* aSym);
 
 /** This function says if the Symbol is Defined
 @return It returns true if the Symbol is defined.
 @param aSym The reference to the Symbol whose attribute is being checked
 */
-bool DefinedSymbol(Elf32_Sym* aSym);
+	bool DefinedSymbol(Elf32_Sym* aSym);
 
 /** This function says if the Symbol has a default Visibility
 @return It returns true if the Symbol has a default Visibility
 @param aSym The reference to the Symbol whose attribute is being checked
 */
-bool VisibleSymbol(Elf32_Sym* aSym);
+	bool VisibleSymbol(Elf32_Sym* aSym);
 
 /** This function finds the segment in which this address belongs
 @return the segment type
 @param aAddr The address within the executable
 */
 
-Elf32_Word Addend(Elf32_Rel* aRel);
-Elf32_Word Addend(Elf32_Rela* aRel);
+	Elf32_Word Addend(Elf32_Rel* aRel);
+	Elf32_Word Addend(Elf32_Rela* aRel);
 
-char* SymbolFromDSO(PLUINT32  aSymbolIndex);
-Elf32_Word* GetFixupLocation(ElfLocalRelocation* aReloc, Elf32_Addr aPlace);
-ESegmentType Segment(Elf32_Sym *aSym);
-Elf32_Phdr* SegmentFromAbs(Elf32_Addr aAddr);
-Elf32_Phdr* Segment(ESegmentType aType);
+	char* SymbolFromDSO(PLUINT32  aSymbolIndex);
+	Elf32_Word* GetFixupLocation(ElfLocalRelocation* aReloc, Elf32_Addr aPlace);
+	ESegmentType Segment(Elf32_Sym *aSym);
+	Elf32_Phdr* SegmentFromAbs(Elf32_Addr aAddr);
+	Elf32_Phdr* Segment(ESegmentType aType);
 
 /** This function processes the linker generated Veneer symbols and
  *  creates a relocation entry.
  */
-void ProcessVeneers();
+	void ProcessVeneers();
 /** This function processes the ELF file to find the static symbol table.
 */
-void FindStaticSymbolTable();
+	void FindStaticSymbolTable();
 /** This function finds the .comment section
 @return the pointer to the comment section
 */
-char* FindCommentSection();
+	char* FindCommentSection();
 /** This function finds the value at the address passed in
 @return the value at the address passed in
 @param aAddr The address within the executable
 */
-Elf32_Word FindValueAtLoc(Elf32_Addr aOffset);
+	Elf32_Word FindValueAtLoc(Elf32_Addr aOffset);
 };
-
-
 
 
 #endif // !defined(_PL_ELFEXECUTABLE_H_)

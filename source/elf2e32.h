@@ -47,7 +47,7 @@ private:
 	ETargetType iTargetType;
 
 	/** Pointer to the ParameterListInterface which is the abstract base class */
-	ParameterManager * iParameterListInterface;
+	ParameterManager * iPrmManager;
 
 	/** Pointer to the UseCaseBase and says whether the usecase is CreateLibrary or CreateDLL or CreateEXE*/
 	UseCaseBase * iUseCase;

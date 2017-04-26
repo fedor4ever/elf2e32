@@ -47,7 +47,7 @@ Constructor for Elf2E32
 */
 Elf2E32::Elf2E32(int aArgc, char **aArgv)
 {
-	iParameterListInterface = GetInstance(aArgc, aArgv);
+	iPrmManager = GetInstance(aArgc, aArgv);
 }
 
 
@@ -93,18 +93,18 @@ This function is to select the appropriate use case based on the input values.
 */
 UseCaseBase * Elf2E32::SelectUseCase()
 {
-	bool definputoption = iParameterListInterface->DefFileInOption();
-	bool elfinputoption = iParameterListInterface->ElfFileInOption();
-	char * deffilein = iParameterListInterface->DefInput();
-	char * elfin = iParameterListInterface->ElfInput();
-	bool filedumpoption = iParameterListInterface->FileDumpOption();
-	int dumpOptions = iParameterListInterface->DumpOptions();
-	char *filedumpsuboptions = iParameterListInterface->FileDumpSubOptions();
+	bool definputoption = iPrmManager->DefFileInOption();
+	bool elfinputoption = iPrmManager->ElfFileInOption();
+	char * deffilein = iPrmManager->DefInput();
+	char * elfin = iPrmManager->ElfInput();
+	bool filedumpoption = iPrmManager->FileDumpOption();
+	int dumpOptions = iPrmManager->DumpOptions();
+	char *filedumpsuboptions = iPrmManager->FileDumpSubOptions();
 
-	bool e32inputoption = iParameterListInterface->E32ImageInOption();
-	char * e32in = iParameterListInterface->E32Input();
+	bool e32inputoption = iPrmManager->E32ImageInOption();
+	char * e32in = iPrmManager->E32Input();
 
-	bool dumpMessageFileOption = iParameterListInterface->DumpMessageFileOption();
+	bool dumpMessageFileOption = iPrmManager->DumpMessageFileOption();
 
 	if (definputoption && !deffilein)
 		throw ParameterParserError(NOARGUMENTERROR, "--definput");
@@ -123,7 +123,7 @@ UseCaseBase * Elf2E32::SelectUseCase()
         throw ParameterParserError(NOARGUMENTERROR, "--e32input");
 	}
 
-	iTargetType = iParameterListInterface->TargetTypeName();
+	iTargetType = iPrmManager->TargetTypeName();
 
 //	if (iTargetType == ETargetTypeNotSet) // Will get this warning in build
 //		cout << "Warning: Target Type is not specified explicitly" << endl;
@@ -133,13 +133,13 @@ UseCaseBase * Elf2E32::SelectUseCase()
 		if (elfin)
 		{
 			if (deffilein)
-				return iUseCase = new ExportTypeRebuildTarget(iParameterListInterface);
+				return iUseCase = new ExportTypeRebuildTarget(iPrmManager);
 			else
-				return iUseCase = new ElfFileSupplied(iParameterListInterface);
+				return iUseCase = new ElfFileSupplied(iPrmManager);
 		}
 		else if (filedumpoption || e32in)
 		{
-			return iUseCase = new FileDump(iParameterListInterface);
+			return iUseCase = new FileDump(iPrmManager);
 		}
 		else if (deffilein)
 		{
@@ -155,28 +155,28 @@ UseCaseBase * Elf2E32::SelectUseCase()
 	{
 	case EDll:
 		if (!deffilein)
-			iUseCase = new DLLTarget(iParameterListInterface);
+			iUseCase = new DLLTarget(iPrmManager);
 		else if (deffilein)
-			iUseCase = new ExportTypeRebuildTarget(iParameterListInterface);
+			iUseCase = new ExportTypeRebuildTarget(iPrmManager);
 		return iUseCase;
 	case ELib:
-        return iUseCase = new LibraryTarget(iParameterListInterface);
+        return iUseCase = new LibraryTarget(iPrmManager);
 	case EExe:
-		return iUseCase = new ExeTarget(iParameterListInterface);
+		return iUseCase = new ExeTarget(iPrmManager);
 	case EPolyDll:
 		if (!deffilein)
-			iUseCase = new POLYDLLFBTarget(iParameterListInterface);
+			iUseCase = new POLYDLLFBTarget(iPrmManager);
 		else if (deffilein)
-			iUseCase = new POLYDLLRebuildTarget(iParameterListInterface);
+			iUseCase = new POLYDLLRebuildTarget(iPrmManager);
 		return iUseCase;
 	case EExexp:
 		if (!deffilein)
-			iUseCase = new DLLTarget(iParameterListInterface);
+			iUseCase = new DLLTarget(iPrmManager);
 		else if (deffilein)
-			iUseCase = new ExportTypeRebuildTarget(iParameterListInterface);
+			iUseCase = new ExportTypeRebuildTarget(iPrmManager);
 		return iUseCase;
 	case EStdExe:
-		return iUseCase = new StdExeTarget(iParameterListInterface);
+		return iUseCase = new StdExeTarget(iPrmManager);
 	default:
 		throw InvalidInvocationError(INVALIDINVOCATIONERROR);
 	}
@@ -203,11 +203,11 @@ int Elf2E32::Execute()
 
 	try
 	{
-		iParameterListInterface->ParameterAnalyser();
-		iParameterListInterface->CheckOptions();
+		iPrmManager->ParameterAnalyser();
+		iPrmManager->CheckOptions();
 
-		bool dumpMessageFileOption = iParameterListInterface->DumpMessageFileOption();
-		char * dumpMessageFile = iParameterListInterface->DumpMessageFile();
+		bool dumpMessageFileOption = iPrmManager->DumpMessageFileOption();
+		char * dumpMessageFile = iPrmManager->DumpMessageFile();
 
 	 	if(dumpMessageFileOption)
 		{

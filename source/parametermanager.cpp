@@ -1526,24 +1526,21 @@ void ParameterManager::CheckOptions()
 			throw ParameterParserError(NOARGUMENTERROR,"--output");
 
 		ValidateDSOGeneration(this);
-		if((iUID1 != KDynamicLibraryUidValue) && (iUID2 != 0x20004C45))
+		if(iUID1 != KDynamicLibraryUidValue) //< guard against wrong uids
 		{
-			if(iUID1 != 0){
-				cerr << "********************\n";
-				cerr << "Wrong UID1\n";
-				cerr << "Set uid1 to KDynamicLibraryUidValue\n";
-				cerr << "********************\n";
-			}
-			SetUID1(KDynamicLibraryUidValue);
+			cerr << "********************\n";
+			cerr << "Wrong UID1\n";
+			cerr << "Set uid1 to KDynamicLibraryUidValue\n";
+			cerr << "********************\n";
 		}
+		SetUID1(KDynamicLibraryUidValue);
 		if(!iUID2)
 		{
 			cerr << "********************\n";
 			cerr << "missed value for UID2\n";
-			cerr << "Set uid1 to KDynamicLibraryUidValue\n";
 			cerr << "********************\n";
-			SetUID1(KSharedLibraryUidValue);
 		}
+		if(iSSTDDll) SetUID2(0x20004C45); // only that uid2 accepted for STDDLL & STDEXE
 		if(!iUID3) cerr << "Missed --uid3 option!\n";
 		break;
 
@@ -1556,14 +1553,12 @@ void ParameterManager::CheckOptions()
 			throw ParameterParserError(NOARGUMENTERROR,"--output");
 		if(iUID1 != KExecutableImageUidValue)
 		{
-			if(iUID1 != 0){
-				cerr << "********************\n";
-				cerr << "Wrong UID1\n";
-				cerr << "Set uid1 to KExecutableImageUidValue\n";
-				cerr << "********************\n";
-			}
-			SetUID1(KExecutableImageUidValue);
+			cerr << "********************\n";
+			cerr << "Wrong UID1\n";
+			cerr << "Set uid1 to KExecutableImageUidValue\n";
+			cerr << "********************\n";
 		}
+		SetUID1(KExecutableImageUidValue);
 		if(!iUID3) cerr << "Missed --uid3 option!\n";
 		break;
 	case EPolyDll:
@@ -1577,15 +1572,13 @@ void ParameterManager::CheckOptions()
 			throw ParameterParserError(NOARGUMENTERROR,"--output");
 		if(iUID1 != KDynamicLibraryUidValue)
 		{
-			if(iUID1 != 0){
-				cerr << "********************\n";
-				cerr << "Wrong UID1\n";
-				cerr << "Set uid1 to KDynamicLibraryUidValue\n";
-				cerr << "********************\n";
-			}
-			SetUID1(KDynamicLibraryUidValue);
+			cerr << "********************\n";
+			cerr << "Wrong UID1\n";
+			cerr << "Set uid1 to KDynamicLibraryUidValue\n";
+			cerr << "********************\n";
 		}
-		if(!iUID3) cerr << "Missed --uid2 option!\n";
+		SetUID1(KDynamicLibraryUidValue);
+		if(!iUID2) cerr << "Missed --uid2 option!\n";
 		if(!iUID3) cerr << "Missed --uid3 option!\n";
 		break;
 	case EExexp:
@@ -1601,14 +1594,12 @@ void ParameterManager::CheckOptions()
 
 		if(iUID1 != KExecutableImageUidValue)
 		{
-			if(iUID1 != 0){
-				cerr << "********************\n";
-				cerr << "Wrong UID1\n";
-				cerr << "Set uid1 to KExecutableImageUidValue\n";
-				cerr << "********************\n";
-			}
-			SetUID1(KExecutableImageUidValue);
+			cerr << "********************\n";
+			cerr << "Wrong UID1\n";
+			cerr << "Set uid1 to KExecutableImageUidValue\n";
+			cerr << "********************\n";
 		}
+		SetUID1(KExecutableImageUidValue);
 		if(!iUID2) cerr << "Missed --uid2 option!\n";
 		if(!iUID3) cerr << "Missed --uid3 option!\n";
 		break;
@@ -1621,23 +1612,13 @@ void ParameterManager::CheckOptions()
 			throw ParameterParserError(NOARGUMENTERROR,"--output");
 		if(iUID1 != KExecutableImageUidValue)
         {
-            if(iUID1 != 0)
-            {
-                cerr << "********************\n";
-                cerr << "Wrong UID1\n";
-                cerr << "Set uid1 to KExecutableImageUidValue\n";
-                cerr << "********************\n";
-            }
-            SetUID1(KExecutableImageUidValue);
-        }
-		if(iUID2 != 0x20004C45)
-		{
 			cerr << "********************\n";
 			cerr << "Wrong UID1\n";
 			cerr << "Set uid1 to KExecutableImageUidValue\n";
 			cerr << "********************\n";
-			SetUID2(0x20004C45);
-		}
+        }
+		SetUID1(KExecutableImageUidValue);
+		SetUID2(0x20004C45);
 
 		if(!iUID3) cerr << "Missed --uid3 option!\n";
 		break;
@@ -1960,8 +1941,6 @@ Pointer to function ParameterManager::ParseVersion returning void.
 DEFINE_PARAM_PARSER(ParameterManager::ParseVersion)
 {
 	INITIALISE_PARAM_PARSER;
-	UINT version = 0;
-	UINT majorVal = 0;
 	UINT minorVal = 0;
 
 	if(!aValue)
@@ -1971,12 +1950,12 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseVersion)
 	char * major, * minor;
 
 	major = strtok(tokens, ".");
-	majorVal = ValidateInputVal(major, "--version");
+	UINT majorVal = ValidateInputVal(major, "--version");
 	minor = strtok(NULL, ".");
 	if (minor && !GetUInt(minorVal, minor))
 		throw InvalidArgumentError(INVALIDARGUMENTERROR, aValue, "--version");
 
-	version = ((majorVal & 0xFFFF) << 16) | (minorVal & 0xFFFF);
+	UINT version = ((majorVal & 0xFFFF) << 16) | (minorVal & 0xFFFF);
 	aPM->SetVersion(version);
 }
 
@@ -2195,10 +2174,8 @@ The priority value passed to --compressionmethod option
 */
 static bool ParseCompressionMethodArg(UINT & aMethod, const char *aText)
 {
-
-	int i = 0;
 	aMethod = 0;
-	for (;; i++)
+	for (int i = 0;; i++)
 	{
 		if (!MethodNames[i].iMethodName)
 			return false;
@@ -2302,9 +2279,8 @@ The priority value passed to --priority option
 */
 static bool ParsePriorityArg(unsigned int & aPriority, const char *aText)
 {
-	int i = 0;
 	aPriority = 0;
-	for (;; i++)
+	for (int i = 0;; i++)
 	{
 		if (!PriorityNames[i].iName)
 			return false;
@@ -2550,10 +2526,10 @@ Pointer to function ParameterManager::ParseCapability returning void.
 DEFINE_PARAM_PARSER(ParameterManager::ParseCapability)
 {
 	INITIALISE_PARAM_PARSER;
-	unsigned int cap;
 	SCapabilitySet capSet = {0, 0};
 	if (!aValue)
 		throw ParameterParserError(NOARGUMENTERROR, "--capability");
+	uint32_t cap;
 	if (GetUInt(cap, aValue))
 	{
 		aPM->SetCapability(cap);
@@ -3046,7 +3022,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseTargetTypeName)
 {
 	INITIALISE_PARAM_PARSER;
 	aPM->SetTargetTypeName(aPM->ValidateTargetType(aValue));
-	if(strcmp(aValue, "STDDLL")==0) aPM->SetUID2(0x20004C45);
+	if(strcmp(aValue, "STDDLL")==0) aPM->iSSTDDll = true;
 }
 
 /**

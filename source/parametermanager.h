@@ -579,6 +579,7 @@ private:
 	bool iSymNamedLookup;
 	bool iDebuggable;
 	bool iSmpSafe;
+	bool iSSTDDll = false;
 };
 
 
