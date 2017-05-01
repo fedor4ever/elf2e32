@@ -10,7 +10,7 @@ elf2e32 --capability=All-TCB --definput="..\tests\libcryptou.def" --defoutput=".
 elf2e32 --capability=All-TCB --definput="tests\libcryptou.def" --defoutput="tests\out.def" --elfinput="tests\libcrypto.dll" --output="tests\libcrypto-2.4.5.dll" --libpath="D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib" --linkas="tests\libcrypto{000a0000}.dll" --dso="tests\libcrypto{000a0000}.dso" --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --namedlookup --dlldata
 
 #simplified syntax example
-elf2e32 --capability=All-TCB --definput="libcryptou.def" --defoutput="out.def" --elfinput="libcrypto.dll" --output="libcrypto-uncompressed-2.4.5.dll" --libpath="D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib" --linkas="libcrypto{000a0000}.dll" --dso="libcrypto{000a0000}.dso" --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --namedlookup --dlldata
+elf2e32 --capability=All-TCB --definput="libcryptou.def" --defoutput="out.def" --elfinput="libcrypto.dll" --output="libcrypto-uncompressed-2.4.5.dll" --libpath="D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib" --linkas="libcrypto{000a0000}.dll" --dso="libcrypto{000a0000}.dso" --fpu=softvfp --uid3=0x00000000 --targettype=STDDLL --namedlookup --dlldata
 
 e:\elf2e32\source\e32imagefile.cpp(1518): warning C6308: 'realloc' might return null pointer: assigning null pointer to 'iData', which is passed as an argument to 'realloc', will cause the original memory block to be leaked.
 e:\elf2e32\source\e32imagefile.cpp(1521): warning C6387: 'iData+oldsize' could be '0':  this does not adhere to the specification for the function 'memset'. 
