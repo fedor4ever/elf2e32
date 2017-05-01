@@ -17,7 +17,7 @@
 //
 //
 
-#define __REFERENCE_CAPABILITY_NAMES__
+#define REFERENCE_CAPABILITY_NAMES
 
 #include "e32imagefile.h"
 #include "pl_common.h"
@@ -681,8 +681,6 @@ void E32ImageFile::DumpSymbolInfo(E32EpocExpSymInfoHdr *aSymInfoHdr)
 
 		const E32ImportSection* isection = (const E32ImportSection*)(iData + iOrigHdr->iImportOffset);
 
-		TInt d;
-
 		/* The import table has offsets to the location (in code section) where the
 		 * import is required. For dependencies pointed by 0th ordinal, this offset
 		 * must be same as the offset of the dependency table entry (relative to
@@ -693,7 +691,7 @@ void E32ImageFile::DumpSymbolInfo(E32EpocExpSymInfoHdr *aSymInfoHdr)
 		{
 			const E32ImportBlock* b = (const E32ImportBlock*)(isection + 1);
 			aZerothFound = false;
-			for (d=0; d<iOrigHdr->iDllRefTableCount; d++)
+			for (TInt d=0; d<iOrigHdr->iDllRefTableCount; d++)
 			{
 				char* dllname = iData + iOrigHdr->iImportOffset + b->iOffsetOfDllName;
 				TInt n = b->iNumberOfImports;

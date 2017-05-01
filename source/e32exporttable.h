@@ -49,7 +49,7 @@ class E32ExportTable {
   size_t iSize;
   uint32_t * iTable;
   // NB. This a virtual address (within the RO segment).
-  uint32_t iExportTableAddress;
+  uintptr_t iExportTableAddress;
   // True if the postlinker must allocate the export table in the E32Image.
   // This should only be false for custom built ELF executables.
   bool iAllocateP;

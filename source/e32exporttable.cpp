@@ -15,6 +15,9 @@
 
 #include <string.h>
 #include "e32exporttable.h"
+#include <iostream>
+#include <stdint.h>
+
 #include "pl_elfexecutable.h"
 #include "pl_elfexports.h"
 #include "pl_elflocalrelocation.h"
@@ -53,7 +56,9 @@ void E32ExportTable::CreateExportTable(ElfExecutable * aElfExecutable, ElfExport
 	// The export table starts after the header. NB this is a virtual address in the RO
 	// segment of the E32Image. It is outside the ELF RO segment.
 	Elf32_Addr * aPlace =  ELF_ENTRY_PTR(Elf32_Addr, aROHdr->p_vaddr, aROHdr->p_filesz) + 1;
-	iExportTableAddress = (uint64_t)aPlace;
+//	inptr_t = nullptr;
+	std::cout << "* aPlace addr: " << aPlace << "\n";
+	iExportTableAddress = (uintptr_t)aPlace;
 	// Tell the E32Image constructor that it must allocate the export table
 	// i.e. copy it from iTable.
 	iAllocateP = true;

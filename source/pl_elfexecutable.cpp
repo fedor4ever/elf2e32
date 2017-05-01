@@ -1392,8 +1392,6 @@ ESegmentType ElfExecutable::Segment(Elf32_Sym *aSym)
 
 	try {
 
-		bool limitSymbolFound = false;
-
 		// If Symbol is absolute then assume it came from linker and is a
 		// limit symbol.
 		if (aSym->st_shndx == SHN_ABS)
@@ -1402,6 +1400,7 @@ ESegmentType ElfExecutable::Segment(Elf32_Sym *aSym)
 		}
 		else
 		{
+			bool limitSymbolFound = false;
 			if( (iCodeSegmentHdr && aSym->st_value == (iCodeSegmentHdr->p_vaddr + iCodeSegmentHdr->p_memsz)) ||
 				(iDataSegmentHdr && aSym->st_value == (iDataSegmentHdr->p_vaddr + iDataSegmentHdr->p_memsz)) )
 			{

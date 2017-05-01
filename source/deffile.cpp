@@ -673,11 +673,10 @@ Return Value - True, if the string starts with one of the patterns.
 bool LineToken::IsPattern(char* aStr, int& aTill, int& aIndex)
 {
 	int pos = 0;
-	int aLength;
 	int size = sizeof(DefFilePatterns)/sizeof(char*);
 	while(size > pos)
 	{
-		aLength = strlen(DefFilePatterns[pos]);
+		int aLength = strlen(DefFilePatterns[pos]);
 		if(!strncmp(aStr, DefFilePatterns[pos], aLength))
 		{
 			aTill = aLength;

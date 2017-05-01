@@ -201,7 +201,7 @@ public:
 	void SetLogFile(char * aSetLogFile);
 	void SetMessageFile(char *aMessageFile);
 	void SetDumpMessageFile(char *aDumpMessageFile);
-	void SetDllDataP(bool newVal);
+	void SetDllData(bool newVal);
 	void SetPriority(TProcessPriority anewVal);
 	void SetVersion(UINT aSetVersion);
 	void SetCallEntryPoint(bool aCallEntryPoint);

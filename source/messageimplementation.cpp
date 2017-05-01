@@ -220,15 +220,14 @@ The index of the information and the corresponding arguments.
 */
 void Message::ReportMessage(int aMessageType, int aMsgIndex,...)
 {
-	char *reportMessage, *ptr, *tmpMessage;
 	char intStr[16];
 	char mssgNo[MAXMSSGNOLENGTH];
-	int mssgIndex,k;
+	int k;
 
 	va_list ap;
 	va_start(ap,aMsgIndex);
 
-	reportMessage=GetMessageString(aMsgIndex);
+	char *reportMessage=GetMessageString(aMsgIndex);
 
 	if(reportMessage)
 	{
@@ -246,16 +245,16 @@ void Message::ReportMessage(int aMessageType, int aMsgIndex,...)
 				break;
             default: break;
 		}
-		mssgIndex = BASEMSSGNO + aMsgIndex;
+		int mssgIndex = BASEMSSGNO + aMsgIndex;
 		sprintf(mssgNo,"%d",mssgIndex);
 		message += mssgNo;
 		message += colSpace;
 
-		ptr = strchr(reportMessage,'%');
+		char *ptr = strchr(reportMessage,'%');
 
 		while( ptr != NULL && (ptr[0]) == '%' )
 		{
-			tmpMessage=new char[ptr - reportMessage + 1];
+			char *tmpMessage=new char[ptr - reportMessage + 1];
 			strncpy(tmpMessage, reportMessage, ptr - reportMessage+1);
 			tmpMessage[ptr - reportMessage]='\0';
 			message += tmpMessage;
@@ -328,7 +327,6 @@ Name of the Message file to be dumped
 */
 void Message::CreateMessageFile(char *aFileName)
 {
-	int i;
 	FILE *fptr;
 
 	// open file for writing messages.
@@ -338,14 +336,13 @@ void Message::CreateMessageFile(char *aFileName)
 	}
 	else
 	{
-		for(i=0;i<MessageArraySize;i++)
+		for(int i=0;i<MessageArraySize;i++)
 		{
 			fprintf(fptr,"%d,%s\n",i+1,MessageArray[i].message);
 		}
 
 		fclose(fptr);
 	}
-
 }
 
 /**
@@ -362,9 +359,6 @@ void Message::InitializeMessages(char *aFileName)
 {
 	char index[16];
 	char *message, *errStr;
-	int i, lineLength;
-	int fileSize;
-	char *messageEntries, *lineToken;
 
 	FILE *fptr;
 
@@ -374,10 +368,10 @@ void Message::InitializeMessages(char *aFileName)
 		iMessage.clear();
 		//Getting File size
 		fseek(fptr, 0, SEEK_END);
-		fileSize=ftell(fptr);
+		int fileSize=ftell(fptr);
 		rewind(fptr);
 
-		messageEntries= new char[fileSize+2];
+		char *messageEntries= new char[fileSize+2];
 
 		//Getting whole file in memory
 		fread(messageEntries, fileSize, 1, fptr);
@@ -389,7 +383,7 @@ void Message::InitializeMessages(char *aFileName)
 
 		fclose(fptr);
 
-		lineToken=strtok(messageEntries,"\n");
+		char *lineToken=strtok(messageEntries,"\n");
 		while(lineToken != nullptr)
 		{
 			if( lineToken[0] == '\n' || lineToken[0] == '\r' )
@@ -398,7 +392,7 @@ void Message::InitializeMessages(char *aFileName)
 				continue;
 			}
 
-			lineLength=strlen(lineToken);
+			int lineLength=strlen(lineToken);
 
 			if( lineToken[strlen(lineToken)-1] == '\r' )
 			{
@@ -420,7 +414,7 @@ void Message::InitializeMessages(char *aFileName)
 	}
 	else
 	{
-		for(i=0;i<MessageArraySize;i++)
+		for(int i=0;i<MessageArraySize;i++)
 		{
 			errStr = new char[strlen(MessageArray[i].message) + 1];
 			strcpy(errStr, MessageArray[i].message);

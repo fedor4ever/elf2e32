@@ -18,7 +18,7 @@
 //
 
 // This must go before ParameterManager.h
-#define __INCLUDE_CAPABILITY_NAMES__
+#define INCLUDE_CAPABILITY_NAMES
 #include <e32capability.h>
 
 #include "pl_common.h"
@@ -1543,7 +1543,6 @@ void ParameterManager::CheckOptions()
 		if(iSSTDDll) SetUID2(0x20004C45); // only that uid2 accepted for STDDLL & STDEXE
 		if(!iUID3) cerr << "Missed --uid3 option!\n";
 		break;
-
 	case EExe:
 		if (!ElfInput())
 			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--elfinput");
@@ -2248,7 +2247,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseAllowDllData)
 {
 	INITIALISE_PARAM_PARSER;
 	CheckInput(aValue, "--dlldata");
-	aPM->SetDllDataP(true);
+	aPM->SetDllData(true);
 }
 
 static const ParameterManager::PriorityValueDesc PriorityNames[] =
@@ -3700,7 +3699,7 @@ This function sets iDllData if --dlldata is passed in.
 @param anewVal
 True if --dlldata is passed in.
 */
-void ParameterManager::SetDllDataP(bool anewVal)
+void ParameterManager::SetDllData(bool anewVal)
 {
 	iDllData = anewVal;
 }
