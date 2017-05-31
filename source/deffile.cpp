@@ -140,8 +140,7 @@ void DefFile::ParseDefFile(char *defFileEntries)
 {
 	iSymbolList = new SymbolList;
 
-	int ordinalNo = 0;
-	int symbolType=SymbolTypeCode;
+    int symbolType=SymbolTypeCode;
 	int PreviousOrdinal=0;
 	char MultiLineStatement[1024]="";
 	bool NAMEorLIBRARYallowed=true;
@@ -329,7 +328,7 @@ void DefFile::ParseDefFile(char *defFileEntries)
 				Symbol *newSymbolEntry = new Symbol(aSymbol);
 				iSymbolList->push_back(newSymbolEntry);
 
-				ordinalNo = aSymbol.OrdNum();
+				int ordinalNo = aSymbol.OrdNum();
 				//Check for ordinal sequence
 				if (ordinalNo != PreviousOrdinal+1)
 		   		{

@@ -54,8 +54,8 @@ Constructor for class Symbol
 @released
 */
 Symbol::Symbol(char* aName, SymbolType aType, Elf32_Sym* aElfSym,
-    PLUINT32 aSymbolIndex): iSymbolName(aName), iSymbolType(aType),
-     iElfSym(aElfSym), iSymbolIndex(aSymbolIndex)
+    PLUINT32 aSymbolIndex): iElfSym(aElfSym), iSymbolIndex(aSymbolIndex),
+    iSymbolName(aName), iSymbolType(aType)
 {}
 
 /**

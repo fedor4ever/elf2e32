@@ -22,7 +22,7 @@
 // get E32ImageHeader class...
 #define INCLUDE_E32IMAGEHEADER_IMPLEMENTATION
 #define RETURN_FAILURE(_r) return (fprintf(stderr, "line %d\n", __LINE__),_r)
-//#define E32IMAGEHEADER_TRACE(_t) printf _t
+
 #include "e32imagefile.h"
 
 #include "pl_elfimportrelocation.h"
@@ -869,7 +869,8 @@ void E32ImageFile::AddExportDescription()
 	iHdr->iExportDescType = edt;
 	if (edt == KImageHdr_ExpD_FullBitmap)
 	{
-		iHdr->iExportDescSize = (uint16)memsz;
+	    assert(memsz > 65536);
+		iHdr->iExportDescSize = memsz;
 		iHdr->iExportDesc[0] = iExportBitMap[0];
 		uint8 * aDesc = new uint8[extra_space];
 		memset(aDesc, 0, extra_space);
@@ -878,7 +879,8 @@ void E32ImageFile::AddExportDescription()
 	}
 	else
 	{
-		iHdr->iExportDescSize = (uint16)(mbs + nbytes);
+	    assert(((mbs + nbytes) > 65536));
+		iHdr->iExportDescSize = mbs + nbytes;
 		uint8 * aBuf = new uint8[extra_space + 1];
 		memset(aBuf , 0, extra_space + 1);
 		TUint8* mptr = aBuf;
@@ -1364,8 +1366,8 @@ void E32ImageFile::AllocateE32Image()
 
 	E32ImageHeaderV* header = (E32ImageHeaderV*)iE32Image;
 	TInt headerSize = header->TotalSize();
-//	if(KErrNone!=header->ValidateWholeImage(iE32Image+headerSize,GetE32ImageSize()-headerSize))
-//		throw InvalidE32ImageError(VALIDATIONERROR, (char*)iUseCase->OutputE32FileName());
+	if(KErrNone!=header->ValidateWholeImage(iE32Image+headerSize,GetE32ImageSize()-headerSize))
+		throw InvalidE32ImageError(VALIDATIONERROR, (char*)iUseCase->OutputE32FileName());
 }
 
 /**

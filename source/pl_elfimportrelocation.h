@@ -14,7 +14,7 @@
 // Implementation of the Class ElfImportRelocation for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #if !defined(_PL_ELFIMPORTRELOCATION_H_)
@@ -31,14 +31,14 @@ class ElfImportRelocation : public ElfRelocation
 {
 
 public:
-	ElfImportRelocation(ElfExecutable *aElfExec, PLMemAddr32 aAddr, \
-			PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType, \
+	ElfImportRelocation(ElfExecutable *aElfExec, PLMemAddr32 aAddr,
+			PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,
 			Elf32_Rel* aRel);
 	~ElfImportRelocation();
 	bool IsImportRelocation();
 	void Add();
-	
-	VersionInfo *iVerRecord;
+
+	VersionInfo *iVerRecord = nullptr;
 };
 
 

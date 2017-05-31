@@ -42,7 +42,8 @@ public:
 
 	Symbol(char* aName, SymbolType aType, Elf32_Sym* aElfSym, PLUINT32 aSymbolIndex);
 
-	Symbol(int symbolStatus,char *name,char *exportName,int ordinalNo,bool r3unused,bool absent,int symbolType,char *comment, PLUINT32 aSymbolSz = 0);
+	Symbol(int symbolStatus,char *name,char *exportName,int ordinalNo,
+        bool r3unused,bool absent,int symbolType,char *comment, PLUINT32 aSymbolSz = 0);
 
 	Symbol(Symbol& aSymbol, SymbolType aCodeDataType, bool aAbsent);
 

@@ -32,11 +32,10 @@ Constructor for class ElfImportRelocation
 @internalComponent
 @released
 */
-ElfImportRelocation::ElfImportRelocation(ElfExecutable *aElfExec,PLMemAddr32 aAddr, \
-			PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType, \
-			Elf32_Rel* aRel): \
-			ElfRelocation(aElfExec, aAddr, aAddend, aIndex, aRelType, aRel), \
-			iVerRecord(nullptr)
+ElfImportRelocation::ElfImportRelocation(ElfExecutable *aElfExec,PLMemAddr32 aAddr,
+			PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,
+			Elf32_Rel* aRel):
+			ElfRelocation(aElfExec, aAddr, aAddend, aIndex, aRelType, aRel)
 {
 	iSymbol = &(aElfExec->iElfDynSym[iSymNdx]);
 	iSegment = aElfExec->Segment(iAddr);
@@ -44,15 +43,7 @@ ElfImportRelocation::ElfImportRelocation(ElfExecutable *aElfExec,PLMemAddr32 aAd
 }
 
 
-
-/**
-Destructor for class ElfImportRelocation
-@internalComponent
-@released
-*/
-ElfImportRelocation::~ElfImportRelocation(){
-
-}
+ElfImportRelocation::~ElfImportRelocation(){}
 
 
 /**

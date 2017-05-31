@@ -8,24 +8,13 @@
 
 static_assert(sizeof(char) == 1, "Wrong char size! Must be 1!");
 
-#ifndef __TText_defined
-typedef wchar_t __TText;
-#define __TText_defined
-#endif // __TText_defined
-
 #define __NO_THROW throw()
 
-#define IMPORT_C
+#define E32IMAGEHEADER_TRACE(_t)
 
 #ifndef RETURN_FAILURE
 #define RETURN_FAILURE(_r) return (fprintf(stderr, "line %d\n", __LINE__),_r)
 #endif // RETURN_FAILURE
-
-#ifdef __GNUC__
-#define _FOFF(c,f)   __builtin_offsetof(c,f)
-#else
-#define  _FOFF(c,f) offsetof(c,f)
-#endif // __GNUC__
 
 typedef unsigned char TText8;
 typedef int32_t		TInt;
@@ -211,7 +200,7 @@ class TCheckedUid {
         TUint iCheck;
     };
 
-const TInt KCapabilitySetMaxSize = (((TInt)ECapability_HardLimit + 7)>>3);
+constexpr TInt KCapabilitySetMaxSize = (((TInt)ECapability_HardLimit + 7)>>3);
 
 class TCapabilitySet {
     public:
@@ -435,7 +424,16 @@ struct SSecurityInfo {
     SCapabilitySet iCaps;   // Capabilities re. platform security
     };
 
-class E32ImageHeaderV : public E32ImageHeader {
+/**
+Extends E32ImageHeader.
+*/
+class E32ImageHeaderComp : public E32ImageHeader
+	{
+public:
+	TUint32 iUncompressedSize;	///< Uncompressed size of file data after the header, or zero if file not compressed.
+};
+
+class E32ImageHeaderV : public E32ImageHeaderComp {
     public:
         TInt ValidateWholeImage(void* aBufferStart, TUint aBufferSize) const;
         TInt ValidateHeader(TInt aFileSize, TUint32& aUncompressedSize) const;
@@ -452,10 +450,6 @@ class E32ImageHeaderV : public E32ImageHeader {
         TUint16 iExportDescSize;    // size of bitmap section
         TUint8  iExportDescType;    // type of description of holes in export table
         TUint8  iExportDesc[1];     // description of holes in export table - extend
-        TUint32 iUncompressedSize;  // Uncompressed size of file
-        // For J format this is file size - sizeof(E32ImageHeader)
-        //  and this is included as part of the compressed data :-(
-        // For other formats this is file size - total header size
     };
 
 
@@ -549,7 +543,7 @@ inline TInt E32ImageHeaderV::ValidateExportDescription() const {
     // check export description...
     TUint edSize = iExportDescSize + sizeof(iExportDescSize) + sizeof(iExportDescType);
     edSize = (edSize+3)&~3;
-    TUint edEnd = _FOFF(E32ImageHeaderV,iExportDescSize)+edSize;
+    TUint edEnd = offsetof(E32ImageHeaderV,iExportDescSize)+edSize;
     if(edEnd!=headerSize)
         RETURN_FAILURE(KErrCorrupt);
 

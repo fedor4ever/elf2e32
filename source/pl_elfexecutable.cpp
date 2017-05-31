@@ -778,7 +778,7 @@ This DSO is then looked up for the ordinal number of this symbol.
 char* ElfExecutable::SymbolFromDSO(PLUINT32  aSymbolIndex){
 
 	VersionInfo *aVInfo = GetVersionInfo(aSymbolIndex);
-	return aVInfo ? aVInfo->iSOName : NULL;
+	return aVInfo ? aVInfo->iSOName : nullptr;
 }
 
 /**
@@ -788,24 +788,19 @@ This function returns the segment type
 @internalComponent
 @released
 */
-ESegmentType ElfExecutable::SegmentType(Elf32_Addr aAddr) { // sometimes got zero arg
 
-	try {
+ESegmentType ElfExecutable::SegmentType(Elf32_Addr aAddr) {
 
-		Elf32_Phdr *aHdr = Segment(aAddr);
-		if( !aHdr )
-			return ESegmentUndefined;
+	Elf32_Phdr *aHdr = Segment(aAddr);
+	if( !aHdr )
+		return ESegmentUndefined;
 
-		if( aHdr == iCodeSegmentHdr)
-			return ESegmentRO;
-		else if(aHdr == iDataSegmentHdr)
-			return ESegmentRW;
-		else
-			return ESegmentUndefined;
-	}
-	catch(...)
-	{
-	}
+	if( aHdr == iCodeSegmentHdr)
+		return ESegmentRO;
+	else if(aHdr == iDataSegmentHdr)
+		return ESegmentRW;
+	else
+		return ESegmentUndefined;
 
 	return ESegmentUndefined;
 }
@@ -826,7 +821,7 @@ Elf32_Phdr* ElfExecutable::Segment(ESegmentType aType) {
 	case ESegmentRW:
 		return iDataSegmentHdr;
 	default:
-		return NULL;
+		return nullptr;
 	}
 }
 
@@ -853,9 +848,12 @@ Elf32_Phdr* ElfExecutable::Segment(Elf32_Addr aAddr) {
 		}
 	}
 
-	std::cout << "we failin: " << (globalcntr-1) << "\n";
-	/** TODO (Administrator#1#04/09/17): Deal with unsetted segment header */
-//throw int(0);
+	// When called from ESegmentType ElfExecutable::SegmentType(Elf32_Addr aAddr)
+	// for libcrypto.dll test we have have unintialized iCodeSegmentHdr and
+	// iDataSegmentHdr in some cases.
+	// This occurs if aAddr==0 and globalcntr have values 829, 1218 or
+	// aAddr==4220920 globalcntr have values 2033, 2062, 2587 and 2994
+
     return nullptr;
 }
 
@@ -880,7 +878,7 @@ Elf32_Phdr* ElfExecutable::SegmentFromAbs(Elf32_Addr aAddr) {
 			return iDataSegmentHdr;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 /**
@@ -1030,9 +1028,9 @@ Function to get symbol ordinal
 */
 PLUINT32 ElfExecutable::GetSymbolOrdinal( char* aSymName) {
 	Elf32_Sym	*aSym = FindSymbol(aSymName);
-	if( !aSym )
+	if(!aSym)
 		return (PLUINT32)-1;
-	return GetSymbolOrdinal( aSym );
+	return GetSymbolOrdinal(aSym);
 
 }
 

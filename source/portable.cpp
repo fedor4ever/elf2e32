@@ -15,7 +15,7 @@ Validate this image header.
 		KErrNotSupported if image format not supported on this platform.
 */
 TInt E32ImageHeaderV::ValidateHeader(TInt aFileSize, TUint32& aUncompressedSize) const
-	{
+{
 	const TUint KMaxDesSize = 0x0fffffffu; // maximum size of descriptor
 	if(aFileSize==-1)
 		{
@@ -43,10 +43,6 @@ TInt E32ImageHeaderV::ValidateHeader(TInt aFileSize, TUint32& aUncompressedSize)
 	// check iCpuIdentifier...
 	TCpu cpu = (TCpu)iCpuIdentifier;
 	bool isARM = (cpu==ECpuArmV4 || cpu==ECpuArmV5 || cpu==ECpuArmV6);
-	if(!isARM)
-		RETURN_FAILURE(KErrNotSupported);
-	else if(cpu!=ECpuX86)
-		RETURN_FAILURE(KErrNotSupported);
 
 	TUint32 pointerAlignMask = isARM ? 3 : 0;	// mask of bits which must be zero for aligned pointers/offsets
 
@@ -283,7 +279,7 @@ TInt E32ImageHeaderV::ValidateHeader(TInt aFileSize, TUint32& aUncompressedSize)
 	// done...
 	aUncompressedSize = uncompressedSize;
 	return KErrNone;
-	}
+}
 
 /**
 Validate a whole executable image.

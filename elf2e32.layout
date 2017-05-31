@@ -2,377 +2,9 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
-	<File name="source\pl_symbol.h" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1580" topLine="53" />
-		</Cursor>
-	</File>
-	<File name="source\dll_type_target.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="819" topLine="21" />
-		</Cursor>
-	</File>
-	<File name="source\parametermanager.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="768" topLine="24" />
-		</Cursor>
-	</File>
-	<File name="source\polydll_fb_target.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1032" topLine="39" />
-		</Cursor>
-	</File>
-	<File name="source\e32exporttable.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1773" topLine="50" />
-		</Cursor>
-	</File>
-	<File name="source\pl_common.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="707" topLine="18" />
-		</Cursor>
-	</File>
-	<File name="source\e32exporttable.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1132" topLine="31" />
-		</Cursor>
-	</File>
-	<File name="source\pl_common.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1415" topLine="27" />
-		</Cursor>
-	</File>
-	<File name="source\e32imagefile.cpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="-2" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="44631" topLine="1860" />
-		</Cursor>
-	</File>
-	<File name="source\pl_dllsymbol.cpp" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1128" topLine="39" />
-		</Cursor>
-	</File>
-	<File name="source\e32imagefile.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2351" topLine="83" />
-		</Cursor>
-	</File>
-	<File name="source\pl_dllsymbol.h" open="1" top="1" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="787" topLine="22" />
-		</Cursor>
-	</File>
-	<File name="source\elf2e32.cpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="4204" topLine="144" />
-		</Cursor>
-	</File>
-	<File name="source\pl_dso_handler.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1626" topLine="70" />
-		</Cursor>
-	</File>
-	<File name="source\elf2e32.h" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="882" topLine="27" />
-		</Cursor>
-	</File>
-	<File name="source\pl_dso_handler.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="994" topLine="37" />
-		</Cursor>
-	</File>
-	<File name="source\elffilesupplied.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="10330" topLine="360" />
-		</Cursor>
-	</File>
-	<File name="source\pl_elfconsumer.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3568" topLine="127" />
-		</Cursor>
-	</File>
-	<File name="source\elffilesupplied.h" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1050" topLine="35" />
-		</Cursor>
-	</File>
-	<File name="source\pl_elfconsumer.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1116" topLine="31" />
-		</Cursor>
-	</File>
-	<File name="source\errorhandler.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="7890" topLine="351" />
-		</Cursor>
-	</File>
-	<File name="source\pl_elfexecutable.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="19091" topLine="725" />
-		</Cursor>
-	</File>
-	<File name="source\errorhandler.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="5828" topLine="306" />
-		</Cursor>
-	</File>
-	<File name="source\pl_elfexecutable.h" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3876" topLine="139" />
-		</Cursor>
-	</File>
-	<File name="source\pl_elfexports.cpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3198" topLine="128" />
-		</Cursor>
-	</File>
-	<File name="source\exetarget.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="841" topLine="28" />
-		</Cursor>
-	</File>
-	<File name="source\pl_elfexports.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1235" topLine="35" />
-		</Cursor>
-	</File>
-	<File name="source\exexp_fb_target.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="862" topLine="19" />
-		</Cursor>
-	</File>
-	<File name="source\pl_elfimports.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1257" topLine="49" />
-		</Cursor>
-	</File>
-	<File name="include\e32imageheaders.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="9643" topLine="269" />
-		</Cursor>
-	</File>
-	<File name="source\exexp_rebuild_target.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="865" topLine="26" />
-		</Cursor>
-	</File>
-	<File name="source\polydll_fb_target.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="929" topLine="33" />
-		</Cursor>
-	</File>
-	<File name="include\elfdefs.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="18680" topLine="453" />
-		</Cursor>
-	</File>
-	<File name="source\inflate.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="5133" topLine="242" />
-		</Cursor>
-	</File>
-	<File name="source\export_type_rebuild_target.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1442" topLine="41" />
-		</Cursor>
-	</File>
-	<File name="source\polydll_rebuild_target.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2784" topLine="97" />
-		</Cursor>
-	</File>
-	<File name="source\pl_elflocalrelocation.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3400" topLine="96" />
-		</Cursor>
-	</File>
-	<File name="include\h_ver.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="429" topLine="1" />
-		</Cursor>
-	</File>
-	<File name="source\inflate.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="576" topLine="9" />
-		</Cursor>
-	</File>
-	<File name="source\export_type_rebuild_target.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="883" topLine="18" />
-		</Cursor>
-	</File>
-	<File name="source\polydll_rebuild_target.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="981" topLine="33" />
-		</Cursor>
-	</File>
-	<File name="source\pl_elflocalrelocation.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="811" topLine="31" />
-		</Cursor>
-	</File>
-	<File name="include\portable.h" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="-2" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="7231" topLine="166" />
-		</Cursor>
-	</File>
-	<File name="source\librarytarget.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1416" topLine="56" />
-		</Cursor>
-	</File>
-	<File name="source\farray.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="767" topLine="13" />
-		</Cursor>
-	</File>
-	<File name="source\portable.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1762" topLine="42" />
-		</Cursor>
-	</File>
-	<File name="source\pl_elfproducer.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1873" topLine="73" />
-		</Cursor>
-	</File>
-	<File name="source\byte_pair.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="8031" topLine="458" />
-		</Cursor>
-	</File>
-	<File name="source\librarytarget.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1115" topLine="35" />
-		</Cursor>
-	</File>
-	<File name="source\filedump.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2550" topLine="95" />
-		</Cursor>
-	</File>
-	<File name="source\staticlibsymbols.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="429" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="source\pl_elfproducer.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3651" topLine="49" />
-		</Cursor>
-	</File>
 	<File name="source\byte_pair.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="593" topLine="11" />
-		</Cursor>
-	</File>
-	<File name="source\main.cpp" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1018" topLine="12" />
-		</Cursor>
-		<Folding>
-			<Collapse line="22" />
-		</Folding>
-	</File>
-	<File name="source\filedump.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="790" topLine="21" />
-		</Cursor>
-	</File>
-	<File name="source\stdexe_target.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1446" topLine="63" />
-		</Cursor>
-	</File>
-	<File name="source\pl_elfrelocation.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="892" topLine="25" />
-		</Cursor>
-	</File>
-	<File name="source\checksum.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="7312" topLine="171" />
-		</Cursor>
-	</File>
-	<File name="source\messagehandler.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="802" topLine="18" />
-		</Cursor>
-	</File>
-	<File name="source\h_utl.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3757" topLine="191" />
-		</Cursor>
-	</File>
-	<File name="source\stdexe_target.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="855" topLine="26" />
-		</Cursor>
-	</File>
-	<File name="source\pl_elfrelocation.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1342" topLine="40" />
-		</Cursor>
-	</File>
-	<File name="source\checksum.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="745" topLine="8" />
-		</Cursor>
-	</File>
-	<File name="source\messagehandler.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="904" topLine="25" />
-		</Cursor>
-	</File>
-	<File name="source\h_utl.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1332" topLine="61" />
-		</Cursor>
-	</File>
-	<File name="source\usecasebase.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2524" topLine="196" />
-		</Cursor>
-	</File>
-	<File name="source\pl_elfrelocations.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="927" topLine="27" />
-		</Cursor>
-	</File>
-	<File name="source\deffile.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2891" topLine="137" />
-		</Cursor>
-	</File>
-	<File name="source\messageimplementation.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3530" topLine="73" />
-		</Cursor>
-	</File>
-	<File name="source\huffman.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1529" topLine="48" />
-		</Cursor>
-	</File>
-	<File name="source\usecasebase.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1049" topLine="29" />
-		</Cursor>
-	</File>
-	<File name="source\pl_elfrelocations.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1153" topLine="39" />
-		</Cursor>
-	</File>
-	<File name="source\deffile.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="748" topLine="41" />
-		</Cursor>
-	</File>
-	<File name="source\messageimplementation.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1984" topLine="71" />
 		</Cursor>
 	</File>
 	<File name="source\huffman.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -380,9 +12,92 @@
 			<Cursor1 position="2524" topLine="88" />
 		</Cursor>
 	</File>
+	<File name="source\pl_elfrelocation.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1342" topLine="40" />
+		</Cursor>
+	</File>
+	<File name="source\checksum.cpp" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3618" topLine="88" />
+		</Cursor>
+	</File>
+	<File name="source\main.cpp" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="995" topLine="4" />
+		</Cursor>
+		<Folding>
+			<Collapse line="22" />
+		</Folding>
+	</File>
+	<File name="source\imgdump.cpp" open="0" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="583" topLine="18" />
+		</Cursor>
+	</File>
+	<File name="source\pl_elfrelocations.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="927" topLine="27" />
+		</Cursor>
+	</File>
+	<File name="source\checksum.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="745" topLine="8" />
+		</Cursor>
+	</File>
+	<File name="source\messagehandler.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="802" topLine="18" />
+		</Cursor>
+	</File>
+	<File name="source\inflate.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="5133" topLine="242" />
+		</Cursor>
+	</File>
+	<File name="source\pl_elfrelocations.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1153" topLine="39" />
+		</Cursor>
+	</File>
+	<File name="source\deffile.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2891" topLine="137" />
+		</Cursor>
+	</File>
+	<File name="source\messagehandler.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="904" topLine="25" />
+		</Cursor>
+	</File>
+	<File name="source\inflate.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="576" topLine="9" />
+		</Cursor>
+	</File>
 	<File name="source\pl_sym_type.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="778" topLine="12" />
+		</Cursor>
+	</File>
+	<File name="source\deffile.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="750" topLine="12" />
+		</Cursor>
+	</File>
+	<File name="source\messageimplementation.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="9874" topLine="350" />
+		</Cursor>
+	</File>
+	<File name="source\librarytarget.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="533" topLine="75" />
+		</Cursor>
+	</File>
+	<File name="source\pl_symbol.cpp" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4745" topLine="269" />
 		</Cursor>
 	</File>
 	<File name="source\deflatecompress.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -390,29 +105,294 @@
 			<Cursor1 position="1946" topLine="79" />
 		</Cursor>
 	</File>
+	<File name="source\messageimplementation.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1984" topLine="71" />
+		</Cursor>
+	</File>
+	<File name="source\librarytarget.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1115" topLine="26" />
+		</Cursor>
+	</File>
+	<File name="source\pl_symbol.h" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1580" topLine="53" />
+		</Cursor>
+	</File>
+	<File name="source\dll_type_target.cpp" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1168" topLine="41" />
+		</Cursor>
+	</File>
 	<File name="source\pagedcompress.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="625" topLine="33" />
 		</Cursor>
 	</File>
-	<File name="source\imgdump.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="source\polydll_fb_target.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="16267" topLine="697" />
+			<Cursor1 position="1032" topLine="39" />
 		</Cursor>
 	</File>
-	<File name="source\pl_symbol.cpp" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="source\dll_type_target.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3244" topLine="128" />
-		</Cursor>
-	</File>
-	<File name="source\dll_type_target.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1168" topLine="41" />
+			<Cursor1 position="919" topLine="21" />
 		</Cursor>
 	</File>
 	<File name="source\parametermanager.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="-2" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="14181" topLine="636" />
+			<Cursor1 position="631" topLine="7" />
+		</Cursor>
+	</File>
+	<File name="source\polydll_fb_target.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="929" topLine="33" />
+		</Cursor>
+	</File>
+	<File name="source\e32exporttable.cpp" open="0" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1808" topLine="50" />
+		</Cursor>
+	</File>
+	<File name="source\parametermanager.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="768" topLine="24" />
+		</Cursor>
+	</File>
+	<File name="source\polydll_rebuild_target.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2784" topLine="97" />
+		</Cursor>
+	</File>
+	<File name="source\e32exporttable.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1132" topLine="31" />
+		</Cursor>
+	</File>
+	<File name="source\pl_common.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="707" topLine="18" />
+		</Cursor>
+	</File>
+	<File name="source\polydll_rebuild_target.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="981" topLine="33" />
+		</Cursor>
+	</File>
+	<File name="source\e32imagefile.cpp" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="-2" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="32537" topLine="1357" />
+		</Cursor>
+	</File>
+	<File name="source\pl_common.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1415" topLine="27" />
+		</Cursor>
+	</File>
+	<File name="source\portable.cpp" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="8448" topLine="268" />
+		</Cursor>
+	</File>
+	<File name="source\e32imagefile.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3502" topLine="113" />
+		</Cursor>
+	</File>
+	<File name="source\pl_dso_handler.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1626" topLine="70" />
+		</Cursor>
+	</File>
+	<File name="source\staticlibsymbols.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="429" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="source\elf2e32.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="5911" topLine="211" />
+		</Cursor>
+	</File>
+	<File name="source\pl_dso_handler.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="994" topLine="37" />
+		</Cursor>
+	</File>
+	<File name="source\stdexe_target.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1446" topLine="63" />
+		</Cursor>
+	</File>
+	<File name="source\elf2e32.h" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="882" topLine="37" />
+		</Cursor>
+	</File>
+	<File name="source\pl_elfconsumer.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3568" topLine="127" />
+		</Cursor>
+	</File>
+	<File name="source\elffilesupplied.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="10639" topLine="619" />
+		</Cursor>
+	</File>
+	<File name="source\pl_elfconsumer.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1116" topLine="31" />
+		</Cursor>
+	</File>
+	<File name="source\elffilesupplied.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="940" topLine="29" />
+		</Cursor>
+	</File>
+	<File name="source\pl_elfexecutable.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="19091" topLine="725" />
+		</Cursor>
+	</File>
+	<File name="source\errorhandler.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="7890" topLine="351" />
+		</Cursor>
+	</File>
+	<File name="source\pl_elfexecutable.h" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3876" topLine="134" />
+		</Cursor>
+	</File>
+	<File name="source\errorhandler.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="5828" topLine="306" />
+		</Cursor>
+	</File>
+	<File name="source\pl_elfexports.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3198" topLine="128" />
+		</Cursor>
+	</File>
+	<File name="source\pl_elfexports.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1235" topLine="35" />
+		</Cursor>
+	</File>
+	<File name="source\stdexe_target.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="855" topLine="26" />
+		</Cursor>
+	</File>
+	<File name="source\exetarget.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="841" topLine="28" />
+		</Cursor>
+	</File>
+	<File name="source\usecasebase.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2524" topLine="196" />
+		</Cursor>
+	</File>
+	<File name="source\export_type_rebuild_target.cpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1269" topLine="33" />
+		</Cursor>
+	</File>
+	<File name="source\usecasebase.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="728" topLine="16" />
+		</Cursor>
+	</File>
+	<File name="source\export_type_rebuild_target.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="858" topLine="18" />
+		</Cursor>
+	</File>
+	<File name="source\pl_elfimports.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1257" topLine="49" />
+		</Cursor>
+	</File>
+	<File name="source\farray.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="767" topLine="13" />
+		</Cursor>
+	</File>
+	<File name="include\e32imageheaders.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="6346" topLine="188" />
+		</Cursor>
+	</File>
+	<File name="source\filedump.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1274" topLine="46" />
+		</Cursor>
+	</File>
+	<File name="source\pl_elflocalrelocation.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3400" topLine="96" />
+		</Cursor>
+	</File>
+	<File name="include\elfdefs.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="18680" topLine="453" />
+		</Cursor>
+	</File>
+	<File name="source\filedump.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="818" topLine="18" />
+		</Cursor>
+	</File>
+	<File name="source\pl_elflocalrelocation.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="811" topLine="31" />
+		</Cursor>
+	</File>
+	<File name="include\h_ver.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="429" topLine="1" />
+		</Cursor>
+	</File>
+	<File name="source\h_utl.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3757" topLine="191" />
+		</Cursor>
+	</File>
+	<File name="source\pl_elfproducer.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1873" topLine="73" />
+		</Cursor>
+	</File>
+	<File name="include\portable.h" open="1" top="1" tabpos="7" split="0" active="1" splitpos="0" zoom_1="-2" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="18227" topLine="479" />
+		</Cursor>
+	</File>
+	<File name="source\h_utl.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1332" topLine="61" />
+		</Cursor>
+	</File>
+	<File name="source\pl_elfproducer.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3651" topLine="49" />
+		</Cursor>
+	</File>
+	<File name="source\byte_pair.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="8031" topLine="458" />
+		</Cursor>
+	</File>
+	<File name="source\huffman.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1529" topLine="48" />
+		</Cursor>
+	</File>
+	<File name="source\pl_elfrelocation.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="892" topLine="25" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

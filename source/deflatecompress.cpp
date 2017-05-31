@@ -17,6 +17,7 @@
 #include <cassert>
 #include <algorithm>
 #include <string.h>
+#include <type_traits>
 
 #include "errorhandler.h"
 #include "farray.h"
@@ -31,14 +32,6 @@ const TInt KDeflateMaxDistance=(1<<KDeflateDistanceMag);
 // hashing
 const TUint KDeflateHashMultiplier=0xAC4B9B19u;
 const TInt KDeflateHashShift=24;
-
-#define COMPILE_TIME_ASSERT(e)	\
-	switch (0)					\
-	{							\
-	case 0:						\
-	case e:						\
-		;						\
-	}
 
 /**
 Class HDeflateHash
@@ -138,9 +131,10 @@ inline HDeflateHash* HDeflateHash::NewLC(TInt aLinks)
 {
 #if __GNUC__ >= 4
 	// Try to detect if the class' layout has changed.
-	COMPILE_TIME_ASSERT( sizeof(HDeflateHash) == 1028 );
-	COMPILE_TIME_ASSERT( sizeof(TOffset) == 2 );
-	COMPILE_TIME_ASSERT( offsetof(HDeflateHash, iHash) < offsetof(HDeflateHash, iOffset) );
+	static_assert( sizeof(HDeflateHash) == 1028, "sizeof(HDeflateHash) != 1028" );
+	static_assert( sizeof(TOffset) == 2, "sizeof(TOffset) != 2" );
+	static_assert( offsetof(HDeflateHash, iHash) < offsetof(HDeflateHash, iOffset),
+               "offsetof(HDeflateHash, iHash) !< offsetof(HDeflateHash, iOffset)" );
 
 	// Compute the size of the class, including rounding it up to a multiple of 4
 	// bytes.
@@ -158,7 +152,7 @@ inline HDeflateHash* HDeflateHash::NewLC(TInt aLinks)
 	// ... And create the object in that memory.
 	return new(p) HDeflateHash;
 #else
-	return new(new char[_FOFF(HDeflateHash,iOffset[(min)(aLinks,KDeflateMaxDistance)])]) HDeflateHash;
+	return new(new char[offsetof(HDeflateHash,iOffset[(min)(aLinks,KDeflateMaxDistance)])]) HDeflateHash;
 #endif
 }
 

@@ -35,8 +35,8 @@ Constructor for class ElfFileSupplied to initialize members and create instance 
 @internalComponent
 @released
 */
-ElfFileSupplied::ElfFileSupplied(ParameterManager* aParameterManager) :  \
-    UseCaseBase(aParameterManager), iNumAbsentExports(-1),iExportBitMap(nullptr), \
+ElfFileSupplied::ElfFileSupplied(ParameterManager* aParameterManager) :
+    UseCaseBase(aParameterManager), iNumAbsentExports(-1),iExportBitMap(nullptr),
 	iE32ImageFile(nullptr), iElfExecutable(nullptr), iExportDescSize(0), iExportDescType(0)
 {
 	iElfIfc = new DSOHandler(aParameterManager);
@@ -158,7 +158,6 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 
 	typedef SymbolList::iterator Iterator;
 
-	Iterator aPos, aEnd;
 
 	//SymbolList *aDefExports, aDefValidExports, aDefAbsentExports, aElfExports;
 	SymbolList aDefValidExports, aDefAbsentExports, aElfExports;
@@ -166,22 +165,19 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 	//aDefExports = iDefIfc->GetSymbolEntryList();
 	if (aDefExports)
 		{
-		aPos = aDefExports->begin();
-		aEnd = aDefExports->end();
 
-		while(aPos != aEnd)
+		for(auto x: *aDefExports)
 			{
-				if( (*aPos)->Absent() ){
-					aDefAbsentExports.insert(aDefAbsentExports.end(), *aPos);
+				if( x->Absent() ){
+					aDefAbsentExports.push_back(x);
 				}
 				else {
-					aDefValidExports.insert(aDefValidExports.end(), *aPos);
+					aDefValidExports.push_back(x);
 				}
 
-				if( aMaxOrdinal < (*aPos)->OrdNum() ){
-					aMaxOrdinal = (*aPos)->OrdNum();
+				if( aMaxOrdinal < x->OrdNum() ){
+					aMaxOrdinal = x->OrdNum();
 				}
-				++aPos;
 			}
 		}
 
@@ -264,10 +260,10 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 				/* For a custom dll and for option "--excludeunwantedexports", the new exports should be filtered,
 				 * so that only the exports from the frozen DEF file are considered.
 				 */
-				if ((aIsCustomDll || aExcludeUnwantedExports) && UnWantedSymbolp((*aResultPos)->SymbolName()))
+				if ((aIsCustomDll || aExcludeUnwantedExports) && UnWantedSymbol((*aResultPos)->SymbolName()))
 				{
 					iElfExecutable->iExports->ExportsFilteredP(true);
-					iElfExecutable->iExports->iFilteredExports.insert(iElfExecutable->iExports->iFilteredExports.end(),(Symbol *)(*aResultPos));
+					iElfExecutable->iExports->iFilteredExports.push_back((Symbol *)(*aResultPos));
 					++aResultPos;
 					continue;
 				}
@@ -278,14 +274,14 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 					    (!strncmp("_ZTV", (*aResultPos)->SymbolName(), len)))
 					{
 						iElfExecutable->iExports->ExportsFilteredP(true);
-						iElfExecutable->iExports->iFilteredExports.insert(iElfExecutable->iExports->iFilteredExports.end(),(Symbol *)(*aResultPos));
+						iElfExecutable->iExports->iFilteredExports.push_back((Symbol *)(*aResultPos));
 						++aResultPos;
 						continue;
 					}
 				}
 				(*aResultPos)->SetOrdinal( ++aMaxOrdinal );
 				(*aResultPos)->SetSymbolStatus(New); // Set the symbol Status as NEW
-				iSymList.insert(iSymList.end(), *aResultPos);
+				iSymList.push_back(*aResultPos);
 				if(WarnForNewExports())
 					cout << "Elf2e32: Warning: New Symbol " << (*aResultPos)->SymbolName() << " found, export(s) not yet Frozen" << "\n";
 			}
@@ -309,7 +305,7 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 				aSymbol = new Symbol( *(*aResultPos), SymbolTypeCode, true);
 				iElfExecutable->iExports->Add(iElfExecutable->iSOName, aSymbol);
 				//aElfExports.insert(aElfExports.end(), (Symbol*)aSymbol);
-				iSymList.insert(iSymList.end(), (Symbol*)aSymbol);
+				iSymList.push_back((Symbol*)aSymbol);
 				++aResultPos;
 			}
 			aElfExports.sort(ElfExports::PtrELFExportOrdinalCompare());
@@ -410,7 +406,7 @@ E32ImageHeaderV * ElfFileSupplied::AllocateE32ImageHeader()
 	}
 
 	int nexp = GetNumExports();
-	cout << "numexports: " << nexp << "\n";
+
 	size_t memsz = (nexp + 7) >> 3;	// size of complete bitmap
 	size_t mbs = (memsz + 7) >> 3;	// size of meta-bitmap
 	size_t nbytes = 0;
@@ -610,33 +606,20 @@ bool ElfFileSupplied::WarnForNewExports()
 }
 
 /**
-To check if the two strings are equal
-@internalComponent
-@released
-*/
-struct eqstr
-{
-  bool operator()(const char* s1, const char* s2) const
-  {
-    return strcmp(s1, s2) == 0;
-  }
-};
-
-/**
 Function to provide a predicate which checks whether a symbol name is unwanted:
 @return 1 if new symbols are present in the static library list else return 0
 @param aSymbol symbols to be checked if part of static lib
 @internalComponent
 @released
 */
-int ElfFileSupplied::UnWantedSymbolp(const char * aSymbol)
+bool ElfFileSupplied::UnWantedSymbol(const char * aSymbol)
 {
 	int symbollistsize = sizeof(Unwantedruntimesymbols) / sizeof(Unwantedruntimesymbols[0]);
 	for (int i = 0; i<symbollistsize; i++)
 	{
 		if (strstr(Unwantedruntimesymbols[i], aSymbol))
-			return 1;
+			return true;
 	}
-	return 0;
+	return false;
 }
 

@@ -32,9 +32,9 @@ Constructor for class ElfLocalRelocation
 @internalComponent
 @released
 */
-ElfLocalRelocation::ElfLocalRelocation(ElfExecutable *aElfExec, PLMemAddr32 aAddr, \
-			PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType, \
-			Elf32_Rel* aRel, bool aVeneerSymbol): \
+ElfLocalRelocation::ElfLocalRelocation(ElfExecutable *aElfExec, PLMemAddr32 aAddr,
+		PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,
+		Elf32_Rel* aRel, bool aVeneerSymbol):
 		ElfRelocation(aElfExec, aAddr, aAddend, aIndex, aRelType, aRel)
 {
 	iSegment = aElfExec->Segment( iAddr );

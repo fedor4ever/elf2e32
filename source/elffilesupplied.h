@@ -70,7 +70,7 @@ public:
 	PLUINT8 GetExportDescType();
 	size_t GetExportTableAddress();
 	//Method to check whether a symbol name is unwanted
-	int UnWantedSymbolp(const char * aSymbol);
+	bool UnWantedSymbol(const char * aSymbol);
 
 protected:
 	SymbolList iSymList;
