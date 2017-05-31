@@ -1546,8 +1546,6 @@ void ParameterManager::CheckOptions()
 	case EExe:
 		if (!ElfInput())
 			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--elfinput");
-		if (!DefOutput())
-			throw ParameterParserError(NOARGUMENTERROR,"--defoutput");
 		if (!E32ImageOutput())
 			throw ParameterParserError(NOARGUMENTERROR,"--output");
 		if(iUID1 != KExecutableImageUidValue)
