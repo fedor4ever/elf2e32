@@ -179,7 +179,7 @@ int FileDump::DumpE32Image(const char* afileName)
 
 	int dumpOptions=iParameterManager->DumpOptions();
 
-	aE32Imagefile->Dump((TText*)afileName, dumpOptions);
+	aE32Imagefile->Dump(afileName, dumpOptions);
 	delete aE32Imagefile;
 	return KErrNone;
 }

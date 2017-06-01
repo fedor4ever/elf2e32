@@ -24,7 +24,6 @@ typedef signed char TInt8;
 typedef unsigned char TUint8;
 typedef int16_t		TInt16;
 typedef uint16_t	TUint16;
-typedef TUint16		TText;
 typedef int32_t		TInt32;
 typedef uint32_t	TUint32;
 typedef uint64_t	Uint64;

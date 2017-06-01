@@ -212,7 +212,7 @@ class E32ImageFile {
         TUint32 Capability();
         TUint32 Format();
 
-        void Dump(TText *aFileName,TInt aDumpFlags);
+        void Dump(const char *aFileName,TInt aDumpFlags);
         void DumpHeader(TInt aDumpFlags);
         void DumpData(TInt aDumpFlags);
         void DumpSymbolInfo(E32EpocExpSymInfoHdr *aSymInfoHdr);

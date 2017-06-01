@@ -765,7 +765,7 @@ Bits will be read from this buffer until it is empty, at which point UnderflowL(
 */
 void TBitInput::Set(const TUint8* aPtr, TInt aLength, TInt aOffset)
 {
-	TUint p=*aPtr;
+	size_t p=(size_t)aPtr;
 	p+=aOffset>>3;			// nearest byte to the specified bit offset
 	aOffset&=7;				// bit offset within the byte
 	const TUint32* ptr=(const TUint32*)(p&~3);	// word containing this byte
