@@ -1859,9 +1859,9 @@ void E32ImageFile::ProcessSymbolInfo() {
 
 	int i = 0;
 	for(auto x: aList){
-        if(!x->iElfSym)
-            std::cout << "nullptr at pos: " << i << "\n";
         i++;
+        if(!x->iElfSym)
+            std::cout << "ABSENT exported function at pos: " << i << "\n";
 	}
 
 /** TODO (Administrator#1#04/15/17): The nullptr iElfSym position corresponds to the Absent function in def file */
