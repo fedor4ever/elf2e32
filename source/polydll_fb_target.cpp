@@ -1,4 +1,5 @@
 // Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2017 Strizhniou Fiodar.
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -8,7 +9,7 @@
 // Initial Contributors:
 // Nokia Corporation - initial contribution.
 //
-// Contributors:
+// Contributors: Strizhniou Fiodar - fix build and runtime errors.
 //
 // Description:
 // Implementation of the Class PolyDllFB Target for the elf2e32 tool
@@ -39,16 +40,9 @@ POLYDLLFBTarget::~POLYDLLFBTarget()
 {
 	if(iDefExports)
 	{
-		SymbolList::iterator aItr = iDefExports->begin();
-		SymbolList::iterator last = iDefExports->end();
-		Symbol *temp;
-
-		while( aItr != last)
+		for(auto x: *iDefExports)
 		{
-			temp = *aItr;
-			++aItr;
-			delete temp;
-			temp = nullptr;
+			delete x;
 		}
 		iDefExports->clear();
 	}
@@ -107,6 +101,3 @@ void POLYDLLFBTarget::GenerateOutput() {
 	}
 	WriteE32();
 }
-
-
-

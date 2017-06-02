@@ -1,4 +1,5 @@
 // Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2017 Strizhniou Fiodar
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -8,7 +9,7 @@
 // Initial Contributors:
 // Nokia Corporation - initial contribution.
 //
-// Contributors:
+// Contributors: Strizhniou Fiodar - fix build and runtime errors.
 //
 // Description:
 // Implementation of the e32 image dump for the elf2e32 tool
@@ -618,17 +619,16 @@ void E32ImageFile::DumpSymbolInfo(E32EpocExpSymInfoHdr *aSymInfoHdr)
 	aSymAddrTbl = (TUint*)(aSymTblBase + aSymInfoHdr->iSymbolTblOffset);
 	aSymNameTbl = (char*)(aSymAddrTbl + aSymInfoHdr->iSymCount);
 
-	int aIdx;
-	char *aSymName;
 
 	printf("\n\n\t\tSymbol Info\n");
 	if(aSymInfoHdr->iSymCount)
 	{
+		char *aSymName = nullptr;
 		printf("0x%x Symbols exported\n",aSymInfoHdr->iSymCount);
 		printf("  Addr\t\tName\n");
 		printf("----------------------------------------\n");
 		TUint aNameOffset = 0;
-		for(aIdx=0;aIdx<aSymInfoHdr->iSymCount ; aIdx++)
+		for(int aIdx=0;aIdx<aSymInfoHdr->iSymCount ; aIdx++)
 		{
 			if(aSymInfoHdr->iFlags & 1)
 			{

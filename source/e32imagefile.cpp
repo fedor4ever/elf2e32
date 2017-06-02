@@ -1,4 +1,5 @@
 // Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2017 Strizhniou Fiodar
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -8,7 +9,7 @@
 // Initial Contributors:
 // Nokia Corporation - initial contribution.
 //
-// Contributors:
+// Contributors: Strizhniou Fiodar - fix build and runtime errors.
 //
 // Description:
 // Implementation of e32 image creation and dump for elf2e32 tool
@@ -1930,10 +1931,10 @@ char* E32ImageFile::CreateSymbolInfo(size_t aBaseOffset) {
 	// while relocating.
 
 	// Update the import table to have offsets to ordinal zero entries
-	uint32 *aLocation, aOffset;
+	uint32 *aLocation;
 	uint32 *aImportTab = iImportSection;
 
-	aOffset = aBaseOffset - iHdr->iCodeOffset;// This gives the offset of syminfo table base
+	uint32 aOffset = aBaseOffset - iHdr->iCodeOffset;// This gives the offset of syminfo table base
 										// wrt the code section start
 	aOffset += aSymInf.iDepDllZeroOrdTableOffset; // This points to the ordinal zero offset table now
 	for(auto x: iImportTabLocations) {

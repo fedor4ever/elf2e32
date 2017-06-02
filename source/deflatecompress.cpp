@@ -1,4 +1,5 @@
 // Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2017 Strizhniou Fiodar
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -8,7 +9,7 @@
 // Initial Contributors:
 // Nokia Corporation - initial contribution.
 //
-// Contributors:
+// Contributors: Strizhniou Fiodar - fix build and runtime errors.
 //
 // Description:
 //
@@ -139,7 +140,7 @@ inline HDeflateHash* HDeflateHash::NewLC(TInt aLinks)
 	// Compute the size of the class, including rounding it up to a multiple of 4
 	// bytes.
 
-	unsigned n = sizeof(TInt) * 256 + sizeof(TOffset) * min(aLinks, KDeflateMaxDistance);
+	unsigned n = sizeof(TInt) * 256 + sizeof(TOffset) * (min)(aLinks, KDeflateMaxDistance);
 
 	while (n & 0x1f)
 	{
@@ -179,7 +180,7 @@ Function First
 inline TInt HDeflateHash::First(const TUint8* aPtr,TInt aPos)
 {
 	TInt h=Hash(aPtr);
-	TInt offset=min(aPos-iHash[h],KDeflateMaxDistance<<1);
+	TInt offset=(min)(aPos-iHash[h],KDeflateMaxDistance<<1);
 	iHash[h]=aPos;
 	iOffset[aPos&(KDeflateMaxDistance-1)]=TOffset(offset);
 	return offset;
@@ -215,7 +216,7 @@ TInt MDeflater::Match(const TUint8* aPtr,const TUint8* aEnd,TInt aPos,HDeflateHa
 	if (offset>KDeflateMaxDistance)
 		return 0;
 	TInt match=0;
-	aEnd=min(aEnd,aPtr+KDeflateMaxLength);
+	aEnd=(min)(aEnd,aPtr+KDeflateMaxLength);
 	TUint8 c=*aPtr;
 	do
 	{

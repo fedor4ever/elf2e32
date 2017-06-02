@@ -1,4 +1,5 @@
 // Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
+// Copyright (c) 2017 Strizhniou Fiodar
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -8,7 +9,7 @@
 // Initial Contributors:
 // Nokia Corporation - initial contribution.
 //
-// Contributors:
+// Contributors: Strizhniou Fiodar - fix build and runtime errors.
 //
 // Description:
 // Class for E32 Image implementation and dump of the elf2e32 tool
@@ -79,8 +80,8 @@ class E32ImageChunks {
     };
 
 typedef unsigned char uint8;
-typedef unsigned short uint16;
-typedef unsigned long uint32;
+typedef uint16_t uint16;
+typedef uint32_t uint32;
 
 class ElfFileSupplied;
 
