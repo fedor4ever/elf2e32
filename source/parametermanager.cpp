@@ -3017,7 +3017,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseTargetTypeName)
 {
 	INITIALISE_PARAM_PARSER;
 	aPM->SetTargetTypeName(aPM->ValidateTargetType(aValue));
-	if(strcmp(aValue, "STDDLL")==0) aPM->iSSTDDll = true;
+	if(strcmp(aValue, "STDDLL")==0) aPM->iSSTDDll = true; /// TODO (Administrator#6#07/05/17): Revisit that
 }
 
 /**
