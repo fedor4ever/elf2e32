@@ -2672,13 +2672,10 @@ Pointer to function ParameterManager::ParseFPU returning void.
 DEFINE_PARAM_PARSER(ParameterManager::ParseFPU)
 {
 	INITIALISE_PARAM_PARSER;
-
-	if (strnicmp(aValue, "softvfp", 7)==0)
+	if (strnicmp(aValue, "vfpv2", 5)!=0)
 		aPM->SetFPU(0);
-	else if (strnicmp(aValue, "vfpv2", 5)==0)
-		aPM->SetFPU(1);
 	else
-		throw InvalidArgumentError(INVALIDARGUMENTERROR, aValue, aOption);
+		aPM->SetFPU(1);
 }
 
 /**

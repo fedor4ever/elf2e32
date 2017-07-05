@@ -608,7 +608,7 @@ bool ElfFileSupplied::WarnForNewExports()
 
 /**
 Function to provide a predicate which checks whether a symbol name is unwanted:
-@return 1 if new symbols are present in the static library list else return 0
+@return true if new symbols are present in the static library list else return false
 @param aSymbol symbols to be checked if part of static lib
 @internalComponent
 @released
