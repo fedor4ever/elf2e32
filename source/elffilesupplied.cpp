@@ -67,8 +67,7 @@ int ElfFileSupplied::Execute()
 	iElfIfc->ProcessElfFile();
 	try
 	{
-	    if(iParameterManager->TargetTypeName() != EPolyDll)
-            ProcessExports();
+        ProcessExports();
 	}
 	catch(SymbolMissingFromElfError& aSme)
 	{
