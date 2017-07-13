@@ -198,7 +198,7 @@ public:
 	void SetIgnoreNonCallable(bool aVal);
 	void SetCapability(unsigned int newVal);
 	void SetCapability(SCapabilitySet & newVal);
-	void SetSysDefs(unsigned int aSysDefOrdinal, char * aSysDefSymbol, int aCount);
+	void SetSysDefs(unsigned int aSysDefOrdinal, const char * aSysDefSymbol, int aCount);
 	void SetLogFile(char * aSetLogFile);
 	void SetMessageFile(char *aMessageFile);
 	void SetDumpMessageFile(char *aDumpMessageFile);

@@ -1949,7 +1949,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseVersion)
 
 	major = strtok(tokens, ".");
 	UINT majorVal = ValidateInputVal(major, "--version");
-	minor = strtok(NULL, ".");
+	minor = strtok(nullptr, ".");
 	if (minor && !GetUInt(minorVal, minor))
 		throw InvalidArgumentError(INVALIDARGUMENTERROR, aValue, "--version");
 
@@ -2344,67 +2344,38 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseSysDefs)
 	INITIALISE_PARAM_PARSER;
 	if (!aValue)
 		throw ParameterParserError(NOARGUMENTERROR, "--sysdef");
-	string aSysDefValues(aValue);
-	string::iterator p = aSysDefValues.begin();
-
-	int sysdeflength = aSysDefValues.size();
-
-	int parsesysdef = 1;
+	string line(aValue);
 
 	int sysdefcount=0;
+	uint64_t ordinalnum = 0;
 
-	while (parsesysdef && sysdeflength)
-	{
+	while(!line.empty())
+    {
+        size_t argpos = line.find_first_of(",");
+        if(argpos==0) throw ParameterParserError(SYSDEFNOSYMBOLERROR, "--sysdef");
+        size_t endpos = line.find_first_of(";");
+        if(endpos==0) throw ParameterParserError(SYSDEFNOSYMBOLERROR, "--sysdef");
 
-		int q = 0;
-		size_t ordinalnum = 0;
-		char *symbol = nullptr;
+        string funcname(line.substr(0, argpos));
+        string ordnum(line.substr(argpos+1, endpos-argpos-1));
+        line.erase(0, endpos+1);
+        if(line.find(funcname) == 0)
+        {
+            cerr << "Find duplicate function name: " << funcname << " with ordinal: " << ordnum << "\n";
+            continue;
+        }
+        if(line.find(ordnum) == 0)
+        {
+            cerr << "Find duplicate function ordinal: " << ordnum << "with name: " << funcname << "\n";
+            continue;
+        }
 
-		size_t nq = aSysDefValues.find_first_of(",", q,sizeof(*p));
-		if (nq && (nq != string::npos))
-		{
-			int len = nq;
-			symbol = new char[len+1];
-			memcpy(symbol, (void*)&p, len); //copy p to symbol todo:rewrite
-			symbol[len] = 0;
-			q = nq+1;
+        if(!IsAllDigits(ordnum.c_str())) throw ParameterParserError(SYSDEFERROR, "--sysdef");
+        else ordinalnum = atoll(ordnum.c_str());
 
-			char val = *(p+q);
-			if (!val || !isdigit(val))
-				throw ParameterParserError(SYSDEFERROR, "--sysdef");
-			ordinalnum = *(p+q) - '0';
-			aPM->SetSysDefs(ordinalnum, symbol, sysdefcount);
-
-			unsigned int separator = aSysDefValues.find(";", 0);
-
-			if (separator && (separator != string::npos))
-			{
-				if (separator != (unsigned int)(q+1))
-					throw ParameterParserError(MULTIPLESYSDEFERROR, "--sysdef");
-				else
-				{
-					sysdeflength -= separator + 1;
-					aSysDefValues = aSysDefValues.substr(separator+1);
-					sysdefcount++;
-				}
-			}
-			else
-			{
-				sysdeflength -= q+1;
-				if (sysdeflength)
-					throw ParameterParserError(MULTIPLESYSDEFERROR, "--sysdef");
-				else
-					parsesysdef = 0;
-			}
-		}
-		else
-		{
-			if (!nq && sysdeflength)
-				throw ParameterParserError(SYSDEFNOSYMBOLERROR, "--sysdef");
-			else
-				throw ParameterParserError(SYSDEFERROR, "--sysdef");
-		}
-	}
+        aPM->SetSysDefs(ordinalnum, funcname.c_str(), sysdefcount);
+        ++sysdefcount;
+    }
 }
 
 /**
@@ -3418,11 +3389,11 @@ Symbol Name
 @param aCount
 Position of the predefined symbol
 */
-void ParameterManager::SetSysDefs(unsigned int aOrdinalnum, char* aSymbol, int aCount)
+void ParameterManager::SetSysDefs(unsigned int aOrdinalnum, const char* aSymbol, int aCount)
 {
 	iSysDefOption = 1;
 	iSysDefSymbols[aCount].iSysDefOrdinalNum = aOrdinalnum;
-	iSysDefSymbols[aCount].iSysDefSymbolName = aSymbol;
+	iSysDefSymbols[aCount].iSysDefSymbolName = const_cast<char *>(aSymbol);
 	iSysDefCount = (aCount+1);
 }
 
