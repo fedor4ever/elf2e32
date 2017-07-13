@@ -11,7 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters='--dlldata --capability=All-TCB --definput=&quot;tests\libcryptou.def&quot; --defoutput=&quot;tests\out.def&quot; --elfinput=&quot;tests\libcrypto.dll&quot; --output=&quot;tests\libcrypto-2.4.5.dll&quot; --libpath=&quot;D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib&quot; --linkas=&quot;tests\libcrypto{000a0000}.dll&quot; --dso=&quot;tests\libcrypto{000a0000}.dso&quot; --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL' />
+				<Option parameters='--sid=0x101ff1ec  --version=10.0 --uid1=0x10000079 --uid2=0x10009d8d --uid3=0x101ff1ec --capability=ProtServ --fpu=softvfp --targettype=PLUGIN --output=&quot;tests\AlternateReaderRecogE32.dll&quot; --ignorenoncallable --dso=tests\AlternateReaderRecog{000a0000}.dso --defoutput=tests\AlternateReaderRecog{000a0000}.def --elfinput=&quot;tests\AlternateReaderRecog.dll&quot; --linkas=tests\AlternateReaderRecog{000a0000}[101ff1ec].dll --libpath=.\tests\SDK_libs' />
 				<Compiler>
 					<Add option="-g -O0" />
 					<Add option="-g3" />
@@ -28,7 +28,7 @@
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters=' --dlldata --elfinput=tests\libcrypto.dll --output=tests\libcrypto-2.4.5.dll --defoutput=tests\out.def --dso=tests\out.dso --linkas=tests\libcrypto{000a0000}.dll --uid1=0x10000079 --uid2=0x00000000 --uid3=0x00000000 --libpath=&quot;D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib&quot; --fpu=softvfp --capability=All-TCB --targettype=STDDLL' />
+				<Option parameters='--sid=0x101ff1ec  --version=10.0 --uid1=0x10000079 --uid2=0x10009d8d --uid3=0x101ff1ec --capability=ProtServ --fpu=softvfp --targettype=PLUGIN --output=&quot;tests\AlternateReaderRecogE32.dll&quot; --ignorenoncallable --dso=tests\AlternateReaderRecog{000a0000}.dso --defoutput=tests\AlternateReaderRecog{000a0000}.def --elfinput=&quot;tests\AlternateReaderRecog.dll&quot; --linkas=tests\AlternateReaderRecog{000a0000}[101ff1ec].dll --libpath=&quot;D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib&quot; --sysdef=_Z24ImplementationGroupProxyRi,1;' />
 				<Compiler>
 					<Add option="-O2" />
 				</Compiler>
@@ -43,13 +43,12 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 			<Add option="-Wno-write-strings" />
-			<Add option="-D__TOOLS2__" />
+			<Add option="-Wno-invalid-offsetof" />
 			<Add option="-D_CRT_NONSTDC_NO_DEPRECATE" />
 			<Add directory="include" />
 		</Compiler>
 		<Linker>
 			<Add option="-static" />
-			<Add library="../../MinGW/lib/gcc/mingw32/5.3.0/libgcc.a" />
 		</Linker>
 		<Unit filename="include/cpudefs.h" />
 		<Unit filename="include/e32imageheaders.h" />

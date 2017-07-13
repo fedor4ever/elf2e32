@@ -153,7 +153,7 @@
 
 1489928028 source:d:\codeblock\elf2e32\external\e32image.cpp
 
-1496397854 source:d:\codeblock\elf2e32\source\e32imagefile.cpp
+1499870462 source:d:\codeblock\elf2e32\source\e32imagefile.cpp
 	"pl_elfexecutable.h"
 	"e32imagefile.h"
 	"pl_elfimportrelocation.h"
@@ -254,7 +254,7 @@
 	"filedump.h"
 	<iostream>
 
-1496399708 d:\codeblock\elf2e32\source\parametermanager.h
+1499974333 d:\codeblock\elf2e32\source\parametermanager.h
 	<portable.h>
 	<vector>
 	<map>
@@ -271,7 +271,7 @@
 1496398237 d:\codeblock\elf2e32\source\exetarget.h
 	"elffilesupplied.h"
 
-1496400680 d:\codeblock\elf2e32\source\polydll_fb_target.h
+1499285325 d:\codeblock\elf2e32\source\polydll_fb_target.h
 	"dll_type_target.h"
 	<list>
 
@@ -298,7 +298,7 @@
 	<stdio.h>
 	<cstring>
 
-1496398046 source:d:\codeblock\elf2e32\source\elffilesupplied.cpp
+1499975012 source:d:\codeblock\elf2e32\source\elffilesupplied.cpp
 	"elffilesupplied.h"
 	"pl_elfexecutable.h"
 	"errorhandler.h"
@@ -348,9 +348,10 @@
 	<cstring>
 	"h_utl.h"
 
-1496398934 source:d:\codeblock\elf2e32\source\huffman.cpp
+1496425562 source:d:\codeblock\elf2e32\source\huffman.cpp
 	<cassert>
 	<portable.h>
+	<vector>
 	"huffman.h"
 	"errorhandler.h"
 	"farray.h"
@@ -428,7 +429,7 @@
 	<elfdefs.h>
 	"pl_common.h"
 
-1496399704 source:d:\codeblock\elf2e32\source\parametermanager.cpp
+1499716612 source:d:\codeblock\elf2e32\source\parametermanager.cpp
 	<e32capability.h>
 	"pl_common.h"
 	"parametermanager.h"
@@ -442,7 +443,7 @@
 1490122564 source:d:\codeblock\elf2e32\source\pl_dllsymbol.cpp
 	"pl_dllsymbol.h"
 
-1496399835 source:d:\codeblock\elf2e32\source\pl_elfexecutable.cpp
+1499596261 source:d:\codeblock\elf2e32\source\pl_elfexecutable.cpp
 	"pl_elfexecutable.h"
 	"errorhandler.h"
 	<stdio.h>
@@ -496,10 +497,11 @@
 	"pl_elfrelocations.h"
 	"pl_elflocalrelocation.h"
 
-1496400674 source:d:\codeblock\elf2e32\source\polydll_fb_target.cpp
+1499974372 source:d:\codeblock\elf2e32\source\polydll_fb_target.cpp
+	<iostream>
 	"polydll_fb_target.h"
 
-1496400687 source:d:\codeblock\elf2e32\source\polydll_rebuild_target.cpp
+1499974404 source:d:\codeblock\elf2e32\source\polydll_rebuild_target.cpp
 	"polydll_rebuild_target.h"
 	"deffile.h"
 	"errorhandler.h"
@@ -515,10 +517,11 @@
 	"e32exporttable.h"
 	"errorhandler.h"
 
-1496400591 source:d:\codeblock\elf2e32\source\portable.cpp
+1499696079 source:d:\codeblock\elf2e32\source\portable.cpp
 	<string.h>
 	<iostream>
 	<portable.h>
+	<vector>
 	"checksum.h"
 
 1496397646 source:d:\codeblock\elf2e32\source\dll_type_target.cpp
