@@ -323,7 +323,7 @@ void DefFile::ParseDefFile(char *defFileEntries)
 		// Get Export entries
 		if (!strcmp(MultiLineStatement,"EXPORTS"))
 		{
-			Symbol aSymbol(nullptr, SymbolTypeCode);
+			Symbol aSymbol("", SymbolTypeCode);
 			if( Tokenize(lineToken, LineNum, aSymbol) )
 			{
 				Symbol *newSymbolEntry = new Symbol(aSymbol);
