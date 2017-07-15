@@ -9,7 +9,7 @@
 // Initial Contributors:
 // Nokia Corporation - initial contribution.
 //
-// Contributors: Strizhniou Fiodar - fix build and runtime errors.
+// Contributors: Strizhniou Fiodar - fix build and runtime errors, refactoring.
 //
 // Description:
 // Implementation of the Class Symbol for the elf2e32 tool
@@ -21,16 +21,11 @@
 #include <cstring>
 #include "pl_symbol.h"
 
-/**
-This constructor sets the symbol members.
-@internalComponent
-@released
-*/
-Symbol::Symbol(char* aName, SymbolType aCodeDataType, char* aExportName, PLUINT32	aOrd,
-	char* aComment , bool aR3Unused, bool aAbsent, PLUINT32 aSz) :
-	iSymbolName(aName), iExportName(aExportName),iSymbolType(aCodeDataType),
-	iOrdinalNumber(aOrd),iComment(aComment),iAbsent(aAbsent), iR3Unused(aR3Unused),
-	iSize (aSz) {}
+Symbol::Symbol(std::string aName, SymbolType aCodeDataType):
+    iSymbolType(aCodeDataType)
+    {
+        iSymbolName = aName;
+    }
 
 /**
 This constructor sets the symbol members.
@@ -40,8 +35,7 @@ This constructor sets the symbol members.
 Symbol::Symbol(Symbol& aSymbol, SymbolType aCodeDataType, bool aAbsent):
 		iSymbolType(aCodeDataType), iAbsent(aAbsent)
 {
-	iSymbolName = new char[strlen(aSymbol.SymbolName()) + 1];
-	strcpy(iSymbolName, aSymbol.SymbolName());
+	iSymbolName = aSymbol.SymbolName();
 	iOrdinalNumber = aSymbol.OrdNum();
 }
 
@@ -74,76 +68,22 @@ Symbol::Symbol(Symbol& aSymbol)
 	iOrdinalNumber = aSymbol.iOrdinalNumber;
 	iAbsent = aSymbol.iAbsent;
 	iR3Unused = aSymbol.iR3Unused;
-	iSize= aSymbol.iSize;
+	iSize = aSymbol.iSize;
 
-	iSymbolName = new char[strlen(aSymbol.SymbolName()) + 1];
-	strcpy(iSymbolName, aSymbol.SymbolName());
+	iSymbolName = aSymbol.SymbolName();
 
-	if(aSymbol.Comment())
+	if(aSymbol.Comment().size() > 0)
 	{
-		iComment = new char[strlen(aSymbol.Comment()) + 1];
-		strcpy(iComment, aSymbol.Comment());
+		iComment = aSymbol.Comment();
 	}
 
 	if(aSymbol.ExportName())
 	{
-		iExportName = new char[strlen(aSymbol.ExportName()) + 1];
-		strcpy(iExportName, aSymbol.ExportName());
+		iExportName = aSymbol.ExportName();
 	}
 }
 
-/**
-This constructor sets the symbol members.
-@internalComponent
-@released
-*/
-Symbol::Symbol(int symbolStatus,char *name,char *exportName,
-            int ordinalNo,bool r3unused,bool absent,int symbolType,char *comment, PLUINT32 aSz)
-            :iSize (aSz)
-{
-	if(symbolStatus==0)
-	{
-		iSymbolStatus=Matching;
-	}
-	else if(symbolStatus==1)
-	{
-		iSymbolStatus=Missing;
-	}
-	else
-	{
-		iSymbolStatus=New;
-	}
-	iSymbolName=name;
-	iExportName=exportName;
-	iOrdinalNumber=ordinalNo;
-	iR3Unused=r3unused;
-	iAbsent=absent;
-	if(symbolType==0)
-	{
-		iSymbolType=SymbolTypeCode;
-	}
-	else if(symbolType==1)
-	{
-		iSymbolType=SymbolTypeData;
-	}
-	else
-	{
-		iSymbolType=SymbolTypeNotDefined;
-	}
-	iComment=comment;
-}
-
-/**
-This destructor frees the symbol members.
-@internalComponent
-@released
-*/
-Symbol::~Symbol()
-{
-		delete [] iSymbolName;
-		delete [] iExportName;
-		delete [] iComment;
-}
+Symbol::~Symbol() {}
 
 /**
 This function sets the symbol name.
@@ -153,12 +93,7 @@ This function sets the symbol name.
 */
 void Symbol::SetSymbolName(char *aSymbolName)
 {
-    if(iSymbolName){
-        delete[] iSymbolName;
-        iSymbolName = nullptr;
-    }
-	iSymbolName = new char[strlen(aSymbolName)+1];
-	strcpy(iSymbolName, aSymbolName);
+	iSymbolName.assign(aSymbolName);
 }
 
 /**
@@ -169,7 +104,7 @@ Return - It returns true if the 2 symbols are equal.
 @released
 */
 bool Symbol::operator==(const Symbol* aSym) const {
-	if(strcmp(iSymbolName, aSym->iSymbolName))
+	if(iSymbolName.compare(aSym->iSymbolName) != 0)
 		return false;
 	if( iSymbolType != aSym->iSymbolType )
 		return false;
@@ -183,7 +118,7 @@ This function returns the symbol name.
 @released
 */
 const char* Symbol::SymbolName() const {
-	return iSymbolName;
+	return iSymbolName.c_str();
 }
 
 /**
@@ -192,7 +127,7 @@ This function returns the aliased symbol name.
 @released
 */
 const char* Symbol::ExportName() {
-	 return iExportName;
+	 return iExportName.c_str();
 }
 
 /**
@@ -246,7 +181,7 @@ This function returns the comment against this def file.
 @internalComponent
 @released
 */
-char* Symbol::Comment() {
+string Symbol::Comment() {
 	return iComment;
 }
 

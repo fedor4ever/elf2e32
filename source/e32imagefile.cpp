@@ -9,7 +9,7 @@
 // Initial Contributors:
 // Nokia Corporation - initial contribution.
 //
-// Contributors: Strizhniou Fiodar - fix build and runtime errors.
+// Contributors: Strizhniou Fiodar - fix build and runtime errors, refactoring.
 //
 // Description:
 // Implementation of e32 image creation and dump for elf2e32 tool
@@ -373,9 +373,7 @@ This function checks if a DSO file exists.
 */
 static bool ProbePath(string & aPath)
 {
-	ifstream aInput;
-	const char * p = aPath.c_str();
-	aInput.open(p);
+	fstream aInput(aPath);
 	if (aInput.is_open())
 	{
 		aInput.close();

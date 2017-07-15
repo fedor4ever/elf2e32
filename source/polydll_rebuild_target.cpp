@@ -9,7 +9,7 @@
 // Initial Contributors:
 // Nokia Corporation - initial contribution.
 //
-// Contributors: Strizhniou Fiodar - fix build and runtime errors.
+// Contributors: Strizhniou Fiodar - fix build and runtime errors, refactoring.
 //
 // Description:
 // Implementation of the Class PolyDLL Rebuild Target for the elf2e32 tool
@@ -66,8 +66,6 @@ void POLYDLLRebuildTarget::ProcessExports()
 		j++; i--;
 	}
 
-	typedef SymbolList::iterator Iterator;
-
 	Symbol *aSymbolEntry;
 
 	SymbolList *iSysDefExports = new SymbolList;
@@ -84,11 +82,11 @@ void POLYDLLRebuildTarget::ProcessExports()
 
 	// Check if the Sysdefs and the DEF file are matching.
 
-	Iterator aBegin = iSysDefExports->begin();
-	Iterator aEnd = iSysDefExports->end();
+	auto aBegin = iSysDefExports->begin();
+	auto aEnd = iSysDefExports->end();
 
-	Iterator aDefBegin = iDefExports->begin();
-	Iterator aDefEnd = iDefExports->end();
+	auto aDefBegin = iDefExports->begin();
+	auto aDefEnd = iDefExports->end();
 
 	std::list<string> aMissingSysDefList;
 

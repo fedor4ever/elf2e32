@@ -9,7 +9,7 @@
 // Initial Contributors:
 // Nokia Corporation - initial contribution.
 //
-// Contributors: Strizhniou Fiodar - fix build and runtime errors.
+// Contributors: Strizhniou Fiodar - fix build and runtime errors, refactoring.
 //
 // Description:
 // Implementation of the Class DefFile for the elf2e32 tool
@@ -928,10 +928,10 @@ void DefFile::WriteDefFile(char *fileName, SymbolList * newSymbolList)
 			if(aSym->Absent())
 				fputs(" ABSENT",fptr);
 
-			if(aSym->Comment()!=NULL)
+			if(aSym->Comment().size() > 0)
 			{
 				fputs(" ; ",fptr);
-				fputs(aSym->Comment(),fptr);
+				fputs(aSym->Comment().c_str(),fptr);
 			}
 			fputs("\r\n",fptr);
 			++aItr;
@@ -978,19 +978,18 @@ void DefFile::WriteDefFile(char *fileName, SymbolList * newSymbolList)
 				if(aSym->Absent())
 					fputs(" ABSENT",fptr);
 
-				if(aSym->Comment()!=NULL)
+				if(aSym->Comment().size() > 0)
 				{
 					if(aSym->CodeDataType()!=SymbolTypeCode &&
 						aSym->CodeDataType()!=SymbolTypeData)
 					{
 						fputs(" ; ",fptr);
-						fputs(aSym->Comment(),fptr);
 					}
 					else
 					{
 						fputs(" ",fptr);
-						fputs(aSym->Comment(),fptr);
 					}
+                    fputs(aSym->Comment().c_str(),fptr);
 				}
 				fputs("\r\n",fptr);
 				++aItr;

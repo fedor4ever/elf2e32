@@ -9,7 +9,7 @@
 // Initial Contributors:
 // Nokia Corporation - initial contribution.
 //
-// Contributors: Strizhniou Fiodar - fix build and runtime errors.
+// Contributors: Strizhniou Fiodar - fix build and runtime errors, refactoring.
 //
 // Description:
 // Implementation of the Class Symbol for the elf2e32 tool
@@ -22,11 +22,12 @@
 #if !defined(_PL_SYMBOL_H_)
 #define _PL_SYMBOL_H_
 
+#include <string>
 #include "pl_common.h"
 #include "pl_sym_type.h"
-#include <string>
 
 #define UnAssignedOrdNum -1;
+using std::string;
 
 enum SymbolStatus {Matching,Missing,New};
 /**
@@ -38,13 +39,10 @@ class Symbol
 {
 
 public:
-	Symbol(char* aName, SymbolType aCodeDataType, char* aExportName=nullptr, PLUINT32 aOrd = -1,
-		char* aComment=nullptr, bool aR3Unused=false, bool aAbsent=false, PLUINT32 aSymbolSz = 0);
+
+    Symbol(string aName, SymbolType aCodeDataType);
 
 	Symbol(char* aName, SymbolType aType, Elf32_Sym* aElfSym, PLUINT32 aSymbolIndex);
-
-	Symbol(int symbolStatus,char *name,char *exportName,int ordinalNo,
-        bool r3unused,bool absent,int symbolType,char *comment, PLUINT32 aSymbolSz = 0);
 
 	Symbol(Symbol& aSymbol, SymbolType aCodeDataType, bool aAbsent);
 
@@ -62,7 +60,7 @@ public:
 	bool R3unused();
 	bool Absent();
 	void SetAbsent(bool aAbsent);
-	char* Comment();
+	string Comment();
 	int GetSymbolStatus();
 	void SetOrdinal(PLUINT32 aOrdinalNum);
 	void SetSymbolStatus(SymbolStatus aSymbolStatus);
@@ -86,11 +84,11 @@ public:
 private:
 /** TODO (Administrator#1#04/20/17): Find why and where this used unitialized!!!! */
 	SymbolStatus iSymbolStatus;// = Missing; /*should fail if not init!!! */
-	char*		iSymbolName = nullptr;
-	char*		iExportName = nullptr;
+	string		iSymbolName;
+	string		iExportName;
 	SymbolType	iSymbolType = SymbolTypeNotDefined; //should fail if not init!!!
-	PLUINT32	iOrdinalNumber  = 0;
-	char*		iComment = nullptr;
+	PLUINT32	iOrdinalNumber  = -1; // default value in ctor
+	string		iComment;
 	bool		iAbsent = false;
 	bool		iR3Unused = false;
 	PLUINT32	iSize = 0;

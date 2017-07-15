@@ -9,7 +9,7 @@
 // Initial Contributors:
 // Nokia Corporation - initial contribution.
 //
-// Contributors: Strizhniou Fiodar - fix build and runtime errors.
+// Contributors: Strizhniou Fiodar - fix build and runtime errors, refactoring.
 //
 // Description:
 // Implementation of the Class ParameterManager for the elf2e32 tool
@@ -2373,7 +2373,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseSysDefs)
         if(!IsAllDigits(ordnum.c_str())) throw ParameterParserError(SYSDEFERROR, "--sysdef");
         else ordinalnum = atoll(ordnum.c_str());
 
-        aPM->SetSysDefs(ordinalnum, funcname.c_str(), sysdefcount);
+        aPM->SetSysDefs(ordinalnum, funcname, sysdefcount);
         ++sysdefcount;
     }
 }
@@ -3389,11 +3389,11 @@ Symbol Name
 @param aCount
 Position of the predefined symbol
 */
-void ParameterManager::SetSysDefs(unsigned int aOrdinalnum, const char* aSymbol, int aCount)
+void ParameterManager::SetSysDefs(unsigned int aOrdinalnum, string aSymbol, int aCount)
 {
 	iSysDefOption = 1;
 	iSysDefSymbols[aCount].iSysDefOrdinalNum = aOrdinalnum;
-	iSysDefSymbols[aCount].iSysDefSymbolName = const_cast<char *>(aSymbol);
+	iSysDefSymbols[aCount].iSysDefSymbolName = aSymbol;
 	iSysDefCount = (aCount+1);
 }
 

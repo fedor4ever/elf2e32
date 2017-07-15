@@ -9,7 +9,7 @@
 // Initial Contributors:
 // Nokia Corporation - initial contribution.
 //
-// Contributors: Strizhniou Fiodar - fix build and runtime errors.
+// Contributors: Strizhniou Fiodar - fix build and runtime errors, refactoring.
 //
 // Description:
 // Implementation of the Header file for Class ParameterManager of the elf2e32 tool
@@ -89,7 +89,7 @@ public:
 	struct SysDefs
 	{
 		int iSysDefOrdinalNum;
-		char * iSysDefSymbolName;
+		string iSysDefSymbolName;
 	};
 
 	typedef struct SysDefs Sys;
@@ -198,7 +198,7 @@ public:
 	void SetIgnoreNonCallable(bool aVal);
 	void SetCapability(unsigned int newVal);
 	void SetCapability(SCapabilitySet & newVal);
-	void SetSysDefs(unsigned int aSysDefOrdinal, const char * aSysDefSymbol, int aCount);
+	void SetSysDefs(unsigned int aSysDefOrdinal, string aSysDefSymbol, int aCount);
 	void SetLogFile(char * aSetLogFile);
 	void SetMessageFile(char *aMessageFile);
 	void SetDumpMessageFile(char *aDumpMessageFile);

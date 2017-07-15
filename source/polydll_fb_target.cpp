@@ -9,7 +9,7 @@
 // Initial Contributors:
 // Nokia Corporation - initial contribution.
 //
-// Contributors: Strizhniou Fiodar - fix build and runtime errors.
+// Contributors: Strizhniou Fiodar - fix build and runtime errors, refactoring.
 //
 // Description:
 // Implementation of the Class PolyDllFB Target for the elf2e32 tool
@@ -61,11 +61,11 @@ void POLYDLLFBTarget::ProcessExports()
 	int count = iParameterManager->SysDefCount();
 	ParameterManager::Sys aSysDefSymbols[10];
 
-	int j=0, i=count;
-	while (i)
+	int i = 0;
+	while (i < count)
 	{
-		aSysDefSymbols[j] = iParameterManager->SysDefSymbols(j);
-		j++; i--;
+		aSysDefSymbols[i] = iParameterManager->SysDefSymbols(i);
+		++i;
 	}
 
 	Symbol *aSymbolEntry;
