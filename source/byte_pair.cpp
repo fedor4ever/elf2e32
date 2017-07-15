@@ -9,7 +9,7 @@
 // Initial Contributors:
 // Nokia Corporation - initial contribution.
 //
-// Contributors: Strizhniou Fiodar - fix build and runtime errors.
+// Contributors: Strizhniou Fiodar - fix build and runtime errors, refactoring.
 //
 // Description:
 //
@@ -332,12 +332,12 @@ TInt Unpak(TUint8* dst, TInt dstSize, TUint8* src, TInt srcSize, TUint8*& srcNex
 	TUint32 p1;
 	TUint32 p2;
 
-	TUint32* l = (TUint32*)LUT;
+	TUint32* lut = (TUint32*)LUT;
 	TUint32 b = 0x03020100;
 	TUint32 step = 0x04040404;
 	do
 		{
-		*l++ = b;
+		*lut++ = b;
 		b += step;
 		}
 	while(b>step);

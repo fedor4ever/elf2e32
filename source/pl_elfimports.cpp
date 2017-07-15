@@ -9,7 +9,7 @@
 // Initial Contributors:
 // Nokia Corporation - initial contribution.
 //
-// Contributors: Strizhniou Fiodar - fix build and runtime errors.
+// Contributors: Strizhniou Fiodar - fix build and runtime errors, refactoring.
 //
 // Description:
 // Implementation of the Class ElfImports for the elf2e32 tool
@@ -22,14 +22,7 @@
 #include "pl_elfimports.h"
 #include "pl_elfimportrelocation.h"
 
-/**
-Constructor for class ElfImports
-@internalComponent
-@released
-*/
-ElfImports::ElfImports(){
-
-}
+ElfImports::ElfImports(){}
 
 /**
 Destructor for class ElfImports to release allocated memory
@@ -38,32 +31,21 @@ Destructor for class ElfImports to release allocated memory
 */
 ElfImports::~ElfImports()
 {
-
 	if(iImports.size())
 	{
-		ImportMap::iterator aItr = iImports.begin();
-		ImportMap::iterator last = iImports.end();
-		RelocationList *rlistTemp;
-
-		while( aItr != last)
+        for(auto x: iImports)
 		{
-			rlistTemp = &((*aItr).second);
-			RelocationList::iterator aItr1 = rlistTemp->begin();
-			RelocationList::iterator last1 = rlistTemp->end();
-			ElfImportRelocation *temp;
+			RelocationList *rlistTemp = &(x.second);
 
-			while( aItr1 != last1)
+            for(auto y: *rlistTemp)
 			{
-				temp = *aItr1;
-				++aItr1;
+				ElfImportRelocation *temp = y;
 				delete temp;
 				temp = nullptr;
 			}
-			++aItr;
 			rlistTemp->clear();
 		}
 	}
-
 	iImports.clear();
 }
 
@@ -123,4 +105,3 @@ ElfImports::ImportMap& ElfImports::GetImports()
 {
 	return iImports;
 }
-

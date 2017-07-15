@@ -59,11 +59,11 @@ void POLYDLLRebuildTarget::ProcessExports()
 	int count = iParameterManager->SysDefCount();
 	ParameterManager::Sys aSysDefSymbols[10];
 
-	int j=0, i=count;
-	while (i)
+	int i = 0;
+	while (i < count)
 	{
-		aSysDefSymbols[j] = iParameterManager->SysDefSymbols(j);
-		j++; i--;
+		aSysDefSymbols[i] = iParameterManager->SysDefSymbols(i);
+		++i;
 	}
 
 	Symbol *aSymbolEntry;

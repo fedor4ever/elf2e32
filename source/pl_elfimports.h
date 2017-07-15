@@ -14,7 +14,7 @@
 // Implementation of the Class ElfImports for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 
@@ -44,10 +44,10 @@ public:
 	{
 		bool operator() (const char * lhs, const char * rhs) const;
 	};
-	
-	typedef std::vector<ElfImportRelocation*>			RelocationList;
-	
-	typedef std::map<const char*, RelocationList, StringPtrLess>	ImportMap;
+
+	typedef std::vector<ElfImportRelocation*> RelocationList;
+
+	typedef std::map<const char*, RelocationList, StringPtrLess> ImportMap;
 
 	ElfImports();
 	~ElfImports();
@@ -60,8 +60,5 @@ private:
 	ImportMap	iImports;
 
 };
-
-
-
 
 #endif // !defined(_PL_ELFIMPORTS_H_)

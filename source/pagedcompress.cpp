@@ -78,14 +78,10 @@ class CBytePairCompressedImage
 		IndexTableHeader 	iHeader;
 		IndexTableItem*		iPages;
 		TUint8* 			iOutBuffer;
-
 };
 
 
-CBytePairCompressedImage::CBytePairCompressedImage()
-{
-
-}
+CBytePairCompressedImage::CBytePairCompressedImage() {}
 
 
 CBytePairCompressedImage* CBytePairCompressedImage::NewLC(TUint16 aNumberOfPages, TInt aSize)
@@ -206,7 +202,6 @@ void CBytePairCompressedImage::WriteOutTable(std::ofstream & os)
 	{
 		os.write( (const char *)iPages[i].iCompressedPageData, iPages[i].iSizeOfCompressedPageData);
 	}
-
 }
 
 
@@ -262,8 +257,6 @@ int  CBytePairCompressedImage::GetPage(TUint16 aPageNum, TUint8 * aPageData)
 												pakEnd );
 
 	return uncompressedSize;
-
-
 }
 
 
@@ -292,10 +285,8 @@ void CompressPages(TUint8* bytes, TInt size, std::ofstream& os)
 	// Write out index table and compressed pages
 	comprImage->WriteOutTable(os);
 
-
 	delete comprImage;
 	comprImage = nullptr;
-
 }
 
 
@@ -312,13 +303,11 @@ int DecompressPages(TUint8 * bytes, std::ifstream& is)
 	TUint numberOfPages = 0;
 	comprImage->ReadInTable(is, numberOfPages);
 
-
-	TUint8* iPageStart;
 	TUint16 iPage = 0;
 
 	while(iPage < numberOfPages )
 	{
-		iPageStart = &bytes[iPage * PAGE_SIZE];
+		TUint8* iPageStart = &bytes[iPage * PAGE_SIZE];
 
 		decompressedSize += comprImage->GetPage(iPage, iPageStart);
 
@@ -327,5 +316,4 @@ int DecompressPages(TUint8 * bytes, std::ifstream& is)
 
 	delete comprImage;
 	return decompressedSize;
-
 }

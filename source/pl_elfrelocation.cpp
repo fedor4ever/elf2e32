@@ -38,20 +38,9 @@ ElfRelocation::ElfRelocation(ElfExecutable *aElfExec, PLMemAddr32 aAddr,
 		PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,
 		Elf32_Rel* aRel) : iAddr(aAddr), iAddend(aAddend),
 		iSymNdx(aIndex), iRelType(aRelType), iRel(aRel),
-		iElfExec(aElfExec)
-{
-}
+		iElfExec(aElfExec) {}
 
-
-
-/**
-Destructor for class ElfRelocation
-@internalComponent
-@released
-*/
-ElfRelocation::~ElfRelocation(){
-
-}
+ElfRelocation::~ElfRelocation(){}
 
 
 /**
@@ -104,5 +93,3 @@ bool ElfRelocation::ValidRelocEntry(PLUCHAR aType) {
 		return false;
 	}
 }
-
-
