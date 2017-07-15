@@ -9,7 +9,7 @@
 // Initial Contributors:
 // Nokia Corporation - initial contribution.
 //
-// Contributors: Strizhniou Fiodar - fix build and runtime errors.
+// Contributors: Strizhniou Fiodar - fix build and runtime errors, refactoring.
 //
 // Description:
 // Implementation of the Class ElfExports for the elf2e32 tool
@@ -237,31 +237,31 @@ bool ElfExports::PtrELFExportOrdinalCompare::operator()(const Symbol * lhs, cons
 }
 
 /**
-Overloaded operator to compare update symbol attributes that are
+Overloaded operator to compare and update symbol attributes that are
 being compared. The comparision is done on the symbol names.
 @return True if lhs symbol name < rhs symbol name, otherwise false
 @internalComponent
 @released
 */
-bool ElfExports::PtrELFExportNameCompareUpdateAttributes::operator()(const Symbol * lhs, const Symbol * rhs) const
+bool ElfExports::PtrELFExportNameCompareUpdateAttributes::operator()(Symbol * lhs, Symbol * rhs) const
 {
 	int result = strcmp(lhs->SymbolName(), rhs->SymbolName());
 	if (!result)
 	{
 		if (lhs->OrdNum() > 0)
-			((Symbol*)rhs)->SetOrdinal( lhs->OrdNum());
+			rhs->SetOrdinal( lhs->OrdNum());
 		else if (rhs->OrdNum() > 0)
-			((Symbol*)lhs)->SetOrdinal( rhs->OrdNum());
+			lhs->SetOrdinal( rhs->OrdNum());
 
-		if( ((Symbol*)lhs)->Absent() )
-			((Symbol*)rhs)->SetAbsent(true);
-		else if ( ((Symbol*)rhs)->Absent() )
-			((Symbol*)lhs)->SetAbsent(true);
+		if( lhs->Absent() )
+			rhs->SetAbsent(true);
+		else if ( rhs->Absent() )
+			lhs->SetAbsent(true);
 
-		if( ((Symbol*)lhs)->SymbolSize() )
-			((Symbol*)rhs)->SetSymbolSize(((Symbol*)lhs)->SymbolSize());
-		else if( ((Symbol*)rhs)->SymbolSize() )
-			((Symbol*)lhs)->SetSymbolSize(((Symbol*)rhs)->SymbolSize());
+		if( lhs->SymbolSize() )
+			rhs->SetSymbolSize(lhs->SymbolSize());
+		else if( rhs->SymbolSize() )
+			lhs->SetSymbolSize(rhs->SymbolSize());
 	}
 	return result < 0;
 }

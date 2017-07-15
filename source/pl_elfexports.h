@@ -9,7 +9,7 @@
 // Initial Contributors:
 // Nokia Corporation - initial contribution.
 //
-// Contributors: Strizhniou Fiodar - fix build and runtime errors.
+// Contributors: Strizhniou Fiodar - fix build and runtime errors, refactoring.
 //
 // Description:
 // Implementation of the Class ElfExports for the elf2e32 tool
@@ -61,9 +61,9 @@ public:
 	};
 
 	struct PtrELFExportNameCompareUpdateAttributes :
-		binary_function<const Symbol *, const Symbol *, bool>
+		binary_function<Symbol *, Symbol *, bool>
 	{
-		bool operator()(const Symbol * lhs, const Symbol * rhs) const;
+		bool operator()(Symbol * lhs, Symbol * rhs) const;
 	};
 
 
