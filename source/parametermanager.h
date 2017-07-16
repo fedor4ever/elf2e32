@@ -374,14 +374,6 @@ public:
 	int DumpOptions();
 	int SysDefCount();
 
-	/**
-    This function finds out the directory separator '\' in the path
-    @internalComponent
-    @released
-    @return the directory spearator '\'
-    */
-	char DirectorySeparator();
-
 	//int SysDefOrdinalNum();
 	//char * SysDefSymbol();
 	Sys SysDefSymbols(int count);

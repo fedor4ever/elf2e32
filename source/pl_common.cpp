@@ -29,7 +29,8 @@ hash function for ELF symbols
 */
 uint32_t elf_hash(const unsigned char *name)
 {
-	for (uint32_t h = 0; *name != 0; ++name)
+    uint32_t h = 0;
+	for (; *name != 0; ++name)
 	{
 		h = (h << 4) + *name;
 		uint32_t g = h & 0xf0000000;

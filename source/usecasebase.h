@@ -95,10 +95,7 @@ class UseCaseBase {
 
         ParameterManager::LibSearchPaths &  GetLibSearchPaths();
 
-
         bool GetIgnoreNonCallable();
-
-        char GetDirectorySeparator();
 
         bool IsCodePaged();
         bool IsCodeUnpaged();

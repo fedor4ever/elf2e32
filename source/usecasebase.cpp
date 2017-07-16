@@ -479,21 +479,6 @@ bool UseCaseBase::GetIgnoreNonCallable()
 	return iParameterManager->IgnoreNonCallable();
 }
 
-/**
-This function returns the directory separator
-
-@internalComponent
-@released
-
-@return directory separator
-
-*/
-char UseCaseBase::GetDirectorySeparator()
-{
-	return iParameterManager->DirectorySeparator();
-}
-
-
 bool UseCaseBase::IsCodePaged()
 {
 	return (iParameterManager->IsCodePaged());

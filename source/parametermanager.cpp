@@ -649,7 +649,7 @@ The file path name
 char * ParameterManager::Path(char * aPathName)
 {
 	string str(aPathName);
-	size_t pos = str.find_last_of(DirectorySeparator());
+	size_t pos = str.find_last_of(directoryseparator);
 
 	if (pos < str.size())
 	{
@@ -1645,7 +1645,7 @@ char * ParameterManager::FileName(char * aFileName)
 {
 	string str(aFileName);
 
-	size_t pos = str.find_last_of(DirectorySeparator());
+	size_t pos = str.find_last_of(directoryseparator);
 #ifndef __LINUX__
 	// Support Unix slashes on Windows when stripping filenames from paths
 	if (pos > str.size())
@@ -1658,23 +1658,6 @@ char * ParameterManager::FileName(char * aFileName)
 		return aFileName + pos + 1;
 	else
 		return aFileName;
-}
-
-/**
-This function finds out the directory separator '\' in the path
-
-@internalComponent
-@released
-
-@return the directory spearator '\'
-*/
-char ParameterManager::DirectorySeparator()
-{
-#ifdef __LINUX__
-	return '/';
-#else
-	return '\\';
-#endif
 }
 
 /**
@@ -3093,36 +3076,34 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseLibPaths)
 	if (!aValue)
 		throw ParameterParserError(NOARGUMENTERROR, "--libpath");
 	string aPathList(aValue);
-	const char* p = aPathList.c_str();
-	int n =  strlen(p);
-	int q = 0;
-	while (n)
-	{
-		int nq = aPathList.find_first_of(";", q, sizeof(*p));
-		if (nq > 0)
-		{
-			// handle case where there are multiple paths which are ; separated
-			int len = nq - q;
-			if (p[len-1] == aPM->DirectorySeparator()) len--;
-			char * path = new char[len+1];
-			memcpy(path, p+q, len);
-			path[len] = 0;
-			aPM->iLibPathList.push_back(path);
-			n -= nq - q + 1;
-			q = nq+1;
-		}
-		else
-		{
-			p += q;
-			int len = strlen(p);
-			if (p[len-1] == aPM->DirectorySeparator()) len--;
-			char * path = new char[len+1];
-			memcpy(path, p, len);
-			path[len] = 0;
-			aPM->iLibPathList.push_back(path);
-			break;
-		}
-	}
+
+	while(aPathList.size() > 0)
+    {
+        size_t pos = aPathList.find(";");
+        if(pos == string::npos) // single path given
+        {
+            while(aPathList.back()==directoryseparator)
+            {
+                aPathList.pop_back();
+            }
+
+            char *st = new char[aPathList.size()+1];
+            memcpy(st, aPathList.c_str(), aPathList.size()+1);
+            aPM->iLibPathList.push_back(st);
+//            delete [] st; /// FIXME (Administrator#6#07/16/17): Erase content in iLibPathList if enabled
+            return;
+        }
+        string tmp(aPathList.substr(0, pos));
+        while(tmp.back()==directoryseparator)
+        {
+            tmp.pop_back();
+        }
+        char *st = new char[tmp.size()+1];
+        memcpy(st, tmp.c_str(), tmp.size()+1);
+        aPM->iLibPathList.push_back(st);
+//        delete [] st; /// FIXME (Administrator#6#07/16/17): Erase content in iLibPathList if enabled
+        aPathList.erase(0, pos);
+    }
 }
 
 /**

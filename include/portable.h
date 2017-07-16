@@ -23,6 +23,13 @@
 
 static_assert(sizeof(char) == 1, "Wrong char size! Must be 1!");
 
+constexpr char directoryseparator =
+#ifdef __LINUX__
+    {'/'};
+#else
+    {'\\'};
+#endif
+
 #define __NO_THROW throw()
 
 #define E32IMAGEHEADER_TRACE(_t)
