@@ -9,7 +9,7 @@
 // Initial Contributors:
 // Nokia Corporation - initial contribution.
 //
-// Contributors: Strizhniou Fiodar - fix build and runtime errors.
+// Contributors: Strizhniou Fiodar - fix build and runtime errors, refactoring.
 //
 // Description:
 // Error Handler Classes for elf2e32 tool
@@ -164,7 +164,7 @@ Base class for ELF File Errors.
 class ELFFileError : public ErrorHandler
 {
 public:
-	ELFFileError(int aMessageIndex, const char * aName);
+	explicit ELFFileError(int aMessageIndex, const char * aName);
 	virtual ~ELFFileError(){}
 	void Report();
 	string iSymbolName;

@@ -9,7 +9,7 @@
 // Initial Contributors:
 // Nokia Corporation - initial contribution.
 //
-// Contributors: Strizhniou Fiodar - fix build and runtime errors.
+// Contributors: Strizhniou Fiodar - fix build and runtime errors, refactoring.
 //
 // Description:
 // Error Handler Operations for elf2e32 tool
@@ -33,8 +33,8 @@
 using std::cerr;
 using std::endl;
 
-char *errMssgPrefix="elf2e32 : Error: E";
-char *colonSpace=": ";
+constexpr char *errMssgPrefix="elf2e32 : Error: E";
+constexpr char *colonSpace=": ";
 
 void ErrorReport(ErrorHandler *handle);
 void ErrorReport2(ErrorHandler *handle);
@@ -48,13 +48,8 @@ ErrorHandler constructor for doing common thing required for derived class funct
 ErrorHandler::ErrorHandler(int aMessageIndex) :
     iMessageIndex(aMessageIndex)
 {
-	char mssgNo[MAXMSSGNOLENGTH];
-	int mssgIndex;
-
 	iMessage=errMssgPrefix;
-	mssgIndex=BASEMSSGNO+iMessageIndex;
-	sprintf(mssgNo,"%d",mssgIndex);
-	iMessage+=mssgNo;
+	iMessage+=std::to_string(BASEMSSGNO+iMessageIndex);
 	iMessage+=colonSpace;
 };
 
@@ -75,7 +70,7 @@ FileError constructor for initializing message index and argument name.
 @internalComponent
 @released
 */
-FileError:: FileError(int aMessageIndex, char * aName) :
+FileError::FileError(int aMessageIndex, char * aName) :
 		ErrorHandler(aMessageIndex) {iName = aName;}
 
 /**
@@ -131,9 +126,15 @@ Function to report DEF File Errors.
 @internalComponent
 @released
 */
+extern EnglishMessage MessageArray[];
+
 void DEFFileError::Report()
 {
-	ErrorReport(this);
+    iMessage+=MessageArray[iMessageIndex-1].message;
+    size_t bufsize = iMessage.size()+1+iName.size()+iToken.size();
+    char *dst = new char[bufsize];
+    snprintf(dst, bufsize, iMessage.c_str(), iName.c_str(), iLineNo, iToken.c_str());
+	MessageHandler::GetInstance()->Output(dst);
 }
 
 /**
@@ -533,7 +534,7 @@ void ErrorReport(ErrorHandler *handle)
 	if(errMessage)
 	{
 		char *tempMssg = new char[strlen(errMessage)+strlen(handle->iName.c_str())];
-		sprintf(tempMssg,errMessage,handle->iName.c_str());
+		sprintf(tempMssg, errMessage, handle->iName.c_str());
 		handle->iMessage+=tempMssg;
 		MessageHandler::GetInstance()->Output(handle->iMessage);
 		delete[] tempMssg;
