@@ -271,10 +271,10 @@ void E32ImageFile::ProcessImports()
 	for (p = aImportMap.begin(); p != aImportMap.end(); p++, idx++)
 	{
 		ElfImports::RelocationList & aImports = (*p).second;
-		char * aDsoName = aImports[0]->iVerRecord->iSOName;
+		string aDsoName = aImports[0]->iVerRecord->iSOName;
 
 		//const char * aDSO = FindDSO((*p).first);
-		const char * aDSO = FindDSO(aDsoName);
+		string aDSO = FindDSO(aDsoName);
 
 		aImportSection.push_back(aStrTabOffsets[idx] + aImportSectionSize);
 		int nImports = aImports.size();
@@ -379,38 +379,19 @@ static bool ProbePath(string & aPath)
 }
 
 /**
-This function allocates space for a DSO file name.
-@param aPath - DSO file name
-@internalComponent
-@released
-*/
-const char * AllocatePath(string & aPath)
-{
-	const char * p = aPath.c_str();
-	size_t len = aPath.size();
-	char * result = new char[len+1];
-	strcpy(result, p);
-	return (const char *)result;
-}
-
-/**
 This function searches for a DSO in the libpath specified.
 @param aName - DSO file name
 @internalComponent
 @released
 */
-const char * E32ImageFile::FindDSO(const char * aName)
+string E32ImageFile::FindDSO(string aName)
 {
 	string aDSOName(aName);
 	string aDSOPath(aName);
 
-	const char *aNewDsoName;
-
 	if (ProbePath(aDSOName))
 	{
-		aNewDsoName = AllocatePath(aDSOName);
-		cleanupStack.push_back((char*)aNewDsoName);
-		return aNewDsoName;
+		return aDSOName;
 	}
 
 	ParameterManager::LibSearchPaths & paths = iUseCase->GetLibSearchPaths();
@@ -423,15 +404,13 @@ const char * E32ImageFile::FindDSO(const char * aName)
 		aDSOPath.insert(aDSOPath.end(), aDSOName.begin(), aDSOName.end());
 		if (ProbePath(aDSOPath))
 		{
-			aNewDsoName = AllocatePath(aDSOPath);
-			cleanupStack.push_back((char*)aNewDsoName);
-			return aNewDsoName;
+			return aDSOPath;
 		}
 	}
 	throw ELFFileError(DSONOTFOUNDERROR,(char*)aDSOPath.c_str());
 }
 
-void E32ImageFile::ReadInputELFFile(const char * aName, size_t & aFileSize, Elf32_Ehdr * & aELFFile )
+void E32ImageFile::ReadInputELFFile(string aName, size_t & aFileSize, Elf32_Ehdr * & aELFFile )
 {
 	ifstream aInput;
 	aInput.open(aName, ifstream::binary|ifstream::in);
@@ -446,7 +425,7 @@ void E32ImageFile::ReadInputELFFile(const char * aName, size_t & aFileSize, Elf3
 	}
 	else
 	{
-		throw FileError(FILEOPENERROR,(char*)aName);
+		throw FileError(FILEOPENERROR,(char*)aName.c_str());
 	}
 }
 
@@ -496,7 +475,6 @@ void E32ImageFile::CreateRelocations(ElfRelocations::RelocationList & aRelocList
 
 		uint32 aBase = (*aRelocList.begin())->iSegment->p_vaddr;
 		//add for cleanup to be done later..
-		cleanupStack.push_back(aRelocs);
 		aRelocs =	new char [aRelocsSize];
 		memset(aRelocs, 0, aRelocsSize);
 		E32RelocSection * aRelocSection = (E32RelocSection * )aRelocs;
@@ -1453,17 +1431,6 @@ E32ImageFile::~E32ImageFile()
 	delete [] iExportBitMap;
 	delete [] iE32Image;
 	delete [] iImportSection;
-
- 	std::vector<char*>::iterator aPos;
- 	char *aPtr;
- 	aPos = cleanupStack.begin();
- 	while( aPos != cleanupStack.end() )
- 	{
- 		aPtr = *aPos;
- 		delete[] aPtr;
- 		++aPos;
- 	}
-
 }
 
 /**

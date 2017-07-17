@@ -28,9 +28,11 @@
 
 #include <fstream>
 #include <vector>
-using std::vector;
 #include <iostream>
+
+using std::vector;
 using std::ifstream;
+using std::string;
 
 class ELFExecutable;
 class ElfFileSupplied;
@@ -103,10 +105,10 @@ class E32ImageFile {
 
         void GenerateE32Image();
 
-        void ReadInputELFFile(const char * aName, size_t & aFileSize, Elf32_Ehdr * & aELFFile );
+        void ReadInputELFFile(string aName, size_t & aFileSize, Elf32_Ehdr * & aELFFile );
 
         void ProcessImports();
-        const char * FindDSO(const char * aName);
+        string FindDSO(string aName);
 
         void ProcessRelocations();
         void ProcessCodeRelocations();
@@ -168,7 +170,7 @@ class E32ImageFile {
         char * iE32Image;
         uint8 * iExportBitMap;
         ElfExecutable * iElfExecutable;
-        std::vector<char*> cleanupStack;
+
         char* iData;
         ElfFileSupplied * iUseCase;
         E32ImageHeaderV * iHdr;
@@ -198,8 +200,8 @@ class E32ImageFile {
         std::vector<int32_t>    iImportTabLocations;
         std::vector<uint32_t> iSymAddrTab;
         std::vector<uint32_t> iSymNameOffTab;
-        std::string         iSymbolNames;
-        uint32_t            iSymNameOffset;
+        string      iSymbolNames;
+        uint32_t    iSymNameOffset;
 
     public:
         E32ImageFile();
