@@ -333,7 +333,7 @@ void DefFile::ParseDefFile(char *defFileEntries)
 				//Check for ordinal sequence
 				if (ordinalNo != PreviousOrdinal+1)
 		   		{
-					throw DEFFileError(ORDINALSEQUENCEERROR,iFileName,LineNum,(char*)aSymbol.SymbolName());
+					throw DEFFileError(ORDINALSEQUENCEERROR, iFileName, LineNum, (char*)aSymbol.SymbolName());
 				}
 
 				PreviousOrdinal = ordinalNo;

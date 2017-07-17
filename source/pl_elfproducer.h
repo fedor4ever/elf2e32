@@ -122,7 +122,6 @@ private:
 	/** The Elf Section-header String table*/
 	String			iDSOSectionNames;
 
-
 	void InitElfContents();
 	void Cleanup();
 	void SetSymolFields(Symbol *aSym, Elf32_Sym* aElfSym, PLUINT32 aIndex);
@@ -130,19 +129,15 @@ private:
 	void CreateVersionTable();
 	void CreateElfHeader();
 	void CreateSections();
-	void SetSectionFields(PLUINT32 aSectionIndex, char* aSectionName, PLUINT32 aType, \
-								   PLUINT32 aEntSz, PLUINT32 aSectionSize, PLUINT32 aLink, \
-								   PLUINT32 aInfo, PLUINT32 aAddrAlign, PLUINT32 aFlags, \
-								   PLUINT32 aAddr);
+	void SetSectionFields(PLUINT32 aSectionIndex, char* aSectionName,
+						PLUINT32 aType, PLUINT32 aEntSz, PLUINT32 aSectionSize,
+						PLUINT32 aLink, PLUINT32 aInfo, PLUINT32 aAddrAlign,
+						PLUINT32 aFlags, PLUINT32 aAddr);
 	void CreateDynamicEntries();
 	void CreateProgHeader();
 
 	void WriteElfContents();
 	void AlignString(String& aStr);
-
 };
-
-
-
 
 #endif // !defined(_PL_ELFPRODUCER_H_)

@@ -301,13 +301,11 @@ Name of the Log file
 */
 void Message::StartLogging(char *aFileName)
 {
-	char logFile[1024];
-	FILE *fptr;
-
-	strcpy(logFile,aFileName);
+	FILE *fptr=nullptr;
+	string logFile(aFileName);
 
 	// open file for log etc.
-	if((fptr=fopen(logFile,"w"))==NULL)
+	if((fptr=fopen(logFile.c_str(), "w"))==NULL)
 	{
 		ReportMessage(WARNING, FILEOPENERROR,aFileName);
 	}

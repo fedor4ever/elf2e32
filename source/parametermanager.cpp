@@ -80,7 +80,6 @@ ParameterManager::ParameterManager(int aArgc, char** aArgv) :
 	iDumpMessageFileName(nullptr),
 	iDumpMessageFileOption(false),
 	iDllData(false),
-	iLibPathList (0),
 	iSysDefCount (0),
 	iPriorityOption(false),
 	iPriorityVal((TProcessPriority)0),
@@ -3086,11 +3085,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseLibPaths)
             {
                 aPathList.pop_back();
             }
-
-            char *st = new char[aPathList.size()+1];
-            memcpy(st, aPathList.c_str(), aPathList.size()+1);
-            aPM->iLibPathList.push_back(st);
-//            delete [] st; /// FIXME (Administrator#6#07/16/17): Erase content in iLibPathList if enabled
+            aPM->iLibPathList.push_back(aPathList);
             return;
         }
         string tmp(aPathList.substr(0, pos));
@@ -3098,10 +3093,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseLibPaths)
         {
             tmp.pop_back();
         }
-        char *st = new char[tmp.size()+1];
-        memcpy(st, tmp.c_str(), tmp.size()+1);
-        aPM->iLibPathList.push_back(st);
-//        delete [] st; /// FIXME (Administrator#6#07/16/17): Erase content in iLibPathList if enabled
+        aPM->iLibPathList.push_back(tmp);
         aPathList.erase(0, pos);
     }
 }

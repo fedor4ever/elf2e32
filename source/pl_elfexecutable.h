@@ -36,7 +36,7 @@ class ElfRelocations;
 class ElfExports;
 class ParameterListInterface;
 class ElfLocalRelocation;
-static PLUINT32 globalcntr = 0;
+//static PLUINT32 globalcntr = 0;
 /**
 This class is for ELF object carrying the elf header, sections, segments.
 @internalComponent

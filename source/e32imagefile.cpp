@@ -77,14 +77,7 @@ E32ImageChunkDesc::E32ImageChunkDesc(char * aData, size_t aSize, size_t aOffset,
 {
 }
 
-/**
-Destructor for E32ImageChunkDesc class.
-@internalComponent
-@released
-*/
-E32ImageChunkDesc::~E32ImageChunkDesc()
-{
-}
+E32ImageChunkDesc::~E32ImageChunkDesc() {}
 
 /**
 This function writes its data in the buffer.
@@ -195,7 +188,7 @@ E32ImageFile::E32ImageFile(const char * aFileName, ElfExecutable * aExecutable, 
 	iMissingExports(0),
 	iSymNameOffset(0),
 	iSize(0),
-	iOrigHdr(0),
+	iOrigHdr(nullptr),
 	iError(0),
 	iOrigHdrOffsetAdj(0){}
 
@@ -421,14 +414,12 @@ const char * E32ImageFile::FindDSO(const char * aName)
 	}
 
 	ParameterManager::LibSearchPaths & paths = iUseCase->GetLibSearchPaths();
-	ParameterManager::LibSearchPaths::iterator p = paths.begin();
-	for (; p != paths.end(); p++)
+	for (auto x: paths)
 	{
-		string path(*p);
-		char dir = iUseCase->GetDirectorySeparator();
+		string path(x);
 		aDSOPath.erase();
 		aDSOPath.insert(aDSOPath.end(), path.begin(), path.end());
-		aDSOPath.insert(aDSOPath.end(), dir);
+		aDSOPath.insert(aDSOPath.end(), directoryseparator);
 		aDSOPath.insert(aDSOPath.end(), aDSOName.begin(), aDSOName.end());
 		if (ProbePath(aDSOPath))
 		{
@@ -437,7 +428,7 @@ const char * E32ImageFile::FindDSO(const char * aName)
 			return aNewDsoName;
 		}
 	}
-	throw ELFFileError(DSONOTFOUNDERROR,(char*)aName);
+	throw ELFFileError(DSONOTFOUNDERROR,(char*)aDSOPath.c_str());
 }
 
 void E32ImageFile::ReadInputELFFile(const char * aName, size_t & aFileSize, Elf32_Ehdr * & aELFFile )

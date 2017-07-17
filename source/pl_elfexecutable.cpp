@@ -834,7 +834,7 @@ Function to get segment header
 @released
 */
 Elf32_Phdr* ElfExecutable::Segment(Elf32_Addr aAddr) {
-    globalcntr++;
+//    globalcntr++;
   //  std::cout << globalcntr << "\n";
 	if(iCodeSegmentHdr) {
 		PLUINT32 aBase = iCodeSegmentHdr->p_vaddr;
@@ -1045,10 +1045,8 @@ Function to get symbol ordinal
 PLUINT32 ElfExecutable::GetSymbolOrdinal( Elf32_Sym* aSym) {
 	PLUINT32 aOrd = (PLUINT32)-1;
 	if( aSym->st_shndx == ESegmentRO) {
-		Elf32_Word *aLocation, aOffset;
-
-		aOffset = iCodeSegmentHdr->p_offset + aSym->st_value - iCodeSegmentHdr->p_vaddr;
-		aLocation = ELF_ENTRY_PTR(Elf32_Word, iElfHeader, aOffset);
+		Elf32_Word aOffset = iCodeSegmentHdr->p_offset + aSym->st_value - iCodeSegmentHdr->p_vaddr;
+		Elf32_Word *aLocation = ELF_ENTRY_PTR(Elf32_Word, iElfHeader, aOffset);
 		aOrd = *aLocation;
 	}
 	return aOrd;
@@ -1170,7 +1168,9 @@ Function to get RO segment size
 */
 uint32_t ElfExecutable::GetROSize()
 {
-	return iCodeSegmentHdr->p_filesz;
+    if(iCodeSegmentHdr)
+        return iCodeSegmentHdr->p_filesz;
+    return 0;
 }
 
 /**

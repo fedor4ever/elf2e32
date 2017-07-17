@@ -96,7 +96,7 @@ public:
 
 	typedef std::less<string> OptionCompare;
 	typedef std::map<string, const OptionDesc *, OptionCompare> OptionMap;
-	typedef std::vector<char *> LibSearchPaths;
+	typedef std::vector<string> LibSearchPaths;
 	typedef std::vector<char *> ParamList;
 
 	typedef void (*ParserFn)(ParameterManager *, char *, char *, const OptionDesc *);
@@ -543,7 +543,6 @@ private:
 
 	bool iDllData;
 
-	//vector<char*> iLibPathList;
 	LibSearchPaths iLibPathList;
 	SCapabilitySet iCapability;
 	//struct SysDefs iSysDefSymbols[10];

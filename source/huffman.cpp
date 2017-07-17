@@ -24,6 +24,7 @@
 
 #include <cassert>
 #include <portable.h>
+#include <vector>
 #include "huffman.h"
 #include "errorhandler.h"
 #include "farray.h"
@@ -366,6 +367,8 @@ void Huffman::Encoding(const TUint32 aHuffman[],TInt aNumCodes,TUint32 aEncodeTa
 		throw E32ImageCompressionError(HUFFMANINVALIDCODINGERROR);
 
 	TFixedArray<TInt,KMaxCodeLength> lenCount;
+//	std::vector<TInt> lenCount;
+//	lenCount.reserve(KMaxCodeLength);
 	lenCount.Reset();
 
 	TInt ii;
