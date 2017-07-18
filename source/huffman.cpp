@@ -217,18 +217,18 @@ Function to Insert the {aCount,aValue} pair into the already sorted array of nod
 void InsertInOrder(TNode* aNodes, TInt aSize, TUint aCount, TInt aVal)
 {
 	// Uses Insertion sort following a binary search...
-	TInt l=0, r=aSize;
-	while (l < r)
+	TInt left=0, right=aSize;
+	while (left < right)
 	{
-		TInt m = (l+r) >> 1;
+		TInt m = (left+right) >> 1;
 		if (aNodes[m].iCount<aCount)
-			r=m;
+			right=m;
 		else
-			l=m+1;
+			left=m+1;
 	}
-	memmove(aNodes+l+1,aNodes+l,sizeof(TNode)*(aSize-l));
-	aNodes[l].iCount=aCount;
-	aNodes[l].iRight=TUint16(aVal);
+	memmove(aNodes+left+1,aNodes+left,sizeof(TNode)*(aSize-left));
+	aNodes[left].iCount=aCount;
+	aNodes[left].iRight=TUint16(aVal);
 }
 
 /**
@@ -482,8 +482,7 @@ void Huffman::ExternalizeL(TBitOutput& aOutput,const TUint32 aHuffman[],TInt aNu
 	//
 	// initialise the list for the MTF coder
 	TFixedArray<TUint8,Huffman::KMetaCodes> list;
-	TInt i;
-	for (i=0;i<list.Count();++i)
+	for (TInt i=0;i<list.Count();++i)
 		list[i]=TUint8(i);
 	TInt last=0;
 
@@ -525,15 +524,15 @@ Function to write the subtree below aPtr and return the head
 */
 TUint32* HuffmanSubTree(TUint32* aPtr,const TUint32* aValue,TUint32** aLevel)
 {
-	TUint32* l=*aLevel++;
-	if (l>aValue)
+	TUint32* left=*aLevel++;
+	if (left > aValue)
 	{
 		TUint32* sub0=HuffmanSubTree(aPtr,aValue,aLevel);		// 0-tree first
 		aPtr=HuffmanSubTree(sub0,aValue-(aPtr-sub0)-1,aLevel);	// 1-tree
 		TInt branch0=(TUint8*)sub0-(TUint8*)(aPtr-1);
 		*--aPtr=KBranch1|branch0;
 	}
-	else if (l==aValue)
+	else if (left == aValue)
 	{
 		TUint term0=*aValue--;						// 0-term
 		aPtr=HuffmanSubTree(aPtr,aValue,aLevel);	// 1-tree
