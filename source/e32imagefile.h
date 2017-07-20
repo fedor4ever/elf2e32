@@ -100,7 +100,7 @@ class E32ImageFile {
             };
 
 //public:
-        E32ImageFile(const char * aFileName, ElfExecutable * aExecutable, ElfFileSupplied * aUseCase);
+        E32ImageFile(ElfExecutable * aExecutable, ElfFileSupplied * aUseCase);
         virtual ~E32ImageFile();
 
         void GenerateE32Image();
@@ -165,7 +165,6 @@ class E32ImageFile {
         bool WriteImage(const char * aName);
 
     public:
-        const char * iFileName;
 
         char * iE32Image;
         uint8 * iExportBitMap;

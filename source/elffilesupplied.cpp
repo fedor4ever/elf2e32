@@ -363,7 +363,7 @@ void ElfFileSupplied::WriteE32()
 
 	const char * aE32FileName = OutputE32FileName();
 
-	iE32ImageFile = new E32ImageFile(aE32FileName, iElfExecutable, this);
+	iE32ImageFile = new E32ImageFile(iElfExecutable, this);
 
 	try
 	{

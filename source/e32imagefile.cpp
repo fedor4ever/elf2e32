@@ -166,8 +166,7 @@ Constructor for E32ImageFile class.
 @internalComponent
 @released
 */
-E32ImageFile::E32ImageFile(const char * aFileName, ElfExecutable * aExecutable, ElfFileSupplied *aUseCase) :
-	iFileName(aFileName),
+E32ImageFile::E32ImageFile(ElfExecutable * aExecutable, ElfFileSupplied *aUseCase) :
 	iE32Image(nullptr),
 	iExportBitMap(nullptr),
 	iElfExecutable(aExecutable),
@@ -197,7 +196,7 @@ Constructor for E32ImageFile class.
 @internalComponent
 @released
 */
-E32ImageFile::E32ImageFile(): E32ImageFile::E32ImageFile(nullptr, nullptr, nullptr){}
+E32ImageFile::E32ImageFile(): E32ImageFile::E32ImageFile(nullptr, nullptr){}
 
 /**
 This function generates the E32 image.
@@ -231,13 +230,12 @@ void E32ImageFile::ProcessImports()
 	TUint aImportTabEntryPos = 0;
 
 	ElfImports::ImportMap aImportMap = iElfExecutable->GetImports();
-	ElfImports::ImportMap::iterator p;
 
 	// First set up the string table and record offsets into string table of each
 	// LinkAs name.
-	for (p = aImportMap.begin(); p != aImportMap.end(); p++)
+	for (auto p: aImportMap)
 	{
-		ElfImports::RelocationList & aImports = (*p).second;
+		ElfImports::RelocationList & aImports = p.second;
 		char* aLinkAs = aImports[0]->iVerRecord->iLinkAs;
 
 		aStrTabOffsets.push_back(aStrTab.size()); //
@@ -268,9 +266,9 @@ void E32ImageFile::ProcessImports()
 	}
 	// Now fill in the E32ImportBlocks
 	int idx = 0;
-	for (p = aImportMap.begin(); p != aImportMap.end(); p++, idx++)
+	for (auto p: aImportMap)
 	{
-		ElfImports::RelocationList & aImports = (*p).second;
+		ElfImports::RelocationList & aImports = p.second;
 		string aDsoName = aImports[0]->iVerRecord->iSOName;
 
 		//const char * aDSO = FindDSO((*p).first);
@@ -336,6 +334,7 @@ void E32ImageFile::ProcessImports()
 			// Put the entry as 0 now, which shall be updated
 			aImportSection.push_back(0);
 		}
+		idx++;
 
 		delete [] ((char*)aElfFile);
 	}
