@@ -69,16 +69,10 @@ Function to get import size
 @released
 */
 PLUINT32 ElfImports::GetImportSize(){
-
 	PLUINT32	aSize = 0;
-
-	ImportMap::iterator aItr = iImports.begin();
-	RelocationList aList;
-
-	while(aItr != iImports.end()) {
-		aList = ((*aItr).second);
+	for(auto x: iImports){
+		RelocationList aList = x.second;
 		aSize += aList.size();
-		++aItr;
 	}
 	return aSize;
 }
@@ -101,7 +95,7 @@ Function to get imports
 @internalComponent
 @released
 */
-ElfImports::ImportMap& ElfImports::GetImports()
+ElfImports::ImportLibs& ElfImports::GetImports()
 {
 	return iImports;
 }

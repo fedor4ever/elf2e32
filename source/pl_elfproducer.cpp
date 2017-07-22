@@ -171,9 +171,8 @@ void ElfProducer::InitElfContents() {
 	iDSOSymNameStrTbl.insert(iDSOSymNameStrTbl.end(), 0);
 
 	while(aItr != aEnd) {
-		String		aSymName("");
 		aSym = *aItr;
-		aSymName = aSym->SymbolName();
+		string aSymName(aSym->SymbolName());
 		//set symbol info..
 		iElfDynSym[aIdx].st_name = iDSOSymNameStrTbl.size();
 
@@ -408,7 +407,7 @@ void ElfProducer::SetSectionFields(PLUINT32 aSectionIndex, char* aSectionName, P
 								   PLUINT32 aInfo, PLUINT32 aAddrAlign, PLUINT32 aFlags, \
 								   PLUINT32 aAddr)
 {
-	String aSecName = aSectionName;
+	string aSecName = aSectionName;
 
 	iSections[aSectionIndex].sh_name			= iDSOSectionNames.size();
 	iDSOSectionNames.insert(iDSOSectionNames.end(), aSecName.begin(), aSecName.end());
@@ -581,7 +580,7 @@ This function aligns the string table to a 4-byte boundary
 @return Error status
 @param aStr - string to be aligned
 */
-void ElfProducer::AlignString(String& aStr) {
+void ElfProducer::AlignString(string& aStr) {
 
 	if( aStr.size() %4 ){
 		PLUCHAR	aPad = (PLUCHAR)(4 - (aStr.size() %4));

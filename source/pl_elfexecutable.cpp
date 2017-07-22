@@ -1347,7 +1347,7 @@ Function to get imports
 @internalComponent
 @released
 */
-ElfImports::ImportMap ElfExecutable::GetImports() {
+ElfImports::ImportLibs ElfExecutable::GetImports() {
 	return iImports.GetImports();
 }
 

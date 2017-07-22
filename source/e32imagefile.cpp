@@ -227,9 +227,8 @@ void E32ImageFile::ProcessImports()
 	int aNumDlls = 0;
 	int aNumImports = 0;
 	bool aNamedLookup = iUseCase->GetNamedSymLookup();
-	TUint aImportTabEntryPos = 0;
 
-	ElfImports::ImportMap aImportMap = iElfExecutable->GetImports();
+	ElfImports::ImportLibs aImportMap = iElfExecutable->GetImports();
 
 	// First set up the string table and record offsets into string table of each
 	// LinkAs name.
@@ -328,7 +327,7 @@ void E32ImageFile::ProcessImports()
 		}
 
 		if( aNamedLookup ) {
-			aImportTabEntryPos = aImportSection.size();
+			TUint aImportTabEntryPos = aImportSection.size();
 			// Keep track of the location of the entry
 			iImportTabLocations.push_back(aImportTabEntryPos);
 			// Put the entry as 0 now, which shall be updated
@@ -353,7 +352,6 @@ void E32ImageFile::ProcessImports()
 	memcpy(iImportSection, (void *)&aImportSection.at(0), aImportSectionSize);
 	char * strTab = ((char *)iImportSection) + aImportSectionSize;
 	memcpy(strTab, aStrTab.data(), aStrTab.size());
-
 }
 
 

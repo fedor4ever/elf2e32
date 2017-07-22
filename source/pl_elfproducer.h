@@ -53,6 +53,8 @@ typedef enum _DYN_ENTRIES_ {
 	MAX_DYN_ENTS=DSO_DT_NULL,
 }DYN_ENTRIES;
 
+using std::string;
+
 #define DEFAULT_VERSION	2
 /**
 This class provides elf contents for the dso file creation. It generates the
@@ -77,15 +79,15 @@ private:
 	 * This is used to create the export info when only a def file is available and
 	 * the DSO needs to be generated for that.
 	 */
-	typedef std::string	String;
+
 	/** The proxy DSO file name*/
-	String			iDSOName;
+	string			iDSOName;
 
 	/** The offset of the file name within the string table of the ELF file*/
 	PLUINT32		iDSONameOffset;
 
 	/** The DLL name that defines the export Symbols*/
-	String			iLinkAs;
+	string			iLinkAs;
 
 	/** The offset of the DLL name within the string table within the ELF file*/
 	PLUINT32		iLinkAsOffset;
@@ -94,7 +96,7 @@ private:
 	SymbolList		*iSymbolsList;
 
 	/** The proxy DSO full file name*/
-	String			iDsoFullName;
+	string			iDsoFullName;
 
 	/*DSO content Fields*/
 
@@ -116,11 +118,11 @@ private:
 	/** The Elf file offset maintained for writing the different sections of the Elf file*/
 	PLUINT32		iElfFileOffset;
 
-	/** The Elf String table*/
-	String			iDSOSymNameStrTbl;
+	/** The Elf string table*/
+	string			iDSOSymNameStrTbl;
 
-	/** The Elf Section-header String table*/
-	String			iDSOSectionNames;
+	/** The Elf Section-header string table*/
+	string			iDSOSectionNames;
 
 	void InitElfContents();
 	void Cleanup();
@@ -137,7 +139,7 @@ private:
 	void CreateProgHeader();
 
 	void WriteElfContents();
-	void AlignString(String& aStr);
+	void AlignString(string& aStr);
 };
 
 #endif // !defined(_PL_ELFPRODUCER_H_)

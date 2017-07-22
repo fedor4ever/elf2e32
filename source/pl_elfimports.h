@@ -25,8 +25,6 @@
 #include <vector>
 #include <map>
 
-using std::vector;
-using std::map;
 using std::binary_function;
 
 class ElfImportRelocation;
@@ -47,17 +45,17 @@ public:
 
 	typedef std::vector<ElfImportRelocation*> RelocationList;
 
-	typedef std::map<const char*, RelocationList, StringPtrLess> ImportMap;
+	typedef std::map<const char*, RelocationList, StringPtrLess> ImportLibs;
 
 	ElfImports();
 	~ElfImports();
 
 	void Add(const char* aDll, ElfImportRelocation *aReloc);
 	PLUINT32 GetImportSize();
-	ImportMap& GetImports();
+	ImportLibs& GetImports();
 
 private:
-	ImportMap	iImports;
+	ImportLibs  iImports;
 
 };
 

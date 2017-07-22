@@ -51,7 +51,7 @@ public:
 	PLUINT32 ProcessElfFile(Elf32_Ehdr *aElfHdr);
 
 	PLUINT32 ProcessSymbols();
-	ElfImports::ImportMap GetImports();
+	ElfImports::ImportLibs GetImports();
 	ElfExports* GetExports();
 	Symbol* AddToExports(char* aDll, Symbol* aSymbol);
 	void AddToImports(ElfImportRelocation* aReloc);

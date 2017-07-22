@@ -25,8 +25,6 @@
 #include "e32imagefile.h"
 #include "parametermanager.h"
 
-class E32ImageFile;
-
 /**
 This class is the base class for the use cases. The appropriate usecases like LibraryTarget,
 DLLTarget, EXETarget are derived from this class.
