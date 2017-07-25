@@ -695,7 +695,7 @@ void E32ImageFile::ComputeE32ImageLayout()
 	uint32 endOfHeader = iChunks.GetOffset();
 
 		// Code section
-	iHdr->iCodeOffset = iChunks.GetOffset();
+	iHdr->iCodeOffset = endOfHeader;
 	iChunks.AddChunk(iElfExecutable->GetRawROSegment(), iElfExecutable->GetROSize(), iHdr->iCodeOffset, "Code Section");
 
 	// Exports Next - then we can set up CodeSize
@@ -774,7 +774,6 @@ size_t E32ImageFile::GetE32ImageSize()
 {
 	assert(iLayoutDone);
 	return iChunks.GetOffset();
-
 }
 
 /**
@@ -861,7 +860,7 @@ void E32ImageFile::AddExportDescription()
 		iHdr->iExportDesc[0] = aBuf[0];
 		uint8 * aDesc = new uint8[extra_space];
 		memcpy(aDesc, aBuf+1, extra_space);
-		delete[] aBuf;
+		delete [] aBuf;
 		iChunks.AddChunk((char *)aDesc,extra_space, iChunks.GetOffset(), "Export Description");
 	}
 }
@@ -996,7 +995,7 @@ void E32ImageFile::SetUpExceptions()
 		//check its in RO segment
 		if (aSymVaddr < aROBase || aSymVaddr >= (aROBase + aROSize))
 		{
-			throw ELFFileError(EXCEPTIONDESCRIPTOROUTSIDEROERROR,(char*)iUseCase->InputElfFileName());
+			throw ELFFileError(EXCEPTIONDESCRIPTOROUTSIDEROERROR, iUseCase->InputElfFileName());
 		}
 		// Set bottom bit so 0 in header slot means an old binary.
 		// The decriptor is always aligned on a 4 byte boundary.
@@ -1121,7 +1120,6 @@ void E32ImageFile::SetCompressionType()
 		iHdr->iCompressionType = iUseCase->GetCompressionMethod();
 	else
 		iHdr->iCompressionType = KFormatNotCompressed;
-
 }
 
 /**
@@ -1421,7 +1419,7 @@ Destructor for E32ImageFile class.
 */
 E32ImageFile::~E32ImageFile()
 {
-	delete[] iData;
+	delete [] iData;
 	if (iHdr && iHdr != iOrigHdr)
 		delete iHdr;
 
@@ -1784,8 +1782,8 @@ TInt E32ImageFile::Open(const char* aFileName)
 	return KErrNone;
 }
 
-void E32ImageFile::ProcessSymbolInfo() {
-
+void E32ImageFile::ProcessSymbolInfo()
+{
 	Elf32_Addr aPlace = iUseCase->GetExportTableAddress() - 4;// This location points to 0th ord.
 	// Create a relocation entry for the 0th ordinal.
 	ElfLocalRelocation *aRel = new ElfLocalRelocation(iElfExecutable, aPlace, 0, 0, R_ARM_ABS32, \
@@ -1803,12 +1801,7 @@ void E32ImageFile::ProcessSymbolInfo() {
 	// Donot disturb the internal list sorting.
 	ElfExports::ExportList aList = iElfExecutable->iExports->GetExports(false);
 
-	TUint aAlign, aNameLen;
-
-
-	char aPad[] = {'\0', '\0', '\0', '\0'};
 	std::cout << "aList.size() is: " << aList.size() << "\n";
-
 
 	int i = 0;
 	for(auto x: aList){
@@ -1817,6 +1810,7 @@ void E32ImageFile::ProcessSymbolInfo() {
             std::cout << "ABSENT exported function at pos: " << i << "\n";
 	}
 
+	char aPad[] = {'\0', '\0', '\0', '\0'};
 /** TODO (Administrator#1#04/15/17): The nullptr iElfSym position corresponds to the Absent function in def file */
 	for(auto x: aList ) {
 		if(!x->iElfSym) continue;
@@ -1828,8 +1822,8 @@ void E32ImageFile::ProcessSymbolInfo() {
 
 		iSymbolNames += x->SymbolName();
 		iSymbolNames += '\0';
-		aNameLen = iSymbolNames.size();
-		aAlign = Align(aNameLen, sizeof(int));
+		TUint aNameLen = iSymbolNames.size();
+		TUint aAlign = Align(aNameLen, sizeof(int));
 		aAlign -= aNameLen;
 		if(aAlign % 4){
 			iSymbolNames.append(aPad, aAlign);
@@ -1842,9 +1836,10 @@ void E32ImageFile::ProcessSymbolInfo() {
 	}
 }
 
-char* E32ImageFile::CreateSymbolInfo(size_t aBaseOffset) {
+char* E32ImageFile::CreateSymbolInfo(size_t aBaseOffset)
+{
 	E32EpocExpSymInfoHdr aSymInf;
-	uint32 aSizeofNames, aSize;
+	uint32 aSizeofNames;
 
 	SetSymInfo(aSymInf);
 	if( aSymInf.iFlags & 1) {
@@ -1854,7 +1849,7 @@ char* E32ImageFile::CreateSymbolInfo(size_t aBaseOffset) {
 		aSizeofNames = sizeof(uint16);
 	}
 
-	aSize = aSymInf.iSize;
+	uint32 aSize = aSymInf.iSize;
 
 	char* aInfo = new char[aSize];
 	memset(aInfo, 0, aSize);
@@ -1884,14 +1879,13 @@ char* E32ImageFile::CreateSymbolInfo(size_t aBaseOffset) {
 	// while relocating.
 
 	// Update the import table to have offsets to ordinal zero entries
-	uint32 *aLocation;
 	uint32 *aImportTab = iImportSection;
 
 	uint32 aOffset = aBaseOffset - iHdr->iCodeOffset;// This gives the offset of syminfo table base
 										// wrt the code section start
 	aOffset += aSymInf.iDepDllZeroOrdTableOffset; // This points to the ordinal zero offset table now
 	for(auto x: iImportTabLocations) {
-		aLocation = (aImportTab + x);
+		uint32 *aLocation = (aImportTab + x);
 		*aLocation = aOffset;
 		aOffset += sizeof(uint32);
 	}

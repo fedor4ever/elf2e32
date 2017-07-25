@@ -232,10 +232,10 @@ TInt MDeflater::Match(const TUint8* aPtr,const TUint8* aEnd,TInt aPos,HDeflateHa
 					continue;
 				return ((m-aPtr)<<16)|offset;
 			}
-			TInt l=m-aPtr-1;
-			if (l>match>>16)
+			TInt left=m-aPtr-1;
+			if (left>match>>16)
 			{
-				match=(l<<16)|offset;
+				match=(left<<16)|offset;
 				c=m[-1];
 			}
 		}

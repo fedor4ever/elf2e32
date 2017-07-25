@@ -186,7 +186,6 @@ static bool GetUInt(UINT & aVal, const char * aArg)
 			if (aArg != final) return true;
 		}
 	}
-
 	return false;
 }
 
@@ -2652,12 +2651,6 @@ DEFINE_PARAM_PARSER(ParameterManager::ParsePaged)
 {
 	INITIALISE_PARAM_PARSER;
 	CheckInput(aValue, "--paged");
-
-	if (aPM->IsCodeUnpaged() || aPM->IsCodeDefaultPaged())
-	{
-		throw InvalidInvocationError(INVALIDINVOCATIONERROR);
-	}
-
 	aPM->SetCodePaged(true);
 }
 
@@ -2682,12 +2675,6 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseUnpaged)
 {
 	INITIALISE_PARAM_PARSER;
 	CheckInput(aValue, "--unpaged");
-
-	if (aPM->IsCodePaged() || aPM->IsCodeDefaultPaged())
-	{
-		throw InvalidInvocationError(INVALIDINVOCATIONERROR);
-	}
-
 	aPM->SetCodeUnpaged(true);
 }
 
@@ -2712,12 +2699,6 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseDefaultPaged)
 {
 	INITIALISE_PARAM_PARSER;
 	CheckInput(aValue, "--defaultpaged");
-
-	if (aPM->IsCodePaged() || aPM->IsCodeUnpaged())
-	{
-		throw InvalidInvocationError(INVALIDINVOCATIONERROR);
-	}
-
 	aPM->SetCodeDefaultPaged(true);
 }
 
@@ -3454,7 +3435,6 @@ True if --uncompressed is passed in.
 */
 void ParameterManager::SetCompressionMethod(UINT aCompressionMethod)
 {
-
 	iCompressionMethod = aCompressionMethod;
 }
 
@@ -3762,5 +3742,4 @@ void ValidateDSOGeneration(ParameterManager *param)
 		throw ParameterParserError(NOREQUIREDOPTIONERROR,"--dso");
 	else if (!linkasoption)
 		throw ParameterParserError(NOREQUIREDOPTIONERROR,"--linkas");
-
 }
