@@ -19,8 +19,6 @@
 #include <malloc.h>
 #include <string.h>
 #include <stdlib.h>
-#include "h_utl.h"
-#include "h_ver.h"
 #include <stdio.h>
 
 #include <fstream>
@@ -35,6 +33,7 @@
 #endif
 #include <time.h>
 
+#include "h_ver.h"
 #include "byte_pair.h"
 
 #define PAGE_SIZE 4096

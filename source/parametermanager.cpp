@@ -29,10 +29,10 @@
 #include <cstring>
 #include <stdlib.h>
 
-#include "h_utl.h"
 #include "h_ver.h"
 
 using std::endl;
+using std::cerr;
 void ValidateDSOGeneration(ParameterManager *param);
 
 /**

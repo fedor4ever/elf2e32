@@ -77,7 +77,7 @@ struct EnglishMessage MessageArray[MessageArraySize]=
 	{NEEDSECTIONVIEWERROR,"ELF File %s has no section headers."},
 	{DSONOTFOUNDERROR,"DSO %s not found."},
 	{UNDEFINEDSYMBOLERROR,"Undefined Symbol %s found in ELF File %s."},
-	{SYMBOLMISSINGFROMELFERROR,"Symbol %s Missing from ELF File : %s."},
+	{SYMBOLMISSINGFROMELFERROR,"Symbol %d Missing from ELF File : %s."},
 	{MEMORYALLOCATIONERROR,"Memory allocation failure : %s."},
 	{E32IMAGEERROR,"Not able to write E32 Image file."},
 	{INVALIDINVOCATIONERROR,"Invalid invocation of elf2e32."},

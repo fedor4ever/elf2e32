@@ -17,9 +17,9 @@
 #ifndef __H_VER_H__
 #define __H_VER_H__
 
-const TInt MajorVersion=2;
-const TInt MinorVersion=1;
-const TInt Build=16;
+const short MajorVersion=2;
+const short MinorVersion=1;
+const short Build=16;
 
 #endif
 

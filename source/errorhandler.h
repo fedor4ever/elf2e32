@@ -201,12 +201,13 @@ Class for handling Symbol Missing From Elf Errors.
 @internalComponent
 @released
 */
-class SymbolMissingFromElfError : public ELFFileError
+class SymbolMissingFromElfError : public ErrorHandler
 {
 public:
 	SymbolMissingFromElfError(int aMessageIndex, list<string> &aSymbolList, const char * aName);
 	virtual ~SymbolMissingFromElfError(){}
 	void Report();
+	uint32_t MissedSymbol = 0;
 };
 
 /**

@@ -24,11 +24,11 @@
 	#pragma warning(disable: 4710) // function not inlined
 #endif
 
-#include "errorhandler.h"
-#include "messagehandler.h"
 #include <iostream>
 #include <stdio.h>
 #include <cstring>
+#include "errorhandler.h"
+#include "messagehandler.h"
 
 using std::cerr;
 using std::endl;
@@ -106,35 +106,23 @@ void ELFFormatError::Report()
 /**
 DEFFileError constructor for initializing message index, argument name and line number and token.
 @param aMessageIndex - Message Index
-@param aName - DEF File name
+@param aFileName - DEF File name
 @param aLineNo - DEF File line number
 @param aToken - Token in export entry
-@internalComponent
-@released
 */
-DEFFileError::DEFFileError(int aMessageIndex, char * aName, int aLineNo,char * aToken) :
+DEFFileError::DEFFileError(int aMessageIndex, char * aFileName, int aLineNo,char * aToken) :
      ErrorHandler(aMessageIndex), iLineNo(aLineNo)
 {
-    iName = aName;
+    iName = aFileName;
 	iToken=aToken;
 	if(iToken[iToken.size()-1]=='\r')
 		iToken[iToken.size()-1]='\0';
 }
 
-/**
-Function to report DEF File Errors.
-@internalComponent
-@released
-*/
-extern EnglishMessage MessageArray[];
-
 void DEFFileError::Report()
 {
-    iMessage+=MessageArray[iMessageIndex-1].message;
-    size_t bufsize = iMessage.size()+1+iName.size()+iToken.size();
-    char *dst = new char[bufsize];
-    snprintf(dst, bufsize, iMessage.c_str(), iName.c_str(), iLineNo, iToken.c_str());
-	MessageHandler::GetInstance()->Output(dst);
+    iMessage+=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
+    printf(iMessage.c_str(), iName.c_str(), iLineNo, iToken.c_str());
 }
 
 /**
@@ -288,21 +276,10 @@ SymbolMissingFromElfError constructor for initializing message index, symbol nam
 */
 SymbolMissingFromElfError::SymbolMissingFromElfError(int aMessageIndex,
 		list<string> &aSymbolList, const char * aName) :
-				ELFFileError(aMessageIndex,aName)
+				ErrorHandler(aMessageIndex)
 {
-
-	std::list<string>::iterator aItr = aSymbolList.begin();
-	std::list<string>::iterator last = aSymbolList.end();
-
-	while(aItr != last)
-	{
-		iSymbolName+=*aItr;
-		++aItr;
-		if(aItr != last)
-		{
-			iSymbolName+=",";
-		}
-	}
+    MissedSymbol = aSymbolList.size();
+    iName = aName;
 }
 
 /**
@@ -312,7 +289,9 @@ Function to report Symbol Missing From Elf Error.
 */
 void SymbolMissingFromElfError::Report()
 {
-	ErrorReport(this);
+    iMessage+=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
+    iMessage+=iName;
+    printf(iMessage.c_str(), MissedSymbol);
 }
 
 /**
@@ -543,7 +522,7 @@ void ErrorReport(ErrorHandler *handle)
 
 void ErrorReport2(ErrorHandler *handle)
 {
-	char *errMessage=MessageHandler::GetInstance()->GetMessageString(handle->iMessageIndex);
+	auto errMessage=MessageHandler::GetInstance()->GetMessageString(handle->iMessageIndex);
 	if(errMessage)
 	{
 		handle->iMessage+=errMessage;

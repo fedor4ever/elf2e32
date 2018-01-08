@@ -21,7 +21,6 @@
 #include "pl_common.h"
 #include "filedump.h"
 #include "e32imagefile.h"
-#include "h_utl.h"
 #include "deffile.h"
 #include "errorhandler.h"
 #include <stdio.h>
