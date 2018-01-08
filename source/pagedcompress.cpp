@@ -28,7 +28,7 @@
 //#define __TEST_ONLY__
 
 
-struct IndexTableItemTag
+struct IndexTableItem
 {
 	TUint16 iSizeOfCompressedPageData;	// pointer to an array TUint16[NumberOfPages]
 	TUint8 *iCompressedPageData;		// pointer to an array TUint8*. Each elemet of
@@ -36,7 +36,7 @@ struct IndexTableItemTag
 };
 
 
-struct IndexTableHeaderTag
+struct IndexTableHeader
 {
 	TInt	iSizeOfData;					// Includes the index and compressed pages
 	TInt	iDecompressedSize;

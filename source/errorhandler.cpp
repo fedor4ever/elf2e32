@@ -38,6 +38,7 @@ constexpr char *colonSpace=": ";
 
 void ErrorReport(ErrorHandler *handle);
 void ErrorReport2(ErrorHandler *handle);
+extern char *GetMessage(int aMessageIndex);
 
 /**
 ErrorHandler constructor for doing common thing required for derived class functions.
@@ -121,8 +122,10 @@ DEFFileError::DEFFileError(int aMessageIndex, char * aFileName, int aLineNo,char
 
 void DEFFileError::Report()
 {
-    iMessage+=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
-    printf(iMessage.c_str(), iName.c_str(), iLineNo, iToken.c_str());
+    iMessage+=GetMessage(iMessageIndex);
+    char *buf = new char[strlen(iMessage.c_str()) + strlen(iToken.c_str()) + strlen(iName.c_str()) + 1];
+    sprintf(buf, iMessage.c_str(), iName.c_str(), iLineNo, iToken.c_str());
+    MessageHandler::GetInstance()->Output(buf);
 }
 
 /**
@@ -289,9 +292,10 @@ Function to report Symbol Missing From Elf Error.
 */
 void SymbolMissingFromElfError::Report()
 {
-    iMessage+=MessageHandler::GetInstance()->GetMessageString(iMessageIndex);
-    iMessage+=iName;
-    printf(iMessage.c_str(), MissedSymbol);
+    iMessage+=GetMessage(iMessageIndex);
+    char *buf = new char[strlen(iMessage.c_str()) + strlen(iName.c_str()) + 1];
+    sprintf(buf, iMessage.c_str(), MissedSymbol, iName.c_str());
+    MessageHandler::GetInstance()->Output(buf);
 }
 
 /**
@@ -509,7 +513,7 @@ void ImportRelocationError::Report()
 
 void ErrorReport(ErrorHandler *handle)
 {
-	char *errMessage=MessageHandler::GetInstance()->GetMessageString(handle->iMessageIndex);
+	char *errMessage=GetMessage(handle->iMessageIndex);
 	if(errMessage)
 	{
 		char *tempMssg = new char[strlen(errMessage)+strlen(handle->iName.c_str())];
@@ -522,7 +526,7 @@ void ErrorReport(ErrorHandler *handle)
 
 void ErrorReport2(ErrorHandler *handle)
 {
-	auto errMessage=MessageHandler::GetInstance()->GetMessageString(handle->iMessageIndex);
+	char *errMessage=GetMessage(handle->iMessageIndex);
 	if(errMessage)
 	{
 		handle->iMessage+=errMessage;

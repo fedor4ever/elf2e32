@@ -22,6 +22,7 @@
 #include "messageimplementation.h"
 
 Message* MessageHandler::iInstance=nullptr;
+char *GetMessage(int aMessageIndex);
 
 /**
 Function Get Instance of class Message and initializing messages.
@@ -33,7 +34,7 @@ Function Get Instance of class Message and initializing messages.
 */
 Message * MessageHandler::GetInstance()
 {
-    if(iInstance == nullptr)
+    if(!iInstance)
 	{
 		iInstance = new Message();
 		iInstance->InitializeMessages(nullptr);
@@ -78,4 +79,9 @@ Function to delete instance of class Message
 void MessageHandler::CleanUp()
 {
 	delete iInstance;
+}
+
+char *GetMessage(int aMessageIndex)
+{
+    return MessageHandler::GetInstance()->GetMessageString(aMessageIndex);
 }
