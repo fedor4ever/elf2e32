@@ -17,9 +17,6 @@
 #ifndef BYTE_PAIR_H
 #define BYTE_PAIR_H
 
-#include <sstream>
-#include <ostream>
-using std::ostream;
 #include <portable.h>
 
 TInt BytePairCompress(TUint8* dst, TUint8* src, TInt size);

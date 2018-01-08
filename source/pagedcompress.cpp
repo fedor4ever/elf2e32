@@ -16,24 +16,11 @@
 //
 //
 
-#include <malloc.h>
-#include <string.h>
 #include <stdlib.h>
-#include <stdio.h>
 
 #include <fstream>
 #include <sstream>
 
-#include <string>
-#include <vector>
-#include <cassert>
-#include <iostream>
-#ifndef __LINUX__
-#include <io.h>
-#endif
-#include <time.h>
-
-#include "h_ver.h"
 #include "byte_pair.h"
 
 #define PAGE_SIZE 4096
@@ -41,20 +28,20 @@
 //#define __TEST_ONLY__
 
 
-typedef struct IndexTableItemTag
+struct IndexTableItemTag
 {
 	TUint16 iSizeOfCompressedPageData;	// pointer to an array TUint16[NumberOfPages]
 	TUint8 *iCompressedPageData;		// pointer to an array TUint8*. Each elemet of
 										// this array point a compressed Page data
-}IndexTableItem;
+};
 
 
-typedef struct IndexTableHeaderTag
+struct IndexTableHeaderTag
 {
 	TInt	iSizeOfData;					// Includes the index and compressed pages
 	TInt	iDecompressedSize;
 	TUint16	iNumberOfPages;
-} IndexTableHeader;
+};
 
 
 class CBytePairCompressedImage
