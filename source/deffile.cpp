@@ -875,54 +875,98 @@ void DefFile::WriteDefFile(char *fileName, SymbolList * newSymbolList)
 {
 
 	char ordinal[6];
-	int newDefEntry=0;
+	bool newDefEntry=false;
 	FILE *fptr;
 
 	if((fptr=fopen(fileName,"wb"))==NULL)
-	{
 		throw FileError(FILEOPENERROR,fileName);
-	}
-	else
-	{
-		SymbolList::iterator aItr = newSymbolList->begin();
-		SymbolList::iterator last = newSymbolList->end();
-		Symbol *aSym;
 
-		fputs("EXPORTS",fptr);
+	SymbolList::iterator aItr = newSymbolList->begin();
+	SymbolList::iterator last = newSymbolList->end();
+	Symbol *aSym;
+
+	string current = "EXPORTS\r\n";
+	fputs(current.c_str(), fptr);
+	while( aItr != last)
+	{
+		aSym = *aItr;
+		//Do not write now if its a new entry
+		if(aSym->GetSymbolStatus()==New)
+		{
+			newDefEntry=true;
+			++aItr;
+			continue;
+		}
+
+		//Make it comment if its missing def entry
+		if(aSym->GetSymbolStatus()==Missing)
+			fputs("; MISSING:",fptr);
+
+		fputs("\t",fptr);
+		if((aSym->ExportName()) && strcmp(aSym->SymbolName(),aSym->ExportName())!=0)
+		{
+			fputs(aSym->ExportName(),fptr);
+		}
+		fputs(aSym->SymbolName(),fptr);
+		fputs(" @ ",fptr);
+		sprintf(ordinal,"%u",aSym->OrdNum());
+		fputs(ordinal,fptr);
+		fputs(" NONAME",fptr);
+		if(aSym->CodeDataType()==SymbolTypeData) {
+			fputs(" DATA",fptr);
+			fputs(" ",fptr);
+			char aSymSize[16];
+			sprintf(aSymSize, "%u", aSym->SymbolSize());
+			fputs(aSymSize,fptr);
+		}
+		if(aSym->R3unused())
+			fputs(" R3UNUSED",fptr);
+		if(aSym->Absent())
+			fputs(" ABSENT",fptr);
+
+		if(aSym->Comment().size() > 0)
+		{
+			fputs(" ; ",fptr);
+			fputs(aSym->Comment().c_str(),fptr);
+		}
 		fputs("\r\n",fptr);
+		++aItr;
+	}
+
+	//This is for writing new def entry in DEF File
+	if(newDefEntry)
+	{
+		fputs("; NEW:\r\n",fptr);
+		aItr = newSymbolList->begin();
+		last = newSymbolList->end();
+
 		while( aItr != last)
 		{
 			aSym = *aItr;
-			//Do not write now if its a new entry
-			if(aSym->GetSymbolStatus()==New)
+			if(aSym->GetSymbolStatus()!=New)
 			{
-				newDefEntry=1;
 				++aItr;
 				continue;
 			}
-
-			//Make it comment if its missing def entry
-			if(aSym->GetSymbolStatus()==Missing)
-				fputs("; MISSING:",fptr);
-
 			fputs("\t",fptr);
 			if((aSym->ExportName()) && strcmp(aSym->SymbolName(),aSym->ExportName())!=0)
 			{
 				fputs(aSym->ExportName(),fptr);
-				fputs("=",fptr);
 			}
-			fputs(aSym->SymbolName(),fptr);
-			fputs(" @ ",fptr);
+			current=aSym->SymbolName();
+			current+=" @ ";
 			sprintf(ordinal,"%u",aSym->OrdNum());
-			fputs(ordinal,fptr);
-			fputs(" NONAME",fptr);
+			current+=ordinal;
+			current+=" NONAME";
+			fputs(current.c_str(),fptr);
+
 			if(aSym->CodeDataType()==SymbolTypeData) {
-				fputs(" DATA",fptr);
-				fputs(" ",fptr);
-				char aSymSize[16];
+				fputs(" DATA ",fptr);
+				char aSymSize[16] = "";
 				sprintf(aSymSize, "%u", aSym->SymbolSize());
 				fputs(aSymSize,fptr);
 			}
+
 			if(aSym->R3unused())
 				fputs(" R3UNUSED",fptr);
 			if(aSym->Absent())
@@ -930,72 +974,18 @@ void DefFile::WriteDefFile(char *fileName, SymbolList * newSymbolList)
 
 			if(aSym->Comment().size() > 0)
 			{
-				fputs(" ; ",fptr);
+                fputs(" ",fptr);
+				if(aSym->CodeDataType()!=SymbolTypeCode &&
+					aSym->CodeDataType()!=SymbolTypeData)
+				{
+					fputs("; ",fptr);
+				}
 				fputs(aSym->Comment().c_str(),fptr);
 			}
 			fputs("\r\n",fptr);
 			++aItr;
 		}
-
-		//This is for writing new def entry in DEF File
-		if(newDefEntry)
-		{
-			fputs("; NEW:",fptr);
-			fputs("\r\n",fptr);
-			aItr = newSymbolList->begin();
-			last = newSymbolList->end();
-
-			while( aItr != last)
-			{
-				aSym = *aItr;
-				if(aSym->GetSymbolStatus()!=New)
-				{
-					++aItr;
-					continue;
-				}
-				fputs("\t",fptr);
-				if((aSym->ExportName()) && strcmp(aSym->SymbolName(),aSym->ExportName())!=0)
-				{
-					fputs(aSym->ExportName(),fptr);
-					fputs("=",fptr);
-				}
-				fputs(aSym->SymbolName(),fptr);
-				fputs(" @ ",fptr);
-				sprintf(ordinal,"%u",aSym->OrdNum());
-				fputs(ordinal,fptr);
-				fputs(" NONAME",fptr);
-
-				if(aSym->CodeDataType()==SymbolTypeData) {
-					fputs(" DATA",fptr);
-					fputs(" ",fptr);
-					char aSymSize[16];
-					sprintf(aSymSize, "%u", aSym->SymbolSize());
-					fputs(aSymSize,fptr);
-				}
-
-				if(aSym->R3unused())
-					fputs(" R3UNUSED",fptr);
-				if(aSym->Absent())
-					fputs(" ABSENT",fptr);
-
-				if(aSym->Comment().size() > 0)
-				{
-					if(aSym->CodeDataType()!=SymbolTypeCode &&
-						aSym->CodeDataType()!=SymbolTypeData)
-					{
-						fputs(" ; ",fptr);
-					}
-					else
-					{
-						fputs(" ",fptr);
-					}
-                    fputs(aSym->Comment().c_str(),fptr);
-				}
-				fputs("\r\n",fptr);
-				++aItr;
-			}
-		}
-		fputs("\r\n",fptr);
-		fclose(fptr);
 	}
+	fputs("\r\n",fptr);
+	fclose(fptr);
 }
