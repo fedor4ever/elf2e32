@@ -904,15 +904,14 @@ void DefFile::WriteDefFile(char *fileName, SymbolList * newSymbolList)
 
 		fputs("\t",fptr);
 		if((aSym->ExportName()) && strcmp(aSym->SymbolName(),aSym->ExportName())!=0)
-		{
 			fputs(aSym->ExportName(),fptr);
-		}
 		fputs(aSym->SymbolName(),fptr);
 		fputs(" @ ",fptr);
 		sprintf(ordinal,"%u",aSym->OrdNum());
 		fputs(ordinal,fptr);
 		fputs(" NONAME",fptr);
-		if(aSym->CodeDataType()==SymbolTypeData) {
+		if(aSym->CodeDataType()==SymbolTypeData)
+		{
 			fputs(" DATA",fptr);
 			fputs(" ",fptr);
 			char aSymSize[16];
@@ -950,9 +949,7 @@ void DefFile::WriteDefFile(char *fileName, SymbolList * newSymbolList)
 			}
 			fputs("\t",fptr);
 			if((aSym->ExportName()) && strcmp(aSym->SymbolName(),aSym->ExportName())!=0)
-			{
 				fputs(aSym->ExportName(),fptr);
-			}
 			current=aSym->SymbolName();
 			current+=" @ ";
 			sprintf(ordinal,"%u",aSym->OrdNum());
@@ -960,7 +957,8 @@ void DefFile::WriteDefFile(char *fileName, SymbolList * newSymbolList)
 			current+=" NONAME";
 			fputs(current.c_str(),fptr);
 
-			if(aSym->CodeDataType()==SymbolTypeData) {
+			if(aSym->CodeDataType()==SymbolTypeData)
+			{
 				fputs(" DATA ",fptr);
 				char aSymSize[16] = "";
 				sprintf(aSymSize, "%u", aSym->SymbolSize());
@@ -975,8 +973,7 @@ void DefFile::WriteDefFile(char *fileName, SymbolList * newSymbolList)
 			if(aSym->Comment().size() > 0)
 			{
                 fputs(" ",fptr);
-				if(aSym->CodeDataType()!=SymbolTypeCode &&
-					aSym->CodeDataType()!=SymbolTypeData)
+				if(aSym->CodeDataType()==SymbolTypeNotDefined)
 				{
 					fputs("; ",fptr);
 				}
