@@ -1672,7 +1672,7 @@ ifstream& operator>>(ifstream& is, E32ImageFile& aImage)
 		InflateUnCompress( compressedData, remainder, (unsigned char*)(aImage.iData + orighdrsz), destsize);
 
 		if (destsize != uncompsize)
-			MessageHandler::GetInstance()->ReportMessage(WARNING, HUFFMANINCONSISTENTSIZEERROR);
+			Message::GetInstance()->ReportMessage(WARNING, HUFFMANINCONSISTENTSIZEERROR);
 
 		delete [] compressedData;
 
@@ -1708,7 +1708,7 @@ ifstream& operator>>(ifstream& is, E32ImageFile& aImage)
 		unsigned int uncompressedDataSize = DecompressPages((TUint8 *) (aImage.iData + orighdrsz + uncompressedCodeSize), is);
 
 		if (uncompressedCodeSize + uncompressedDataSize != uncompsize)
-			MessageHandler::GetInstance()->ReportMessage(WARNING, BYTEPAIRINCONSISTENTSIZEERROR);
+			Message::GetInstance()->ReportMessage(WARNING, BYTEPAIRINCONSISTENTSIZEERROR);
 
 		if ((TUint)orighdrsz > oh->iCodeOffset)
 			{

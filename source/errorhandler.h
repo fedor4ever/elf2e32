@@ -22,7 +22,7 @@
 #ifndef _ERROR_HANDLER_
 #define _ERROR_HANDLER_
 
-#include "messagehandler.h"
+#include "message.h"
 #include <list>
 #include <string>
 
@@ -38,7 +38,7 @@ class ErrorHandler
 {
 public:
 	explicit ErrorHandler(int aMessageIndex);
-	virtual ~ErrorHandler();
+	virtual ~ErrorHandler(){}
 	virtual void Report() =0;
 
 	string iMessage;

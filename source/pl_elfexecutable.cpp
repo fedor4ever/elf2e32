@@ -27,7 +27,7 @@
 #include "parametermanager.h"
 #include "pl_elfimportrelocation.h"
 #include "pl_symbol.h"
-#include "messagehandler.h"
+#include "message.h"
 #include "pl_elflocalrelocation.h"
 
 
@@ -1209,7 +1209,7 @@ Elf32_Word ElfExecutable::EntryPointOffset()
 {
 	if (!(iElfHeader->e_entry) && !(iCodeSegmentHdr->p_vaddr))
 	{
-		MessageHandler::GetInstance()->ReportMessage(WARNING, UNDEFINEDENTRYPOINTERROR,(char*)iParameterManager->ElfInput());
+		Message::GetInstance()->ReportMessage(WARNING, UNDEFINEDENTRYPOINTERROR,(char*)iParameterManager->ElfInput());
 		return 0;
 	}
 	else if (!(iElfHeader->e_entry))

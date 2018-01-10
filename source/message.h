@@ -113,8 +113,7 @@ enum {	FILEOPENERROR=1,
 class Message
 {
     public:
-		Message();
-		~Message();
+        static Message *GetInstance();
 		char* GetMessageString(int errorIndex);
 		void Output(const std::string &aInfo);
 		void StartLogging(char *fileName);
@@ -123,10 +122,14 @@ class Message
 		void CreateMessageFile(char *fileName);
 		void InitializeMessages(char *fileName);
     private:
+		Message(){}
+		Message(const Message& root) = delete;
+		Message& operator=(const Message&) = delete;
+		~Message();
 
-		bool iLogging;
-		char* iLogFileName;
-		FILE *iLogPtr;
+		bool iLogging = false;
+		char* iLogFileName = nullptr;
+		FILE *iLogPtr = nullptr;
 		Map iMessage;
 };
 

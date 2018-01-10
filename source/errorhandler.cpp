@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <cstring>
 #include "errorhandler.h"
-#include "messagehandler.h"
+#include "message.h"
 
 using std::cerr;
 using std::endl;
@@ -38,7 +38,12 @@ constexpr char *colonSpace=": ";
 
 void ErrorReport(ErrorHandler *handle);
 void ErrorReport2(ErrorHandler *handle);
-extern char *GetMessage(int aMessageIndex);
+char *GetMessage(int aMessageIndex);
+
+char *GetMessage(int aMessageIndex)
+{
+    return Message::GetInstance()->GetMessageString(aMessageIndex);
+}
 
 /**
 ErrorHandler constructor for doing common thing required for derived class functions.
@@ -53,16 +58,6 @@ ErrorHandler::ErrorHandler(int aMessageIndex) :
 	iMessage+=std::to_string(BASEMSSGNO+iMessageIndex);
 	iMessage+=colonSpace;
 };
-
-/**
-ErrorHandler destructor.
-@internalComponent
-@released
-*/
-ErrorHandler::~ErrorHandler()
-{
-	MessageHandler::CleanUp();
-}
 
 /**
 FileError constructor for initializing message index and argument name.
@@ -125,7 +120,7 @@ void DEFFileError::Report()
     iMessage+=GetMessage(iMessageIndex);
     char *buf = new char[strlen(iMessage.c_str()) + strlen(iToken.c_str()) + strlen(iName.c_str()) + 1];
     sprintf(buf, iMessage.c_str(), iName.c_str(), iLineNo, iToken.c_str());
-    MessageHandler::GetInstance()->Output(buf);
+    Message::GetInstance()->Output(buf);
 }
 
 /**
@@ -295,7 +290,7 @@ void SymbolMissingFromElfError::Report()
     iMessage+=GetMessage(iMessageIndex);
     char *buf = new char[strlen(iMessage.c_str()) + strlen(iName.c_str()) + 1];
     sprintf(buf, iMessage.c_str(), MissedSymbol, iName.c_str());
-    MessageHandler::GetInstance()->Output(buf);
+    Message::GetInstance()->Output(buf);
 }
 
 /**
@@ -519,7 +514,7 @@ void ErrorReport(ErrorHandler *handle)
 		char *tempMssg = new char[strlen(errMessage)+strlen(handle->iName.c_str())];
 		sprintf(tempMssg, errMessage, handle->iName.c_str());
 		handle->iMessage+=tempMssg;
-		MessageHandler::GetInstance()->Output(handle->iMessage);
+		Message::GetInstance()->Output(handle->iMessage);
 		delete[] tempMssg;
 	}
 }
@@ -530,7 +525,7 @@ void ErrorReport2(ErrorHandler *handle)
 	if(errMessage)
 	{
 		handle->iMessage+=errMessage;
-		MessageHandler::GetInstance()->Output(handle->iMessage);
+		Message::GetInstance()->Output(handle->iMessage);
 	}
 }
 

@@ -215,7 +215,7 @@ int Elf2E32::Execute()
 			if (dumpMessageFile)
 			{
 				//create message file
-				MessageHandler::GetInstance()->CreateMessageFile(dumpMessageFile);
+				Message::GetInstance()->CreateMessageFile(dumpMessageFile);
 				//return result;
 			}
 			else
@@ -245,7 +245,7 @@ int Elf2E32::Execute()
 	catch(...) // If there are any other unhandled exception,they are handled here.
 	{
 		result = EXIT_FAILURE;
-		MessageHandler::GetInstance()->ReportMessage(ERROR, POSTLINKERERROR);
+		Message::GetInstance()->ReportMessage(ERROR, POSTLINKERERROR);
 	}
 	delete usecase;
 	return result;

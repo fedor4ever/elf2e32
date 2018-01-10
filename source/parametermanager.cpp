@@ -1796,7 +1796,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseLogFile)
 	if(aValue)
 	{
 		aPM->SetLogFile(aValue);
-		MessageHandler::StartLogging(aValue);
+		Message::GetInstance()->StartLogging(aValue);
 	}
 	else
 	{
@@ -1827,7 +1827,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseMessageFile)
 	if(aValue)
 	{
 		aPM->SetMessageFile(aValue);
-		MessageHandler::InitializeMessages(aValue);
+		Message::GetInstance()->InitializeMessages(aValue);
 	}
 	else
 	{
@@ -1897,7 +1897,7 @@ Option that is passed as input
 void CheckInput(char * aValue, char * aOption)
 {
 	if (aValue)
-		MessageHandler::GetInstance()->ReportMessage(WARNING, VALUEIGNOREDWARNING, aOption);
+		Message::GetInstance()->ReportMessage(WARNING, VALUEIGNOREDWARNING, aOption);
 }
 
 /**
@@ -2923,9 +2923,9 @@ ETargetType ParameterManager::ValidateTargetType(const char * aArg)
 	if (res == EInvalidTargetType)
 	{
 		if (aArg)
-			MessageHandler::GetInstance()->ReportMessage(WARNING, UNSUPPORTEDTARGETTYPEERROR,aArg);
+			Message::GetInstance()->ReportMessage(WARNING, UNSUPPORTEDTARGETTYPEERROR,aArg);
 		else
-			MessageHandler::GetInstance()->ReportMessage(WARNING, TARGETTYPENOTSPECIFIEDERROR);
+			Message::GetInstance()->ReportMessage(WARNING, TARGETTYPENOTSPECIFIEDERROR);
 	}
 	return res;
 }

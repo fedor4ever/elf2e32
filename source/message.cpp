@@ -19,7 +19,7 @@
 //
 
 
-#include "messageimplementation.h"
+#include "message.h"
 #include "errorhandler.h"
 #include <cstring>
 #include <iostream>
@@ -111,16 +111,22 @@ struct EnglishMessage MessageArray[MessageArraySize]=
 };
 
 /**
-Constructor to reset the logging option flag.
+Function Get Instance of class Message and initializing messages.
 
 @internalComponent
 @released
+
+@return Instance of Message
 */
-Message::Message()
+Message *Message::GetInstance()
 {
-    iLogging = false;
-    iLogFileName = nullptr;
-    iLogPtr = nullptr;
+    static Message* iInstance;
+    if(!iInstance)
+	{
+		iInstance = new Message();
+		iInstance->InitializeMessages(nullptr);
+	}
+	return iInstance;
 }
 
 /**
