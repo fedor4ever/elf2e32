@@ -18,13 +18,8 @@
 //
 //
 
-#include "huffman.h"
 #include "inflate.h"
-#include <cpudefs.h>
-#include "farray.h"
 #include "errorhandler.h"
-#include <iostream>
-using std::cout;
 
 /*
 Inline constructor for CInflater

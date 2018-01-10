@@ -21,7 +21,6 @@
 //
 #include <stdio.h>
 #include <stdlib.h>
-#include <iostream>
 #include <string.h>
 
 #include "pl_symbol.h"
@@ -29,15 +28,10 @@
 #include "errorhandler.h"
 
 #ifdef __LINUX__
-    #include "h_utl.h"
     #define STRUPR strupr
 #else
     #define STRUPR _strupr
 #endif
-
-using std::cerr;
-using std::cout;
-using std::endl;
 
 #define SUCCESS 1
 #define FAILURE 0

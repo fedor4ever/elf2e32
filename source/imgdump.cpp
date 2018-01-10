@@ -458,8 +458,7 @@ void dump(TUint *aData, TInt aLength)
 			}
 		}
 		*linep='\0';
-		printf("%s", line+(ccount*9));
-		cout << "\n";
+		printf("%s\n", line+(ccount*9));
 	}
 }
 

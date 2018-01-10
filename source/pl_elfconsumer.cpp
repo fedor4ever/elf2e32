@@ -21,13 +21,8 @@
 #include "pl_elfconsumer.h"
 #include "parametermanager.h"
 #include "errorhandler.h"
-#include <iostream>
-#include <string>
 #include <string.h>
 
-using std::list;
-using std::cout;
-using std::endl;
 using std::min;
 
 /**

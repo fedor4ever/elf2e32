@@ -102,7 +102,6 @@ Function to process exports
 void ElfFileSupplied::ProcessExports()
 {
 	ValidateExports(nullptr);
-	std::cout << "ProcessExports()\n";
 	CreateExports();
 }
 
