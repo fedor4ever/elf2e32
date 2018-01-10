@@ -141,14 +141,13 @@ void DefFile::ParseDefFile(char *defFileEntries)
 {
 	iSymbolList = new SymbolList;
 
-    int symbolType=SymbolTypeCode;
 	int PreviousOrdinal=0;
 	char MultiLineStatement[1024]="";
 	bool NAMEorLIBRARYallowed=true;
 	int LineNum = 0;
 
 	char *lineToken;
-	int aLineLength = 0, width = 0;
+	int width = 0;
 	unsigned i;
 	char *ptrEntry,*ptrEntryType;
 	char entryType[256];
@@ -158,9 +157,7 @@ void DefFile::ParseDefFile(char *defFileEntries)
 	lineToken=strtok(defFileEntries,"\n");
 	while(lineToken != nullptr)
 	{
-		symbolType=SymbolTypeCode;
 		entryType[0]='\0';
-		aLineLength = strlen(lineToken);
 		LineNum++;
 
 		if (lineToken[0]==13)
