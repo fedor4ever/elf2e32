@@ -182,7 +182,7 @@ UseCaseBase * Elf2E32::SelectUseCase()
 		throw InvalidInvocationError(INVALIDINVOCATIONERROR);
 	}
 
-	return (iUseCase=0x0);
+	return nullptr;
 }
 
 /**
@@ -220,7 +220,7 @@ int Elf2E32::Execute()
 			}
 			else
 			//dumpmessage file name is not provided as input
-			throw ParameterParserError(NOARGUMENTERROR, "--dumpmessagefile");
+                throw ParameterParserError(NOARGUMENTERROR, "--dumpmessagefile");
 		}
 
 		usecase = SelectUseCase();
