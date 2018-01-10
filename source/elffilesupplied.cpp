@@ -347,6 +347,12 @@ void ElfFileSupplied::WriteDSOFile()
 {
 	char * aLinkAs = UseCaseBase::LinkAsDLLName();
 	char * aDSOName = UseCaseBase::DSOOutput();
+	if(!aDSOName)
+	{
+	    std::cerr << "--dso option not specified!\n";
+	    return;
+	}
+
 	char * aDSOFileName = UseCaseBase::FileName(aDSOName);
 
 	iElfIfc->WriteElfFile( aDSOName, aDSOFileName, aLinkAs, iSymList );
@@ -361,6 +367,12 @@ void ElfFileSupplied::WriteE32()
 {
 
 	const char * aE32FileName = OutputE32FileName();
+
+    if(!aE32FileName)
+	{
+	    std::cerr << "--output option not specified!\n";
+	    return;
+	}
 
 	iE32ImageFile = new E32ImageFile(iElfExecutable, this);
 
