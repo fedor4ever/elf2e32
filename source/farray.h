@@ -20,9 +20,13 @@
 
 #ifndef __FARRAY_H__
 #define __FARRAY_H__
-#include <cassert>
+
 #include <portable.h>
 #include <string.h>
+#ifdef NDEBUG
+#undef NDEBUG
+#endif //NDEBUG
+#include <cassert>
 
 template <class T,TInt S>
 class TFixedArray
@@ -92,7 +96,7 @@ inline const T& TFixedArray<T,S>::operator[](TInt aIndex) const
 	{return const_cast<ThisClass&>(*this)[aIndex];}
 template <class T,TInt S>
 inline T& TFixedArray<T,S>::At(TInt aIndex)
-	{verify(InRange(aIndex));return iRep[aIndex];}
+	{assert(InRange(aIndex));return iRep[aIndex];}
 template <class T,TInt S>
 inline const T& TFixedArray<T,S>::At(TInt aIndex) const
 	{return const_cast<ThisClass&>(*this).At(aIndex);}
