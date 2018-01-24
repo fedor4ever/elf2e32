@@ -94,7 +94,7 @@ PLUINT32  ElfExecutable::ProcessElfFile(Elf32_Ehdr *aElfHdr) {
 	if(iElfHeader->e_shstrndx != SHN_UNDEF) {
 
 		if(iElfHeader->e_shstrndx > iElfHeader->e_shnum ) {
-			throw ELFFormatError(ELFSHSTRINDEXERROR,iParameterManager->ElfInput());
+			throw Elf2e32Error(ELFSHSTRINDEXERROR,iParameterManager->ElfInput());
 		}
 
 		iSectionHdrStrTbl = ELF_ENTRY_PTR(char, iElfHeader, iSections[iElfHeader->e_shstrndx].sh_offset);
@@ -352,7 +352,7 @@ PLUINT32  ElfExecutable::ProcessSymbols(){
 			 * All imported symbols must be informed via the version needed information.
 			 */
 			if( iVerInfo[iVersionTbl[aSymIdx]].iVerCategory != VER_CAT_NEEDED ) {
-				throw UndefinedSymbolError(UNDEFINEDSYMBOLERROR, iParameterManager->ElfInput(), aSymName);
+				throw Elf2e32Error(UNDEFINEDSYMBOLERROR, iParameterManager->ElfInput(), aSymName);
 			}
 			aDllName = iVerInfo[iVersionTbl[aSymIdx]].iLinkAs;
 			//aSymbol = new DllSymbol( aSymName, aType, &iElfDynSym[aSymIdx], aSymIdx);
@@ -430,22 +430,22 @@ PLUINT32  ElfExecutable::ValidateElfFile() {
 		(iElfHeader->e_ident[EI_MAG1] == ELFMAG1) &&
 		(iElfHeader->e_ident[EI_MAG2] == ELFMAG2) &&
 		(iElfHeader->e_ident[EI_MAG3] == ELFMAG3) ) {
-			throw ELFFormatError(ELFMAGICERROR, iParameterManager->ElfInput());
+			throw Elf2e32Error(ELFMAGICERROR, iParameterManager->ElfInput());
 	}
 
 	/*32-bit ELF file*/
 	if(iElfHeader->e_ident[EI_CLASS] != ELFCLASS32) {
-		throw ELFFormatError(ELFCLASSERROR, iParameterManager->ElfInput());
+		throw Elf2e32Error(ELFCLASSERROR, iParameterManager->ElfInput());
 	}
 
 	/* Check if the ELF file is in Little endian format*/
 	if(iElfHeader->e_ident[EI_DATA] != ELFDATA2LSB) {
-		throw ELFFormatError(ELFLEERROR, iParameterManager->ElfInput());
+		throw Elf2e32Error(ELFLEERROR, iParameterManager->ElfInput());
 	}
 
 	/* The ELF executable must be a DLL or an EXE*/
 	if( iElfHeader->e_type != ET_EXEC && iElfHeader->e_type != ET_DYN) {
-		throw ELFFormatError(ELFEXECUTABLEERROR, iParameterManager->ElfInput());
+		throw Elf2e32Error(ELFEXECUTABLEERROR, iParameterManager->ElfInput());
 	}
 
 	return 0;
@@ -596,7 +596,7 @@ PLUINT32  ElfExecutable::ProcessDynamicEntries(){
 	{
 		//The number of symbols should be same as the number of chains in hashtable
 		if (iNSymbols && (iNSymbols != iHashTbl->nChains))
-			throw ELFFormatError(SYMBOLCOUNTMISMATCHERROR,(char*)iParameterManager->ElfInput());
+			throw Elf2e32Error(SYMBOLCOUNTMISMATCHERROR, iParameterManager->ElfInput());
 		else
 		//The number of symbols is same as the number of chains in hashtable
 			iNSymbols = iHashTbl->nChains;
@@ -1213,7 +1213,7 @@ Elf32_Word ElfExecutable::EntryPointOffset()
 		return 0;
 	}
 	else if (!(iElfHeader->e_entry))
-		throw ELFFormatError(ENTRYPOINTNOTSETERROR, (char*)iParameterManager->ElfInput());
+		throw Elf2e32Error(ENTRYPOINTNOTSETERROR, iParameterManager->ElfInput());
 	else
 		return iElfHeader->e_entry - iCodeSegmentHdr->p_vaddr;
 }
@@ -1247,7 +1247,7 @@ bool ElfExecutable::ExeceptionsPresentP()
 
 	}
 	else
-		throw ELFFileError(NEEDSECTIONVIEWERROR, (char*)iParameterManager->ElfInput());
+		throw Elf2e32Error(NEEDSECTIONVIEWERROR, iParameterManager->ElfInput());
 
 	return false;
 }
@@ -1270,75 +1270,68 @@ This function looks up for a symbol in the static symbol table.
 */
 Elf32_Sym * ElfExecutable::LookupStaticSymbol(char * aName) {
 	size_t nShdrs = iElfHeader->e_shnum;
-	if (nShdrs)
+	if (!nShdrs)
+        throw Elf2e32Error(NOSTATICSYMBOLSERROR, iParameterManager->ElfInput());
+
+	// find the static symbol table and string table
+	Elf32_Shdr * aShdr = ELF_ENTRY_PTR(Elf32_Shdr, iElfHeader, iElfHeader->e_shoff);
+	char * aShStrTab = ELF_ENTRY_PTR(char, iElfHeader, aShdr[iElfHeader->e_shstrndx].sh_offset);
+	Elf32_Sym * aSymTab = nullptr;
+	Elf32_Sym * aLim = nullptr;
+	char * aStrTab = nullptr;
+	for (PLUINT32 i = 0; i < nShdrs; i++)
 	{
-		// find the static symbol table and string table
-		Elf32_Shdr * aShdr = ELF_ENTRY_PTR(Elf32_Shdr, iElfHeader, iElfHeader->e_shoff);
-		char * aShStrTab = ELF_ENTRY_PTR(char, iElfHeader, aShdr[iElfHeader->e_shstrndx].sh_offset);
-		Elf32_Sym * aSymTab = nullptr;
-		Elf32_Sym * aLim = nullptr;
-		char * aStrTab = nullptr;
-		for (PLUINT32 i = 0; i < nShdrs; i++)
+		if (aShdr[i].sh_type == SHT_SYMTAB)
 		{
-			if (aShdr[i].sh_type == SHT_SYMTAB)
-			{
-				aSymTab = ELF_ENTRY_PTR(Elf32_Sym, iElfHeader, aShdr[i].sh_offset);
-				aLim = ELF_ENTRY_PTR(Elf32_Sym, aSymTab, aShdr[i].sh_size);
-				if (aStrTab) break;
-			}
-			else if (aShdr[i].sh_type == SHT_STRTAB)
-			{
-				char * aSectionName = aShStrTab + aShdr[i].sh_name;
-				if (!strcmp(aSectionName, ".strtab"))
-				{
-					aStrTab = ELF_ENTRY_PTR(char, iElfHeader, aShdr[i].sh_offset);
-					if (aSymTab) break;
-				}
-			}
+			aSymTab = ELF_ENTRY_PTR(Elf32_Sym, iElfHeader, aShdr[i].sh_offset);
+			aLim = ELF_ENTRY_PTR(Elf32_Sym, aSymTab, aShdr[i].sh_size);
+			if (aStrTab) break;
 		}
-
-		/*if(aHashTbl && aSymTab && aStrTab)
+		else if (aShdr[i].sh_type == SHT_STRTAB)
 		{
-			PLULONG aHashVal = Util::elf_hash((const PLUCHAR*)aName);
-			Elf32_Sword* aBuckets = ELF_ENTRY_PTR(Elf32_Sword, aHashTbl, sizeof(Elf32_HashTable) );
-			Elf32_Sword* aChains = ELF_ENTRY_PTR(Elf32_Sword, aBuckets, sizeof(Elf32_Sword)*(aHashTbl->nBuckets) );
-
-			PLUINT32 aIdx = aHashVal % aHashTbl->nBuckets;
-			aIdx = aBuckets[aIdx];
-
-			char	*aSymName;
-			do {
-				aSymName = ELF_ENTRY_PTR(char, aStrTab, aSymTab[aIdx].st_name);
-				if( !strcmp(aSymName, aName) ) {
-					return &aSymTab[aIdx];
-				}
-				aIdx = aChains[aIdx];
-			}while( aIdx > 0 );
-
-			return NULL;
-		}
-		else */
-
-		if (aSymTab && aStrTab)
-		{
-			for(; aSymTab < aLim; aSymTab++)
+			char * aSectionName = aShStrTab + aShdr[i].sh_name;
+			if (!strcmp(aSectionName, ".strtab"))
 			{
-				if (!aSymTab->st_name) continue;
-				char * aSymName = aStrTab + aSymTab->st_name;
-				if (!strcmp(aSymName, aName))
-					return aSymTab;
+				aStrTab = ELF_ENTRY_PTR(char, iElfHeader, aShdr[i].sh_offset);
+				if (aSymTab) break;
 			}
-			return nullptr;
-		}
-		else
-		{
-			throw ELFFileError(NOSTATICSYMBOLSERROR, (char*)iParameterManager->ElfInput());
 		}
 	}
-	else
+
+	/*if(aHashTbl && aSymTab && aStrTab)
 	{
-			throw ELFFileError(NOSTATICSYMBOLSERROR, (char*)iParameterManager->ElfInput());
+		PLULONG aHashVal = Util::elf_hash((const PLUCHAR*)aName);
+		Elf32_Sword* aBuckets = ELF_ENTRY_PTR(Elf32_Sword, aHashTbl, sizeof(Elf32_HashTable) );
+		Elf32_Sword* aChains = ELF_ENTRY_PTR(Elf32_Sword, aBuckets, sizeof(Elf32_Sword)*(aHashTbl->nBuckets) );
+
+		PLUINT32 aIdx = aHashVal % aHashTbl->nBuckets;
+		aIdx = aBuckets[aIdx];
+
+		char	*aSymName;
+		do {
+			aSymName = ELF_ENTRY_PTR(char, aStrTab, aSymTab[aIdx].st_name);
+			if( !strcmp(aSymName, aName) ) {
+				return &aSymTab[aIdx];
+			}
+			aIdx = aChains[aIdx];
+		}while( aIdx > 0 );
+
+		return NULL;
 	}
+	else */
+
+	if (aSymTab && aStrTab)
+	{
+		for(; aSymTab < aLim; aSymTab++)
+		{
+			if (!aSymTab->st_name) continue;
+			char * aSymName = aStrTab + aSymTab->st_name;
+			if (!strcmp(aSymName, aName))
+				return aSymTab;
+		}
+		return nullptr;
+	}else
+		throw Elf2e32Error(NOSTATICSYMBOLSERROR, iParameterManager->ElfInput());
 }
 
 /**

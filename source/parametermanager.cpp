@@ -523,7 +523,7 @@ void ParameterManager::ParameterAnalyser()
 			else if (!strncmp(*p, iParamShortPrefix, prefixShortLen))
 				ShortPrefix = 1;
 			else // Option is neither preceeded by '-' or by '--'
-				throw ParameterParserError(OPTIONNAMEERROR,*p);
+				throw Elf2e32Error(OPTIONNAMEERROR,*p);
 		}
 		catch (ErrorHandler& error)
 		{
@@ -612,7 +612,7 @@ void ParameterManager::ParameterAnalyser()
 		try
 		{
 			if (!aDesc)
-				throw ParameterParserError(OPTIONNAMEERROR,*p);
+				throw Elf2e32Error(OPTIONNAMEERROR,*p);
 		}
 		catch (ErrorHandler& error)
 		{
@@ -1512,17 +1512,17 @@ void ParameterManager::CheckOptions()
 	case ELib:
 		ValidateDSOGeneration(this);
 		if (!DefInput())
-			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--definput");
+			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--definput");
 		break;
 	case EDll:
 		if (!ElfInput())
-			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--elfinput");
+			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--elfinput");
 		if (!DefFileOutOption())
-			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--defoutput");
+			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--defoutput");
 		if (!DefOutput())
-			throw ParameterParserError(NOARGUMENTERROR,"--defoutput");
+			throw Elf2e32Error(NOARGUMENTERROR,"--defoutput");
 		if (!E32ImageOutput())
-			throw ParameterParserError(NOARGUMENTERROR,"--output");
+			throw Elf2e32Error(NOARGUMENTERROR,"--output");
 
 		ValidateDSOGeneration(this);
 		if(iUID1 != KDynamicLibraryUidValue) //< guard against wrong uids
@@ -1544,9 +1544,9 @@ void ParameterManager::CheckOptions()
 		break;
 	case EExe:
 		if (!ElfInput())
-			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--elfinput");
+			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--elfinput");
 		if (!E32ImageOutput())
-			throw ParameterParserError(NOARGUMENTERROR,"--output");
+			throw Elf2e32Error(NOARGUMENTERROR,"--output");
 		if(iUID1 != KExecutableImageUidValue)
 		{
 			cerr << "********************\n";
@@ -1559,13 +1559,13 @@ void ParameterManager::CheckOptions()
 		break;
 	case EPolyDll:
 		if (!ElfInput())
-			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--elfinput");
+			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--elfinput");
 		if (!DefFileOutOption())
-			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--defoutput");
+			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--defoutput");
 		if (!DefOutput())
-			throw ParameterParserError(NOARGUMENTERROR,"--defoutput");
+			throw Elf2e32Error(NOARGUMENTERROR,"--defoutput");
 		if (!E32ImageOutput())
-			throw ParameterParserError(NOARGUMENTERROR,"--output");
+			throw Elf2e32Error(NOARGUMENTERROR,"--output");
 		if(iUID1 != KDynamicLibraryUidValue)
 		{
 			cerr << "********************\n";
@@ -1579,13 +1579,13 @@ void ParameterManager::CheckOptions()
 		break;
 	case EExexp:
 		if (!ElfInput())
-			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--elfinput");
+			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--elfinput");
 		if (!DefFileOutOption())
-			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--defoutput");
+			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--defoutput");
 		if (!DefOutput())
-			throw ParameterParserError(NOARGUMENTERROR,"--defoutput");
+			throw Elf2e32Error(NOARGUMENTERROR,"--defoutput");
 		if (!E32ImageOutput())
-			throw ParameterParserError(NOARGUMENTERROR,"--output");
+			throw Elf2e32Error(NOARGUMENTERROR,"--output");
 		ValidateDSOGeneration(this);
 
 		if(iUID1 != KExecutableImageUidValue)
@@ -1601,11 +1601,11 @@ void ParameterManager::CheckOptions()
 		break;
 	case EStdExe:
 		if (!ElfInput())
-			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--elfinput");
+			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--elfinput");
 		if (!DefOutput())
-			throw ParameterParserError(NOARGUMENTERROR,"--defoutput");
+			throw Elf2e32Error(NOARGUMENTERROR,"--defoutput");
 		if (!E32ImageOutput())
-			throw ParameterParserError(NOARGUMENTERROR,"--output");
+			throw Elf2e32Error(NOARGUMENTERROR,"--output");
 		if(iUID1 != KExecutableImageUidValue)
         {
 			cerr << "********************\n";
@@ -1800,7 +1800,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseLogFile)
 	}
 	else
 	{
-		throw ParameterParserError(NOARGUMENTERROR, "--log");
+		throw Elf2e32Error(NOARGUMENTERROR, "--log");
 	}
 }
 
@@ -1831,7 +1831,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseMessageFile)
 	}
 	else
 	{
-		throw ParameterParserError(NOARGUMENTERROR, "--messagefile");
+		throw Elf2e32Error(NOARGUMENTERROR, "--messagefile");
 	}
 }
 
@@ -1875,9 +1875,9 @@ UINT ValidateInputVal(char * aValue, char * aOption)
 {
 	UINT uid;
 	if (!aValue)
-		throw ParameterParserError(NOARGUMENTERROR, aOption);
+		throw Elf2e32Error(NOARGUMENTERROR, aOption);
 	else if (!GetUInt(uid, aValue))
-		throw InvalidArgumentError(INVALIDARGUMENTERROR, aValue, aOption);
+		throw Elf2e32Error(INVALIDARGUMENTERROR, aValue, aOption);
 	return uid;
 }
 
@@ -1923,7 +1923,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseVersion)
 	UINT minorVal = 0;
 
 	if(!aValue)
-  	throw ParameterParserError(NOARGUMENTERROR, "--version");
+  	throw Elf2e32Error(NOARGUMENTERROR, "--version");
 
 	char * tokens = strdup(aValue);
 	char * major, * minor;
@@ -1932,7 +1932,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseVersion)
 	UINT majorVal = ValidateInputVal(major, "--version");
 	minor = strtok(nullptr, ".");
 	if (minor && !GetUInt(minorVal, minor))
-		throw InvalidArgumentError(INVALIDARGUMENTERROR, aValue, "--version");
+		throw Elf2e32Error(INVALIDARGUMENTERROR, aValue, "--version");
 
 	UINT version = ((majorVal & 0xFFFF) << 16) | (minorVal & 0xFFFF);
 	aPM->SetVersion(version);
@@ -2189,12 +2189,12 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseCompressionMethod)
 	INITIALISE_PARAM_PARSER;
 	UINT method;
 	if(!aValue)
-		throw ParameterParserError(NOARGUMENTERROR, "--compressionmethod");
+		throw Elf2e32Error(NOARGUMENTERROR, "--compressionmethod");
 
 	if(ParseCompressionMethodArg(method, aValue) )
 		aPM->SetCompressionMethod(method);
 	else
-		throw InvalidArgumentError(INVALIDARGUMENTERROR, aValue, "compression method");
+		throw Elf2e32Error(INVALIDARGUMENTERROR, aValue, "compression method");
 }
 
 /**
@@ -2295,11 +2295,11 @@ DEFINE_PARAM_PARSER(ParameterManager::ParsePriority)
 	INITIALISE_PARAM_PARSER;
 	unsigned int priority;
 	if (!aValue)
-		throw ParameterParserError(NOARGUMENTERROR, "--priority");
+		throw Elf2e32Error(NOARGUMENTERROR, "--priority");
 	if (GetUInt(priority, aValue) || ParsePriorityArg(priority, aValue))
 		aPM->SetPriority((TProcessPriority)priority);
 	else
-		throw InvalidArgumentError(INVALIDARGUMENTERROR, aValue, "priority");
+		throw Elf2e32Error(INVALIDARGUMENTERROR, aValue, "priority");
 }
 
 /**
@@ -2324,7 +2324,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseSysDefs)
 {
 	INITIALISE_PARAM_PARSER;
 	if (!aValue)
-		throw ParameterParserError(NOARGUMENTERROR, "--sysdef");
+		throw Elf2e32Error(NOARGUMENTERROR, "--sysdef");
 	string line(aValue);
 
 	int sysdefcount=0;
@@ -2333,9 +2333,9 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseSysDefs)
 	while(!line.empty())
     {
         size_t argpos = line.find_first_of(",");
-        if(argpos==0) throw ParameterParserError(SYSDEFNOSYMBOLERROR, "--sysdef");
+        if(argpos==0) throw Elf2e32Error(SYSDEFNOSYMBOLERROR, "--sysdef");
         size_t endpos = line.find_first_of(";");
-        if(endpos==0) throw ParameterParserError(SYSDEFNOSYMBOLERROR, "--sysdef");
+        if(endpos==0) throw Elf2e32Error(SYSDEFNOSYMBOLERROR, "--sysdef");
 
         string funcname(line.substr(0, argpos));
         string ordnum(line.substr(argpos+1, endpos-argpos-1));
@@ -2351,7 +2351,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseSysDefs)
             continue;
         }
 
-        if(!IsAllDigits(ordnum.c_str())) throw ParameterParserError(SYSDEFERROR, "--sysdef");
+        if(!IsAllDigits(ordnum.c_str())) throw Elf2e32Error(SYSDEFERROR, "--sysdef");
         else ordinalnum = atoll(ordnum.c_str());
 
         aPM->SetSysDefs(ordinalnum, funcname, sysdefcount);
@@ -2378,14 +2378,14 @@ void ParameterManager::ParseCapability1(string aCapName,
 	int i = 0;
 	if(aCapName.size()==0){
         if(aInvert)
-            throw CapabilityError(CAPABILITYALLINVERSIONERROR);
+            throw Elf2e32Error(CAPABILITYALLINVERSIONERROR);
         else return;
 	}
 
 	if(aCapName.size()==3 && !strcmp(aCapName.c_str(),"All"))
 	{
 		if(aInvert)
-			throw CapabilityError(CAPABILITYALLINVERSIONERROR);
+			throw Elf2e32Error(CAPABILITYALLINVERSIONERROR);
 
 		for(i=0; i<ECapability_Limit; i++)
 		{
@@ -2398,7 +2398,7 @@ void ParameterManager::ParseCapability1(string aCapName,
 	if(aCapName.size()==4 && aCapName.find("none")==0)
 	{
 		if(aInvert)
-			throw CapabilityError(CAPABILITYNONEINVERSIONERROR);
+			throw Elf2e32Error(CAPABILITYNONEINVERSIONERROR);
 
 		memset(&aCapabilities,0,sizeof(aCapabilities));
 		return;
@@ -2412,7 +2412,7 @@ void ParameterManager::ParseCapability1(string aCapName,
 	}
 
 	if(i>=ECapability_Limit)
-		throw UnrecognisedCapabilityError(UNRECOGNISEDCAPABILITYERROR, aCapName);
+		throw Elf2e32Error(UNRECOGNISEDCAPABILITYERROR, aCapName);
 
 	if(aInvert)
 		aCapabilities[i>>5] &= ~(1<<(i&31));
@@ -2478,7 +2478,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseCapability)
 	INITIALISE_PARAM_PARSER;
 	SCapabilitySet capSet = {0, 0};
 	if (!aValue)
-		throw ParameterParserError(NOARGUMENTERROR, "--capability");
+		throw Elf2e32Error(NOARGUMENTERROR, "--capability");
 	uint32_t cap;
 	if (GetUInt(cap, aValue))
 	{
@@ -2518,7 +2518,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseHeap)
 	if (p  < 0)
 	{
 		if ( !GetUInt(committed, aValue))
-			throw InvalidArgumentError(INVALIDARGUMENTERROR, aValue, "heap");
+			throw Elf2e32Error(INVALIDARGUMENTERROR, aValue, "heap");
 	}
 	else
 	{
@@ -2526,7 +2526,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseHeap)
 		const char * committedval = aArg.c_str();
 		const char * reservedval = committedval + p + 1;
 		if (!(GetUInt(committed, committedval) && GetUInt(reserved, reservedval)))
-			throw InvalidArgumentError(INVALIDARGUMENTERROR, aValue, "heap");
+			throw Elf2e32Error(INVALIDARGUMENTERROR, aValue, "heap");
 	}
 	aPM->SetHeapCommittedSize(committed);
 	aPM->SetHeapReservedSize(reserved);
@@ -3054,7 +3054,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseLibPaths)
 {
 	INITIALISE_PARAM_PARSER;
 	if (!aValue)
-		throw ParameterParserError(NOARGUMENTERROR, "--libpath");
+		throw Elf2e32Error(NOARGUMENTERROR, "--libpath");
 	string aPathList(aValue);
 
 	while(aPathList.size() > 0)
@@ -3733,13 +3733,13 @@ void ValidateDSOGeneration(ParameterManager *param)
 	char * linkas	  = param->LinkAsDLLName();
 
 	if (dsofileoutoption && !dsofileout)
-		throw ParameterParserError(NOARGUMENTERROR, "--dso");
+		throw Elf2e32Error(NOARGUMENTERROR, "--dso");
 	else if (linkasoption && !linkas)
-		throw ParameterParserError(NOFILENAMEERROR,"--linkas");
+		throw Elf2e32Error(NOFILENAMEERROR,"--linkas");
 	else if (!dsofileoutoption && !linkasoption)
-		throw ParameterParserError(NOREQUIREDOPTIONERROR,"--dso, --linkas");
+		throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--dso, --linkas");
 	else if (!dsofileoutoption)
-		throw ParameterParserError(NOREQUIREDOPTIONERROR,"--dso");
+		throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--dso");
 	else if (!linkasoption)
-		throw ParameterParserError(NOREQUIREDOPTIONERROR,"--linkas");
+		throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--linkas");
 }

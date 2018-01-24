@@ -55,22 +55,22 @@ int FileDump::Execute()
 	if(iParameterManager->FileDumpOption() && iParameterManager->E32OutOption() && iParameterManager->DefFileInOption()) //DumpAsm
 	{
 		if(!(iParameterManager->DumpOptions() & EDumpAsm))
-			throw InvalidArgumentError(INVALIDARGUMENTERROR,(!iParameterManager->FileDumpSubOptions()?"":iParameterManager->FileDumpSubOptions()) ,"--dump");
+			throw Elf2e32Error(INVALIDARGUMENTERROR,(!iParameterManager->FileDumpSubOptions()?"":iParameterManager->FileDumpSubOptions()) ,"--dump");
 		if(iParameterManager->DumpOptions() & 31)
-			throw InvalidArgumentError(INVALIDARGUMENTERROR,(!iParameterManager->FileDumpSubOptions()?"":iParameterManager->FileDumpSubOptions()),"--dump");
+			throw Elf2e32Error(INVALIDARGUMENTERROR,(!iParameterManager->FileDumpSubOptions()?"":iParameterManager->FileDumpSubOptions()),"--dump");
 		if(!iParameterManager->E32ImageOutput())
-			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--output");
+			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--output");
 		if(!iParameterManager->DefInput())
-			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--definput");
+			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--definput");
 
 		GenerateAsmFile(iParameterManager->E32ImageOutput());
 	}
 	else
 	{
 		if(!iParameterManager->E32Input())
-			throw ParameterParserError(NOREQUIREDOPTIONERROR,"--e32input");
+			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--e32input");
 		if(iParameterManager->DumpOptions() & EDumpAsm )
-			throw InvalidArgumentError(INVALIDARGUMENTERROR,iParameterManager->FileDumpSubOptions() ,"--dump");
+			throw Elf2e32Error(INVALIDARGUMENTERROR,iParameterManager->FileDumpSubOptions() ,"--dump");
 		DumpE32Image(iParameterManager->E32Input());
 	}
 	return 0;
@@ -93,7 +93,7 @@ int FileDump::GenerateAsmFile(const char* afileName)//DumpAsm
 
 	if((fptr=fopen(afileName,"w"))==NULL)
 	{
-		throw FileError(FILEOPENERROR,(char*)afileName);
+		throw Elf2e32Error(FILEOPENERROR, afileName);
 	}
 	else
 	{
@@ -170,11 +170,11 @@ int FileDump::DumpE32Image(const char* afileName)
 		return 1;
 	else if (result == KErrCorrupt || result == KErrNotSupported)
 	{
-		throw InvalidE32ImageError(INVALIDE32IMAGEERROR, (char *)afileName);
+		throw Elf2e32Error(INVALIDE32IMAGEERROR, afileName);
 	}
 	else if (result != 0)
 	{
-		throw FileError(FILEREADERROR, (char *)afileName);
+		throw Elf2e32Error(FILEREADERROR, afileName);
 	}
 
 	int dumpOptions=iParameterManager->DumpOptions();

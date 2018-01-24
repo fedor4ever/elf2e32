@@ -124,7 +124,7 @@ void CInflater::InitL()
 	if (!Huffman::IsValid(iEncoding->iLitLen,TEncoding::ELitLens) ||
 		!Huffman::IsValid(iEncoding->iDistance,TEncoding::EDistances))
 	{
-		throw E32ImageCompressionError(HUFFMANINVALIDCODINGERROR);
+		throw Elf2e32Error(HUFFMANINVALIDCODINGERROR);
 	}
 
 	// convert the length tables into huffman decoding trees
@@ -232,13 +232,13 @@ TFileInput::~TFileInput()
 
 /*
 Function UnderFlowL
-@Leave E32ImageCompressionError
+@Leave CommonError
 @internalComponent
 @released
 */
 void TFileInput::UnderflowL()
 {
-	throw E32ImageCompressionError(HUFFMANBUFFERUNDERFLOWERROR);
+	throw Elf2e32Error(HUFFMANBUFFERUNDERFLOWERROR);
 }
 
 /*

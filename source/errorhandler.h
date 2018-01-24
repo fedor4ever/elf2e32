@@ -47,32 +47,6 @@ public:
 };
 
 /**
-Base class for File Errors.
-@internalComponent
-@released
-*/
-class FileError : public ErrorHandler
-{
-public:
-	FileError(int aMessageIndex, char * aName);
-	virtual ~FileError(){}
-	void Report();
-};
-
-/**
-Base class for ELFFormat Errors.
-@internalComponent
-@released
-*/
-class ELFFormatError : public ErrorHandler
-{
-public:
-	ELFFormatError(int aMessageIndex, char * aName);
-	virtual ~ELFFormatError(){}
-	void Report();
-};
-
-/**
 Base class for DEF File Errors.
 @internalComponent
 @released
@@ -88,112 +62,14 @@ public:
 	string iToken;
 };
 
-/**
-Base class for Parameter Parser Errors.
-@internalComponent
-@released
-*/
-class ParameterParserError : public ErrorHandler
+class Elf2e32Error : public ErrorHandler
 {
 public:
-	ParameterParserError(int aMessageIndex, char * aName);
-	virtual ~ParameterParserError(){}
-	void Report();
-};
-
-/**
-Class for Invalid Argument Errors.
-@internalComponent
-@released
-*/
-class InvalidArgumentError : public ErrorHandler
-{
-public:
-	InvalidArgumentError(int aMessageIndex, const char * aValue, char * aOption);
-	virtual ~InvalidArgumentError(){}
-	void Report();
-
-	string iValue;
-	string iOption;
-};
-
-/**
-Base class for E32Image Compression Errors.
-@internalComponent
-@released
-*/
-class E32ImageCompressionError : public ErrorHandler
-{
-public:
-	explicit E32ImageCompressionError(int aMessageIndex);
-	virtual ~E32ImageCompressionError(){}
-	void Report();
-};
-
-/**
-Base class for Capability Errors.
-@internalComponent
-@released
-*/
-class CapabilityError : public ErrorHandler
-{
-public:
-	explicit CapabilityError(int aMessageIndex);
-	virtual ~CapabilityError(){}
-	void Report();
-};
-
-/**
-Class for handling Unrecognised Capability Errors.
-@internalComponent
-@released
-*/
-class UnrecognisedCapabilityError : public CapabilityError
-{
-public:
-	UnrecognisedCapabilityError(int aMessageIndex, string aName);
-	virtual ~UnrecognisedCapabilityError(){}
-	void Report();
-};
-
-/**
-Base class for ELF File Errors.
-@internalComponent
-@released
-*/
-class ELFFileError : public ErrorHandler
-{
-public:
-	explicit ELFFileError(int aMessageIndex, const char * aName);
-	virtual ~ELFFileError(){}
-	void Report();
-	string iSymbolName;
-};
-
-/**
-Class for handling Undefined Symbol Errors.
-@internalComponent
-@released
-*/
-class UndefinedSymbolError : public ELFFileError
-{
-public:
-	UndefinedSymbolError(int aMessageIndex, char * aName, char *aSymbolName);
-	virtual ~UndefinedSymbolError(){}
-	void Report();
-};
-
-/**
-Class for handling Import relocation to Data segment
-@internalComponent
-@released
-*/
-class ImportRelocationError : public ELFFileError
-{
-public:
-	ImportRelocationError(int aMessageIndex, char * aName, char *aSymbolName);
-	virtual ~ImportRelocationError(){}
-	void Report();
+	explicit Elf2e32Error(int aMessageIndex);
+	explicit Elf2e32Error(int aMessageIndex, string aName);
+	explicit Elf2e32Error(int aMessageIndex, string aName, string aParam);
+	virtual ~Elf2e32Error(){}
+	void Report(){}
 };
 
 /**
@@ -208,71 +84,6 @@ public:
 	virtual ~SymbolMissingFromElfError(){}
 	void Report();
 	uint32_t MissedSymbol = 0;
-};
-
-/**
-Class for handling Memory Allocation Errors.
-@internalComponent
-@released
-*/
-class MemoryAllocationError : public ErrorHandler
-{
-public:
-	MemoryAllocationError(int aMessageIndex, char * aName);
-	virtual ~MemoryAllocationError(){}
-	void Report();
-};
-
-/**
-Class for handling E32 Image Errors.
-@internalComponent
-@released
-*/
-class E32ImageError : public ErrorHandler
-{
-public:
-	explicit E32ImageError(int aMessageIndex);
-	virtual ~E32ImageError(){}
-	void Report();
-};
-
-/**
-Class for handling Invalid Invocation Errors.
-@internalComponent
-@released
-*/
-class InvalidInvocationError : public ErrorHandler
-{
-public:
-	explicit InvalidInvocationError(int aMessageIndex);
-	virtual ~InvalidInvocationError(){}
-	void Report();
-};
-
-/**
-Base class for handling Target Type Errors.
-@internalComponent
-@released
-*/
-class TargetTypeError : public ErrorHandler
-{
-public:
-	explicit TargetTypeError(int aMessageIndex);
-	virtual ~TargetTypeError(){}
-	void Report();
-};
-
-/**
-Class for handling Unsupported Target Type Errors.
-@internalComponent
-@released
-*/
-class UnsupportedTargetTypeError : public TargetTypeError
-{
-public:
-	UnsupportedTargetTypeError(int aMessageIndex, char * aName);
-	virtual ~UnsupportedTargetTypeError(){}
-	void Report();
 };
 
 /**
@@ -291,19 +102,6 @@ public:
 };
 
 /**
-Class for handling No Message File Errors.
-@internalComponent
-@released
-*/
-class NoMessageFileError : public ErrorHandler
-{
-public:
-	explicit NoMessageFileError(int aMessageIndex);
-	virtual ~NoMessageFileError(){}
-	void Report();
-};
-
-/**
 Class for handling Symbol that are passed through --sysdef
 not matching with the ones in the DEF file.
 @internalComponent
@@ -317,19 +115,6 @@ public:
 	void Report();
 
 	string iSymbolNames;
-};
-
-/**
-Class for handling Invalid E32 Image Error
-@internalComponent
-@released
-*/
-class InvalidE32ImageError : public ErrorHandler
-{
-public:
-	InvalidE32ImageError(int aMessageIndex, char * aName);
-	virtual ~InvalidE32ImageError(){}
-	void Report();
 };
 
 #endif

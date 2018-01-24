@@ -72,7 +72,7 @@ int DefFile::GetFileSize(FILE *fptrDef)
 	status=fseek(fptrDef, 0, SEEK_END);
 	if(status!=0)
 	{
-		throw FileError(FILEREADERROR,iFileName);
+		throw Elf2e32Error(FILEREADERROR,iFileName);
 	}
 	fileSize=ftell(fptrDef);
 	rewind(fptrDef);
@@ -96,14 +96,14 @@ char* DefFile::OpenDefFile(char * defFile)
 	iFileName=defFile;
 	if((fptrDef=fopen(defFile,"rb"))== nullptr)
 	{
-		throw FileError(FILEOPENERROR,defFile);
+		throw Elf2e32Error(FILEOPENERROR,defFile);
 	}
 
 	fileSize=GetFileSize(fptrDef);
 
 	if((defFileEntries= new char[fileSize+2]) == nullptr)
 	{
-		throw MemoryAllocationError(MEMORYALLOCATIONERROR,defFile);
+		throw Elf2e32Error(MEMORYALLOCATIONERROR,defFile);
 	}
 
 	//Getting whole file in memory
@@ -111,7 +111,7 @@ char* DefFile::OpenDefFile(char * defFile)
 	{
 	    delete[] defFileEntries;
 	    defFileEntries = nullptr;
-		throw FileError(FILEREADERROR,defFile);
+		throw Elf2e32Error(FILEREADERROR,defFile);
 	}
 
 	//Adding ENTER at end
@@ -870,7 +870,7 @@ void DefFile::WriteDefFile(char *fileName, SymbolList * newSymbolList)
 	FILE *fptr;
 
 	if((fptr=fopen(fileName,"wb"))==NULL)
-		throw FileError(FILEOPENERROR,fileName);
+		throw Elf2e32Error(FILEOPENERROR,fileName);
 
 	SymbolList::iterator aItr = newSymbolList->begin();
 	SymbolList::iterator last = newSymbolList->end();

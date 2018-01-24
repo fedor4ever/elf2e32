@@ -108,20 +108,20 @@ UseCaseBase * Elf2E32::SelectUseCase()
 	bool dumpMessageFileOption = iPrmManager->DumpMessageFileOption();
 
 	if (definputoption && !deffilein)
-		throw ParameterParserError(NOARGUMENTERROR, "--definput");
+		throw Elf2e32Error(NOARGUMENTERROR, "--definput");
 
 	if (elfinputoption && !elfin)
-		throw ParameterParserError(NOARGUMENTERROR, "--elfinput");
+		throw Elf2e32Error(NOARGUMENTERROR, "--elfinput");
 
 	if(filedumpoption && !dumpOptions)
 	{
 		//throw for wrong options
-		throw InvalidArgumentError(INVALIDARGUMENTERROR,filedumpsuboptions,"--dump");
+		throw Elf2e32Error(INVALIDARGUMENTERROR,filedumpsuboptions,"--dump");
 	}
 
 	if(e32inputoption && !e32in)
 	{
-        throw ParameterParserError(NOARGUMENTERROR, "--e32input");
+        throw Elf2e32Error(NOARGUMENTERROR, "--e32input");
 	}
 
 	iTargetType = iPrmManager->TargetTypeName();
@@ -149,7 +149,7 @@ UseCaseBase * Elf2E32::SelectUseCase()
 		else if (dumpMessageFileOption)
 			return nullptr;
 		else
-			throw InvalidInvocationError(INVALIDINVOCATIONERROR); //REVISIT
+			throw Elf2e32Error(INVALIDINVOCATIONERROR); //REVISIT
 	}
 
 	switch (iTargetType)
@@ -179,7 +179,7 @@ UseCaseBase * Elf2E32::SelectUseCase()
 	case EStdExe:
 		return iUseCase = new StdExeTarget(iPrmManager);
 	default:
-		throw InvalidInvocationError(INVALIDINVOCATIONERROR);
+		throw Elf2e32Error(INVALIDINVOCATIONERROR);
 	}
 
 	return nullptr;
@@ -220,7 +220,7 @@ int Elf2E32::Execute()
 			}
 			else
 			//dumpmessage file name is not provided as input
-                throw ParameterParserError(NOARGUMENTERROR, "--dumpmessagefile");
+                throw Elf2e32Error(NOARGUMENTERROR, "--dumpmessagefile");
 		}
 
 		usecase = SelectUseCase();

@@ -300,7 +300,7 @@ void E32ImageFile::ProcessImports()
 			{
 				if (iElfExecutable->SegmentType(aReloc->iAddr) != ESegmentRO)
 				{
-					throw ImportRelocationError(ILLEGALEXPORTFROMDATASEGMENT, aSymName, iElfExecutable->iParameterManager->ElfInput());
+					throw Elf2e32Error(ILLEGALEXPORTFROMDATASEGMENT, aSymName, iElfExecutable->iParameterManager->ElfInput());
 				}
 			}
 			/**This catch block introduced here is to avoid deleting partially constructed object(s).
@@ -404,7 +404,7 @@ string E32ImageFile::FindDSO(string aName)
 			return aDSOPath;
 		}
 	}
-	throw ELFFileError(DSONOTFOUNDERROR,(char*)aDSOPath.c_str());
+	throw Elf2e32Error(DSONOTFOUNDERROR, aDSOPath);
 }
 
 void E32ImageFile::ReadInputELFFile(string aName, size_t & aFileSize, Elf32_Ehdr * & aELFFile )
@@ -422,7 +422,7 @@ void E32ImageFile::ReadInputELFFile(string aName, size_t & aFileSize, Elf32_Ehdr
 	}
 	else
 	{
-		throw FileError(FILEOPENERROR,(char*)aName.c_str());
+		throw Elf2e32Error(FILEOPENERROR, aName);
 	}
 }
 
@@ -885,10 +885,10 @@ void E32ImageFile::FinalizeE32Image()
 	{
 		iHdr->iFlags |= KImageDll;
 		if (iHdr->iDataSize && !iUseCase->AllowDllData())
-			throw ELFFileError(DLLHASINITIALISEDDATAERROR, (char*)iUseCase->InputElfFileName());
+			throw Elf2e32Error(DLLHASINITIALISEDDATAERROR, iUseCase->InputElfFileName());
 
 		if (iHdr->iBssSize  && !iUseCase->AllowDllData())
-			throw ELFFileError(DLLHASUNINITIALISEDDATAERROR, (char*)iUseCase->InputElfFileName());
+			throw Elf2e32Error(DLLHASUNINITIALISEDDATAERROR, iUseCase->InputElfFileName());
 
 	}
 
@@ -901,9 +901,9 @@ void E32ImageFile::FinalizeE32Image()
 
 	EEntryPointStatus r = ValidateEntryPoint();
 	if (r == EEntryPointCorrupt)
-		throw ELFFileError(ENTRYPOINTCORRUPTERROR, (char*)iUseCase->InputElfFileName());
+		throw Elf2e32Error(ENTRYPOINTCORRUPTERROR, iUseCase->InputElfFileName());
 	else if (r == EEntryPointNotSupported)
-		throw ELFFileError(ENTRYPOINTNOTSUPPORTEDERROR, (char*)iUseCase->InputElfFileName());
+		throw Elf2e32Error(ENTRYPOINTNOTSUPPORTEDERROR, iUseCase->InputElfFileName());
 
 	SetUpExceptions();
 	SetUids();
@@ -995,7 +995,7 @@ void E32ImageFile::SetUpExceptions()
 		//check its in RO segment
 		if (aSymVaddr < aROBase || aSymVaddr >= (aROBase + aROSize))
 		{
-			throw ELFFileError(EXCEPTIONDESCRIPTOROUTSIDEROERROR, iUseCase->InputElfFileName());
+			throw Elf2e32Error(EXCEPTIONDESCRIPTOROUTSIDEROERROR, iUseCase->InputElfFileName());
 		}
 		// Set bottom bit so 0 in header slot means an old binary.
 		// The decriptor is always aligned on a 4 byte boundary.
@@ -1330,7 +1330,7 @@ void E32ImageFile::AllocateE32Image()
 	E32ImageHeaderV* header = (E32ImageHeaderV*)iE32Image;
 	TInt headerSize = header->TotalSize();
 	if(KErrNone!=header->ValidateWholeImage(iE32Image+headerSize,GetE32ImageSize()-headerSize))
-		throw InvalidE32ImageError(VALIDATIONERROR, (char*)iUseCase->OutputE32FileName());
+		throw Elf2e32Error(VALIDATIONERROR, iUseCase->OutputE32FileName());
 }
 
 /**
@@ -1400,7 +1400,7 @@ bool E32ImageFile::WriteImage(const char * aName)
 	}
 	else
 	{
-		throw FileError(FILEOPENERROR,(char*)aName);
+		throw Elf2e32Error(FILEOPENERROR, aName);
 	}
 	os->close();
 	if(os!=nullptr)
@@ -1452,7 +1452,7 @@ void E32ImageFile::Adjust(int32_t aSize, bool aAllowShrink)
 		iSize = asize;
 		iData = (char*)realloc(iData, iSize);
 
-		if (!iData) throw MemoryAllocationError(MEMORYALLOCATIONERROR, "iData == nullptr");
+		if (!iData) throw Elf2e32Error(MEMORYALLOCATIONERROR, "iData == nullptr");
 
 		if (iSize > oldsize)
 			memset(iData+oldsize, 0, iSize-oldsize);
@@ -1750,7 +1750,7 @@ int GetFileSize(const char* aFileName) {
 	int ret=_findfirst((char *)aFileName,&fileinfo);
 	if (ret==-1)
 	{
-		throw FileError(FILEOPENERROR,(char *)aFileName);
+		throw Elf2e32Error(FILEOPENERROR, aFileName);
 	}
     return fileinfo.size;
 }
@@ -1771,7 +1771,7 @@ TInt E32ImageFile::Open(const char* aFileName)
 	ifstream ifile((char *)aFileName, ios::in | ios::binary);
 	if(!ifile.is_open())
 	{
-		throw FileError(FILEOPENERROR,(char *)aFileName);
+		throw Elf2e32Error(FILEOPENERROR, aFileName);
 	}
 	ifile >> *this;
 	ifile.close();

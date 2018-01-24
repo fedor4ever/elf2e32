@@ -602,7 +602,7 @@ void ElfProducer::WriteElfContents()
 	PLUINT32	aIndex;
 
 	if((aElfFd = fopen(iDsoFullName.c_str(), "wb")) == NULL ) {
-		throw FileError(FILEOPENERROR, (char*)iDsoFullName.c_str());
+		throw Elf2e32Error(FILEOPENERROR, iDsoFullName);
 	}
 
 	// The ELF header..

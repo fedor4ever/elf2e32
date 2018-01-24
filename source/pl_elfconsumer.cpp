@@ -58,7 +58,7 @@ PLUINT32 ElfConsumer::ReadElfFile(char* aFile){
 	FILE*	aFd;
 
 	if( (aFd = fopen(aFile,"rb")) == nullptr) {
-		throw FileError(FILEOPENERROR, aFile);
+		throw Elf2e32Error(FILEOPENERROR, aFile);
 	}
 
 	fseek(aFd, 0, SEEK_END);
@@ -77,7 +77,7 @@ PLUINT32 ElfConsumer::ReadElfFile(char* aFile){
 
 		if( fread(iMemBlock + bytesRead, chunkSize, 1, aFd) != 1) {
             fclose(aFd);
-			throw FileError(FILEREADERROR, aFile);
+			throw Elf2e32Error(FILEREADERROR, aFile);
 		}
 	}
     fclose(aFd);

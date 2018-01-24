@@ -194,7 +194,7 @@ Recursive function to calculate the code lengths from the node tree
 void HuffmanLengthsL(TUint32* aLengths,const TNode* aNodes,TInt aNode,TInt aLen)
 {
 	if (++aLen>Huffman::KMaxCodeLength)
-		throw E32ImageCompressionError(HUFFMANBUFFEROVERFLOWERROR);
+		throw Elf2e32Error(HUFFMANBUFFEROVERFLOWERROR);
 
 	const TNode& node=aNodes[aNode];
 	TUint x=node.iLeft;
@@ -256,7 +256,7 @@ size as the frequency table, and can safely be the same table
 void Huffman::HuffmanL(const TUint32 aFrequency[],TInt aNumCodes,TUint32 aHuffman[])
 {
 	if(TUint(aNumCodes)>TUint(KMaxCodes))
-		throw E32ImageCompressionError(HUFFMANTOOMANYCODESERROR);
+		throw Elf2e32Error(HUFFMANTOOMANYCODESERROR);
 
 	// Sort the values into decreasing order of frequency
 	TNode* nodes = new TNode[aNumCodes];
@@ -300,7 +300,7 @@ void Huffman::HuffmanL(const TUint32 aFrequency[],TInt aNumCodes,TUint32 aHuffma
 	delete [] nodes;
 
 	if(!IsValid(aHuffman,aNumCodes))
-		throw E32ImageCompressionError(HUFFMANINVALIDCODINGERROR);
+		throw Elf2e32Error(HUFFMANINVALIDCODINGERROR);
 }
 
 /**
@@ -364,7 +364,7 @@ size as the code-length table, and can safely be the same table.
 void Huffman::Encoding(const TUint32 aHuffman[],TInt aNumCodes,TUint32 aEncodeTable[])
 {
 	if (!IsValid(aHuffman,aNumCodes))
-		throw E32ImageCompressionError(HUFFMANINVALIDCODINGERROR);
+		throw Elf2e32Error(HUFFMANINVALIDCODINGERROR);
 
 	TFixedArray<TInt,KMaxCodeLength> lenCount;
 //	std::vector<TInt> lenCount;
@@ -569,7 +569,7 @@ this is zero.
 void Huffman::Decoding(const TUint32 aHuffman[],TInt aNumCodes,TUint32 aDecodeTree[],TInt aSymbolBase)
 {
 	if(!IsValid(aHuffman,aNumCodes))
-		throw E32ImageCompressionError(HUFFMANINVALIDCODINGERROR);
+		throw Elf2e32Error(HUFFMANINVALIDCODINGERROR);
 
 	TFixedArray<TInt,KMaxCodeLength> counts;
 	counts.Reset();
@@ -690,7 +690,7 @@ void Huffman::InternalizeL(TBitInput& aInput,TUint32 aHuffman[],TInt aNumCodes)
 			{
 				if (p>end)
 				{
-					throw E32ImageCompressionError(HUFFMANINVALIDCODINGERROR);
+					throw Elf2e32Error(HUFFMANINVALIDCODINGERROR);
 				}
 				*p++=last;
 				--rl;
@@ -702,7 +702,7 @@ void Huffman::InternalizeL(TBitInput& aInput,TUint32 aHuffman[],TInt aNumCodes)
 			memmove((void * const)&list[1],(const void * const)&list[0],(size_t)c);
 			if (p>end)
 			{
-				throw E32ImageCompressionError(HUFFMANINVALIDCODINGERROR);
+				throw Elf2e32Error(HUFFMANINVALIDCODINGERROR);
 			}
 			*p++=last;
 		}
@@ -711,7 +711,7 @@ void Huffman::InternalizeL(TBitInput& aInput,TUint32 aHuffman[],TInt aNumCodes)
 	{
 		if (p>end)
 		{
-			throw E32ImageCompressionError(HUFFMANINVALIDCODINGERROR);
+			throw Elf2e32Error(HUFFMANINVALIDCODINGERROR);
 		}
 		*p++=last;
 		--rl;
@@ -916,7 +916,7 @@ the input buffer.
 */
 void TBitInput::UnderflowL()
 {
-	throw E32ImageCompressionError(HUFFMANBUFFEROVERFLOWERROR);
+	throw Elf2e32Error(HUFFMANBUFFEROVERFLOWERROR);
 }
 
 TBitInput::~TBitInput()
