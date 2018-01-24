@@ -13,7 +13,7 @@
 //
 // Description:
 // lifted from the ARMELF spec
-// 
+//
 //
 
 #ifndef __ELFDEFS_H__
@@ -32,7 +32,7 @@ typedef unsigned char UChar;         //Unsigned small integer
 
 typedef char* MemAddr;
 /*
-3.2 ELF Header 
+3.2 ELF Header
 Some object file control structures can grow, because the ELF header
 contains their actual sizes. If the object file format changes, a
 program may encounter control structures that are larger or smaller
@@ -41,9 +41,9 @@ treatment of missing information depends on context and will be
 specified when and if extensions are defined.
 */
 #define EI_NIDENT 16
-typedef struct {
+struct Elf32_Ehdr{
 
-  // marks the file as an object file and provide machine-independent 
+  // marks the file as an object file and provide machine-independent
   // data with which to decode and interpret the file's contents.
   unsigned char e_ident[EI_NIDENT];
 
@@ -56,52 +56,51 @@ typedef struct {
   // identifies the object file version.
   Elf32_Word e_version;
 
-  // gives the virtual address to which the system first transfers 
+  // gives the virtual address to which the system first transfers
   // control, thus starting the process. If the file has no associated
   // entry point, this member holds zero.
   Elf32_Addr e_entry;
 
-  // holds the program header table's file offset in bytes. If the 
+  // holds the program header table's file offset in bytes. If the
   // file has no program header table, this member holds zero.
   Elf32_Off e_phoff;
 
-  // holds the section header table's file offset in bytes. If the 
+  // holds the section header table's file offset in bytes. If the
   // file has no section header table, this member holds zero.
   Elf32_Off e_shoff;
 
-  // holds processor-specific flags associated with the file. Flag 
+  // holds processor-specific flags associated with the file. Flag
   // names take the form EF_machine_flag.
   Elf32_Word e_flags;
 
   // holds the ELF header's size in bytes.
   Elf32_Half e_ehsize;
 
-  // holds the size in bytes of one entry in the file's program 
+  // holds the size in bytes of one entry in the file's program
   // header table; all entries are the same size.
   Elf32_Half e_phentsize;
 
-  // holds the number of entries in the program header table. 
-  // Thus the product of e_phentsize and e_phnum gives the table's 
+  // holds the number of entries in the program header table.
+  // Thus the product of e_phentsize and e_phnum gives the table's
   // size in bytes. If a file has no program header table, e_phnum
   // holds the value zero.
   Elf32_Half e_phnum;
 
-  // holds a section header's size in bytes. A section header is 
+  // holds a section header's size in bytes. A section header is
   // one entry in the section header table; all entries are the same size.
   Elf32_Half e_shentsize;
 
-  // holds the number of entries in the section header table. Thus 
-  // the product of e_shentsize and e_shnum gives the section header 
-  // table's size in bytes. If a file has no section header table, 
+  // holds the number of entries in the section header table. Thus
+  // the product of e_shentsize and e_shnum gives the section header
+  // table's size in bytes. If a file has no section header table,
   // e_shnum holds the value zero.
   Elf32_Half e_shnum;
 
-  // holds the section header table index of the entry associated 
-  // with the section name string table. If the file has no section 
-  // name string table, this member holds the value SHN_UNDEF. 
+  // holds the section header table index of the entry associated
+  // with the section name string table. If the file has no section
+  // name string table, this member holds the value SHN_UNDEF.
   Elf32_Half e_shstrndx;
-
-} Elf32_Ehdr;
+};
 
 // values for e_type
 #define ET_NONE 	0 // No file type
@@ -150,8 +149,8 @@ typedef struct {
 #define ELFCLASS32 	1 // 32-bit objects
 #define ELFCLASS64 	2 // 64-bit objects
 
-// values for e_ident[EI_DATA] - specifies the data encoding of the 
-// processor-specific data in the object file. 
+// values for e_ident[EI_DATA] - specifies the data encoding of the
+// processor-specific data in the object file.
 #define ELFDATANONE 	0 // Invalid data encoding
 #define ELFDATA2LSB 	1 // 2's complement , with LSB at lowest address.
 #define ELFDATA2MSB 	2 // 2's complement , with MSB at lowest address.
@@ -163,7 +162,7 @@ typedef struct {
 // Each subsection of the symbol table is sorted by symbol value
 #define EF_ARM_SYMSARESORTED 0x04
 // Symbols in dynamic symbol tables that are defined in sections
-// included in program segment n have st_shndx = n+ 1. 
+// included in program segment n have st_shndx = n+ 1.
 #define EF_ARM_DYNSYMSUSESEGIDX 0x8
 // Mapping symbols precede other local symbols in the symbol table
 #define EF_ARM_MAPSYMSFIRST 0x10
@@ -175,7 +174,7 @@ typedef struct {
 #define EF_ARM_EABI_VERSION 0x02000000
 #define EF_ARM_BPABI_VERSION 0x04000000
 
-/* 
+/*
 3.3 Sections
 
 An object file's section header table lets one locate all the file's
@@ -190,26 +189,26 @@ contains; e_shentsize gives the size in bytes of each entry.
 // Some section header table indexes are reserved; an object file will
 // not have sections for these special indexes.
 
-// marks an undefined, missing, irrelevant, or otherwise meaningless 
+// marks an undefined, missing, irrelevant, or otherwise meaningless
 // section reference.
 #define SHN_UNDEF 	0
 // specifies the lower bound of the range of reserved indexes.
 #define SHN_LORESERVE 	0xff00
-// SHN_LOPROC-SHN_HIPRO - this inclusive range reserved for 
+// SHN_LOPROC-SHN_HIPRO - this inclusive range reserved for
 // processor-specific semantics.
 #define SHN_LOPROC 	0xff00
 #define SHN_HIPROC 	0xff1f
-// Specifies absolute values for the corresponding reference. 
-// For example, symbols defined relative to section number SHN_ABS have 
+// Specifies absolute values for the corresponding reference.
+// For example, symbols defined relative to section number SHN_ABS have
 // absolute values and are not affected by relocation.
 #define SHN_ABS 	0xfff1
-// Symbols defined relative to this section are common symbols, 
+// Symbols defined relative to this section are common symbols,
 // such as FORTRAN COMMON or unallocated C external variables.
 #define SHN_COMMON 	0xfff2
 // specifies the upper bound of the range of reserved indexes.
 #define SHN_HIRESERVE 	0xffff
 
-typedef struct {
+struct Elf32_Shdr{
 
   // specifies the name of the section. Its value is an index into the
   // section header string table section [see String Tablebelow],
@@ -264,10 +263,9 @@ typedef struct {
   // not hold a table of fixedsize entries. A section header's sh_type
   // member specifies the section's semantics.
   Elf32_Word sh_entsize;
+};
 
-} Elf32_Shdr;
-
-// values for sh_type 
+// values for sh_type
 
 #define SHT_NULL 0 // marks the section header as inactive; it does
  // not have an associated section. Other members of the section
@@ -313,18 +311,18 @@ typedef struct {
 // values for sh_flags
 
 // The section contains data that should be writable during process execution
-#define SHF_WRITE 0x1 
+#define SHF_WRITE 0x1
 // The section occupies memory during process execution. Some control
 // sections do not reside in the memory image of an object file; this
 // attribute is off for those sections
-#define SHF_ALLOC 0x2 
+#define SHF_ALLOC 0x2
 // The section contains executable machine instructions.
-#define SHF_EXECINSTR 0x4 
+#define SHF_EXECINSTR 0x4
 // Bits in this mask are reserved for processor-specific semantics.
-#define SHF_MASKPROC 0xf0000000 
+#define SHF_MASKPROC 0xf0000000
 
 
-typedef struct {
+struct Elf32_Sym{
 
   // holds an index into the object file's symbol string table, which
   // holds the character representations of the symbol names.
@@ -350,15 +348,13 @@ typedef struct {
   // This member currently holds 0 and has no defined meaning.
   unsigned char st_other;
 
-
 #define ELF32_ST_VISIBILITY(o)       ((o)&0x3)
 #define ELF64_ST_VISIBILITY(o)       ((o)&0x3)
 
   // Every symbol table entry is defined in relation to some section;
   // this member holds the relevant section header table index.
   Elf32_Half st_shndx;
-
-} Elf32_Sym;
+};
 
 // Local symbols are not visible outside the object file containing
 // their definition. Local symbols of the same name may exist in
@@ -371,27 +367,27 @@ typedef struct {
 // Weak symbols resemble global symbols, but their definitions have
 // lower precedence. Undefined weak symbols (weak references) may have
 // processor- or OS-specific semantics
-#define STB_WEAK 2 
+#define STB_WEAK 2
 // STB_LOPROC through STB_HIPROC - values in this inclusive range are
 // reserved for processor-specific semantics.
-#define STB_LOPROC 13 
+#define STB_LOPROC 13
 #define STB_HIPROC 15
 
 // The symbol's type is not specified.
-#define STT_NOTYPE 0 
+#define STT_NOTYPE 0
 // The symbol is associated with a data object, such as a variable, an
 // array, and so on.
-#define STT_OBJECT 1 
+#define STT_OBJECT 1
 // The symbol is associated with a function or other executable code.
-#define STT_FUNC 2 
+#define STT_FUNC 2
 // The symbol is associated with a section. Symbol table entries of
 // this type exist primarily for relocation and normally have
 // STB_LOCAL binding.
-#define STT_SECTION 3 
+#define STT_SECTION 3
 // A file symbol has STB_LOCAL binding, its section index is SHN_A BS,
 // and it precedes the other STB_LOCAL symbols for the file, if it is
 // present.
-#define STT_FILE 4 
+#define STT_FILE 4
 // Values in this inclusive range are reserved for processor-specific
 // semantics. If a symbol's value refers to a specific location within
 // a section, its section index member, st_shndx, holds an index into
@@ -404,11 +400,11 @@ typedef struct {
 
 /*
 STV_DEFAULT
-The visibility of symbols with the STV_DEFAULT attribute is as specified by the symbol's 
-binding type. That is, global and weak symbols are visible outside of their defining 
+The visibility of symbols with the STV_DEFAULT attribute is as specified by the symbol's
+binding type. That is, global and weak symbols are visible outside of their defining
 component, the executable file or shared object. Local symbols are hidden. Global and weak
  symbols can also be preempted, that is, they may by interposed by definitions of the same
- name in another component. 
+ name in another component.
 
 STV_PROTECTED
 A symbol defined in the current component is protected if it is visible in other components
@@ -419,11 +415,11 @@ A symbol defined in the current component is protected if it is visible in other
 
 STV_HIDDEN
 A symbol defined in the current component is hidden if its name is not visible to other
- components. Such a symbol is necessarily protected. This attribute is used to control 
- the external interface of a component. An object named by such a symbol may still be 
+ components. Such a symbol is necessarily protected. This attribute is used to control
+ the external interface of a component. An object named by such a symbol may still be
  referenced from another component if its address is passed outside.
 
-A hidden symbol contained in a relocatable object is either removed or converted to 
+A hidden symbol contained in a relocatable object is either removed or converted to
 STB_LOCAL binding by the link-editor when the relocatable object is included in an
  executable file or shared object.
 
@@ -436,9 +432,8 @@ This visibility attribute is currently reserved.
 #define	STV_PROTECTED	3
 
 // Relocation Entries
-
-typedef struct { 
-
+struct Elf32_Rel
+{
   // r_offset gives the location at which to apply the relocation
   // action. For a relocatable file, the value is the byte offset from
   // the beginning of the section to the storage unit affected by the
@@ -463,19 +458,20 @@ typedef struct {
 #define ELF32_R_TYPE(i) ((unsigned char)(i))
 #define ELF32_R_INFO(s,t) (((s)<<8)+(unsigned char)(t))
 
-  Elf32_Word r_info; 
-} Elf32_Rel; 
+  Elf32_Word r_info;
+};
 
-typedef struct {
+struct Elf32_Rela
+{
   Elf32_Addr r_offset;
   Elf32_Word r_info;
   Elf32_Sword r_addend;
-} Elf32_Rela;
+} ;
 
 // Program Header
 
-typedef struct {
-
+struct Elf32_Phdr
+{
   // p_type tells what kind of segment this array element describes or
   // how to interpret the array element's information. Type values and
   // their meanings are given below.
@@ -513,34 +509,33 @@ typedef struct {
   // required. Otherwise, p_align should be a positive, integral power
   // of 2, and p_vaddr should equal p_offset, modulo p_align.
   Elf32_Word p_align;
-
-} Elf32_Phdr;
+};
 
 // Segment types - values for p_type
 
 // The array element is unused; other members' values are
 // undefined. This type lets the program header table have ignored
 // entries.
-#define PT_NULL 0 
+#define PT_NULL 0
 // The array element specifies a loadable segment, described by
 // p_filesz and p_memsz (for additional explanation, see
 // PT_LOAD below).
-#define PT_LOAD 1 
+#define PT_LOAD 1
 // The array element specifies dynamic linking information. See
 // subsection 4.7.
-#define PT_DYNAMIC 2 
+#define PT_DYNAMIC 2
 // The array element specifies the location and size of a
 // null-terminated pathname to invoke as an interpreter.
-#define PT_INTERP 3 
+#define PT_INTERP 3
 // The array element specifies the location and size of auxiliary
 // information.
-#define PT_NOTE 4 
+#define PT_NOTE 4
 // This segment type is reserved but has unspecified semantics.
-#define PT_SHLIB 5 
+#define PT_SHLIB 5
 // The array element, if present, specifies the location and size of
 // the program header table itself (for additional explanation, see
 // PT_ PHDR below).
-#define PT_PHDR 6 
+#define PT_PHDR 6
 // Values in the inclusive [PT_LOPROC, PT_HIPROC] range are reserved
 // for processor-specific semantics.
 #define PT_LOPROC 0x70000000
@@ -548,14 +543,14 @@ typedef struct {
 
 // values for p_flags
 // The segment may be executed.
-#define PF_X 1 
+#define PF_X 1
 // The segment may be written to.
-#define PF_W 2 
+#define PF_W 2
 // The segment may be read.
-#define PF_R 4 
+#define PF_R 4
 // Reserved for processor-specific purposes (see 4.6, Program
 // headers).
-#define PF_MASKPROC 0xf0000000 
+#define PF_MASKPROC 0xf0000000
 #define PF_ARM_ENTRY 0x80000000
 
 
@@ -607,7 +602,7 @@ typedef struct {
 // relocation types 0-16 are generic
 //      Name             Type    Field                  Computation
 //====================================================================
-#define R_ARM_NONE         0  // Any                    No relocation. 
+#define R_ARM_NONE         0  // Any                    No relocation.
 #define R_ARM_PC24         1  // ARM B/BL               S - P + A
 #define R_ARM_ABS32        2  // 32-bit word            S + A
 #define R_ARM_REL32        3  // 32-bit word            S - P + A
@@ -630,7 +625,7 @@ typedef struct {
 #define R_ARM_JUMP_SLOT   22  //  PLT related			S + A
 #define R_ARM_RELATIVE	  23  //  32-bit word			B(S) + A
 
-#define R_ARM_GOT_BREL	  26  //  			
+#define R_ARM_GOT_BREL	  26  //
 
 #define R_ARM_ALU_PCREL_7_0   32 // ARM ADD/SUB         (S - P + A) & 0x000000FF
 #define R_ARM_ALU_PCREL_15_8  33 // ARM ADD/SUB         (S - P + A) & 0x0000FF00
@@ -639,7 +634,7 @@ typedef struct {
 #define R_ARM_ALU_SBREL_19_12 36 // ARM ADD/SUB         (S - B + A) & 0x000FF000
 #define R_ARM_ALU_SBREL_27_20 37 // ARM ADD/SUB         (S - B + A) & 0x0FF00000
 
-// Dynamic relocation types 
+// Dynamic relocation types
 
 // A small set of relocation types supports relocating executable ELF
 // files. They are used only in a relocation section embedded in a
@@ -675,10 +670,11 @@ typedef struct {
                                //                     the following relocation directives.
 // DYNAMIC SEGMENT
 // The dynamic segment begins with a dynamic section containing an array of structures of type:
-typedef struct Elf32_Dyn {
+struct Elf32_Dyn
+{
   Elf32_Sword d_tag;
   Elf32_Word d_val;
-} Elf32_Dyn;
+};
 
 // This entry marks the end of the dynamic array. mandatory
 #define DT_NULL 0
@@ -745,21 +741,22 @@ typedef struct Elf32_Dyn {
 #define DT_ARM_SYMTABSZ_21 0x70000000 // For RVCT 2.1
 #define DT_ARM_SYMTABSZ	   0x70000001 // The DT_ARM_SYMTABSZ tag value has been changed from RVCT2.2
 /* Holds the address of the pre-emption map for platforms that use the DLL static binding model. */
-#define DT_ARM_PREEMPTMAP  0x70000002 
+#define DT_ARM_PREEMPTMAP  0x70000002
 #define DT_ARM_RESERVED2   0x70000003
 #define DT_ARM_PLTGOTBASE  0x70000004
 #define DT_ARM_PLTGOTLIMIT 0x70000005
 
 // What the hash table looks like in the dynamic segment
-typedef struct Elf32_HashTable {
+struct Elf32_HashTable
+{
   Elf32_Word nBuckets;
   Elf32_Word nChains;
   // Elf32_Word bucket[nBuckets];
   // Elf32_Word chain[nChains];
-} Elf32_HashTable;
+};
 
 
-typedef struct
+struct Elf32_Verdef
 {
   Elf32_Half	vd_version;		/* Version revision */
   Elf32_Half	vd_flags;		/* Version information */
@@ -767,19 +764,17 @@ typedef struct
   Elf32_Half	vd_cnt;			/* Number of associated aux entries */
   Elf32_Word	vd_hash;		/* Version name hash value */
   Elf32_Word	vd_aux;			/* Offset in bytes to verdaux array */
-  Elf32_Word	vd_next;		/* Offset in bytes to next verdef
-									entry */
-} Elf32_Verdef;
+  Elf32_Word	vd_next;		/* Offset in bytes to next verdef entry */
+};
 
-typedef struct
+struct Elf32_Verdaux
 {
   Elf32_Word	vda_name;		/* Version or dependency names */
-  Elf32_Word	vda_next;		/* Offset in bytes to next verdaux
-									entry */
-} Elf32_Verdaux;
+  Elf32_Word	vda_next;		/* Offset in bytes to next verdaux									entry */
+};
 
 
-typedef struct
+struct Elf32_Verneed
 {
   Elf32_Half	vn_version;		/* Version of structure */
   Elf32_Half	vn_cnt;			/* Number of associated aux entries */
@@ -788,32 +783,26 @@ typedef struct
   Elf32_Word	vn_aux;			/* Offset in bytes to vernaux array */
   Elf32_Word	vn_next;		/* Offset in bytes to next verneed
 					   entry */
-} Elf32_Verneed;
+};
 
-typedef struct {
+struct Elf32_Vernaux{
 	Elf32_Word    vna_hash;
 	Elf32_Half    vna_flags;
 	Elf32_Half    vna_other;
 	Elf32_Word    vna_name;
 	Elf32_Word    vna_next;
-} Elf32_Vernaux;
+};
 
-
-enum ESegmentType 
+enum ESegmentType
 {
 	ESegmentUndefined = SHN_UNDEF,	// undefined or meaningless section/segment reference
     ESegmentRO,						// Read Only (text) segment
     ESegmentRW,						// Read Write (data) segment
 	ESegmentDynamic,				// Dynamic segment
-	ESegmentABS = SHN_ABS,			// Symbols defined relative to section number SHN_ABS have 
+	ESegmentABS = SHN_ABS,			// Symbols defined relative to section number SHN_ABS have
 									// absolute values and are not affected by relocation.
-	ESegmentCommon = SHN_COMMON,	// Symbols defined relative to section number SHN_ABS have 
+	ESegmentCommon = SHN_COMMON,	// Symbols defined relative to section number SHN_ABS have
 									// absolute values and are not affected by relocation.
 };
 
 #endif
-
-
-
-
-
