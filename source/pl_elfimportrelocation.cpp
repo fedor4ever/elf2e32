@@ -39,7 +39,7 @@ ElfImportRelocation::ElfImportRelocation(ElfExecutable *aElfExec,PLMemAddr32 aAd
 			ElfRelocation(aElfExec, aAddr, aAddend, aIndex, aRelType, aRel)
 {
 	iSymbol = &(aElfExec->iElfDynSym[iSymNdx]);
-	iSegment = aElfExec->Segment(iAddr);
+	iSegment = aElfExec->GetSegmentAtAddr(iAddr);
 	iSegmentType = aElfExec->SegmentType(iAddr);
 }
 

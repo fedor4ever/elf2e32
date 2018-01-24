@@ -76,7 +76,7 @@ public:
 	MemAddr GetRawRWSegment();
 	Elf32_Word EntryPointOffset();
 	ESegmentType SegmentType(Elf32_Addr aAddr);
-	Elf32_Phdr* Segment(Elf32_Addr aAddr);
+	Elf32_Phdr* GetSegmentAtAddr(Elf32_Addr aAddr);
 	ElfRelocations::RelocationList & GetCodeRelocations();
 	ElfRelocations::RelocationList & GetDataRelocations();
 	ElfRelocations& GetLocalRelocations();
@@ -218,7 +218,6 @@ public:
 	char* SymbolFromDSO(PLUINT32  aSymbolIndex);
 	Elf32_Word* GetFixupLocation(ElfLocalRelocation* aReloc, Elf32_Addr aPlace);
 	ESegmentType Segment(Elf32_Sym *aSym);
-	Elf32_Phdr* SegmentFromAbs(Elf32_Addr aAddr);
 	Elf32_Phdr* Segment(ESegmentType aType);
 
 /** This function processes the linker generated Veneer symbols and

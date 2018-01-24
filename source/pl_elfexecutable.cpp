@@ -296,7 +296,7 @@ Function to find the content of the address passed in
 */
 Elf32_Word	ElfExecutable::FindValueAtLoc(Elf32_Addr aOffset)
 {
-	Elf32_Phdr  *aHdr = Segment(aOffset);
+	Elf32_Phdr  *aHdr = GetSegmentAtAddr(aOffset);
 	PLUINT32 aLoc = aHdr->p_offset + aOffset - aHdr->p_vaddr;
 	Elf32_Word	*aLocVal = ELF_ENTRY_PTR(Elf32_Word, iElfHeader, aLoc);
 	return *aLocVal;
@@ -725,7 +725,7 @@ This function finds the addend associated with a relocation entry.
 @released
 */
 Elf32_Word ElfExecutable::Addend(Elf32_Rel* aRel) {
-	Elf32_Phdr  *aHdr = Segment(aRel->r_offset);
+	Elf32_Phdr  *aHdr = GetSegmentAtAddr(aRel->r_offset);
 	PLUINT32 aOffset = aHdr->p_offset + aRel->r_offset - aHdr->p_vaddr;
 	Elf32_Word	*aAddendPlace = ELF_ENTRY_PTR(Elf32_Word, iElfHeader, aOffset);
 	return *aAddendPlace;
@@ -792,7 +792,7 @@ This function returns the segment type
 
 ESegmentType ElfExecutable::SegmentType(Elf32_Addr aAddr) {
 
-	Elf32_Phdr *aHdr = Segment(aAddr);
+	Elf32_Phdr *aHdr = GetSegmentAtAddr(aAddr);
 	if( !aHdr )
 		return ESegmentUndefined;
 
@@ -827,13 +827,13 @@ Elf32_Phdr* ElfExecutable::Segment(ESegmentType aType) {
 }
 
 /**
-Function to get segment header
-@param aAddr - Address
-@return Segment header
+Thsi function returns the segment header to which the address refers.
+@param aAddr - location
+@return Segment header.
 @internalComponent
 @released
 */
-Elf32_Phdr* ElfExecutable::Segment(Elf32_Addr aAddr) {
+Elf32_Phdr* ElfExecutable::GetSegmentAtAddr(Elf32_Addr aAddr) {
 //    globalcntr++;
   //  std::cout << globalcntr << "\n";
 	if(iCodeSegmentHdr) {
@@ -856,30 +856,6 @@ Elf32_Phdr* ElfExecutable::Segment(Elf32_Addr aAddr) {
 	// aAddr==4220920 globalcntr have values 2033, 2062, 2587 and 2994
 
     return nullptr;
-}
-
-/**
-Thsi function returns the segment header to which the address refers.
-@param aAddr - location
-@return Segment header.
-@internalComponent
-@released
-*/
-Elf32_Phdr* ElfExecutable::SegmentFromAbs(Elf32_Addr aAddr) {
-
-	if(iCodeSegmentHdr) {
-		PLUINT32 aBase = iCodeSegmentHdr->p_vaddr;
-		if( aBase <= aAddr && aAddr <= (aBase + iCodeSegmentHdr->p_memsz) ) {
-			return iCodeSegmentHdr;
-		}
-	}
-	if(iDataSegmentHdr) {
-		PLUINT32 aBase = iDataSegmentHdr->p_vaddr;
-		if( aBase <= aAddr && aAddr <= (aBase + iDataSegmentHdr->p_memsz) ) {
-			return iDataSegmentHdr;
-		}
-	}
-	return nullptr;
 }
 
 /**
@@ -1061,7 +1037,7 @@ Function to get relocation offset
 */
 Elf32_Word ElfExecutable::GetRelocationOffset(ElfRelocation * aReloc)
 {
-	Elf32_Phdr * aHdr = Segment(aReloc->iAddr);
+	Elf32_Phdr * aHdr = GetSegmentAtAddr(aReloc->iAddr);
 	unsigned int aOffset = aReloc->iAddr - aHdr->p_vaddr;
 	return aOffset;
 }
@@ -1075,7 +1051,7 @@ Function to get relocation place address
 */
 Elf32_Word * ElfExecutable::GetRelocationPlace(ElfRelocation * aReloc)
 {
-	Elf32_Phdr * aHdr = Segment(aReloc->iAddr);
+	Elf32_Phdr * aHdr = GetSegmentAtAddr(aReloc->iAddr);
 	unsigned int aOffset = aHdr->p_offset + aReloc->iAddr - aHdr->p_vaddr;
 	Elf32_Word * aPlace = ELF_ENTRY_PTR(Elf32_Word, iElfHeader, aOffset);
 	return aPlace;
@@ -1365,7 +1341,7 @@ Function to get fixup location
 Elf32_Word* ElfExecutable::GetFixupLocation(ElfLocalRelocation* aReloc, Elf32_Addr aPlace)
 {
 	Elf32_Phdr * aPhdr = aReloc->ExportTableReloc() ?
-		iCodeSegmentHdr : Segment(aPlace);
+		iCodeSegmentHdr : GetSegmentAtAddr(aPlace);
 
 	Elf32_Word offset = aPhdr->p_offset + aPlace - aPhdr->p_vaddr;
 	return ELF_ENTRY_PTR(Elf32_Word, iElfHeader, offset);
@@ -1388,7 +1364,7 @@ ESegmentType ElfExecutable::Segment(Elf32_Sym *aSym)
 		// limit symbol.
 		if (aSym->st_shndx == SHN_ABS)
 		{
-			aHdr = SegmentFromAbs(aSym->st_value);
+			aHdr = GetSegmentAtAddr(aSym->st_value);
 		}
 		else
 		{
@@ -1400,14 +1376,14 @@ ESegmentType ElfExecutable::Segment(Elf32_Sym *aSym)
 				string limitstr = iStringTable + aSym->st_name;
 				if (limitstr.rfind("$$Limit",limitstr.length()) != string::npos)
 				{
-					aHdr = SegmentFromAbs(aSym->st_value);
+					aHdr = GetSegmentAtAddr(aSym->st_value);
 					limitSymbolFound = true;
 				}
 			}
 
 			if(!limitSymbolFound )
 			{
-				aHdr = Segment(aSym->st_value);
+				aHdr = GetSegmentAtAddr(aSym->st_value);
 			}
 
 		}

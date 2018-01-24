@@ -38,7 +38,7 @@ ElfLocalRelocation::ElfLocalRelocation(ElfExecutable *aElfExec, PLMemAddr32 aAdd
 		Elf32_Rel* aRel, bool aVeneerSymbol):
 		ElfRelocation(aElfExec, aAddr, aAddend, aIndex, aRelType, aRel)
 {
-	iSegment = aElfExec->Segment( iAddr );
+	iSegment = aElfExec->GetSegmentAtAddr( iAddr );
 	iSegmentType = aElfExec->SegmentType( iAddr );
 	iSymbol = &(aElfExec->iElfDynSym[iSymNdx]);
 	iDelSym = false;
