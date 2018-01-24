@@ -1008,7 +1008,6 @@ PLUINT32 ElfExecutable::GetSymbolOrdinal( char* aSymName) {
 	if(!aSym)
 		return (PLUINT32)-1;
 	return GetSymbolOrdinal(aSym);
-
 }
 
 /**
@@ -1038,8 +1037,7 @@ Function to get relocation offset
 Elf32_Word ElfExecutable::GetRelocationOffset(ElfRelocation * aReloc)
 {
 	Elf32_Phdr * aHdr = GetSegmentAtAddr(aReloc->iAddr);
-	unsigned int aOffset = aReloc->iAddr - aHdr->p_vaddr;
-	return aOffset;
+	return aReloc->iAddr - aHdr->p_vaddr;
 }
 
 /**
@@ -1203,28 +1201,24 @@ Function to check exception is present in the Elf image.
 bool ElfExecutable::ExeceptionsPresentP()
 {
 	size_t nShdrs = iElfHeader->e_shnum;
-	if (nShdrs)
-	{
-		// Find the exception index table section
-		Elf32_Shdr * aShdr = ELF_ENTRY_PTR(Elf32_Shdr, iElfHeader, iElfHeader->e_shoff);
-		char * aShStrTab = ELF_ENTRY_PTR(char, iElfHeader, aShdr[iElfHeader->e_shstrndx].sh_offset);
-
-		for (PLUINT32 i = 0; i < nShdrs; i++)
-		{
-			if (aShdr[i].sh_type == SHT_ARM_EXIDX)
-			{
-				char * aSectionName = aShStrTab + aShdr[i].sh_name;
-				if (!strcmp(aSectionName, ".ARM.exidx"))
-				{
-					return true;
-				}
-			}
-		}
-
-	}
-	else
+	if (!nShdrs)
 		throw Elf2e32Error(NEEDSECTIONVIEWERROR, iParameterManager->ElfInput());
 
+    // Find the exception index table section
+    Elf32_Shdr * aShdr = ELF_ENTRY_PTR(Elf32_Shdr, iElfHeader, iElfHeader->e_shoff);
+    char * aShStrTab = ELF_ENTRY_PTR(char, iElfHeader, aShdr[iElfHeader->e_shstrndx].sh_offset);
+
+    for (PLUINT32 i = 0; i < nShdrs; i++)
+    {
+        if (aShdr[i].sh_type == SHT_ARM_EXIDX)
+        {
+            char * aSectionName = aShStrTab + aShdr[i].sh_name;
+            if (!strcmp(aSectionName, ".ARM.exidx"))
+            {
+                return true;
+            }
+        }
+    }
 	return false;
 }
 
@@ -1356,50 +1350,14 @@ Function to get the segment type
 */
 ESegmentType ElfExecutable::Segment(Elf32_Sym *aSym)
 {
-	Elf32_Phdr * aHdr;
+    ESegmentType type = ESegmentUndefined;
+    if(!aSym) return type;
 
-	try {
+	Elf32_Phdr * aHdr = GetSegmentAtAddr(aSym->st_value);
 
-		// If Symbol is absolute then assume it came from linker and is a
-		// limit symbol.
-		if (aSym->st_shndx == SHN_ABS)
-		{
-			aHdr = GetSegmentAtAddr(aSym->st_value);
-		}
-		else
-		{
-			bool limitSymbolFound = false;
-			if( (iCodeSegmentHdr && aSym->st_value == (iCodeSegmentHdr->p_vaddr + iCodeSegmentHdr->p_memsz)) ||
-				(iDataSegmentHdr && aSym->st_value == (iDataSegmentHdr->p_vaddr + iDataSegmentHdr->p_memsz)) )
-			{
-				//If Symbol is a $$Limit symbol, then consider the open boundary.
-				string limitstr = iStringTable + aSym->st_name;
-				if (limitstr.rfind("$$Limit",limitstr.length()) != string::npos)
-				{
-					aHdr = GetSegmentAtAddr(aSym->st_value);
-					limitSymbolFound = true;
-				}
-			}
+    if (aHdr == iCodeSegmentHdr) type = ESegmentRO;
+    else if (aHdr == iDataSegmentHdr) type = ESegmentRW;
 
-			if(!limitSymbolFound )
-			{
-				aHdr = GetSegmentAtAddr(aSym->st_value);
-			}
-
-		}
-
-		if (aHdr == iCodeSegmentHdr)
-		{
-			return ESegmentRO;
-		}
-		else if (aHdr == iDataSegmentHdr)
-		{
-			return ESegmentRW;
-		}
-	}
-	catch(...)
-	{
-	}
-	return ESegmentUndefined;
+	return type;
 }
 
