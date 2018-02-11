@@ -14,7 +14,7 @@
 // Implementation of the Class ElfRelocations for the elf2e32 tool
 // @internalComponent
 // @released
-// 
+//
 //
 
 #if !defined(_PL_ELFRELOCATIONS_H)
@@ -36,8 +36,7 @@ class ElfRelocations
 {
 public:
 	typedef std::list<ElfLocalRelocation*> RelocationList;
-	
-	ElfRelocations();
+
 	~ElfRelocations();
 	PLUINT32 Add(ElfLocalRelocation* aReloc);
 
@@ -47,9 +46,9 @@ public:
 		bool operator()(ElfRelocation * x, ElfRelocation * y);
 	};
 private:
-	bool iCodeSortedP;
+	bool iCodeSortedP=false;
 	RelocationList iCodeRelocations;
-	bool iDataSortedP;
+	bool iDataSortedP=false;
 	RelocationList iDataRelocations;
 
 };

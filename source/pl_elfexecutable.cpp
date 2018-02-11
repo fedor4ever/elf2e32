@@ -187,6 +187,7 @@ char* ElfExecutable::FindCommentSection()
 {
 	size_t nShdrs = iElfHeader->e_shnum;
 	char *aCommentSection = ".comment";
+    int length = strlen(aCommentSection);
 
 	if (nShdrs)
 	{
@@ -196,7 +197,6 @@ char* ElfExecutable::FindCommentSection()
 			if (iSections[i].sh_type == SHT_PROGBITS)
 			{
 				char * aSectionName = iSectionHdrStrTbl + iSections[i].sh_name;
-				int length = strlen(aCommentSection);
 				if (!strncmp(aSectionName, aCommentSection, length))
 				{
 					char *aComment = ELF_ENTRY_PTR(char, iElfHeader, iSections[i].sh_offset);

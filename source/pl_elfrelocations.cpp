@@ -22,16 +22,6 @@
 #include "pl_elflocalrelocation.h"
 
 /**
-Constructor for class ElfRelocations
-@internalComponent
-@released
-*/
-ElfRelocations::ElfRelocations() :
-	iCodeSortedP(false), iDataSortedP(false)
-{
-}
-
-/**
 Destructor for class ElfRelocations to release allocated memory
 @internalComponent
 @released

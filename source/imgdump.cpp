@@ -305,9 +305,8 @@ void E32ImageFile::DumpHeader(TInt aDumpFlags)
 			if (v->iExportDescType != KImageHdr_ExpD_NoHoles)
 			{
 				TInt nb = v->iExportDescSize;
-				TInt i;
 				TInt j = 0;
-				for (i=0; i<nb; ++i)
+				for (TInt i=0; i<nb; ++i)
 				{
 					if (++j == 8)
 					{

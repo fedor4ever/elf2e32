@@ -134,11 +134,11 @@ public:
 	Elf32_Phdr		*iDynSegmentHdr = nullptr;
 	Elf32_Phdr		*iDataSegmentHdr = nullptr;
 	MemAddr			iDataSegment = nullptr;
-	uint32_t			iDataSegmentSize = 0;
+	uint32_t		iDataSegmentSize = 0;
 	PLUINT32		iDataSegmentIdx = 0;
 	Elf32_Phdr		*iCodeSegmentHdr = nullptr;
 	MemAddr			iCodeSegment = nullptr;
-	uint32_t			iCodeSegmentSize = 0;
+	uint32_t		iCodeSegmentSize = 0;
 	PLUINT32		iCodeSegmentIdx = 0;
 	ElfImports		iImports;
 	ElfExports		*iExports = nullptr;
