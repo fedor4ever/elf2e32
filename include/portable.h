@@ -300,41 +300,40 @@ enum TProcessPriority {
     EPrioritySupervisor=950
     };
 
-class E32EpocExpSymInfoHdr {
-    public:
-        TInt iSize;      // size of this Table
-        TInt16 iFlags;
-        TInt16 iSymCount;     // number of symbols
-        TInt iSymbolTblOffset;   // start of the symbol table - offset from byte 0 of this header
-        TInt iStringTableSz;    // size of the string table
-        TInt iStringTableOffset;   // start of the string table having names of the symbols - offset from byte 0 of this header
-        TInt iDllCount;     // Number of dependent DLLs
-        TInt iDepDllZeroOrdTableOffset; // offset of the DLL dependency table - offset from byte 0 of this header.
-    };
+struct E32EpocExpSymInfoHdr {
+    TInt iSize=0;      // size of this Table
+    TInt16 iFlags=0;
+    TInt16 iSymCount=0;     // number of symbols
+    TInt iSymbolTblOffset=0;   // start of the symbol table - offset from byte 0 of this header
+    TInt iStringTableSz=0;    // size of the string table
+    TInt iStringTableOffset=0;   // start of the string table having names of the symbols - offset from byte 0 of this header
+    TInt iDllCount=0;     // Number of dependent DLLs
+    TInt iDepDllZeroOrdTableOffset=0; // offset of the DLL dependency table - offset from byte 0 of this header.
+};
 
 class TVersion {
     public:
-        TVersion(TInt aMajor,TInt aMinor,TInt aBuild);
+        TVersion(TInt8 aMajor,TInt8 aMinor,TInt16 aBuild);
         TVersion(): TVersion(0,0,0) {}
         //IMPORT_C TVersionName Name() const;
     public:
         TInt8 iMajor; //The major version number.
         TInt8 iMinor; //The minor version number.
         TInt16 iBuild; //The build number.
-    };
+};
 
 
 struct E32RelocSection {
     TInt iSize;                 // size of this relocation section
     TInt iNumberOfRelocs;       // number of relocations in this section
-    };
+};
 
-typedef struct TExceptionDescriptor {
+struct TExceptionDescriptor {
     TUint32 iExIdxBase;
     TUint32 iExIdxLimit;
     TUint32 iROSegmentBase;
     TUint32 iROSegmentLimit;
-    } TExceptionDescriptor;
+};
 
 class E32ImageHeader {
     public:

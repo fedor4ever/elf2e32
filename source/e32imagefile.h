@@ -46,7 +46,7 @@ class E32ImageChunkDesc {
     public:
         E32ImageChunkDesc(char * aData, size_t aSize, size_t aOffset, char * aDoc);
         virtual ~E32ImageChunkDesc();
-        virtual void Write(char * aPlace);
+        void Init(char * aPlace);
 
     public:
         char * iData;
@@ -66,7 +66,6 @@ class E32ImageChunks {
         typedef vector<E32ImageChunkDesc *> ChunkList;
 
     public:
-        E32ImageChunks();
         virtual ~E32ImageChunks();
 
         void AddChunk(char * aData, size_t aSize, size_t aOffset, char * aDoc);
@@ -74,10 +73,10 @@ class E32ImageChunks {
         void SetOffset(size_t aOffset);
         ChunkList & GetChunks();
 
-    public:
+    private:
         ChunkList iChunks;
 
-        size_t iOffset;
+        size_t iOffset=0;
 
     };
 
@@ -110,7 +109,6 @@ class E32ImageFile {
         void ProcessImports();
         string FindDSO(string aName);
 
-        void ProcessRelocations();
         void ProcessCodeRelocations();
         void ProcessDataRelocations();
         void CreateRelocations(ElfRelocations::RelocationList & aRelocList, char * & aRelocs, size_t & aRelocSize);
@@ -120,21 +118,21 @@ class E32ImageFile {
 
         void ConstructImage();
 
-        virtual void InitE32ImageHeader();
-        virtual size_t GetE32ImageHeaderSize();
-        virtual size_t GetExtendedE32ImageHeaderSize();
-        virtual void SetExtendedE32ImageHeaderSize(size_t aSize);
+        void InitE32ImageHeader();
+        size_t GetE32ImageHeaderSize();
+        size_t GetExtendedE32ImageHeaderSize();
+        void SetExtendedE32ImageHeaderSize(size_t aSize);
 
-        virtual void ComputeE32ImageLayout();
-        virtual size_t GetE32ImageSize();
-        virtual size_t GetExportOffset();
-        virtual void CreateExportBitMap();
-        virtual void AddExportDescription();
+        void ComputeE32ImageLayout();
+        size_t GetE32ImageSize();
+        size_t GetExportOffset();
+        void CreateExportBitMap();
+        void AddExportDescription();
 
-        virtual void AllocateE32Image();
-        virtual void FinalizeE32Image();
-        virtual uint16_t GetCpuIdentifier();
-        virtual uint32_t EntryPointOffset();
+        void AllocateE32Image();
+        void FinalizeE32Image();
+        uint16_t GetCpuIdentifier();
+        uint32_t EntryPointOffset();
 
         enum EEntryPointStatus {
             EEntryPointOK,
@@ -144,21 +142,21 @@ class E32ImageFile {
 
         EEntryPointStatus ValidateEntryPoint();
 
-        virtual void SetUpExceptions();
-        virtual void SetUids();
-        virtual void SetSecureId();
-        virtual void SetVendorId();
-        virtual void SetCallEntryPoints();
-        virtual void SetCapability();
-        virtual void SetPriority(bool isDllp);
-        virtual void SetFixedAddress(bool isDllp);
-        virtual void SetVersion();
-        virtual void SetCompressionType();
-        virtual void SetFPU();
-        virtual void SetPaged();
-        virtual void SetSymbolLookup();
-        virtual void SetDebuggable();
-        virtual void SetSmpSafe();
+        void SetUpExceptions();
+        void SetUids();
+        void SetSecureId();
+        void SetVendorId();
+        void SetCallEntryPoints();
+        void SetCapability();
+        void SetPriority(bool isDllp);
+        void SetFixedAddress(bool isDllp);
+        void SetVersion();
+        void SetCompressionType();
+        void SetFPU();
+        void SetPaged();
+        void SetSymbolLookup();
+        void SetDebuggable();
+        void SetSmpSafe();
 
         void UpdateHeaderCrc();
 
@@ -166,33 +164,33 @@ class E32ImageFile {
 
     public:
 
-        char * iE32Image;
-        uint8 * iExportBitMap;
-        ElfExecutable * iElfExecutable;
+        char * iE32Image=nullptr;
+        uint8 * iExportBitMap=nullptr;
+        ElfExecutable * iElfExecutable=nullptr;
 
-        char* iData;
-        ElfFileSupplied * iUseCase;
-        E32ImageHeaderV * iHdr;
-        size_t iHdrSize;
+        char* iData=nullptr;
+        ElfFileSupplied * iUseCase=nullptr;
+        E32ImageHeaderV * iHdr=nullptr;
+        size_t iHdrSize=sizeof(E32ImageHeaderV);
 
         E32ImageChunks iChunks;
 
-        uint32 iNumDlls;
-        uint32 iNumImports;
+        uint32 iNumDlls=0;
+        uint32 iNumImports=0;
 
-        uint32 * iImportSection;
-        size_t iImportSectionSize;
+        uint32 * iImportSection=nullptr;
+        size_t iImportSectionSize=0;
 
-        char * iCodeRelocs;
-        size_t iCodeRelocsSize;
+        char * iCodeRelocs=nullptr;
+        size_t iCodeRelocsSize=0;
 
-        char * iDataRelocs;
-        size_t iDataRelocsSize;
+        char * iDataRelocs=nullptr;
+        size_t iDataRelocsSize=0;
 
-        size_t iExportOffset;
-        bool   iLayoutDone;
+        size_t iExportOffset=0;
+        bool   iLayoutDone=false;
 
-        int iMissingExports;
+        int iMissingExports=0;
 
         // This table carries the byte offsets in the import table entries corresponding
         // to the 0th ordinal entry of static dependencies.
@@ -200,7 +198,7 @@ class E32ImageFile {
         std::vector<uint32_t> iSymAddrTab;
         std::vector<uint32_t> iSymNameOffTab;
         string      iSymbolNames;
-        uint32_t    iSymNameOffset;
+        uint32_t    iSymNameOffset=0;
 
     public:
         E32ImageFile();
@@ -212,7 +210,6 @@ class E32ImageFile {
         TUint DataOffset();
         TUint BssOffset();
         TUint32 Capability();
-        TUint32 Format();
 
         void Dump(const char *aFileName,TInt aDumpFlags);
         void DumpHeader(TInt aDumpFlags);
@@ -250,11 +247,11 @@ class E32ImageFile {
             }
 
     public:
-        TInt iSize;
-        E32ImageHeader* iOrigHdr;
-        TInt iError;
-        TUint iOrigHdrOffsetAdj;
-        TInt iFileSize = 0;
+        TInt iSize=0;
+        E32ImageHeader* iOrigHdr=nullptr;
+        TInt iError=0;
+        TUint iOrigHdrOffsetAdj=0;
+        TInt iFileSize=0;
     };
 
 ifstream &operator>>(ifstream &is, E32ImageFile &aImage);

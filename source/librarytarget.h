@@ -46,7 +46,7 @@ public:
 	virtual ~LibraryTarget();
 	int Execute();
 	SymbolList* ReadInputDefFile();
-	void GenerateOutput(SymbolList* aSymList);
+	void GenerateOutput(SymbolList* aSymList); /// TODO (Administrator#1#02/12/18): Duplicate. See ElfFileSupplied::WriteDSOFile()
 
 private:
 	DSOHandler	*iElfIfc;

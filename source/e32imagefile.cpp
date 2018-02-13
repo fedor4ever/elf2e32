@@ -61,10 +61,8 @@ Constructor for TVersion class.
 @internalComponent
 @released
 */
-TVersion::TVersion(TInt aMajor, TInt aMinor, TInt aBuild):
-	iMajor((TInt8)aMajor), iMinor((TInt8)aMinor), iBuild((TInt16)aBuild)
-{
-}
+TVersion::TVersion(TInt8 aMajor, TInt8 aMinor, TInt16 aBuild):
+	iMajor(aMajor), iMinor(aMinor), iBuild(aBuild) {}
 
 
 /**
@@ -74,8 +72,7 @@ Constructor for E32ImageChunkDesc class.
 */
 E32ImageChunkDesc::E32ImageChunkDesc(char * aData, size_t aSize, size_t aOffset, char * aDoc):
 	iData(aData), iSize(aSize), iOffset(aOffset), iDoc(aDoc)
-{
-}
+{}
 
 E32ImageChunkDesc::~E32ImageChunkDesc() {}
 
@@ -85,19 +82,9 @@ This function writes its data in the buffer.
 @internalComponent
 @released
 */
-void E32ImageChunkDesc::Write(char * aPlace)
+void E32ImageChunkDesc::Init(char * aPlace)
 {
 	memcpy(aPlace+iOffset, iData, iSize);
-}
-
-/**
-Constructor for E32ImageChunks class.
-@internalComponent
-@released
-*/
-E32ImageChunks::E32ImageChunks():
-	iOffset(0)
-{
 }
 
 /**
@@ -167,29 +154,8 @@ Constructor for E32ImageFile class.
 @released
 */
 E32ImageFile::E32ImageFile(ElfExecutable * aExecutable, ElfFileSupplied *aUseCase) :
-	iE32Image(nullptr),
-	iExportBitMap(nullptr),
 	iElfExecutable(aExecutable),
-	iData(nullptr),
-	iUseCase(aUseCase),
-	iHdr(nullptr),
-	iHdrSize(sizeof(E32ImageHeaderV)),
-	iNumDlls(0),
-	iNumImports(0),
-	iImportSection(nullptr),
-	iImportSectionSize(0),
-	iCodeRelocs(nullptr),
-	iCodeRelocsSize(0),
-	iDataRelocs(nullptr),
-	iDataRelocsSize(0),
-	iExportOffset(0),
-	iLayoutDone(false),
-	iMissingExports(0),
-	iSymNameOffset(0),
-	iSize(0),
-	iOrigHdr(nullptr),
-	iError(0),
-	iOrigHdrOffsetAdj(0){}
+	iUseCase(aUseCase){}
 
 /**
 Constructor for E32ImageFile class.
@@ -209,7 +175,8 @@ void E32ImageFile::GenerateE32Image()
 		ProcessSymbolInfo();
 	}
 	ProcessImports();
-	ProcessRelocations();
+	ProcessCodeRelocations();
+	ProcessDataRelocations();
 	ConstructImage();
 }
 
@@ -427,17 +394,6 @@ void E32ImageFile::ReadInputELFFile(string aName, size_t & aFileSize, Elf32_Ehdr
 }
 
 /**
-This function processes relocations.
-@internalComponent
-@released
-*/
-void E32ImageFile::ProcessRelocations()
-{
-	ProcessCodeRelocations();
-	ProcessDataRelocations();
-}
-
-/**
 This function processes Code relocations.
 @internalComponent
 @released
@@ -472,7 +428,7 @@ void E32ImageFile::CreateRelocations(ElfRelocations::RelocationList & aRelocList
 
 		uint32 aBase = (*aRelocList.begin())->iSegment->p_vaddr;
 		//add for cleanup to be done later..
-		aRelocs =	new char [aRelocsSize];
+		aRelocs = new char[aRelocsSize];
 		memset(aRelocs, 0, aRelocsSize);
 		E32RelocSection * aRelocSection = (E32RelocSection * )aRelocs;
 
@@ -646,7 +602,7 @@ void E32ImageFile::InitE32ImageHeader()
 	iHdr->iModuleVersion = 0x00010000u;
 	iHdr->iCompressionType = 0;
 	iHdr->iToolsVersion = TVersion(MajorVersion, MinorVersion, Build);
-	Int64 ltime(timeToInt64(time(nullptr)));
+	Int64 ltime = timeToInt64(time(nullptr));
 	iHdr->iTimeLo=(uint32)ltime;
 	iHdr->iTimeHi=(uint32)(ltime>>32);
 	iHdr->iFlags = KImageHdrFmt_V;
@@ -741,14 +697,14 @@ void E32ImageFile::ComputeE32ImageLayout()
 	if (iCodeRelocsSize)
 	{
 		iHdr->iCodeRelocOffset = iChunks.GetOffset();
-		iChunks.AddChunk((char *)iCodeRelocs, iCodeRelocsSize, iHdr->iCodeRelocOffset, "Code Relocs");
+		iChunks.AddChunk(iCodeRelocs, iCodeRelocsSize, iHdr->iCodeRelocOffset, "Code Relocs");
 	}
 
 	// Data relocs
 	if (iDataRelocsSize)
 	{
 		iHdr->iDataRelocOffset = iChunks.GetOffset();
-		iChunks.AddChunk((char *)iDataRelocs, iDataRelocsSize, iHdr->iDataRelocOffset, "Data Relocs");
+		iChunks.AddChunk(iDataRelocs, iDataRelocsSize, iHdr->iDataRelocOffset, "Data Relocs");
 	}
 
 	iLayoutDone = true;
@@ -1324,7 +1280,7 @@ void E32ImageFile::AllocateE32Image()
 	E32ImageChunks::ChunkList aChunkList = iChunks.GetChunks();
 	for(auto p: aChunkList)
 	{
-		p->Write(iE32Image);
+		p->Init(iE32Image);
 	}
 
 	E32ImageHeaderV* header = (E32ImageHeaderV*)iE32Image;
@@ -1405,8 +1361,8 @@ bool E32ImageFile::WriteImage(const char * aName)
 	os->close();
 	if(os!=nullptr)
 	{
-	delete os;
-	os = nullptr;
+		delete os;
+		os = nullptr;
 	}
 	return true;
 }
@@ -1803,12 +1759,13 @@ void E32ImageFile::ProcessSymbolInfo()
 
 	std::cout << "aList.size() is: " << aList.size() << "\n";
 
-	int i = 0;
-	for(auto x: aList){
-        i++;
-        if(!x->iElfSym)
-            std::cout << "ABSENT exported function at pos: " << i << "\n";
-	}
+//	int i = 0;
+//	for(auto x: aList)
+//    {
+//        i++;
+//        if(!x->iElfSym)
+//            std::cout << "ABSENT exported function at pos: " << i << "\n";
+//	}
 
 	char aPad[] = {'\0', '\0', '\0', '\0'};
 /** TODO (Administrator#1#04/15/17): The nullptr iElfSym position corresponds to the Absent function in def file */
