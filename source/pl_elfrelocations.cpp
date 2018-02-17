@@ -83,7 +83,7 @@ ElfRelocations::RelocationList & ElfRelocations::GetCodeRelocations()
 		iCodeRelocations.sort(Cmp());
 		iCodeSortedP = true;
 	}
-  return iCodeRelocations;
+	return iCodeRelocations;
 }
 
 /**

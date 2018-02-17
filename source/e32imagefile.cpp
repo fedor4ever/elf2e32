@@ -46,6 +46,14 @@
 
 using namespace std;
 
+struct E32RelocPageDesc {
+    uint32_t aOffset;
+    uint32_t aSize;
+};
+
+void CreateRelocations(ElfRelocations::RelocationList & aRelocList, char * & aRelocs, size_t & aRelocsSize);
+size_t RelocationsSize(ElfRelocations::RelocationList & aRelocList);
+
 template <class T>
 inline T Align(T v, size_t s)
 {
@@ -328,7 +336,7 @@ This function checks if a DSO file exists.
 @internalComponent
 @released
 */
-static bool ProbePath(string & aPath)
+bool ProbePath(string & aPath)
 {
 	fstream aInput(aPath);
 	if (aInput.is_open())
@@ -419,7 +427,7 @@ ELF form to E32 form.
 @internalComponent
 @released
 */
-void E32ImageFile::CreateRelocations(ElfRelocations::RelocationList & aRelocList, char * & aRelocs, size_t & aRelocsSize)
+void CreateRelocations(ElfRelocations::RelocationList & aRelocList, char * & aRelocs, size_t & aRelocsSize)
 {
 	size_t rsize = RelocationsSize(aRelocList);
 	if (rsize)
@@ -481,7 +489,7 @@ sorted.
 @internalComponent
 @released
 */
-size_t E32ImageFile::RelocationsSize(ElfRelocations::RelocationList & aRelocList)
+size_t RelocationsSize(ElfRelocations::RelocationList & aRelocList)
 {
 	size_t bytecount = 0;
 	int page = -1;

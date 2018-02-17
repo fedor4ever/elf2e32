@@ -93,10 +93,6 @@ Class E32ImageFile for fields of an E32 image.
 */
 class E32ImageFile {
     public:
-        struct E32RelocPageDesc {
-        	uint32_t aOffset;
-            uint32_t aSize;
-            };
 
 //public:
         E32ImageFile(ElfExecutable * aExecutable, ElfFileSupplied * aUseCase);
@@ -111,8 +107,6 @@ class E32ImageFile {
 
         void ProcessCodeRelocations();
         void ProcessDataRelocations();
-        void CreateRelocations(ElfRelocations::RelocationList & aRelocList, char * & aRelocs, size_t & aRelocSize);
-        size_t RelocationsSize(ElfRelocations::RelocationList & aRelocList);
 
         uint16 GetE32RelocType(ElfRelocation * aReloc);
 
