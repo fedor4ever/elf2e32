@@ -46,16 +46,6 @@ ElfImportRelocation::ElfImportRelocation(ElfExecutable *aElfExec,PLMemAddr32 aAd
 
 ElfImportRelocation::~ElfImportRelocation(){}
 
-
-/**
-Function to know is import relocation
-@internalComponent
-@released
-*/
-bool ElfImportRelocation::IsImportRelocation(){
-	return true;
-}
-
 /**
 Function to add import relocation
 @internalComponent

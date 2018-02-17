@@ -87,18 +87,6 @@ ElfLocalRelocation::~ElfLocalRelocation()
 
 }
 
-
-/**
-This function overrides the virtual function to indicate that this
-relocation is not an import relocation.
-@return false
-@internalComponent
-@released
-*/
-bool ElfLocalRelocation::IsImportRelocation(){
-	return false;
-}
-
 /**
 Function to add local relocations
 @internalComponent

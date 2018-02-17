@@ -46,7 +46,6 @@ public:
 		PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,
 		void* aRel, bool aImportRel);
 
-	virtual bool IsImportRelocation() =0;
 	virtual void Add() = 0;
 
 	PLMemAddr32 iAddr;

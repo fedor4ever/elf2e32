@@ -403,7 +403,7 @@ This function adds local relocation into a list
 @released
 */
 void ElfExecutable::AddToLocalRelocations(ElfRelocation* aReloc) {
-	iLocalRelocations.Add((ElfLocalRelocation*)aReloc);
+	iElfRelocations.Add((ElfLocalRelocation*)aReloc);
 }
 
 /**
@@ -1056,17 +1056,6 @@ Elf32_Word * ElfExecutable::GetRelocationPlace(ElfRelocation * aReloc)
 }
 
 /**
-Function to get local relocation
-@return local relocation
-@internalComponent
-@released
-*/
-ElfRelocations& ElfExecutable::GetLocalRelocations()
-{
-	return iLocalRelocations;
-}
-
-/**
 Function to get code relocation
 @return code relocation list
 @internalComponent
@@ -1074,7 +1063,7 @@ Function to get code relocation
 */
 ElfRelocations::RelocationList & ElfExecutable::GetCodeRelocations()
 {
-	return GetLocalRelocations().GetCodeRelocations();
+	return iElfRelocations.GetCodeRelocations();
 }
 
 /**
@@ -1085,7 +1074,7 @@ Function to get data relocation
 */
 ElfRelocations::RelocationList & ElfExecutable::GetDataRelocations()
 {
-	return GetLocalRelocations().GetDataRelocations();
+	return iElfRelocations.GetDataRelocations();
 }
 
 /**

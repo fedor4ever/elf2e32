@@ -79,7 +79,6 @@ public:
 	Elf32_Phdr* GetSegmentAtAddr(Elf32_Addr aAddr);
 	ElfRelocations::RelocationList & GetCodeRelocations();
 	ElfRelocations::RelocationList & GetDataRelocations();
-	ElfRelocations& GetLocalRelocations();
 	bool ExeceptionsPresentP();
 	ElfExports::ExportList& GetExportsInOrdinalOrder();
 	Elf32_Sym* LookupStaticSymbol(char * aName);
@@ -142,7 +141,7 @@ public:
 	PLUINT32		iCodeSegmentIdx = 0;
 	ElfImports		iImports;
 	ElfExports		*iExports = nullptr;
-	ElfRelocations  iLocalRelocations;
+	ElfRelocations  iElfRelocations;
 	ParameterManager *iParameterManager;
 	PLUINT32		iPltGotBase = 0;
 	PLUINT32		iPltGotLimit = 0;

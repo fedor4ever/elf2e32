@@ -41,7 +41,6 @@ public:
 			Elf32_Rel* aRel, ESegmentType aSegmentType,
 			Elf32_Sym* aSym, bool aDelSym, bool aVeneerSymbol=false);
 	~ElfLocalRelocation();
-	bool IsImportRelocation();
 	void Add();
 
 	bool ExportTableReloc();

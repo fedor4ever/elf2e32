@@ -47,10 +47,9 @@ ElfRelocations::~ElfRelocations()
 Function for adding Elf local Relocations.
 @internalComponent
 @released
-@return 0 if therelocation is valid.
 */
-PLUINT32 ElfRelocations::Add(ElfLocalRelocation* aReloc){
-	if(!aReloc) return 1;
+void ElfRelocations::Add(ElfLocalRelocation* aReloc){
+	if(!aReloc) return;
 
 	switch (aReloc->iSegmentType)
 	{
@@ -63,10 +62,8 @@ PLUINT32 ElfRelocations::Add(ElfLocalRelocation* aReloc){
 		iDataRelocations.push_back(aReloc);
 		break;
 	default:
-		;
-	}
-
-	return 0;
+		break;
+}
 }
 
 /**

@@ -36,7 +36,6 @@ public:
 			PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,
 			Elf32_Rel* aRel);
 	~ElfImportRelocation();
-	bool IsImportRelocation();
 	void Add();
 
 	VersionInfo *iVerRecord = nullptr;

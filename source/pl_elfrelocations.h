@@ -38,7 +38,7 @@ public:
 	typedef std::list<ElfLocalRelocation*> RelocationList;
 
 	~ElfRelocations();
-	PLUINT32 Add(ElfLocalRelocation* aReloc);
+	void Add(ElfLocalRelocation* aReloc);
 
 	RelocationList & GetCodeRelocations();
 	RelocationList & GetDataRelocations();
