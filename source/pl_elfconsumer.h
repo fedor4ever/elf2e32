@@ -25,8 +25,6 @@
 #include <list>
 #include <stdio.h>
 
-using std::list;
-
 enum{ KMaxWindowsIOSize = 31 * 1024 * 1024 };
 
 /**
@@ -38,10 +36,10 @@ ET_EXEC or ET_DYN, it processes the imports(if required) or exports respectively
 class ElfConsumer : public ElfExecutable
 {
 public:
-	explicit ElfConsumer(ParameterManager* aParameterManager);
+	explicit ElfConsumer(std::string aElfInput);
 	virtual ~ElfConsumer();
 	PLUINT32 ReadElfFile(char* aFile);
-	int GetElfSymbolList(list<Symbol*>& aList);
+	int GetElfSymbolList(std::list<Symbol*>& aList);
 	void GetImageDetails(/*E32ImageInterface aInterface*/);
 	PLUINT32 ProcessElfFile();
 

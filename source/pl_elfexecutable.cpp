@@ -24,12 +24,12 @@
 #include <stdio.h>
 #include <cstring>
 #include <iostream>
-#include "parametermanager.h"
 #include "pl_elfimportrelocation.h"
 #include "pl_symbol.h"
 #include "message.h"
 #include "pl_elflocalrelocation.h"
 
+using std::list;
 
 /**
 Constructor for class ElfExecutable
@@ -37,8 +37,10 @@ Constructor for class ElfExecutable
 @internalComponent
 @released
 */
-ElfExecutable::ElfExecutable(ParameterManager* aParameterManager) :
-	iParameterManager(aParameterManager) {}
+ElfExecutable::ElfExecutable(string aElfInput)
+{
+    iElfInput = aElfInput;
+}
 
 
 /**
@@ -94,7 +96,7 @@ PLUINT32  ElfExecutable::ProcessElfFile(Elf32_Ehdr *aElfHdr) {
 	if(iElfHeader->e_shstrndx != SHN_UNDEF) {
 
 		if(iElfHeader->e_shstrndx > iElfHeader->e_shnum ) {
-			throw Elf2e32Error(ELFSHSTRINDEXERROR,iParameterManager->ElfInput());
+			throw Elf2e32Error(ELFSHSTRINDEXERROR,iElfInput);
 		}
 
 		iSectionHdrStrTbl = ELF_ENTRY_PTR(char, iElfHeader, iSections[iElfHeader->e_shstrndx].sh_offset);
@@ -351,7 +353,7 @@ PLUINT32  ElfExecutable::ProcessSymbols(){
 			 * All imported symbols must be informed via the version needed information.
 			 */
 			if( iVerInfo[iVersionTbl[aSymIdx]].iVerCategory != VER_CAT_NEEDED ) {
-				throw Elf2e32Error(UNDEFINEDSYMBOLERROR, iParameterManager->ElfInput(), aSymName);
+				throw Elf2e32Error(UNDEFINEDSYMBOLERROR, iElfInput, aSymName);
 			}
 			aDllName = iVerInfo[iVersionTbl[aSymIdx]].iLinkAs;
 			//aSymbol = new DllSymbol( aSymName, aType, &iElfDynSym[aSymIdx], aSymIdx);
@@ -429,22 +431,22 @@ PLUINT32  ElfExecutable::ValidateElfFile() {
 		(iElfHeader->e_ident[EI_MAG1] == ELFMAG1) &&
 		(iElfHeader->e_ident[EI_MAG2] == ELFMAG2) &&
 		(iElfHeader->e_ident[EI_MAG3] == ELFMAG3) ) {
-			throw Elf2e32Error(ELFMAGICERROR, iParameterManager->ElfInput());
+			throw Elf2e32Error(ELFMAGICERROR, iElfInput);
 	}
 
 	/*32-bit ELF file*/
 	if(iElfHeader->e_ident[EI_CLASS] != ELFCLASS32) {
-		throw Elf2e32Error(ELFCLASSERROR, iParameterManager->ElfInput());
+		throw Elf2e32Error(ELFCLASSERROR, iElfInput);
 	}
 
 	/* Check if the ELF file is in Little endian format*/
 	if(iElfHeader->e_ident[EI_DATA] != ELFDATA2LSB) {
-		throw Elf2e32Error(ELFLEERROR, iParameterManager->ElfInput());
+		throw Elf2e32Error(ELFLEERROR, iElfInput);
 	}
 
 	/* The ELF executable must be a DLL or an EXE*/
 	if( iElfHeader->e_type != ET_EXEC && iElfHeader->e_type != ET_DYN) {
-		throw Elf2e32Error(ELFEXECUTABLEERROR, iParameterManager->ElfInput());
+		throw Elf2e32Error(ELFEXECUTABLEERROR, iElfInput);
 	}
 
 	return 0;
@@ -595,7 +597,7 @@ PLUINT32  ElfExecutable::ProcessDynamicEntries(){
 	{
 		//The number of symbols should be same as the number of chains in hashtable
 		if (iNSymbols && (iNSymbols != iHashTbl->nChains))
-			throw Elf2e32Error(SYMBOLCOUNTMISMATCHERROR, iParameterManager->ElfInput());
+			throw Elf2e32Error(SYMBOLCOUNTMISMATCHERROR, iElfInput);
 		else
 		//The number of symbols is same as the number of chains in hashtable
 			iNSymbols = iHashTbl->nChains;
@@ -1171,11 +1173,11 @@ Elf32_Word ElfExecutable::EntryPointOffset()
 {
 	if (!(iElfHeader->e_entry) && !(iCodeSegmentHdr->p_vaddr))
 	{
-		Message::GetInstance()->ReportMessage(WARNING, UNDEFINEDENTRYPOINTERROR,(char*)iParameterManager->ElfInput());
+		Message::GetInstance()->ReportMessage(WARNING, UNDEFINEDENTRYPOINTERROR,(char*)iElfInput.c_str());
 		return 0;
 	}
 	else if (!(iElfHeader->e_entry))
-		throw Elf2e32Error(ENTRYPOINTNOTSETERROR, iParameterManager->ElfInput());
+		throw Elf2e32Error(ENTRYPOINTNOTSETERROR, iElfInput);
 	else
 		return iElfHeader->e_entry - iCodeSegmentHdr->p_vaddr;
 }
@@ -1190,7 +1192,7 @@ bool ElfExecutable::ExeceptionsPresentP()
 {
 	size_t nShdrs = iElfHeader->e_shnum;
 	if (!nShdrs)
-		throw Elf2e32Error(NEEDSECTIONVIEWERROR, iParameterManager->ElfInput());
+		throw Elf2e32Error(NEEDSECTIONVIEWERROR, iElfInput);
 
     // Find the exception index table section
     Elf32_Shdr * aShdr = ELF_ENTRY_PTR(Elf32_Shdr, iElfHeader, iElfHeader->e_shoff);
@@ -1229,7 +1231,7 @@ This function looks up for a symbol in the static symbol table.
 Elf32_Sym * ElfExecutable::LookupStaticSymbol(char * aName) {
 	size_t nShdrs = iElfHeader->e_shnum;
 	if (!nShdrs)
-        throw Elf2e32Error(NOSTATICSYMBOLSERROR, iParameterManager->ElfInput());
+        throw Elf2e32Error(NOSTATICSYMBOLSERROR, iElfInput);
 
 	// find the static symbol table and string table
 	Elf32_Shdr * aShdr = ELF_ENTRY_PTR(Elf32_Shdr, iElfHeader, iElfHeader->e_shoff);
@@ -1289,7 +1291,7 @@ Elf32_Sym * ElfExecutable::LookupStaticSymbol(char * aName) {
 		}
 		return nullptr;
 	}else
-		throw Elf2e32Error(NOSTATICSYMBOLSERROR, iParameterManager->ElfInput());
+		throw Elf2e32Error(NOSTATICSYMBOLSERROR, iElfInput);
 }
 
 /**

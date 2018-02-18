@@ -67,7 +67,7 @@ class ElfProducer : public ElfExecutable
 
 	typedef std::list<Symbol*> SymbolList;
 public:
-	explicit ElfProducer(ParameterManager* aParameterManager);
+	explicit ElfProducer(std::string aElfInput);
 	~ElfProducer();
 
 	void SetSymbolList(SymbolList& aSymbolList);

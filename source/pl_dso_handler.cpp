@@ -22,6 +22,7 @@
 #include "pl_dso_handler.h"
 #include "pl_elfconsumer.h"
 #include "pl_elfproducer.h"
+#include "parametermanager.h"
 
 /**
 Constructor for class DSOHandler
@@ -32,8 +33,8 @@ Constructor for class DSOHandler
 DSOHandler::DSOHandler(ParameterManager* aParameterManager){
 
 	iParameterListInterface = aParameterManager;
-	iElfProducer = new ElfProducer(aParameterManager);
-	iElfConsumer = new ElfConsumer(aParameterManager);
+	iElfProducer = new ElfProducer(aParameterManager->ElfInput());
+	iElfConsumer = new ElfConsumer(aParameterManager->ElfInput());
 }
 
 

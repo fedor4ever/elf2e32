@@ -260,7 +260,7 @@ void E32ImageFile::ProcessImports()
 		Elf32_Ehdr * aElfFile = nullptr;
 		ReadInputELFFile(aDSO, aSize, aElfFile);
 
-		ElfExecutable aElfExecutable(nullptr);//(aElfFile, aSize);
+		ElfExecutable aElfExecutable(iElfExecutable->iElfInput);
 		aElfExecutable.ProcessElfFile(aElfFile);
 
 		ElfImports::RelocationList::iterator q;
@@ -275,7 +275,7 @@ void E32ImageFile::ProcessImports()
 			{
 				if (iElfExecutable->SegmentType(aReloc->iAddr) != ESegmentRO)
 				{
-					throw Elf2e32Error(ILLEGALEXPORTFROMDATASEGMENT, aSymName, iElfExecutable->iParameterManager->ElfInput());
+					throw Elf2e32Error(ILLEGALEXPORTFROMDATASEGMENT, aSymName, iElfExecutable->iElfInput);
 				}
 			}
 			/**This catch block introduced here is to avoid deleting partially constructed object(s).

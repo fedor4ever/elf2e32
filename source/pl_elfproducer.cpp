@@ -46,8 +46,8 @@ Constructor for class ElfProducer
 @internalComponent
 @released
 */
-ElfProducer::ElfProducer(ParameterManager* aParameterManager):
-     ElfExecutable(aParameterManager) {}
+ElfProducer::ElfProducer(string aElfInput):
+     ElfExecutable(aElfInput) {}
 
 /**
 Destructor for class ElfProducer to release allocated memory

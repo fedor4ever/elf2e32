@@ -21,20 +21,17 @@
 #if !defined(_PL_ELFEXECUTABLE_H_)
 #define _PL_ELFEXECUTABLE_H_
 
-#include "pl_common.h"
 #include <list>
+#include "pl_common.h"
 #include "elfdefs.h"
 #include "pl_elfimports.h"
 #include "pl_elfrelocations.h"
 #include "pl_elfexports.h"
-#include "parametermanager.h"
 
-using std::list;
 
 class Symbol;
 class ElfRelocations;
 class ElfExports;
-class ParameterListInterface;
 class ElfLocalRelocation;
 //static PLUINT32 globalcntr = 0;
 /**
@@ -45,7 +42,7 @@ This class is for ELF object carrying the elf header, sections, segments.
 class ElfExecutable
 {
 public:
-	explicit ElfExecutable(ParameterManager* aParameterManager);
+	explicit ElfExecutable(std::string aElfInput);
 	virtual ~ElfExecutable();
 
 	PLUINT32 ProcessElfFile(Elf32_Ehdr *aElfHdr);
@@ -114,7 +111,7 @@ public:
 	char			*iStringTable = nullptr;
 	char			*iSectionHdrStrTbl = nullptr;
 
-	list<char*>		iNeeded;
+	std::list<char*>		iNeeded;
 	VersionInfo		*iVerInfo = nullptr;
 	/**
 	 * The dynamic symbol array.
@@ -142,7 +139,7 @@ public:
 	ElfImports		iImports;
 	ElfExports		*iExports = nullptr;
 	ElfRelocations  iElfRelocations;
-	ParameterManager *iParameterManager;
+	std::string     iElfInput;
 	PLUINT32		iPltGotBase = 0;
 	PLUINT32		iPltGotLimit = 0;
 	PLUINT32		iStrTabSz = 0;

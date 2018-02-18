@@ -18,12 +18,12 @@
 //
 //
 
-#include "pl_elfconsumer.h"
-#include "parametermanager.h"
-#include "errorhandler.h"
 #include <string.h>
+#include "pl_elfconsumer.h"
+#include "errorhandler.h"
 
 using std::min;
+using std::list;
 
 /**
 Constructor for class ElfConsumer
@@ -31,8 +31,8 @@ Constructor for class ElfConsumer
 @internalComponent
 @released
 */
-ElfConsumer::ElfConsumer(ParameterManager* aParameterManager) :
- ElfExecutable(aParameterManager)
+ElfConsumer::ElfConsumer(string aElfInput) :
+ ElfExecutable(aElfInput)
 {}
 
 
