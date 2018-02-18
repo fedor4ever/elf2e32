@@ -40,7 +40,6 @@ char* SECTION_NAME[] = {
 	".shstrtab"
 };
 
-
 /**
 Constructor for class ElfProducer
 @param aParameterListInterface - instance of class ParameterListInterface
@@ -48,17 +47,7 @@ Constructor for class ElfProducer
 @released
 */
 ElfProducer::ElfProducer(ParameterManager* aParameterManager):
-     ElfExecutable(aParameterManager) ,
-	 iDSONameOffset(0),
-	 iLinkAsOffset(0),
-	 iSymbolsList(nullptr),
-	 iDSODaux(nullptr),
-	 iDSOBuckets(nullptr),
-     iDSOChains(nullptr),
-	 iCodeSectionData(nullptr),
-	 iElfFileOffset(0)
-{}
-
+     ElfExecutable(aParameterManager) {}
 
 /**
 Destructor for class ElfProducer to release allocated memory
@@ -68,7 +57,6 @@ Destructor for class ElfProducer to release allocated memory
 ElfProducer::~ElfProducer(){
 	Cleanup();
 }
-
 
 /**
 This function sets the export Symbol list

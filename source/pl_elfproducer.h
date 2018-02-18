@@ -84,16 +84,16 @@ private:
 	string			iDSOName;
 
 	/** The offset of the file name within the string table of the ELF file*/
-	PLUINT32		iDSONameOffset;
+	PLUINT32		iDSONameOffset=0;
 
 	/** The DLL name that defines the export Symbols*/
 	string			iLinkAs;
 
 	/** The offset of the DLL name within the string table within the ELF file*/
-	PLUINT32		iLinkAsOffset;
+	PLUINT32		iLinkAsOffset=0;
 
 	/** The export Symbol list*/
-	SymbolList		*iSymbolsList;
+	SymbolList		*iSymbolsList=nullptr;
 
 	/** The proxy DSO full file name*/
 	string			iDsoFullName;
@@ -101,22 +101,22 @@ private:
 	/*DSO content Fields*/
 
 	/** The Elf version definition auxiliary section*/
-	Elf32_Verdaux	*iDSODaux;
+	Elf32_Verdaux	*iDSODaux=nullptr;
 
 	/** The Buckets for the hash table*/
-	Elf32_Sword		*iDSOBuckets;
+	Elf32_Sword		*iDSOBuckets=nullptr;
 
 	/** The chains pointed to by the buckets belonging to the hash table*/
-	Elf32_Sword		*iDSOChains;
+	Elf32_Sword		*iDSOChains=nullptr;
 
 	/** The Elf Dynamic section table*/
 	Elf32_Dyn		iDSODynTbl[MAX_DYN_ENTS+1];
 
 	/** The code section*/
-	PLUINT32		*iCodeSectionData;
+	PLUINT32		*iCodeSectionData=nullptr;
 
 	/** The Elf file offset maintained for writing the different sections of the Elf file*/
-	PLUINT32		iElfFileOffset;
+	PLUINT32		iElfFileOffset=0;
 
 	/** The Elf string table*/
 	string			iDSOSymNameStrTbl;
