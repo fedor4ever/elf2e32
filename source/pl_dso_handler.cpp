@@ -22,7 +22,6 @@
 #include "pl_dso_handler.h"
 #include "pl_elfconsumer.h"
 #include "pl_elfproducer.h"
-#include "parametermanager.h"
 
 /**
 Constructor for class DSOHandler
@@ -30,11 +29,10 @@ Constructor for class DSOHandler
 @internalComponent
 @released
 */
-DSOHandler::DSOHandler(ParameterManager* aParameterManager){
-
-	iParameterListInterface = aParameterManager;
-	iElfProducer = new ElfProducer(aParameterManager->ElfInput());
-	iElfConsumer = new ElfConsumer(aParameterManager->ElfInput());
+DSOHandler::DSOHandler(string aElfInput)
+{
+	iElfProducer = new ElfProducer(aElfInput);
+	iElfConsumer = new ElfConsumer(aElfInput);
 }
 
 
@@ -43,8 +41,8 @@ Destructor for class DSOHandler to release allocated memory
 @internalComponent
 @released
 */
-DSOHandler::~DSOHandler(){
-
+DSOHandler::~DSOHandler()
+{
 	DELETE_PTR(iElfProducer);
 	DELETE_PTR(iElfConsumer);
 }

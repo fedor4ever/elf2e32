@@ -20,16 +20,14 @@
 
 #if !defined(_PL_DSOHANDLER_H_)
 #define _PL_DSOHANDLER_H_
-#include "pl_common.h"
 #include <list>
-
-using std::list;
+#include <string>
+#include "pl_common.h"
 
 class Symbol;
 class ElfExecutable;
 class ElfProducer;
 class ElfConsumer;
-class ParameterManager;
 
 /**
 This class is for reading the input ELF file. If the input is of type ET_DYN, it
@@ -44,7 +42,7 @@ class DSOHandler
 	typedef std::list<Symbol*>	SymbolList;
 
 public:
-	explicit DSOHandler(ParameterManager* aParameterManager);
+	explicit DSOHandler(std::string aElfInput);
 	~DSOHandler();
 	PLUINT32 ReadElfFile(char* aElfFile);
 	void ProcessElfFile();
@@ -58,7 +56,6 @@ private:
 	ElfConsumer* iElfConsumer;
 	/** This member is responsible for generating the proxy DSO file. */
 	ElfProducer* iElfProducer;
-	ParameterManager *iParameterListInterface;
 };
 
 

@@ -40,7 +40,7 @@ ElfFileSupplied::ElfFileSupplied(ParameterManager* aParameterManager) :
     UseCaseBase(aParameterManager), iNumAbsentExports(-1),iExportBitMap(nullptr),
 	iE32ImageFile(nullptr), iElfExecutable(nullptr), iExportDescSize(0), iExportDescType(0)
 {
-	iElfIfc = new DSOHandler(aParameterManager);
+	iElfIfc = new DSOHandler(aParameterManager->ElfInput());
 }
 
 /**

@@ -33,7 +33,7 @@ Constructor for the Library Class
 LibraryTarget::LibraryTarget(ParameterManager* aParameterManager):
 UseCaseBase(aParameterManager)
 {
-	iElfIfc = new DSOHandler(aParameterManager);
+	iElfIfc = new DSOHandler(aParameterManager->ElfInput());
 	iDefFile = new DefFile();
 }
 
