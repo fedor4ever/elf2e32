@@ -20,8 +20,9 @@
 #if !defined(_PL_ELFRELOCATIONS_H)
 #define _PL_ELFRELOCATIONS_H
 
-#include "pl_common.h"
 #include <list>
+#include "pl_common.h"
+#include "elfdefs.h"
 
 class ElfRelocation;
 class ElfLocalRelocation;
@@ -35,21 +36,20 @@ This class is for Elf relocations.
 class ElfRelocations
 {
 public:
-	typedef std::list<ElfLocalRelocation*> RelocationList;
+	typedef std::list<ElfLocalRelocation*> Relocations;
 
 	~ElfRelocations();
 	void Add(ElfLocalRelocation* aReloc);
+	Relocations & GetRelocations(ESegmentType type);
 
-	RelocationList & GetCodeRelocations();
-	RelocationList & GetDataRelocations();
+private:
 	struct Cmp {
 		bool operator()(ElfRelocation * x, ElfRelocation * y);
 	};
-private:
-	bool iCodeSortedP=false;
-	RelocationList iCodeRelocations;
-	bool iDataSortedP=false;
-	RelocationList iDataRelocations;
+	bool iCodeSorted=false;
+	Relocations iCodeRelocations;
+	bool iDataSorted=false;
+	Relocations iDataRelocations;
 
 };
 

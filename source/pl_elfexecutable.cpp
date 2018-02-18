@@ -103,12 +103,12 @@ PLUINT32  ElfExecutable::ProcessElfFile(Elf32_Ehdr *aElfHdr) {
 	if( iProgHeader ) {
 		PLUINT32 aIdx = 0;
 
-		while( aIdx < iElfHeader->e_phnum) {
-			switch( iProgHeader[aIdx].p_type ) {
+		while( aIdx < iElfHeader->e_phnum)
+        {
+			switch( iProgHeader[aIdx].p_type )
+			{
 			case PT_DYNAMIC:
-				{
-					iDynSegmentHdr = &iProgHeader[aIdx];
-				}
+                iDynSegmentHdr = &iProgHeader[aIdx];
 				break;
 			case PT_LOAD:
 				{
@@ -128,7 +128,6 @@ PLUINT32  ElfExecutable::ProcessElfFile(Elf32_Ehdr *aElfHdr) {
 				break;
 			default:
 				break;
-
 			}
 			aIdx++;
 		}
@@ -217,7 +216,7 @@ void ElfExecutable::ProcessVeneers()
 {
 	if (iSymTab && iStrTab)
 	{
-		ElfRelocations::RelocationList & iLocalCodeRelocs = GetCodeRelocations();
+		ElfRelocations::Relocations & iLocalCodeRelocs = GetCodeRelocations();
 
 		Elf32_Sym *aSymTab = iSymTab;
 		int length = strlen("$Ven$AT$L$$");
@@ -238,7 +237,7 @@ void ElfExecutable::ProcessVeneers()
 				Elf32_Word	aInstruction = FindValueAtLoc(r_offset);
 				bool aRelocEntryFound = false;
 
-				ElfRelocations::RelocationList::iterator r;
+				ElfRelocations::Relocations::iterator r;
 				for (r = iLocalCodeRelocs.begin(); r != iLocalCodeRelocs.end(); r++)
 				{
 					ElfLocalRelocation * aReloc = *r;
@@ -1061,9 +1060,9 @@ Function to get code relocation
 @internalComponent
 @released
 */
-ElfRelocations::RelocationList & ElfExecutable::GetCodeRelocations()
+ElfRelocations::Relocations & ElfExecutable::GetCodeRelocations()
 {
-	return iElfRelocations.GetCodeRelocations();
+	return iElfRelocations.GetRelocations(ESegmentRO);
 }
 
 /**
@@ -1072,9 +1071,9 @@ Function to get data relocation
 @internalComponent
 @released
 */
-ElfRelocations::RelocationList & ElfExecutable::GetDataRelocations()
+ElfRelocations::Relocations & ElfExecutable::GetDataRelocations()
 {
-	return iElfRelocations.GetDataRelocations();
+	return iElfRelocations.GetRelocations(ESegmentRW);
 }
 
 /**

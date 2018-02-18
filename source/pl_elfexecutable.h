@@ -77,8 +77,8 @@ public:
 	Elf32_Word EntryPointOffset();
 	ESegmentType SegmentType(Elf32_Addr aAddr);
 	Elf32_Phdr* GetSegmentAtAddr(Elf32_Addr aAddr);
-	ElfRelocations::RelocationList & GetCodeRelocations();
-	ElfRelocations::RelocationList & GetDataRelocations();
+	ElfRelocations::Relocations & GetCodeRelocations();
+	ElfRelocations::Relocations & GetDataRelocations();
 	bool ExeceptionsPresentP();
 	ElfExports::ExportList& GetExportsInOrdinalOrder();
 	Elf32_Sym* LookupStaticSymbol(char * aName);

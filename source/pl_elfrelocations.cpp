@@ -54,50 +54,46 @@ void ElfRelocations::Add(ElfLocalRelocation* aReloc){
 	switch (aReloc->iSegmentType)
 	{
 	case ESegmentRO:
-		iCodeSortedP = false;
+		iCodeSorted = false;
 		iCodeRelocations.push_back(aReloc);
 		break;
 	case ESegmentRW:
-		iDataSortedP = false;
+		iDataSorted = false;
 		iDataRelocations.push_back(aReloc);
 		break;
 	default:
 		break;
-}
+	}
 }
 
 /**
-Function for getting code relocations. The reloc entries are
+Function for getting relocations. The reloc entries are
 sorted on the address they refer to.
 @internalComponent
 @released
-@return list of code relocation
+@return list of relocation
 */
-ElfRelocations::RelocationList & ElfRelocations::GetCodeRelocations()
+ElfRelocations::Relocations & ElfRelocations::GetRelocations(ESegmentType type)
 {
-	if (!iCodeSortedP)
-	{
-		iCodeRelocations.sort(Cmp());
-		iCodeSortedP = true;
-	}
-	return iCodeRelocations;
-}
-
-/**
-Function for getting data relocations. The reloc entries are
-sorted on the address they refer to.
-@internalComponent
-@released
-@return list of code relocation
-*/
-ElfRelocations::RelocationList & ElfRelocations::GetDataRelocations()
-{
-	if (!iDataSortedP)
-	{
-		iDataRelocations.sort(Cmp());
-		iDataSortedP = true;
-	}
-  return iDataRelocations;
+    if(type == ESegmentRO)
+    {
+        if (!iCodeSorted)
+        {
+            iCodeRelocations.sort(Cmp());
+            iCodeSorted = true;
+        }
+        return iCodeRelocations;
+    }
+    if(type == ESegmentRW)
+    {
+        if (!iDataSorted)
+        {
+            iDataRelocations.sort(Cmp());
+            iDataSorted = true;
+        }
+    return iDataRelocations;
+    }
+    throw;
 }
 
 /**

@@ -55,9 +55,9 @@ Function to create new relocation entry
 @internalComponent
 @released
 */
-ElfRelocation* ElfRelocation::NewRelocEntry(ElfExecutable *aElfExec, PLMemAddr32 aAddr, \
-				PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType, \
-				void* aRel, bool aImportRel)
+ElfRelocation* ElfRelocation::NewRelocEntry(ElfExecutable *aElfExec, PLMemAddr32 aAddr,
+        PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,
+        void* aRel, bool aImportRel)
 {
 	ElfRelocation	*aReloc = nullptr;
 	if(aImportRel)

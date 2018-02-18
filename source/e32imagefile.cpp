@@ -51,8 +51,8 @@ struct E32RelocPageDesc {
     uint32_t aSize;
 };
 
-void CreateRelocations(ElfRelocations::RelocationList & aRelocList, char * & aRelocs, size_t & aRelocsSize);
-size_t RelocationsSize(ElfRelocations::RelocationList & aRelocList);
+void CreateRelocations(ElfRelocations::Relocations & aRelocations, char * & aRelocs, size_t & aRelocsSize);
+size_t RelocationsSize(ElfRelocations::Relocations & aRelocs);
 
 template <class T>
 inline T Align(T v, size_t s)
@@ -427,14 +427,14 @@ ELF form to E32 form.
 @internalComponent
 @released
 */
-void CreateRelocations(ElfRelocations::RelocationList & aRelocList, char * & aRelocs, size_t & aRelocsSize)
+void CreateRelocations(ElfRelocations::Relocations & aRelocations, char * & aRelocs, size_t & aRelocsSize)
 {
-	size_t rsize = RelocationsSize(aRelocList);
+	size_t rsize = RelocationsSize(aRelocations);
 	if (rsize)
 	{
 		aRelocsSize = Align(rsize + sizeof(E32RelocSection), sizeof(uint32));
 
-		uint32 aBase = (*aRelocList.begin())->iSegment->p_vaddr;
+		uint32 aBase = (*aRelocations.begin())->iSegment->p_vaddr;
 		//add for cleanup to be done later..
 		aRelocs = new char[aRelocsSize];
 		memset(aRelocs, 0, aRelocsSize);
@@ -445,7 +445,7 @@ void CreateRelocations(ElfRelocations::RelocationList & aRelocList, char * & aRe
 
 		int page = -1;
 		int pagesize = sizeof(E32RelocPageDesc);
-		for (auto r: aRelocList)
+		for (auto r: aRelocations)
 		{
 			ElfLocalRelocation * aReloc = r;
 			int p = aReloc->iAddr & 0xfffff000;
@@ -475,9 +475,8 @@ void CreateRelocations(ElfRelocations::RelocationList & aRelocList, char * & aRe
 		}
 		startofblock->aOffset = page - aBase;
 		startofblock->aSize = pagesize;
-		((E32RelocSection *)aRelocs)->iNumberOfRelocs = aRelocList.size();
+		((E32RelocSection *)aRelocs)->iNumberOfRelocs = aRelocations.size();
 		((E32RelocSection *)aRelocs)->iSize = rsize;
-
 	}
 }
 
@@ -485,16 +484,16 @@ void CreateRelocations(ElfRelocations::RelocationList & aRelocList, char * & aRe
 This function calculates the relocation taking into consideration
 the page boundaries if they are crossed. The relocations are
 sorted.
-@param aRelocList - relocations found in the Elf file.
+@param aRelocs - relocations found in the Elf file.
 @internalComponent
 @released
 */
-size_t RelocationsSize(ElfRelocations::RelocationList & aRelocList)
+size_t RelocationsSize(ElfRelocations::Relocations & aRelocs)
 {
 	size_t bytecount = 0;
 	int page = -1;
-	ElfRelocations::RelocationList::iterator r;
-	for (r = aRelocList.begin(); r != aRelocList.end(); r++)
+	ElfRelocations::Relocations::iterator r;
+	for (r = aRelocs.begin(); r != aRelocs.end(); r++)
 	{
 		ElfLocalRelocation * aReloc = *r;
 		int p = aReloc->iAddr & 0xfffff000;

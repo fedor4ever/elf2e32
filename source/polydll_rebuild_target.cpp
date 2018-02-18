@@ -66,7 +66,7 @@ void POLYDLLRebuildTarget::ProcessExports()
 		++i;
 	}
 
-	Symbol *aSymbolEntry;
+	Symbol *aSymbolEntry = nullptr;
 
 	SymbolList *iSysDefExports = new SymbolList;
 
