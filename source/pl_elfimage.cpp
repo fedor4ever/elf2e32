@@ -12,14 +12,15 @@
 // Contributors: Strizhniou Fiodar - fix build and runtime errors.
 //
 // Description:
-// Implementation of the Class ElfExecutable for the elf2e32 tool
+// Implementation of the Class ElfImage for the elf2e32 tool
 // @internalComponent
 // @released
 //
 //
 
 
-#include "pl_elfexecutable.h"
+#include "pl_elfimage.h"
+
 #include "errorhandler.h"
 #include <stdio.h>
 #include <cstring>
@@ -32,29 +33,28 @@
 using std::list;
 
 /**
-Constructor for class ElfExecutable
-@param aParameterManager - Instance of class ParameterManager
+Constructor for class ElfImage
 @internalComponent
 @released
 */
-ElfExecutable::ElfExecutable(const string& aElfInput)
+ElfImage::ElfImage(const string& aElfInput)
 {
     iElfInput = aElfInput;
 }
 
 
 /**
-Destructor for class ElfExecutable
+Destructor for class ElfImage
 @internalComponent
 @released
 */
-ElfExecutable::~ElfExecutable()
+ElfImage::~ElfImage()
 {
 	delete iExports;
 	delete [] iVerInfo;
 	/*
 	all of these were getting deleted, they are not allocated by
-	ElfExecutable, they simply refer to a linear array of images
+	ElfImage, they simply refer to a linear array of images
 	in an ElfImage, hence they shouldn't be de-allocated
 
 	delete iRela;
@@ -73,7 +73,7 @@ Function to process Elf file
 @internalComponent
 @released
 */
-PLUINT32  ElfExecutable::ProcessElfFile(Elf32_Ehdr *aElfHdr) {
+PLUINT32  ElfImage::ProcessElfFile(Elf32_Ehdr *aElfHdr) {
 
 	iElfHeader = aElfHdr;
 	iEntryPoint = aElfHdr->e_entry;
@@ -150,7 +150,7 @@ Function to Find the Static Symbol Table
 @internalComponent
 @released
 */
-void ElfExecutable::FindStaticSymbolTable()
+void ElfImage::FindStaticSymbolTable()
 {
 	size_t nShdrs = iElfHeader->e_shnum;
 
@@ -184,7 +184,7 @@ Function to Find the Comment Section
 @internalComponent
 @released
 */
-char* ElfExecutable::FindCommentSection()
+char* ElfImage::FindCommentSection()
 {
 	size_t nShdrs = iElfHeader->e_shnum;
 	char *aCommentSection = ".comment";
@@ -214,7 +214,7 @@ Function to process the ARM to Thumb veneers
 @internalComponent
 @released
 */
-void ElfExecutable::ProcessVeneers()
+void ElfImage::ProcessVeneers()
 {
 	if (iSymTab && iStrTab)
 	{
@@ -295,7 +295,7 @@ Function to find the content of the address passed in
 @internalComponent
 @released
 */
-Elf32_Word	ElfExecutable::FindValueAtLoc(Elf32_Addr aOffset)
+Elf32_Word	ElfImage::FindValueAtLoc(Elf32_Addr aOffset)
 {
 	Elf32_Phdr  *aHdr = GetSegmentAtAddr(aOffset);
 	PLUINT32 aLoc = aHdr->p_offset + aOffset - aHdr->p_vaddr;
@@ -308,7 +308,7 @@ Function to process Elf symbols
 @internalComponent
 @released
 */
-PLUINT32  ElfExecutable::ProcessSymbols(){
+PLUINT32  ElfImage::ProcessSymbols(){
 	PLUINT32	aSymIdx = 0;
 	char		*aDllName;
 	char		*aSymName;
@@ -375,7 +375,7 @@ This function adds exports into the export list
 @internalComponent
 @released
 */
-Symbol* ElfExecutable::AddToExports(char* aDll, Symbol* aSymbol){
+Symbol* ElfImage::AddToExports(char* aDll, Symbol* aSymbol){
 	if( !iExports ) {
 		iExports = new ElfExports();
 	}
@@ -389,7 +389,7 @@ This function adds imports into the map
 @internalComponent
 @released
 */
-void  ElfExecutable::AddToImports(ElfImportRelocation* aReloc){
+void ElfImage::AddToImports(ElfImportRelocation* aReloc){
 	SetVersionRecord(aReloc);
 	//char *aDll = iVerInfo[iVersionTbl[aReloc->iSymNdx]].iLinkAs;
 	char *aDll = aReloc->iVerRecord->iLinkAs;
@@ -403,7 +403,7 @@ This function adds local relocation into a list
 @internalComponent
 @released
 */
-void ElfExecutable::AddToLocalRelocations(ElfRelocation* aReloc) {
+void ElfImage::AddToLocalRelocations(ElfRelocation* aReloc) {
 	iElfRelocations.Add((ElfLocalRelocation*)aReloc);
 }
 
@@ -413,7 +413,7 @@ This function records the version of an imported symbol
 @internalComponent
 @released
 */
-void ElfExecutable::SetVersionRecord( ElfRelocation* aReloc ) {
+void ElfImage::SetVersionRecord( ElfRelocation* aReloc ) {
 	if( !aReloc )
 		return;
 	((ElfImportRelocation*)aReloc)->iVerRecord = &iVerInfo[ iVersionTbl[aReloc->iSymNdx]];
@@ -424,7 +424,7 @@ This function validates the ELF file
 @internalComponent
 @released
 */
-PLUINT32  ElfExecutable::ValidateElfFile() {
+PLUINT32 ElfImage::ValidateElfFile() {
 
 	/*Check if the ELF-Magic is correct*/
 	if(!(iElfHeader->e_ident[EI_MAG0] == ELFMAG0) &&
@@ -458,7 +458,7 @@ This function processes the dynamic table.
 @internalComponent
 @released
 */
-PLUINT32  ElfExecutable::ProcessDynamicEntries(){
+PLUINT32 ElfImage::ProcessDynamicEntries(){
 
 	PLUINT32 aIdx = 0;
 	bool aSONameFound = false;
@@ -631,7 +631,7 @@ This function processes version information
 @internalComponent
 @released
 */
-void ElfExecutable::ProcessVerInfo() {
+void ElfImage::ProcessVerInfo() {
 	PLUINT32 aSz = iVerNeedCount + iVerDefCount + 1;
 	iVerInfo = new VersionInfo[aSz];
 
@@ -677,7 +677,7 @@ This function processes Elf relocations
 @internalComponent
 @released
 */
-void ElfExecutable::ProcessRelocations(){
+void ElfImage::ProcessRelocations(){
 	ProcessRelocations(iRel, iRelSize);
 	ProcessRelocations(iRela, iRelaSize);
 	ProcessRelocations(iPltRel, iPltRelSz);
@@ -692,7 +692,7 @@ Template Function to process relocations
 @released
 */
 template <class T>
-void ElfExecutable::ProcessRelocations(T *aElfRel, size_t aSize){
+void ElfImage::ProcessRelocations(T *aElfRel, size_t aSize){
 	if( !aElfRel )
 		return;
 
@@ -725,7 +725,7 @@ This function finds the addend associated with a relocation entry.
 @internalComponent
 @released
 */
-Elf32_Word ElfExecutable::Addend(Elf32_Rel* aRel) {
+Elf32_Word ElfImage::Addend(Elf32_Rel* aRel) {
 	Elf32_Phdr  *aHdr = GetSegmentAtAddr(aRel->r_offset);
 	PLUINT32 aOffset = aHdr->p_offset + aRel->r_offset - aHdr->p_vaddr;
 	Elf32_Word	*aAddendPlace = ELF_ENTRY_PTR(Elf32_Word, iElfHeader, aOffset);
@@ -739,7 +739,7 @@ This function returns the addend for a relocation entry
 @internalComponent
 @released
 */
-Elf32_Word ElfExecutable::Addend(Elf32_Rela* aRel) {
+Elf32_Word ElfImage::Addend(Elf32_Rela* aRel) {
 	return aRel->r_addend;
 }
 
@@ -750,7 +750,7 @@ This function gets the version info at an index
 @internalComponent
 @released
 */
-VersionInfo* ElfExecutable::GetVersionInfo(PLUINT32  aIndex){
+VersionInfo* ElfImage::GetVersionInfo(PLUINT32  aIndex){
 	return &iVerInfo[ iVersionTbl[aIndex]];
 }
 
@@ -763,7 +763,7 @@ defined by looking in the version required section.
 @internalComponent
 @released
 */
-char* ElfExecutable::SymbolDefinedInDll(PLUINT32  aSymbolIndex){
+char* ElfImage::SymbolDefinedInDll(PLUINT32  aSymbolIndex){
 
 	VersionInfo *aVInfo = GetVersionInfo(aSymbolIndex);
 	return aVInfo ? aVInfo->iLinkAs : nullptr;
@@ -777,7 +777,7 @@ This DSO is then looked up for the ordinal number of this symbol.
 @internalComponent
 @released
 */
-char* ElfExecutable::SymbolFromDSO(PLUINT32  aSymbolIndex){
+char* ElfImage::SymbolFromDSO(PLUINT32  aSymbolIndex){
 
 	VersionInfo *aVInfo = GetVersionInfo(aSymbolIndex);
 	return aVInfo ? aVInfo->iSOName : nullptr;
@@ -791,7 +791,7 @@ This function returns the segment type
 @released
 */
 
-ESegmentType ElfExecutable::SegmentType(Elf32_Addr aAddr) {
+ESegmentType ElfImage::SegmentType(Elf32_Addr aAddr) {
 
 	Elf32_Phdr *aHdr = GetSegmentAtAddr(aAddr);
 	if( !aHdr )
@@ -814,7 +814,7 @@ This function returns the segment type
 @internalComponent
 @released
 */
-Elf32_Phdr* ElfExecutable::Segment(ESegmentType aType) {
+Elf32_Phdr* ElfImage::Segment(ESegmentType aType) {
 
 	switch(aType)
 	{
@@ -834,7 +834,7 @@ Thsi function returns the segment header to which the address refers.
 @internalComponent
 @released
 */
-Elf32_Phdr* ElfExecutable::GetSegmentAtAddr(Elf32_Addr aAddr) {
+Elf32_Phdr* ElfImage::GetSegmentAtAddr(Elf32_Addr aAddr) {
 //    globalcntr++;
   //  std::cout << globalcntr << "\n";
 	if(iCodeSegmentHdr) {
@@ -850,7 +850,7 @@ Elf32_Phdr* ElfExecutable::GetSegmentAtAddr(Elf32_Addr aAddr) {
 		}
 	}
 
-	// When called from ESegmentType ElfExecutable::SegmentType(Elf32_Addr aAddr)
+	// When called from ESegmentType ElfImage::SegmentType(Elf32_Addr aAddr)
 	// for libcrypto.dll test we have have unintialized iCodeSegmentHdr and
 	// iDataSegmentHdr in some cases.
 	// This occurs if aAddr==0 and globalcntr have values 829, 1218 or
@@ -866,7 +866,7 @@ This function says if the symbol is global.
 @internalComponent
 @released
 */
-bool ElfExecutable::GlobalSymbol(Elf32_Sym* aSym)
+bool ElfImage::GlobalSymbol(Elf32_Sym* aSym)
 {
 	return (ELF32_ST_BIND(aSym->st_info) == STB_GLOBAL);
 }
@@ -878,7 +878,7 @@ This function says if the symbol is exported.
 @internalComponent
 @released
 */
-bool ElfExecutable::ExportedSymbol(Elf32_Sym* aSym)
+bool ElfImage::ExportedSymbol(Elf32_Sym* aSym)
 {
 	PLUINT32 aIdx = aSym->st_shndx;
 
@@ -895,7 +895,7 @@ This function says if the symbol is imported.
 @internalComponent
 @released
 */
-bool ElfExecutable::ImportedSymbol(Elf32_Sym* aSym)
+bool ElfImage::ImportedSymbol(Elf32_Sym* aSym)
 {
 	PLUINT32 aIdx = aSym->st_shndx;
 
@@ -911,7 +911,7 @@ This function says if the symbol refers to code or data.
 @internalComponent
 @released
 */
-bool ElfExecutable::FunctionSymbol(Elf32_Sym* aSym)
+bool ElfImage::FunctionSymbol(Elf32_Sym* aSym)
 {
 	return (STT_FUNC == ELF32_ST_TYPE(aSym->st_info));
 }
@@ -923,7 +923,7 @@ This function says if the symbol refers to code or data.
 @internalComponent
 @released
 */
-bool ElfExecutable::DataSymbol(Elf32_Sym* aSym)
+bool ElfImage::DataSymbol(Elf32_Sym* aSym)
 {
 	return (STT_OBJECT == ELF32_ST_TYPE(aSym->st_info));
 }
@@ -935,7 +935,7 @@ This function says if the symbol is defined in the Elf executable.
 @internalComponent
 @released
 */
-bool ElfExecutable::DefinedSymbol(Elf32_Sym* aSym)
+bool ElfImage::DefinedSymbol(Elf32_Sym* aSym)
 {
 	if( aSym->st_shndx == SHN_UNDEF )
 		return false;
@@ -950,7 +950,7 @@ This function says if the visibility of the symbol is default.
 @internalComponent
 @released
 */
-bool ElfExecutable::VisibleSymbol(Elf32_Sym* aSym)
+bool ElfImage::VisibleSymbol(Elf32_Sym* aSym)
 {
 	return (STV_DEFAULT == ELF32_ST_VISIBILITY(aSym->st_other) || STV_PROTECTED == ELF32_ST_VISIBILITY(aSym->st_other));
 }
@@ -962,7 +962,7 @@ This function finds symbol using the hash table
 @internalComponent
 @released
 */
-Elf32_Sym* ElfExecutable::FindSymbol(char* aName) {
+Elf32_Sym* ElfImage::FindSymbol(char* aName) {
 	if(!aName )
 		return nullptr;
 
@@ -993,7 +993,7 @@ Function to get symbol name
 @internalComponent
 @released
 */
-char* ElfExecutable::GetSymbolName( PLUINT32 aSymIdx) {
+char* ElfImage::GetSymbolName( PLUINT32 aSymIdx) {
 	return ELF_ENTRY_PTR(char, iStringTable, iElfDynSym[aSymIdx].st_name);
 }
 
@@ -1004,7 +1004,7 @@ Function to get symbol ordinal
 @internalComponent
 @released
 */
-PLUINT32 ElfExecutable::GetSymbolOrdinal( char* aSymName) {
+PLUINT32 ElfImage::GetSymbolOrdinal( char* aSymName) {
 	Elf32_Sym	*aSym = FindSymbol(aSymName);
 	if(!aSym)
 		return (PLUINT32)-1;
@@ -1018,7 +1018,7 @@ Function to get symbol ordinal
 @internalComponent
 @released
 */
-PLUINT32 ElfExecutable::GetSymbolOrdinal( Elf32_Sym* aSym) {
+PLUINT32 ElfImage::GetSymbolOrdinal( Elf32_Sym* aSym) {
 	PLUINT32 aOrd = (PLUINT32)-1;
 	if( aSym->st_shndx == ESegmentRO) {
 		Elf32_Word aOffset = iCodeSegmentHdr->p_offset + aSym->st_value - iCodeSegmentHdr->p_vaddr;
@@ -1035,7 +1035,7 @@ Function to get relocation offset
 @internalComponent
 @released
 */
-Elf32_Word ElfExecutable::GetRelocationOffset(ElfRelocation * aReloc)
+Elf32_Word ElfImage::GetRelocationOffset(ElfRelocation * aReloc)
 {
 	Elf32_Phdr * aHdr = GetSegmentAtAddr(aReloc->iAddr);
 	return aReloc->iAddr - aHdr->p_vaddr;
@@ -1048,7 +1048,7 @@ Function to get relocation place address
 @internalComponent
 @released
 */
-Elf32_Word * ElfExecutable::GetRelocationPlace(ElfRelocation * aReloc)
+Elf32_Word * ElfImage::GetRelocationPlace(ElfRelocation * aReloc)
 {
 	Elf32_Phdr * aHdr = GetSegmentAtAddr(aReloc->iAddr);
 	unsigned int aOffset = aHdr->p_offset + aReloc->iAddr - aHdr->p_vaddr;
@@ -1062,7 +1062,7 @@ Function to get code relocation
 @internalComponent
 @released
 */
-ElfRelocations::Relocations & ElfExecutable::GetCodeRelocations()
+ElfRelocations::Relocations & ElfImage::GetCodeRelocations()
 {
 	return iElfRelocations.GetRelocations(ESegmentRO);
 }
@@ -1073,7 +1073,7 @@ Function to get data relocation
 @internalComponent
 @released
 */
-ElfRelocations::Relocations & ElfExecutable::GetDataRelocations()
+ElfRelocations::Relocations & ElfImage::GetDataRelocations()
 {
 	return iElfRelocations.GetRelocations(ESegmentRW);
 }
@@ -1084,7 +1084,7 @@ Function to get RO base address
 @internalComponent
 @released
 */
-Elf32_Word ElfExecutable::GetROBase()
+Elf32_Word ElfImage::GetROBase()
 {
 	if (iCodeSegmentHdr) return iCodeSegmentHdr->p_vaddr;
 	return 0;
@@ -1096,7 +1096,7 @@ Function to get RO segment
 @internalComponent
 @released
 */
-MemAddr ElfExecutable::GetRawROSegment()
+MemAddr ElfImage::GetRawROSegment()
 {
 	return iCodeSegment;
 }
@@ -1107,7 +1107,7 @@ Function to get RW segment virtual address
 @internalComponent
 @released
 */
-Elf32_Word ElfExecutable::GetRWBase()
+Elf32_Word ElfImage::GetRWBase()
 {
 	if (iDataSegmentHdr) return iDataSegmentHdr->p_vaddr;
 	return 0;
@@ -1119,7 +1119,7 @@ Function to get Raw RW segment
 @internalComponent
 @released
 */
-MemAddr ElfExecutable::GetRawRWSegment()
+MemAddr ElfImage::GetRawRWSegment()
 {
 	return iDataSegment;
 }
@@ -1130,7 +1130,7 @@ Function to get RO segment size
 @internalComponent
 @released
 */
-uint32_t ElfExecutable::GetROSize()
+uint32_t ElfImage::GetROSize()
 {
     if(iCodeSegmentHdr)
         return iCodeSegmentHdr->p_filesz;
@@ -1143,7 +1143,7 @@ Function to get RW segment size
 @internalComponent
 @released
 */
-uint32_t ElfExecutable::GetRWSize()
+uint32_t ElfImage::GetRWSize()
 {
 	if (iDataSegmentHdr)
 		return iDataSegmentHdr->p_filesz;;
@@ -1156,7 +1156,7 @@ Function to get Bss segment size
 @internalComponent
 @released
 */
-uint32_t ElfExecutable::GetBssSize()
+uint32_t ElfImage::GetBssSize()
 {
 	if (iDataSegmentHdr)
 		return iDataSegmentHdr->p_memsz - iDataSegmentHdr->p_filesz;
@@ -1169,7 +1169,7 @@ Function returns entry point location in Elf image.
 @internalComponent
 @released
 */
-Elf32_Word ElfExecutable::EntryPointOffset()
+Elf32_Word ElfImage::EntryPointOffset()
 {
 	if (!(iElfHeader->e_entry) && !(iCodeSegmentHdr->p_vaddr))
 	{
@@ -1188,7 +1188,7 @@ Function to check exception is present in the Elf image.
 @internalComponent
 @released
 */
-bool ElfExecutable::ExeceptionsPresentP()
+bool ElfImage::ExeceptionsPresentP()
 {
 	size_t nShdrs = iElfHeader->e_shnum;
 	if (!nShdrs)
@@ -1218,7 +1218,7 @@ Function to get the exports in ordinal number order.
 @internalComponent
 @released
 */
-ElfExports::ExportList &ElfExecutable::GetExportsInOrdinalOrder() {
+ElfExports::ExportList &ElfImage::GetExportsInOrdinalOrder() {
 	return iExports->GetExportsInOrdinalOrder();
 }
 
@@ -1228,7 +1228,7 @@ This function looks up for a symbol in the static symbol table.
 @internalComponent
 @released
 */
-Elf32_Sym * ElfExecutable::LookupStaticSymbol(char * aName) {
+Elf32_Sym * ElfImage::LookupStaticSymbol(char * aName) {
 	size_t nShdrs = iElfHeader->e_shnum;
 	if (!nShdrs)
         throw Elf2e32Error(NOSTATICSYMBOLSERROR, iElfInput);
@@ -1300,7 +1300,7 @@ Function to get imports
 @internalComponent
 @released
 */
-ElfImports::ImportLibs ElfExecutable::GetImports() {
+ElfImports::ImportLibs ElfImage::GetImports() {
 	return iImports.GetImports();
 }
 
@@ -1310,7 +1310,7 @@ Function to get exports
 @internalComponent
 @released
 */
-ElfExports* ElfExecutable::GetExports() {
+ElfExports* ElfImage::GetExports() {
 	return iExports;
 }
 
@@ -1322,7 +1322,7 @@ Function to get fixup location
 @internalComponent
 @released
 */
-Elf32_Word* ElfExecutable::GetFixupLocation(ElfLocalRelocation* aReloc, Elf32_Addr aPlace)
+Elf32_Word* ElfImage::GetFixupLocation(ElfLocalRelocation* aReloc, Elf32_Addr aPlace)
 {
 	Elf32_Phdr * aPhdr = aReloc->ExportTableReloc() ?
 		iCodeSegmentHdr : GetSegmentAtAddr(aPlace);
@@ -1338,7 +1338,7 @@ Function to get the segment type
 @internalComponent
 @released
 */
-ESegmentType ElfExecutable::Segment(Elf32_Sym *aSym)
+ESegmentType ElfImage::Segment(Elf32_Sym *aSym)
 {
     ESegmentType type = ESegmentUndefined;
     if(!aSym) return type;

@@ -19,12 +19,12 @@
 //
 
 #include "pl_elfimportrelocation.h"
-#include "pl_elfexecutable.h"
+#include "pl_elfimage.h"
 
 
 /**
 Constructor for class ElfImportRelocation
-@param aElfExec - Instance of class ElfExecutable
+@param aElfImage - Instance of class ElfImage
 @param aAddr
 @param aAddend
 @param aIndex
@@ -33,14 +33,14 @@ Constructor for class ElfImportRelocation
 @internalComponent
 @released
 */
-ElfImportRelocation::ElfImportRelocation(ElfExecutable *aElfExec,PLMemAddr32 aAddr,
+ElfImportRelocation::ElfImportRelocation(ElfImage *aElfImage,PLMemAddr32 aAddr,
 			PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,
 			Elf32_Rel* aRel):
-			ElfRelocation(aElfExec, aAddr, aAddend, aIndex, aRelType, aRel)
+			ElfRelocation(aElfImage, aAddr, aAddend, aIndex, aRelType, aRel)
 {
-	iSymbol = &(aElfExec->iElfDynSym[iSymNdx]);
-	iSegment = aElfExec->GetSegmentAtAddr(iAddr);
-	iSegmentType = aElfExec->SegmentType(iAddr);
+	iSymbol = &(aElfImage->iElfDynSym[iSymNdx]);
+	iSegment = aElfImage->GetSegmentAtAddr(iAddr);
+	iSegmentType = aElfImage->SegmentType(iAddr);
 }
 
 
@@ -52,7 +52,7 @@ Function to add import relocation
 @released
 */
 void ElfImportRelocation::Add() {
-	iElfExec->AddToImports(this);
+	iElfImage->AddToImports(this);
 }
 
 

@@ -29,7 +29,7 @@
 using std::vector;
 using std::binary_function;
 
-class ElfExecutable;
+class ElfImage;
 class Symbol;
 
 /**
@@ -70,9 +70,9 @@ public:
 	ElfExports();
 	~ElfExports();
 
-	bool ValidExportP(ElfExecutable * aExecutable, Symbol * aSym);
+	bool ValidExportP(ElfImage * aElfImage, Symbol * aSym);
 	void FilterExports();
-	Symbol* Add(char *aDll, ElfExecutable * aExecutable, Symbol *aSym);
+	Symbol* Add(char *aDll, ElfImage * aExecutable, Symbol *aSym);
 	void Add(char *aDll, Symbol *aSym);
 	void Sort();
 	void ExportsFilteredP(bool aExportsFilteredP)

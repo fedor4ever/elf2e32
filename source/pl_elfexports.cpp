@@ -18,10 +18,10 @@
 //
 //
 
-#include "pl_elfexports.h"
-#include "pl_elfexecutable.h"
-#include "pl_symbol.h"
 #include <cstring>
+#include "pl_elfexports.h"
+#include "pl_elfimage.h"
+#include "pl_symbol.h"
 
 using std::set_difference;
 
@@ -61,15 +61,15 @@ ElfExports::~ElfExports()
 /**
 This function validates exported symbols. The typeinfo name strings
 are not valid export symbols and are discarded.
-@param aExecutable - Instance of class ElfExecutable
+@param aExecutable - Instance of class ElfImage
 @param aSym	- Symbol
 @return True if symbol is valid, otherwise false
 @internalComponent
 @released
 */
-bool ElfExports::ValidExportP(ElfExecutable * aExecutable, Symbol * aSym)
+bool ElfExports::ValidExportP(ElfImage * aElfImage, Symbol * aSym)
 {
-	char * aSymName = aExecutable->GetSymbolName(aSym->iSymbolIndex);
+	char * aSymName = aElfImage->GetSymbolName(aSym->iSymbolIndex);
 	int result = strncmp(aSymName, "_ZTS", strlen("_ZTS"));
 	return ( result != 0);
 }
@@ -77,13 +77,13 @@ bool ElfExports::ValidExportP(ElfExecutable * aExecutable, Symbol * aSym)
 /**
 This function adds export symbols into exports list.
 @param aDll - Dll name
-@param aExecutable - Instance of class ElfExecutable
+@param aExecutable - Instance of class ElfImage
 @param aSym - Dll symbol
 @return Dll Symbol if its valid, otherwise nullptr
 @internalComponent
 @released
 */
-Symbol* ElfExports::Add(char *aDll, ElfExecutable * aExecutable, Symbol *aSym)
+Symbol* ElfExports::Add(char *aDll, ElfImage * aExecutable, Symbol *aSym)
 {
 	if (ValidExportP(aExecutable, aSym))
 	{

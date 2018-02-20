@@ -25,7 +25,7 @@
 #include "pl_common.h"
 
 class DllSymbol;
-class ElfExecutable;
+class ElfImage;
 
 /**
 This class is for Elf relocation.
@@ -37,12 +37,12 @@ class ElfRelocation
 {
 
 public:
-	ElfRelocation(ElfExecutable *aElfExec, PLMemAddr32 aAddr, PLUINT32 aAddend,
+	ElfRelocation(ElfImage *aElfImage, PLMemAddr32 aAddr, PLUINT32 aAddend,
 			PLUINT32 aIndex, PLUCHAR aRelType, Elf32_Rel* aRel);
 	virtual ~ElfRelocation();
 
 	static bool ValidRelocEntry(PLUCHAR aType);
-	static ElfRelocation* NewRelocEntry( ElfExecutable *aElfExec, PLMemAddr32 aAddr,
+	static ElfRelocation* NewRelocEntry(ElfImage *aElfImage, PLMemAddr32 aAddr,
 		PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,
 		void* aRel, bool aImportRel);
 
@@ -54,7 +54,7 @@ public:
 	PLUCHAR		iRelType;
 	Elf32_Rel	*iRel;
 	Elf32_Sym	*iSymbol = nullptr;
-	ElfExecutable *iElfExec;
+	ElfImage 	*iElfImage;
 	Elf32_Phdr	*iSegment = nullptr;
 	ESegmentType iSegmentType = ESegmentUndefined;
 };

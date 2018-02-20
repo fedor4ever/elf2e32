@@ -95,7 +95,7 @@ class E32ImageFile {
     public:
 
 //public:
-        E32ImageFile(ElfExecutable * aExecutable, ElfFileSupplied * aUseCase);
+        E32ImageFile(ElfImage * aElfImage, ElfFileSupplied * aUseCase);
         virtual ~E32ImageFile();
 
         void GenerateE32Image();
@@ -160,7 +160,7 @@ class E32ImageFile {
 
         char * iE32Image=nullptr;
         uint8 * iExportBitMap=nullptr;
-        ElfExecutable * iElfExecutable=nullptr;
+        ElfImage * iElfImage=nullptr;
 
         char* iData=nullptr;
         ElfFileSupplied * iUseCase=nullptr;

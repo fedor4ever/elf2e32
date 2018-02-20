@@ -18,7 +18,7 @@
 //
 //
 
-#include "pl_elfexecutable.h"
+#include "pl_elfimage.h"
 
 // get E32ImageHeader class...
 #define INCLUDE_E32IMAGEHEADER_IMPLEMENTATION
@@ -161,8 +161,8 @@ Constructor for E32ImageFile class.
 @internalComponent
 @released
 */
-E32ImageFile::E32ImageFile(ElfExecutable * aExecutable, ElfFileSupplied *aUseCase) :
-	iElfExecutable(aExecutable),
+E32ImageFile::E32ImageFile(ElfImage * aElfImage, ElfFileSupplied *aUseCase) :
+	iElfImage(aElfImage),
 	iUseCase(aUseCase){}
 
 /**
@@ -203,7 +203,7 @@ void E32ImageFile::ProcessImports()
 	int aNumImports = 0;
 	bool aNamedLookup = iUseCase->GetNamedSymLookup();
 
-	ElfImports::ImportLibs aImportMap = iElfExecutable->GetImports();
+	ElfImports::ImportLibs aImportMap = iElfImage->GetImports();
 
 	// First set up the string table and record offsets into string table of each
 	// LinkAs name.
@@ -260,22 +260,22 @@ void E32ImageFile::ProcessImports()
 		Elf32_Ehdr * aElfFile = nullptr;
 		ReadInputELFFile(aDSO, aSize, aElfFile);
 
-		ElfExecutable aElfExecutable(iElfExecutable->iElfInput);
-		aElfExecutable.ProcessElfFile(aElfFile);
+		ElfImage aElfImage(iElfImage->iElfInput);
+		aElfImage.ProcessElfFile(aElfFile);
 
 		ElfImports::RelocationList::iterator q;
 		for (q = aImports.begin(); q != aImports.end(); q++)
 		{
 			ElfImportRelocation * aReloc = *q;
-			char * aSymName = iElfExecutable->GetSymbolName(aReloc->iSymNdx);
-			unsigned int aOrdinal = aElfExecutable.GetSymbolOrdinal(aSymName);
+			char * aSymName = iElfImage->GetSymbolName(aReloc->iSymNdx);
+			unsigned int aOrdinal = aElfImage.GetSymbolOrdinal(aSymName);
 
 			//check the reloc refers to Code Segment
 			try
 			{
-				if (iElfExecutable->SegmentType(aReloc->iAddr) != ESegmentRO)
+				if (iElfImage->SegmentType(aReloc->iAddr) != ESegmentRO)
 				{
-					throw Elf2e32Error(ILLEGALEXPORTFROMDATASEGMENT, aSymName, iElfExecutable->iElfInput);
+					throw Elf2e32Error(ILLEGALEXPORTFROMDATASEGMENT, aSymName, iElfImage->iElfInput);
 				}
 			}
 			/**This catch block introduced here is to avoid deleting partially constructed object(s).
@@ -287,10 +287,10 @@ void E32ImageFile::ProcessImports()
 				exit(EXIT_FAILURE);
 			}
 
-			Elf32_Word aRelocOffset = iElfExecutable->GetRelocationOffset(aReloc);
+			Elf32_Word aRelocOffset = iElfImage->GetRelocationOffset(aReloc);
 			aImportSection.push_back(aRelocOffset);
 
-			Elf32_Word * aRelocPlace = iElfExecutable->GetRelocationPlace(aReloc);
+			Elf32_Word * aRelocPlace = iElfImage->GetRelocationPlace(aReloc);
 //todo: wtf??:: empty conditions???
 			if (aOrdinal > 0xFFFF)
 			{
@@ -408,7 +408,7 @@ This function processes Code relocations.
 */
 void E32ImageFile::ProcessCodeRelocations()
 {
-	CreateRelocations(iElfExecutable->GetCodeRelocations(), iCodeRelocs, iCodeRelocsSize);
+	CreateRelocations(iElfImage->GetCodeRelocations(), iCodeRelocs, iCodeRelocsSize);
 }
 
 /**
@@ -418,7 +418,7 @@ This function processes Data relocations.
 */
 void E32ImageFile::ProcessDataRelocations()
 {
-	CreateRelocations(iElfExecutable->GetDataRelocations(), iDataRelocs, iDataRelocsSize);
+	CreateRelocations(iElfImage->GetDataRelocations(), iDataRelocs, iDataRelocsSize);
 }
 
 /**
@@ -519,7 +519,7 @@ This function returns the E32 interpretation for an Elf relocation type.
 */
 uint16 E32ImageFile::GetE32RelocType(ElfRelocation * aReloc)
 {
-	ESegmentType aSegType = aReloc->iSegmentType; // iElfExecutable->SegmentType(aReloc->iSymbol->st_value);
+	ESegmentType aSegType = aReloc->iSegmentType; // iElfImage->SegmentType(aReloc->iSymbol->st_value);
 	switch (aSegType)
 	{
 	case ESegmentRO:
@@ -615,18 +615,18 @@ void E32ImageFile::InitE32ImageHeader()
 	iHdr->iFlags = KImageHdrFmt_V;
 	// Confusingly, CodeSize means everything except writable data
 	iHdr->iCodeSize = 0;
-	iHdr->iDataSize = iElfExecutable->GetRWSize();
+	iHdr->iDataSize = iElfImage->GetRWSize();
 	iHdr->iHeapSizeMin = 0;
 	iHdr->iHeapSizeMax = 0;
 	iHdr->iStackSize = 0;
-	iHdr->iBssSize = iElfExecutable->GetBssSize();
+	iHdr->iBssSize = iElfImage->GetBssSize();
 	iHdr->iEntryPoint = 0;
-	iHdr->iCodeBase = iElfExecutable->GetROBase();
-	iHdr->iDataBase = iElfExecutable->GetRWBase();
+	iHdr->iCodeBase = iElfImage->GetROBase();
+	iHdr->iDataBase = iElfImage->GetRWBase();
 	iHdr->iDllRefTableCount = iNumDlls;
 	iHdr->iExportDirOffset = 0;
 	iHdr->iExportDirCount = iUseCase->GetNumExports();
-	iHdr->iTextSize = iElfExecutable->GetROSize();
+	iHdr->iTextSize = iElfImage->GetROSize();
 	iHdr->iCodeOffset = 0;
 	iHdr->iDataOffset = 0;
 	iHdr->iImportOffset = 0;
@@ -659,7 +659,7 @@ void E32ImageFile::ComputeE32ImageLayout()
 
 		// Code section
 	iHdr->iCodeOffset = endOfHeader;
-	iChunks.AddChunk(iElfExecutable->GetRawROSegment(), iElfExecutable->GetROSize(), iHdr->iCodeOffset, "Code Section");
+	iChunks.AddChunk(iElfImage->GetRawROSegment(), iElfImage->GetROSize(), iHdr->iCodeOffset, "Code Section");
 
 	// Exports Next - then we can set up CodeSize
 	// Call out to the use case so it can decide how we do this
@@ -687,10 +687,10 @@ void E32ImageFile::ComputeE32ImageLayout()
 	iHdr->iTextSize = iHdr->iCodeSize = iChunks.GetOffset() - endOfHeader;
 
 	// Data section
-	if (iElfExecutable->GetRWSize())
+	if (iElfImage->GetRWSize())
 	{
 		iHdr->iDataOffset = iChunks.GetOffset();
-		iChunks.AddChunk(iElfExecutable->GetRawRWSegment(), iElfExecutable->GetRWSize(), iHdr->iDataOffset, "Data Section");
+		iChunks.AddChunk(iElfImage->GetRawRWSegment(), iElfImage->GetRWSize(), iHdr->iDataOffset, "Data Section");
 	}
 
 	// Import Section
@@ -753,7 +753,7 @@ void E32ImageFile::CreateExportBitMap()
 	memset(iExportBitMap, 0xff, memsz);
 	// skip header
 	uint32 * exports = ((uint32 *)iUseCase->GetExportTable()) + 1;
-	uint32 absentVal = EntryPointOffset() + iElfExecutable->GetROBase();
+	uint32 absentVal = EntryPointOffset() + iElfImage->GetROBase();
 	iMissingExports = 0;
 	for (int i=0; i<nexp; ++i)
 	{
@@ -905,7 +905,7 @@ This function returns the entry point of the E32 image .
 */
 uint32_t E32ImageFile::EntryPointOffset()
 {
-	return iElfExecutable->EntryPointOffset();
+	return iElfImage->EntryPointOffset();
 }
 
 /**
@@ -918,11 +918,11 @@ E32ImageFile::EEntryPointStatus E32ImageFile::ValidateEntryPoint()
 	uint32 epOffset = iHdr->iEntryPoint;
 	if (epOffset & 3)
 		return EEntryPointOK;	// if entry point not 4 byte aligned, must be old style
-	uint32 fileOffset = epOffset + iElfExecutable->iCodeSegmentHdr->p_offset;
+	uint32 fileOffset = epOffset + iElfImage->iCodeSegmentHdr->p_offset;
 	if (fileOffset+4 > iChunks.GetOffset())
 		return EEntryPointCorrupt;	// entry point is past the end of the file??
 	int ept = 0;			// old style if first instruction not recognised
-	uint8 * p = ELF_ENTRY_PTR(uint8, iElfExecutable->iElfHeader, fileOffset + 4);
+	uint8 * p = ELF_ENTRY_PTR(uint8, iElfImage->iElfHeader, fileOffset + 4);
 	uint32 x = *--p;
 	x<<=8;
 	x|=*--p;
@@ -949,12 +949,12 @@ This function sets the exciption descriptor in the E32 image .
 void E32ImageFile::SetUpExceptions()
 {
 	char * aExDescName = "Symbian$$CPP$$Exception$$Descriptor";
-	Elf32_Sym * aSym = iElfExecutable->LookupStaticSymbol(aExDescName);
+	Elf32_Sym * aSym = iElfImage->LookupStaticSymbol(aExDescName);
 	if (aSym)
 	{
 		uint32 aSymVaddr = aSym->st_value;
-		uint32 aROBase = iElfExecutable->GetROBase();
-		uint32 aROSize = iElfExecutable->GetROSize();
+		uint32 aROBase = iElfImage->GetROBase();
+		uint32 aROSize = iElfImage->GetROSize();
 		//check its in RO segment
 		if (aSymVaddr < aROBase || aSymVaddr >= (aROBase + aROSize))
 		{
@@ -1749,7 +1749,7 @@ void E32ImageFile::ProcessSymbolInfo()
 {
 	Elf32_Addr aPlace = iUseCase->GetExportTableAddress() - 4;// This location points to 0th ord.
 	// Create a relocation entry for the 0th ordinal.
-	ElfLocalRelocation *aRel = new ElfLocalRelocation(iElfExecutable, aPlace, 0, 0, R_ARM_ABS32, \
+	ElfLocalRelocation *aRel = new ElfLocalRelocation(iElfImage, aPlace, 0, 0, R_ARM_ABS32, \
 		nullptr, ESegmentRO, nullptr, false);
 	aRel->Add();
 
@@ -1758,11 +1758,11 @@ void E32ImageFile::ProcessSymbolInfo()
 	*aZerothOrd = aPlace;
 	aPlace += sizeof(E32EpocExpSymInfoHdr);// aPlace now points to the symbol address
 											// which is just after the syminfo header.
-	if(!iElfExecutable->iExports)
+	if(!iElfImage->iExports)
 		return;
 
 	// Donot disturb the internal list sorting.
-	ElfExports::ExportList aList = iElfExecutable->iExports->GetExports(false);
+	ElfExports::ExportList aList = iElfImage->iExports->GetExports(false);
 
 	std::cout << "aList.size() is: " << aList.size() << "\n";
 
@@ -1793,7 +1793,7 @@ void E32ImageFile::ProcessSymbolInfo()
 			iSymbolNames.append(aPad, aAlign);
 		}
 		//Create a relocation entry...
-		aRel = new ElfLocalRelocation(iElfExecutable, aPlace, 0, 0, R_ARM_ABS32, nullptr,
+		aRel = new ElfLocalRelocation(iElfImage, aPlace, 0, 0, R_ARM_ABS32, nullptr,
 			ESegmentRO, x->iElfSym, false);
 		aPlace += sizeof(uint32);
 		aRel->Add();

@@ -32,7 +32,7 @@ class ElfImportRelocation : public ElfRelocation
 {
 
 public:
-	ElfImportRelocation(ElfExecutable *aElfExec, PLMemAddr32 aAddr,
+	ElfImportRelocation(ElfImage *aElfImage, PLMemAddr32 aAddr,
 			PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,
 			Elf32_Rel* aRel);
 	~ElfImportRelocation();

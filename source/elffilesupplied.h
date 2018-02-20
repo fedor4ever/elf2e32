@@ -82,7 +82,7 @@ protected:
 	PLUINT8 * iExportBitMap;
 
 	E32ImageFile * iE32ImageFile;
-	ElfExecutable *iElfExecutable;
+	ElfImage *iElfImage;
 	PLUINT16 iExportDescSize;
 	PLUINT8 iExportDescType;
 };

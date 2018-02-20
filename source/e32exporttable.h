@@ -25,7 +25,7 @@
 
 #include "pl_elfexports.h"
 
-class ElfExecutable;
+class ElfImage;
 
 /**
 class for E32 Export Table
@@ -35,14 +35,14 @@ class for E32 Export Table
 class E32ExportTable {
  public:
   ~E32ExportTable();
-  void CreateExportTable(ElfExecutable * aElfExecutable, ElfExports::ExportList & aExportList);
+  void CreateExportTable(ElfImage * aElfImage, ElfExports::ExportList & aExportList);
   size_t GetNumExports();
   bool AllocateP();
   size_t GetExportTableSize();
   uint32_t * GetExportTable();
 
  public:
-  ElfExecutable * iElfExecutable=nullptr;
+  ElfImage * iElfImage=nullptr;
   size_t iSize=0;
   uint32_t * iTable=nullptr;
   // NB. This a virtual address (within the RO segment).

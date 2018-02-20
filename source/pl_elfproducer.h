@@ -21,7 +21,7 @@
 #if !defined(_PL_ELFPRODUCER_H_)
 #define _PL_ELFPRODUCER_H_
 
-#include "pl_elfexecutable.h"
+#include "pl_elfimage.h"
 #include <string>
 
 //enum for section index
@@ -62,7 +62,7 @@ elf header, sections, dynamic array and the relocatrion entries.
 @internalComponent
 @released
 */
-class ElfProducer : public ElfExecutable
+class ElfProducer : public ElfImage
 {
 
 	typedef std::list<Symbol*> SymbolList;

@@ -15,7 +15,7 @@
 //
 
 #include "elffilesupplied.h"
-#include "pl_elfexecutable.h"
+#include "pl_elfimage.h"
 #include "errorhandler.h"
 #include "pl_dso_handler.h"
 #include "deffile.h"
@@ -38,7 +38,7 @@ Constructor for class ElfFileSupplied to initialize members and create instance 
 */
 ElfFileSupplied::ElfFileSupplied(ParameterManager* aParameterManager) :
     UseCaseBase(aParameterManager), iNumAbsentExports(-1),iExportBitMap(nullptr),
-	iE32ImageFile(nullptr), iElfExecutable(nullptr), iExportDescSize(0), iExportDescType(0)
+	iE32ImageFile(nullptr), iElfImage(nullptr), iExportDescSize(0), iExportDescType(0)
 {
 	iElfIfc = new DSOHandler(aParameterManager->ElfInput());
 }
@@ -89,7 +89,7 @@ Function to read ELF File
 void ElfFileSupplied::ReadElfFile()
 {
 	iElfIfc->ReadElfFile();
-	iElfExecutable = iElfIfc->ElfExecutableP();
+	iElfImage = iElfIfc->ElfImageP();
 }
 
 /**
@@ -123,7 +123,7 @@ Function to create exports
 */
 void ElfFileSupplied::CreateExports()
 {
-	if (iElfExecutable->iExports || GetNamedSymLookup())
+	if (iElfImage->iExports || GetNamedSymLookup())
 	{
 		CreateExportTable();
 		CreateExportBitMap();
@@ -181,7 +181,7 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 
 	iSymList = aDefValidExports;
 
-	if (iElfIfc->ElfExecutableP()->iExports)
+	if (iElfIfc->ElfImageP()->iExports)
 		iElfIfc->GetElfExportSymbolList( aElfExports );
 	else if (!aDefExports)
 		return;
@@ -260,8 +260,8 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 				 */
 				if ((aIsCustomDll || aExcludeUnwantedExports) && UnWantedSymbol((*aResultPos)->SymbolName()))
 				{
-					iElfExecutable->iExports->ExportsFilteredP(true);
-					iElfExecutable->iExports->iFilteredExports.push_back((Symbol *)(*aResultPos));
+					iElfImage->iExports->ExportsFilteredP(true);
+					iElfImage->iExports->iFilteredExports.push_back((Symbol *)(*aResultPos));
 					++aResultPos;
 					continue;
 				}
@@ -271,8 +271,8 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 					if ((!strncmp("_ZTI", (*aResultPos)->SymbolName(), len)) ||
 					    (!strncmp("_ZTV", (*aResultPos)->SymbolName(), len)))
 					{
-						iElfExecutable->iExports->ExportsFilteredP(true);
-						iElfExecutable->iExports->iFilteredExports.push_back((Symbol *)(*aResultPos));
+						iElfImage->iExports->ExportsFilteredP(true);
+						iElfImage->iExports->iFilteredExports.push_back((Symbol *)(*aResultPos));
 						++aResultPos;
 						continue;
 					}
@@ -301,7 +301,7 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 			while( aResultPos != aAbsentListEnd  ) {
 				//aElfExports.insert(aElfExports.end(), *aResultPos);
 				aSymbol = new Symbol( *(*aResultPos), SymbolTypeCode, true);
-				iElfExecutable->iExports->Add(iElfExecutable->iSOName, aSymbol);
+				iElfImage->iExports->Add(iElfImage->iSOName, aSymbol);
 				//aElfExports.insert(aElfExports.end(), (Symbol*)aSymbol);
 				iSymList.push_back((Symbol*)aSymbol);
 				++aResultPos;
@@ -311,8 +311,8 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 		}
 	}
 
-	if(iElfExecutable->iExports && iElfExecutable->iExports->ExportsFilteredP() ) {
-		iElfExecutable->iExports->FilterExports();
+	if(iElfImage->iExports && iElfImage->iExports->ExportsFilteredP() ) {
+		iElfImage->iExports->FilterExports();
 	}
 
 	aElfExports.clear();
@@ -328,7 +328,7 @@ exports are available.
 */
 void ElfFileSupplied::GenerateOutput()
 {
-	if (iElfExecutable->iExports)
+	if (iElfImage->iExports)
 	{
 		WriteDefFile();
 		WriteDSOFile();
@@ -372,7 +372,7 @@ void ElfFileSupplied::WriteE32()
 	    return;
 	}
 
-	iE32ImageFile = new E32ImageFile(iElfExecutable, this);
+	iE32ImageFile = new E32ImageFile(iElfImage, this);
 
 	try
 	{
@@ -399,7 +399,7 @@ Function to check image is Dll or not.
 */
 bool ElfFileSupplied::ImageIsDll()
 {
-	return (iElfExecutable->LookupStaticSymbol("_E32Dll") != NULL);
+	return (iElfImage->LookupStaticSymbol("_E32Dll") != NULL);
 }
 
 /**
@@ -469,10 +469,10 @@ void ElfFileSupplied::CreateExportTable()
 {
 	ElfExports::ExportList aList;
 
-	if(iElfExecutable->iExports)
-		aList = iElfExecutable->GetExportsInOrdinalOrder();
+	if(iElfImage->iExports)
+		aList = iElfImage->GetExportsInOrdinalOrder();
 
-	iExportTable.CreateExportTable(iElfExecutable, aList);
+	iExportTable.CreateExportTable(iElfImage, aList);
 }
 
 /**
@@ -488,7 +488,7 @@ void ElfFileSupplied::CreateExportBitMap()
 	memset(iExportBitMap, 0xff, memsz);
 	// skip header
 	PLUINT32 * exports = ((PLUINT32 *)GetExportTable()) + 1;
-	PLUINT32 absentVal = iElfExecutable->EntryPointOffset() + iElfExecutable->GetROBase();
+	PLUINT32 absentVal = iElfImage->EntryPointOffset() + iElfImage->GetROBase();
 	iNumAbsentExports = 0;
 	for (int i=0; i<nexp; ++i)
 	{

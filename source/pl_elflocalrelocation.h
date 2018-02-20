@@ -33,10 +33,10 @@ class ElfLocalRelocation : public ElfRelocation
 {
 
 public:
-	ElfLocalRelocation(ElfExecutable *aElfExec,PLMemAddr32 aAddr,
+	ElfLocalRelocation(ElfImage *aElfImage,PLMemAddr32 aAddr,
 			PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,
 			Elf32_Rel* aRel, bool aVeneerSymbol=false);
-	ElfLocalRelocation(ElfExecutable *aElfExec,PLMemAddr32 aAddr,
+	ElfLocalRelocation(ElfImage *aElfImage,PLMemAddr32 aAddr,
 			PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,
 			Elf32_Rel* aRel, ESegmentType aSegmentType,
 			Elf32_Sym* aSym, bool aDelSym, bool aVeneerSymbol=false);

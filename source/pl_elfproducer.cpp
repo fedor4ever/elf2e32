@@ -47,7 +47,7 @@ Constructor for class ElfProducer
 @released
 */
 ElfProducer::ElfProducer(string aElfInput):
-     ElfExecutable(aElfInput) {}
+     ElfImage(aElfInput) {}
 
 /**
 Destructor for class ElfProducer to release allocated memory

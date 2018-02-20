@@ -25,7 +25,7 @@
 #include "pl_common.h"
 
 class Symbol;
-class ElfExecutable;
+class ElfImage;
 class ElfProducer;
 class ElfReader;
 
@@ -49,7 +49,7 @@ public:
 	PLUINT32 WriteElfFile(char* aDsoFullName, char* aDllName, char* aFile, SymbolList& aSymbolList);
 	int GetElfExportSymbolList(SymbolList& aList);
 	void GetImageDetails(/*E32ImageInterface aImageInterface*/);
-	ElfExecutable * ElfExecutableP();
+	ElfImage * ElfImageP();
 
 private:
 	/** This member handles reading the ELF executable file. */

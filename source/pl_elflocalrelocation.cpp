@@ -18,13 +18,13 @@
 //
 //
 
-#include "pl_elflocalrelocation.h"
-#include "pl_elfexecutable.h"
 #include <portable.h>
+#include "pl_elflocalrelocation.h"
+#include "pl_elfimage.h"
 
 /**
 Constructor for class ElfLocalRelocation
-@param aElfExec - Instance of class ElfExecutable
+@param aElfImage - Instance of class ElfImage
 @param aAddr    - location where the relocation refers to.
 @param aAddend  - addend for the relocation entry
 @param aIndex   - symbol index
@@ -33,21 +33,21 @@ Constructor for class ElfLocalRelocation
 @internalComponent
 @released
 */
-ElfLocalRelocation::ElfLocalRelocation(ElfExecutable *aElfExec, PLMemAddr32 aAddr,
+ElfLocalRelocation::ElfLocalRelocation(ElfImage *aElfImage, PLMemAddr32 aAddr,
 		PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,
 		Elf32_Rel* aRel, bool aVeneerSymbol):
-		ElfRelocation(aElfExec, aAddr, aAddend, aIndex, aRelType, aRel)
+		ElfRelocation(aElfImage, aAddr, aAddend, aIndex, aRelType, aRel)
 {
-	iSegment = aElfExec->GetSegmentAtAddr( iAddr );
-	iSegmentType = aElfExec->SegmentType( iAddr );
-	iSymbol = &(aElfExec->iElfDynSym[iSymNdx]);
+	iSegment = aElfImage->GetSegmentAtAddr( iAddr );
+	iSegmentType = aElfImage->SegmentType( iAddr );
+	iSymbol = &(aElfImage->iElfDynSym[iSymNdx]);
 	iDelSym = false;
 	iVeneerSymbol = aVeneerSymbol;
 }
 
 /**
 Constructor for class ElfLocalRelocation
-@param aElfExec - Instance of class ElfExecutable
+@param aElfImage - Instance of class ElfImage
 @param aAddr    - location where the relocation refers to.
 @param aAddend  - addend for the relocation entry
 @param aIndex
@@ -59,32 +59,26 @@ Constructor for class ElfLocalRelocation
 @internalComponent
 @released
 */
-ElfLocalRelocation::ElfLocalRelocation(ElfExecutable *aElfExec, PLMemAddr32 aAddr, \
-			PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType, \
-			Elf32_Rel* aRel, ESegmentType aSegmentType, Elf32_Sym* aSym,bool aDelSym, bool aVeneerSymbol): \
-		ElfRelocation(aElfExec, aAddr, aAddend, aIndex, aRelType, aRel)
+ElfLocalRelocation::ElfLocalRelocation(ElfImage *aElfImage, PLMemAddr32 aAddr,
+			PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,
+			Elf32_Rel* aRel, ESegmentType aSegmentType, Elf32_Sym* aSym,bool aDelSym, bool aVeneerSymbol):
+		ElfRelocation(aElfImage, aAddr, aAddend, aIndex, aRelType, aRel)
 {
 	iSegmentType = aSegmentType;
-	iSegment = aElfExec->Segment(aSegmentType);
-	//iSymbol = &(aElfExec->iElfDynSym[iSymNdx]);
+	iSegment = aElfImage->Segment(aSegmentType);
+	//iSymbol = &(aElfImage->iElfDynSym[iSymNdx]);
 	iSymbol = aSym;
 	iDelSym = aDelSym;
 	iVeneerSymbol = aVeneerSymbol;
 }
 
 
-/**
-Destructor for class ElfLocalRelocation
-@internalComponent
-@released
-*/
 ElfLocalRelocation::~ElfLocalRelocation()
 {
 	if(iDelSym)
 	{
 		DELETE_PTR(iSymbol);
 	}
-
 }
 
 /**
@@ -93,7 +87,7 @@ Function to add local relocations
 @released
 */
 void ElfLocalRelocation::Add() {
-	iElfExec->AddToLocalRelocations(this);
+	iElfImage->AddToLocalRelocations(this);
 }
 
 /**
@@ -106,7 +100,7 @@ PLUINT16 ElfLocalRelocation::Fixup()
 {
 	if(!ExportTableReloc() && !iVeneerSymbol)
 	{
-		Elf32_Word * aLoc = iElfExec->GetFixupLocation(this, iAddr);
+		Elf32_Word * aLoc = iElfImage->GetFixupLocation(this, iAddr);
 		Elf32_Word aLocVal = * aLoc;
 
 		if (iRelType == R_ARM_ABS32 || iRelType == R_ARM_GLOB_DAT )
@@ -119,7 +113,7 @@ PLUINT16 ElfLocalRelocation::Fixup()
 
 	ESegmentType aType;
 	if( iSymbol )
-		aType = iElfExec->Segment(iSymbol);
+		aType = iElfImage->Segment(iSymbol);
 	else
 		aType = iSegmentType;
 

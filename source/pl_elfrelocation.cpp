@@ -34,18 +34,18 @@ Constructor for class ElfRelocation
 @internalComponent
 @released
 */
-ElfRelocation::ElfRelocation(ElfExecutable *aElfExec, PLMemAddr32 aAddr,
+ElfRelocation::ElfRelocation(ElfImage *aElfExec, PLMemAddr32 aAddr,
 		PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,
 		Elf32_Rel* aRel) : iAddr(aAddr), iAddend(aAddend),
 		iSymNdx(aIndex), iRelType(aRelType), iRel(aRel),
-		iElfExec(aElfExec) {}
+		iElfImage(aElfExec) {}
 
 ElfRelocation::~ElfRelocation(){}
 
 
 /**
 Function to create new relocation entry
-@param aElfExec - Instance of class ElfExecutable
+@param aElfExec - Instance of class ElfImage
 @param aAddr    - location where the relocation refers to.
 @param aAddend  - addend for the relocation entry
 @param aIndex   - symbol index
@@ -55,7 +55,7 @@ Function to create new relocation entry
 @internalComponent
 @released
 */
-ElfRelocation* ElfRelocation::NewRelocEntry(ElfExecutable *aElfExec, PLMemAddr32 aAddr,
+ElfRelocation* ElfRelocation::NewRelocEntry(ElfImage *aElfExec, PLMemAddr32 aAddr,
         PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,
         void* aRel, bool aImportRel)
 {

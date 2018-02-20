@@ -21,7 +21,7 @@
 #if !defined(_PL_ELFCONSUMER_H_)
 #define _PL_ELFCONSUMER_H_
 
-#include "pl_elfexecutable.h"
+#include "pl_elfimage.h"
 #include <list>
 #include <stdio.h>
 
@@ -33,12 +33,12 @@ ET_EXEC or ET_DYN, it processes the imports(if required) or exports respectively
 @internalComponent
 @released
 */
-class ElfReader : public ElfExecutable
+class ElfReader : public ElfImage
 {
 public:
 	explicit ElfReader(std::string aElfInput);
 	virtual ~ElfReader();
-	PLUINT32 Read(char* aFile);
+	PLUINT32 Read();
 	int GetElfSymbols(std::list<Symbol*>& aList);
 	void GetImageDetails(/*E32ImageInterface aInterface*/);
 	PLUINT32 ProcessElfFile();

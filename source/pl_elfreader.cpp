@@ -28,7 +28,7 @@ using std::list;
 
 
 ElfReader::ElfReader(string aElfInput) :
-    ElfExecutable(aElfInput)
+    ElfImage(aElfInput)
 {}
 
 
@@ -113,7 +113,7 @@ PLUINT32 ElfReader::ProcessElfFile(){
 
 	try
 	{
-		ElfExecutable::ProcessElfFile(aElfHdr);
+		ElfImage::ProcessElfFile(aElfHdr);
 
 		/* The following is a workaround for the ARM linker problem.
 		 * Linker Problem: ARM linker generates Long ARM to Thumb veneers for which
@@ -124,7 +124,7 @@ PLUINT32 ElfReader::ProcessElfFile(){
 		 */
 		char const aARMCompiler[] = "ARM Linker, RVCT";
 		int length = strlen(aARMCompiler);
-		char * aCommentSection = ElfExecutable::FindCommentSection();
+		char * aCommentSection = ElfImage::FindCommentSection();
    		/* The .comment section in an elf file contains the compiler version information and
    		 * it is used to apply the fore mentioned workaround.
    		 * Some build tool chains generating elf file output without the .comment section,
@@ -177,8 +177,8 @@ PLUINT32 ElfReader::ProcessElfFile(){
 				 * Relocation entries should be generated for these symbols if the linker
 				 * is not generating the same.
 				 */
-				ElfExecutable::FindStaticSymbolTable();
-				ElfExecutable::ProcessVeneers();
+				ElfImage::FindStaticSymbolTable();
+				ElfImage::ProcessVeneers();
 			}
 		}
 		}

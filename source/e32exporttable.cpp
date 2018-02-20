@@ -1,5 +1,5 @@
 // Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
-// Copyright (c) 2017 Strizhniou Fiodar
+// Copyright (c) 2017-2018 Strizhniou Fiodar
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,7 +19,7 @@
 #include <iostream>
 #include <stdint.h>
 
-#include "pl_elfexecutable.h"
+#include "pl_elfimage.h"
 #include "pl_elfexports.h"
 #include "pl_elflocalrelocation.h"
 #include "pl_symbol.h"
@@ -36,18 +36,18 @@ E32ExportTable::~E32ExportTable()
 
 /**
 This function updates the e32 export table.
-@param aElfExecutable - Elf executable
+@param aElfImage - Elf executable
 @param aExportList - export symbol list
 @internalComponent
 @released
 */
-void E32ExportTable::CreateExportTable(ElfExecutable * aElfExecutable, ElfExports::ExportList & aExportList)
+void E32ExportTable::CreateExportTable(ElfImage * aElfImage, ElfExports::ExportList & aExports)
 {
-	iElfExecutable = aElfExecutable;
-	// ELFExports::ExportList aExportList = aElfExecutable->GetExportsInOrdinalOrder();
+	iElfImage = aElfImage;
+	// ELFExports::ExportList aExportList = aElfImage->GetExportsInOrdinalOrder();
 	// The export table has a header containing the number of entries
 	// before the entries themselves. So add 1 to number of exports
-	iNumExports = aExportList.size();
+	iNumExports = aExports.size();
 	size_t aSize = iNumExports + 1;
 	iSize = aSize * sizeof(MemAddr);
 
@@ -56,8 +56,8 @@ void E32ExportTable::CreateExportTable(ElfExecutable * aElfExecutable, ElfExport
 
 	iTable = new uint32_t[aSize];
 	// Set up header
-	iTable[0] = aExportList.size();
-	Elf32_Phdr * aROHdr = aElfExecutable->iCodeSegmentHdr;
+	iTable[0] = aExports.size();
+	Elf32_Phdr * aROHdr = aElfImage->iCodeSegmentHdr;
 	// The export table starts after the header. NB this is a virtual address in the RO
 	// segment of the E32Image. It is outside the ELF RO segment.
 	Elf32_Addr * aPlace =  ELF_ENTRY_PTR(Elf32_Addr, aROHdr->p_vaddr, aROHdr->p_filesz) + 1;
@@ -66,7 +66,7 @@ void E32ExportTable::CreateExportTable(ElfExecutable * aElfExecutable, ElfExport
 	// i.e. copy it from iTable.
 	iAllocateP = true;
 	bool aDelSym;
-	ElfExports::ExportList::iterator first = aExportList.begin();
+	ElfExports::ExportList::iterator first = aExports.begin();
 	for (uint32_t i = 1; i < aSize; i++, first++)
 	{
 		Elf32_Sym * sym;
@@ -74,7 +74,7 @@ void E32ExportTable::CreateExportTable(ElfExecutable * aElfExecutable, ElfExport
 		uint32_t ptr;
 		if ((*first)->Absent())
 		{
-			ptr = aElfExecutable->iEntryPoint;
+			ptr = aElfImage->iEntryPoint;
 			sym = new Elf32_Sym;
 			memset(sym, 0, sizeof(Elf32_Sym));
 			sym->st_value = ptr;
@@ -88,7 +88,7 @@ void E32ExportTable::CreateExportTable(ElfExecutable * aElfExecutable, ElfExport
 		}
 		// set up the pointer
 		iTable[i] = ptr;
-		ElfLocalRelocation * aRel = new ElfLocalRelocation(iElfExecutable,
+		ElfLocalRelocation * aRel = new ElfLocalRelocation(iElfImage,
                 iExportTableAddress, 0, i, R_ARM_ABS32, nullptr, ESegmentRO, sym, aDelSym);
 	    aPlace++; /// TODO (Administrator#1#06/02/17): why that val never used??!!
 		aRel->Add();

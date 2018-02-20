@@ -12,7 +12,7 @@
 // Contributors: Strizhniou Fiodar - fix build and runtime errors.
 //
 // Description:
-// Implementation of the Class ElfExecutable for the elf2e32 tool
+// Implementation of the Class ElfImage for the elf2e32 tool
 // @internalComponent
 // @released
 //
@@ -39,11 +39,11 @@ This class is for ELF object carrying the elf header, sections, segments.
 @internalComponent
 @released
 */
-class ElfExecutable
+class ElfImage
 {
 public:
-	explicit ElfExecutable(const std::string& aElfInput);
-	virtual ~ElfExecutable();
+	explicit ElfImage(const std::string& aElfInput);
+	virtual ~ElfImage();
 
 	PLUINT32 ProcessElfFile(Elf32_Ehdr *aElfHdr);
 

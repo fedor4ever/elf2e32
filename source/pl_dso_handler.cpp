@@ -118,7 +118,7 @@ Function for returning instance of elf consumer
 @released
 @return return the elf consumer instance
 */
-ElfExecutable * DSOHandler::ElfExecutableP(){
+ElfImage * DSOHandler::ElfImageP(){
 	return iElfReader;
 }
 
