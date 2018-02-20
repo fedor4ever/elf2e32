@@ -42,7 +42,7 @@ This class is for ELF object carrying the elf header, sections, segments.
 class ElfExecutable
 {
 public:
-	explicit ElfExecutable(std::string aElfInput);
+	explicit ElfExecutable(const std::string& aElfInput);
 	virtual ~ElfExecutable();
 
 	PLUINT32 ProcessElfFile(Elf32_Ehdr *aElfHdr);

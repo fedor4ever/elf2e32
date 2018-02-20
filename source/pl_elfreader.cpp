@@ -12,49 +12,33 @@
 // Contributors: Strizhniou Fiodar - fix build and runtime errors.
 //
 // Description:
-// Implementation of the Class ElfConsumer for the elf2e32 tool
+// Implementation of the Class ElfReader for the elf2e32 tool
 // @internalComponent
 // @released
 //
 //
 
 #include <string.h>
-#include "pl_elfconsumer.h"
+
+#include "pl_elfreader.h"
 #include "errorhandler.h"
 
 using std::min;
 using std::list;
 
-/**
-Constructor for class ElfConsumer
-@param aParameterListInterface - instance of class ParameterListInterface
-@internalComponent
-@released
-*/
-ElfConsumer::ElfConsumer(string aElfInput) :
+
+ElfReader::ElfReader(string aElfInput) :
  ElfExecutable(aElfInput)
 {}
 
 
-/**
-Destructor for class ElfConsumer
-@internalComponent
-@released
-*/
-ElfConsumer::~ElfConsumer(){
+ElfReader::~ElfReader(){
 
 	DELETE_PTR_ARRAY(iMemBlock);
 }
 
 
-/**
-This operation takes the member of the ElfFileWriter object that is to be populated with the
-export info in the iExports member (from the iInputElfFile member of ElfConsumer).
-@param aFile - Elf file name
-@internalComponent
-@released
-*/
-PLUINT32 ElfConsumer::ReadElfFile(char* aFile){
+PLUINT32 ElfReader::Read(char* aFile){
 	FILE*	aFd;
 
 	if( (aFd = fopen(aFile,"rb")) == nullptr) {
@@ -92,7 +76,7 @@ Funtion for getting elf symbol list
 @internalComponent
 @released
 */
-int ElfConsumer::GetElfSymbolList(list<Symbol*>& aList){
+int ElfReader::GetElfSymbols(list<Symbol*>& aList){
 
 	if( !iExports ) return 0;
 
@@ -114,7 +98,7 @@ Funtion for getting image details
 @internalComponent
 @released
 */
-void ElfConsumer::GetImageDetails(/*E32ImageInterface aInterface*/){
+void ElfReader::GetImageDetails(/*E32ImageInterface aInterface*/){
 
 }
 
@@ -124,7 +108,7 @@ Funtion for processing elf file
 @internalComponent
 @released
 */
-PLUINT32 ElfConsumer::ProcessElfFile(){
+PLUINT32 ElfReader::ProcessElfFile(){
 
 	Elf32_Ehdr *aElfHdr = ELF_ENTRY_PTR(Elf32_Ehdr, iMemBlock, 0);
 

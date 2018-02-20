@@ -20,7 +20,7 @@
 
 
 #include "pl_dso_handler.h"
-#include "pl_elfconsumer.h"
+#include "pl_elfreader.h"
 #include "pl_elfproducer.h"
 
 /**
@@ -32,7 +32,7 @@ Constructor for class DSOHandler
 DSOHandler::DSOHandler(string aElfInput)
 {
 	iElfProducer = new ElfProducer(aElfInput);
-	iElfConsumer = new ElfConsumer(aElfInput);
+	iElfReader = new ElfReader(aElfInput);
 }
 
 
@@ -44,29 +44,29 @@ Destructor for class DSOHandler to release allocated memory
 DSOHandler::~DSOHandler()
 {
 	DELETE_PTR(iElfProducer);
-	DELETE_PTR(iElfConsumer);
+	DELETE_PTR(iElfReader);
 }
 
 
 /**
-Reads the ELF executable file through its ElfConsumer member
+Reads the ELF executable file through its ElfReader member
 @param aElfFile The ELF executable file name
 @internalComponent
 @released
 @return Error status
 */
 PLUINT32 DSOHandler::ReadElfFile(char* aElfFile){
-	return iElfConsumer->ReadElfFile( aElfFile );
+	return iElfReader->Read( aElfFile );
 }
 
 /**
-Processes the ELF executable file through its ElfConsumer member
+Processes the ELF executable file through its ElfReader member
 @internalComponent
 @released
 @return Error status
 */
 void DSOHandler::ProcessElfFile(){
-	iElfConsumer->ProcessElfFile();
+	iElfReader->ProcessElfFile();
 }
 
 /**
@@ -98,7 +98,7 @@ compare them with those found from the DEF file.
 @param aList A reference to the list is passed so as to fetch all the exported Symbols from ELF executable.
 */
 int DSOHandler::GetElfExportSymbolList(SymbolList& aList){
-	return (iElfConsumer->GetElfSymbolList(aList));
+	return (iElfReader->GetElfSymbols(aList));
 }
 
 
@@ -113,13 +113,13 @@ void DSOHandler::GetImageDetails(/*E32ImageInterface aImageInterface*/){
 }
 
 /**
-Function for retuning instance of elf consumer
+Function for returning instance of elf consumer
 @internalComponent
 @released
 @return return the elf consumer instance
 */
 ElfExecutable * DSOHandler::ElfExecutableP(){
-	return iElfConsumer;
+	return iElfReader;
 }
 
 

@@ -37,7 +37,7 @@ Constructor for class ElfExecutable
 @internalComponent
 @released
 */
-ElfExecutable::ElfExecutable(string aElfInput)
+ElfExecutable::ElfExecutable(const string& aElfInput)
 {
     iElfInput = aElfInput;
 }

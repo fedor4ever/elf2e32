@@ -12,7 +12,7 @@
 // Contributors:
 //
 // Description:
-// Implementation of the Class ElfConsumer for the elf2e32 tool
+// Implementation of the Class ElfReader for the elf2e32 tool
 // @internalComponent
 // @released
 //
@@ -33,13 +33,13 @@ ET_EXEC or ET_DYN, it processes the imports(if required) or exports respectively
 @internalComponent
 @released
 */
-class ElfConsumer : public ElfExecutable
+class ElfReader : public ElfExecutable
 {
 public:
-	explicit ElfConsumer(std::string aElfInput);
-	virtual ~ElfConsumer();
-	PLUINT32 ReadElfFile(char* aFile);
-	int GetElfSymbolList(std::list<Symbol*>& aList);
+	explicit ElfReader(std::string aElfInput);
+	virtual ~ElfReader();
+	PLUINT32 Read(char* aFile);
+	int GetElfSymbols(std::list<Symbol*>& aList);
 	void GetImageDetails(/*E32ImageInterface aInterface*/);
 	PLUINT32 ProcessElfFile();
 

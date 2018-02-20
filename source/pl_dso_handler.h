@@ -27,7 +27,7 @@
 class Symbol;
 class ElfExecutable;
 class ElfProducer;
-class ElfConsumer;
+class ElfReader;
 
 /**
 This class is for reading the input ELF file. If the input is of type ET_DYN, it
@@ -52,13 +52,11 @@ public:
 	ElfExecutable * ElfExecutableP();
 
 private:
-	/** This member handles reading the ELF exucutable file. */
-	ElfConsumer* iElfConsumer;
+	/** This member handles reading the ELF executable file. */
+	ElfReader* iElfReader;
 	/** This member is responsible for generating the proxy DSO file. */
 	ElfProducer* iElfProducer;
 };
-
-
 
 
 #endif // !defined(_PL_DSOHANDLER_H_)
