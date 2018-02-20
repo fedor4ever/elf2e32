@@ -55,8 +55,8 @@ Reads the ELF executable file through its ElfReader member
 @released
 @return Error status
 */
-PLUINT32 DSOHandler::ReadElfFile(char* aElfFile){
-	return iElfReader->Read( aElfFile );
+PLUINT32 DSOHandler::ReadElfFile(){
+	return iElfReader->Read();
 }
 
 /**

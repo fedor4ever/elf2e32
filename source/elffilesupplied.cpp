@@ -88,9 +88,7 @@ Function to read ELF File
 */
 void ElfFileSupplied::ReadElfFile()
 {
-	char * aElfFileName = UseCaseBase::InputElfFileName();
-
-	iElfIfc->ReadElfFile(aElfFileName);
+	iElfIfc->ReadElfFile();
 	iElfExecutable = iElfIfc->ElfExecutableP();
 }
 

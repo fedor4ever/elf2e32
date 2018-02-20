@@ -28,21 +28,20 @@ using std::list;
 
 
 ElfReader::ElfReader(string aElfInput) :
- ElfExecutable(aElfInput)
+    ElfExecutable(aElfInput)
 {}
 
 
 ElfReader::~ElfReader(){
-
 	DELETE_PTR_ARRAY(iMemBlock);
 }
 
 
-PLUINT32 ElfReader::Read(char* aFile){
+PLUINT32 ElfReader::Read(){
 	FILE*	aFd;
 
-	if( (aFd = fopen(aFile,"rb")) == nullptr) {
-		throw Elf2e32Error(FILEOPENERROR, aFile);
+	if( (aFd = fopen(iElfInput.c_str(),"rb")) == nullptr) {
+		throw Elf2e32Error(FILEOPENERROR, iElfInput);
 	}
 
 	fseek(aFd, 0, SEEK_END);
@@ -61,7 +60,7 @@ PLUINT32 ElfReader::Read(char* aFile){
 
 		if( fread(iMemBlock + bytesRead, chunkSize, 1, aFd) != 1) {
             fclose(aFd);
-			throw Elf2e32Error(FILEREADERROR, aFile);
+			throw Elf2e32Error(FILEREADERROR, iElfInput);
 		}
 	}
     fclose(aFd);
@@ -123,7 +122,7 @@ PLUINT32 ElfReader::ProcessElfFile(){
 		 * Hence the workaround is applicable only for executables generated
 		 * by ARM linker 2.2 and if build number is below 616.
 		 */
-		char * aARMCompiler = "ARM Linker, RVCT";
+		char const aARMCompiler[] = "ARM Linker, RVCT";
 		int length = strlen(aARMCompiler);
 		char * aCommentSection = ElfExecutable::FindCommentSection();
    		/* The .comment section in an elf file contains the compiler version information and

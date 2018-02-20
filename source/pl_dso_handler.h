@@ -44,7 +44,7 @@ class DSOHandler
 public:
 	explicit DSOHandler(std::string aElfInput);
 	~DSOHandler();
-	PLUINT32 ReadElfFile(char* aElfFile);
+	PLUINT32 ReadElfFile();
 	void ProcessElfFile();
 	PLUINT32 WriteElfFile(char* aDsoFullName, char* aDllName, char* aFile, SymbolList& aSymbolList);
 	int GetElfExportSymbolList(SymbolList& aList);
