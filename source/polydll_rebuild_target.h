@@ -27,7 +27,7 @@
 
 class Symbol;
 
-typedef std::list<Symbol*> SymbolList;
+typedef std::list<Symbol*> Symbols;
 
 /**
 This class is derived from the base class ExportTypeRebuildTarget and is responsible for

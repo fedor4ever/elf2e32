@@ -70,7 +70,7 @@ void POLYDLLFBTarget::ProcessExports()
 
 	Symbol *aSymbolEntry;
 
-	iDefExports = new SymbolList;
+	iDefExports = new Symbols;
 
 	for (int k=0; k < count; k++)
 	{

@@ -21,16 +21,16 @@
 #ifndef __ELFFILESUPPLIED_H_
 #define __ELFFILESUPPLIED_H_
 
+#include <list>
 #include "usecasebase.h"
 #include "e32exporttable.h"
-#include <list>
 
 class Symbol;
-class DllSymbol;
-class DSOHandler;
+class ElfReader;
+class ElfProducer;
 class ParameterManager;
 
-typedef std::list<Symbol*> SymbolList;
+typedef std::list<Symbol*> Symbols;
 
 /**
 This class is derived from the base class UseCaseBase and handles case for elf file supplied.
@@ -49,7 +49,7 @@ public:
 	void ReadElfFile();
 	virtual void ProcessExports();
 	virtual void GenerateOutput();
-	void ValidateExports(SymbolList* aDefExports);
+	void ValidateExports(Symbols* aDefExports);
 	void CreateExports();
 	void WriteDefFile();
 	void WriteDSOFile();
@@ -74,15 +74,16 @@ public:
 	bool UnWantedSymbol(const char * aSymbol);
 
 protected:
-	SymbolList iSymList;
-	DSOHandler	*iElfIfc;
+	Symbols iSymbols;
 
 	E32ExportTable iExportTable;
 	int iNumAbsentExports;
 	PLUINT8 * iExportBitMap;
 
 	E32ImageFile * iE32ImageFile;
-	ElfImage *iElfImage;
+	ElfReader *iReader;
+	ElfProducer* iElfProducer;
+
 	PLUINT16 iExportDescSize;
 	PLUINT8 iExportDescType;
 };

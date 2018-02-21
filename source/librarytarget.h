@@ -22,13 +22,14 @@
 #if !defined(SYMBIAN_LIBRARYTARGET_H_)
 #define SYMBIAN_LIBRARYTARGET_H_
 
-#include "usecasebase.h"
 #include <list>
+
+#include "elffilesupplied.h"
+#include "usecasebase.h"
 
 class Symbol;
 class DSOHandler;
 class DefFile;
-typedef std::list<Symbol*> SymbolList;
 
 /**
 This class is derived from the base class UseCaseBase and is responsible for creation of
@@ -38,18 +39,16 @@ and then passes the Symbol List to the DSOHandler to generate the DSO file.
 @internalComponent
 @released
 */
-class LibraryTarget : public UseCaseBase
+class LibraryTarget : public ElfFileSupplied
 {
 
 public:
 	explicit LibraryTarget(ParameterManager* aParameterManager);
 	virtual ~LibraryTarget();
 	int Execute();
-	SymbolList* ReadInputDefFile();
-	void GenerateOutput(SymbolList* aSymList); /// TODO (Administrator#1#02/12/18): Duplicate. See ElfFileSupplied::WriteDSOFile()
+	Symbols* ReadInputDefFile();
 
 private:
-	DSOHandler	*iElfIfc;
 	DefFile *iDefFile;
 };
 

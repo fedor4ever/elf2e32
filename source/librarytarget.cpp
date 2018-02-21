@@ -19,7 +19,6 @@
 //
 
 #include "librarytarget.h"
-#include "pl_dso_handler.h"
 #include "deffile.h"
 #include <iostream>
 #include <stdlib.h>
@@ -31,9 +30,8 @@ Constructor for the Library Class
 @released
 */
 LibraryTarget::LibraryTarget(ParameterManager* aParameterManager):
-UseCaseBase(aParameterManager)
+ElfFileSupplied(aParameterManager)
 {
-	iElfIfc = new DSOHandler(aParameterManager->ElfInput());
 	iDefFile = new DefFile();
 }
 
@@ -46,7 +44,6 @@ Destructor for the Library Class
 */
 LibraryTarget::~LibraryTarget()
 {
-	delete iElfIfc;
 	delete iDefFile;
 }
 
@@ -61,11 +58,10 @@ DEF file. The DSO file is generated on passing the symbols.
 */
 int LibraryTarget::Execute()
 {
-	SymbolList *aSymList;
-	aSymList = ReadInputDefFile();
-	GenerateOutput(aSymList);
+    Symbols *tmp = ReadInputDefFile();
+    iSymbols.splice(iSymbols.begin(), *tmp);
+	WriteDSOFile();
 	return EXIT_SUCCESS;
-
 }
 
 /**
@@ -76,24 +72,10 @@ Function to read the symbols from the DEF file.
 
 @return the list of symbols read from the DEF file.
 */
-SymbolList* LibraryTarget::ReadInputDefFile()
+Symbols* LibraryTarget::ReadInputDefFile()
 {
 	char * aDEFFileName = UseCaseBase::DefInput();
 
 	return iDefFile->ReadDefFile(aDEFFileName);
 }
 
-/**
-Function to generate the output DSO File.
-
-@internalComponent
-@released
-*/
-void LibraryTarget::GenerateOutput(SymbolList* aSymList)
-{
-	char * aLinkAs = UseCaseBase::LinkAsDLLName();
-	char * aDSOName = UseCaseBase::DSOOutput();
-	char * aDSOFileName = UseCaseBase::FileName(aDSOName);
-
-	iElfIfc->WriteElfFile( aDSOName, aDSOFileName, aLinkAs, *aSymList);
-}

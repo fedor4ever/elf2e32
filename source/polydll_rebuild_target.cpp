@@ -68,7 +68,7 @@ void POLYDLLRebuildTarget::ProcessExports()
 
 	Symbol *aSymbolEntry = nullptr;
 
-	SymbolList *iSysDefExports = new SymbolList;
+	Symbols *iSysDefExports = new Symbols;
 
 	iDefExports = iDefFile->ReadDefFile(iParameterManager->DefInput());
 

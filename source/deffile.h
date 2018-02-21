@@ -24,7 +24,7 @@
 #include <list>
 
 class Symbol;
-typedef std::list <Symbol*>	SymbolList;
+typedef std::list <Symbol*>	Symbols;
 
 /**
 Class for DEF File Handler.
@@ -36,13 +36,13 @@ class DefFile
 	public:
 		DefFile(): iFileName(nullptr),iSymbolList(nullptr){};
 		virtual ~DefFile();
-		SymbolList* ReadDefFile(char *defFile);
-		void WriteDefFile(char *fileName, SymbolList *newSymbolList);
-		SymbolList* GetSymbolEntryList(char *defFile);
-		SymbolList* GetSymbolEntryList() { return iSymbolList;}
+		Symbols* ReadDefFile(char *defFile);
+		void WriteDefFile(char *fileName, Symbols *newSymbolList);
+		Symbols* GetSymbolEntryList(char *defFile);
+		Symbols* GetSymbolEntryList() { return iSymbolList;}
 	private:
 		char *iFileName;
-		SymbolList *iSymbolList;
+		Symbols *iSymbolList;
 		int GetFileSize(FILE * fptrDef);
 		char* OpenDefFile(char *defFile);
 		void ParseDefFile(char *defData);

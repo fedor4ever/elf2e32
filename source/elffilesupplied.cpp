@@ -14,19 +14,20 @@
 // Description:
 //
 
+#include <algorithm>
+#include <iostream>
+#include <cstring>
+
 #include "elffilesupplied.h"
 #include "pl_elfimage.h"
 #include "errorhandler.h"
-#include "pl_dso_handler.h"
 #include "deffile.h"
 #include "pl_elfexports.h"
 #include "pl_symbol.h"
 #include "elf2e32.h"
 #include "staticlibsymbols.h"
-
-#include <algorithm>
-#include <iostream>
-#include <cstring>
+#include "pl_elfproducer.h"
+#include "pl_elfreader.h"
 
 using std::cout;
 
@@ -38,9 +39,10 @@ Constructor for class ElfFileSupplied to initialize members and create instance 
 */
 ElfFileSupplied::ElfFileSupplied(ParameterManager* aParameterManager) :
     UseCaseBase(aParameterManager), iNumAbsentExports(-1),iExportBitMap(nullptr),
-	iE32ImageFile(nullptr), iElfImage(nullptr), iExportDescSize(0), iExportDescType(0)
+	iE32ImageFile(nullptr), iReader(nullptr), iExportDescSize(0), iExportDescType(0)
 {
-	iElfIfc = new DSOHandler(aParameterManager->ElfInput());
+	iElfProducer = new ElfProducer(aParameterManager->ElfInput());
+	iReader = new ElfReader(aParameterManager->ElfInput());
 }
 
 /**
@@ -50,8 +52,9 @@ Destructor for class ElfFileSupplied to release allocated memory
 */
 ElfFileSupplied::~ElfFileSupplied()
 {
-	iSymList.clear();
-	delete iElfIfc;
+	iSymbols.clear();
+	delete iElfProducer;
+	delete iReader;
 	delete [] iExportBitMap;
 }
 
@@ -64,7 +67,7 @@ Execute Function for the Elf File Supplied use case
 int ElfFileSupplied::Execute()
 {
 	ReadElfFile();
-	iElfIfc->ProcessElfFile();
+	iReader->ProcessElfFile();
 	try
 	{
         ProcessExports();
@@ -88,8 +91,7 @@ Function to read ELF File
 */
 void ElfFileSupplied::ReadElfFile()
 {
-	iElfIfc->ReadElfFile();
-	iElfImage = iElfIfc->ElfImageP();
+	iReader->Read();
 }
 
 /**
@@ -113,7 +115,7 @@ void ElfFileSupplied::WriteDefFile()
 	char * aDEFFileName = UseCaseBase::DefOutput();
 	DefFile deffile;
 
-	deffile.WriteDefFile(aDEFFileName, &iSymList);
+	deffile.WriteDefFile(aDEFFileName, &iSymbols);
 }
 
 /**
@@ -123,7 +125,7 @@ Function to create exports
 */
 void ElfFileSupplied::CreateExports()
 {
-	if (iElfImage->iExports || GetNamedSymLookup())
+	if (iReader->iExports || GetNamedSymLookup())
 	{
 		CreateExportTable();
 		CreateExportBitMap();
@@ -136,7 +138,7 @@ Function to validate exports
 @internalComponent
 @released
 */
-void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
+void ElfFileSupplied::ValidateExports(Symbols *aDefExports)
 {
 	/**
 	 * Symbols from DEF file (DEF_Symbols) => Valid_DEF + Absent
@@ -154,11 +156,11 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 	PLUINT32 aMaxOrdinal = 0;
 	int len = strlen("_ZTI");
 
-	typedef SymbolList::iterator Iterator;
+	typedef Symbols::iterator Iterator;
 
 
-	//SymbolList *aDefExports, aDefValidExports, aDefAbsentExports, aElfExports;
-	SymbolList aDefValidExports, aDefAbsentExports, aElfExports;
+	//Symbols *aDefExports, aDefValidExports, aDefAbsentExports, aElfExports;
+	Symbols aDefValidExports, aDefAbsentExports, aElfExports;
 
 	//aDefExports = iDefIfc->GetSymbolEntryList();
 	if (aDefExports)
@@ -179,10 +181,10 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 			}
 		}
 
-	iSymList = aDefValidExports;
+	iSymbols = aDefValidExports;
 
-	if (iElfIfc->ElfImageP()->iExports)
-		iElfIfc->GetElfExportSymbolList( aElfExports );
+	if (iReader->iExports)
+		iReader->GetElfSymbols( aElfExports );
 	else if (!aDefExports)
 		return;
 
@@ -195,7 +197,7 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 
 	//Check for Case 1... {Valid_DEF - ELF_Symbols}
 	{
-		SymbolList aResult(aDefValidExports.size());
+		Symbols aResult(aDefValidExports.size());
 		Iterator aResultPos = aResult.begin();
 
 		Iterator aMissingListEnd = set_difference(aDefValidExports.begin(), aDefValidExports.end(), \
@@ -221,7 +223,7 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 	{
 		if(aDefAbsentExports.size())
 		{
-			SymbolList aResult(aDefAbsentExports.size());
+			Symbols aResult(aDefAbsentExports.size());
 			Iterator aResultPos = aResult.begin();
 
 			Iterator aAbsentListEnd = set_intersection(aDefAbsentExports.begin(), aDefAbsentExports.end(), \
@@ -231,7 +233,7 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 			{
 				// intersection set {Absent,ELF_Symbols} is non-empty
 
-				iSymList.insert(iSymList.end(), *aResultPos);
+				iSymbols.insert(iSymbols.end(), *aResultPos);
 				cout << "Elf2e32: Warning: Symbol " << (*aResultPos)->SymbolName() << " absent in the DEF file, but present in the ELF file" << "\n";
 				++aResultPos;
 			}
@@ -240,7 +242,7 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 
 	//Do 3
 	{
-		SymbolList aResult(aElfExports.size());
+		Symbols aResult(aElfExports.size());
 		Iterator aResultPos = aResult.begin();
 
 		Iterator aNewListEnd = set_difference(aElfExports.begin(), aElfExports.end(), \
@@ -260,8 +262,8 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 				 */
 				if ((aIsCustomDll || aExcludeUnwantedExports) && UnWantedSymbol((*aResultPos)->SymbolName()))
 				{
-					iElfImage->iExports->ExportsFilteredP(true);
-					iElfImage->iExports->iFilteredExports.push_back((Symbol *)(*aResultPos));
+					iReader->iExports->ExportsFilteredP(true);
+					iReader->iExports->iFilteredExports.push_back((Symbol *)(*aResultPos));
 					++aResultPos;
 					continue;
 				}
@@ -271,15 +273,15 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 					if ((!strncmp("_ZTI", (*aResultPos)->SymbolName(), len)) ||
 					    (!strncmp("_ZTV", (*aResultPos)->SymbolName(), len)))
 					{
-						iElfImage->iExports->ExportsFilteredP(true);
-						iElfImage->iExports->iFilteredExports.push_back((Symbol *)(*aResultPos));
+						iReader->iExports->ExportsFilteredP(true);
+						iReader->iExports->iFilteredExports.push_back((Symbol *)(*aResultPos));
 						++aResultPos;
 						continue;
 					}
 				}
 				(*aResultPos)->SetOrdinal( ++aMaxOrdinal );
 				(*aResultPos)->SetSymbolStatus(New); // Set the symbol Status as NEW
-				iSymList.push_back(*aResultPos);
+				iSymbols.push_back(*aResultPos);
 				if(WarnForNewExports())
 					cout << "Elf2e32: Warning: New Symbol " << (*aResultPos)->SymbolName() << " found, export(s) not yet Frozen" << "\n";
 			}
@@ -291,7 +293,7 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 	{
 		if(aDefAbsentExports.size())
 		{
-			SymbolList aResult(aDefAbsentExports.size());
+			Symbols aResult(aDefAbsentExports.size());
 			Iterator aResultPos = aResult.begin();
 
 			Iterator aAbsentListEnd = set_difference(aDefAbsentExports.begin(), aDefAbsentExports.end(), \
@@ -301,18 +303,18 @@ void ElfFileSupplied::ValidateExports(SymbolList *aDefExports)
 			while( aResultPos != aAbsentListEnd  ) {
 				//aElfExports.insert(aElfExports.end(), *aResultPos);
 				aSymbol = new Symbol( *(*aResultPos), SymbolTypeCode, true);
-				iElfImage->iExports->Add(iElfImage->iSOName, aSymbol);
+				iReader->iExports->Add(iReader->iSOName, aSymbol);
 				//aElfExports.insert(aElfExports.end(), (Symbol*)aSymbol);
-				iSymList.push_back((Symbol*)aSymbol);
+				iSymbols.push_back((Symbol*)aSymbol);
 				++aResultPos;
 			}
 			aElfExports.sort(ElfExports::PtrELFExportOrdinalCompare());
-			iSymList.sort(ElfExports::PtrELFExportOrdinalCompare());
+			iSymbols.sort(ElfExports::PtrELFExportOrdinalCompare());
 		}
 	}
 
-	if(iElfImage->iExports && iElfImage->iExports->ExportsFilteredP() ) {
-		iElfImage->iExports->FilterExports();
+	if(iReader->iExports && iReader->iExports->ExportsFilteredP() ) {
+		iReader->iExports->FilterExports();
 	}
 
 	aElfExports.clear();
@@ -328,7 +330,7 @@ exports are available.
 */
 void ElfFileSupplied::GenerateOutput()
 {
-	if (iElfImage->iExports)
+	if (iReader->iExports)
 	{
 		WriteDefFile();
 		WriteDSOFile();
@@ -352,8 +354,10 @@ void ElfFileSupplied::WriteDSOFile()
 	}
 
 	char * aDSOFileName = UseCaseBase::FileName(aDSOName);
+	/** This member is responsible for generating the proxy DSO file. */
 
-	iElfIfc->WriteElfFile( aDSOName, aDSOFileName, aLinkAs, iSymList );
+	iElfProducer->SetSymbolList(iSymbols);
+	iElfProducer->WriteElfFile(aDSOName, aDSOFileName, aLinkAs);
 }
 
 /**
@@ -372,7 +376,7 @@ void ElfFileSupplied::WriteE32()
 	    return;
 	}
 
-	iE32ImageFile = new E32ImageFile(iElfImage, this);
+	iE32ImageFile = new E32ImageFile(iReader, this);
 
 	try
 	{
@@ -399,7 +403,7 @@ Function to check image is Dll or not.
 */
 bool ElfFileSupplied::ImageIsDll()
 {
-	return (iElfImage->LookupStaticSymbol("_E32Dll") != NULL);
+	return (iReader->LookupStaticSymbol("_E32Dll") != NULL);
 }
 
 /**
@@ -469,10 +473,10 @@ void ElfFileSupplied::CreateExportTable()
 {
 	ElfExports::ExportList aList;
 
-	if(iElfImage->iExports)
-		aList = iElfImage->GetExportsInOrdinalOrder();
+	if(iReader->iExports)
+		aList = iReader->GetExportsInOrdinalOrder();
 
-	iExportTable.CreateExportTable(iElfImage, aList);
+	iExportTable.CreateExportTable(iReader, aList);
 }
 
 /**
@@ -488,7 +492,7 @@ void ElfFileSupplied::CreateExportBitMap()
 	memset(iExportBitMap, 0xff, memsz);
 	// skip header
 	PLUINT32 * exports = ((PLUINT32 *)GetExportTable()) + 1;
-	PLUINT32 absentVal = iElfImage->EntryPointOffset() + iElfImage->GetROBase();
+	PLUINT32 absentVal = iReader->EntryPointOffset() + iReader->GetROBase();
 	iNumAbsentExports = 0;
 	for (int i=0; i<nexp; ++i)
 	{

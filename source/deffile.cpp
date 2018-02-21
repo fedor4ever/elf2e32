@@ -45,8 +45,8 @@ DefFile::~DefFile()
 {
 	if(iSymbolList && iSymbolList->size())
 	{
-		SymbolList::iterator aItr = iSymbolList->begin();
-		SymbolList::iterator last = iSymbolList->end();
+		Symbols::iterator aItr = iSymbolList->begin();
+		Symbols::iterator last = iSymbolList->end();
 		Symbol *temp;
 
 		while(aItr != last)
@@ -133,7 +133,7 @@ Function to Parse Def File which has been read in buffer.
 */
 void DefFile::ParseDefFile(char *defFileEntries)
 {
-	iSymbolList = new SymbolList;
+	iSymbolList = new Symbols;
 
 	int PreviousOrdinal=0;
 	char MultiLineStatement[1024]="";
@@ -822,7 +822,7 @@ Function to Read def file and get the internal representation in structure.
 @internalComponent
 @released
 */
-SymbolList* DefFile::ReadDefFile(char *defFile)
+Symbols* DefFile::ReadDefFile(char *defFile)
 {
 	char *defFileEntries;
 
@@ -841,7 +841,7 @@ Function to get the internal representation of Def File.
 @internalComponent
 @released
 */
-SymbolList* DefFile::GetSymbolEntryList(char *defFile)
+Symbols* DefFile::GetSymbolEntryList(char *defFile)
 {
 	if(iSymbolList)
 	{
@@ -858,11 +858,11 @@ SymbolList* DefFile::GetSymbolEntryList(char *defFile)
 /**
 Function to write DEF file from symbol entry List.
 @param fileName - Def file name
-@param newSymbolList - pointer to SymbolList which we get as an input for writing in DEF File
+@param newSymbolList - pointer to Symbols which we get as an input for writing in DEF File
 @internalComponent
 @released
 */
-void DefFile::WriteDefFile(char *fileName, SymbolList * newSymbolList)
+void DefFile::WriteDefFile(char *fileName, Symbols * newSymbolList)
 {
 
 	char ordinal[6];
@@ -872,8 +872,8 @@ void DefFile::WriteDefFile(char *fileName, SymbolList * newSymbolList)
 	if((fptr=fopen(fileName,"wb"))==NULL)
 		throw Elf2e32Error(FILEOPENERROR,fileName);
 
-	SymbolList::iterator aItr = newSymbolList->begin();
-	SymbolList::iterator last = newSymbolList->end();
+	Symbols::iterator aItr = newSymbolList->begin();
+	Symbols::iterator last = newSymbolList->end();
 	Symbol *aSym;
 
 	string current = "EXPORTS\r\n";

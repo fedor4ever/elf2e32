@@ -31,8 +31,8 @@ using std::string;
 
 enum SymbolStatus {Matching,Missing,New};
 /**
- * This class is shared among all that use the symbol information. To name  them,
- * DefFileHandler, UseCaseController, DSOHandler. To be finalized  by
+ * This class is shared among all that use the symbol information. To name them,
+ * DefFileHandler, UseCaseController, DSOHandler. To be finalized by
  * DefFileHandler.
  */
 class Symbol

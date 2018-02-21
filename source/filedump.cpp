@@ -86,7 +86,7 @@ Function to generate ASM File.
 int FileDump::GenerateAsmFile(const char* afileName)//DumpAsm
 {
 	DefFile *iDefFile = new DefFile();
-	SymbolList *aSymList;
+	Symbols *aSymList;
 	aSymList = iDefFile->ReadDefFile(iParameterManager->DefInput());
 
 	FILE *fptr;
@@ -97,8 +97,8 @@ int FileDump::GenerateAsmFile(const char* afileName)//DumpAsm
 	}
 	else
 	{
-		SymbolList::iterator aItr = aSymList->begin();
-		SymbolList::iterator last = aSymList->end();
+		Symbols::iterator aItr = aSymList->begin();
+		Symbols::iterator last = aSymList->end();
 		Symbol *aSym;
 
 		while( aItr != last)

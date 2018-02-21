@@ -27,7 +27,7 @@
 
 class Symbol;
 
-typedef std::list<Symbol*> SymbolList;
+typedef std::list<Symbol*> Symbols;
 
 /**
 This class is derived from the class DLLTarget and is responsible for creation of

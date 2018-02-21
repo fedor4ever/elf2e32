@@ -519,7 +519,7 @@ This function returns the E32 interpretation for an Elf relocation type.
 */
 uint16 E32ImageFile::GetE32RelocType(ElfRelocation * aReloc)
 {
-	ESegmentType aSegType = aReloc->iSegmentType; // iElfImage->SegmentType(aReloc->iSymbol->st_value);
+	ESegmentType aSegType = aReloc->iSegmentType; // iReader->SegmentType(aReloc->iSymbol->st_value);
 	switch (aSegType)
 	{
 	case ESegmentRO:

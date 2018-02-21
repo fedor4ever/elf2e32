@@ -40,7 +40,7 @@ public:
 	void GenerateOutput();
 
 protected:
-	SymbolList *iDefExports;
+	Symbols *iDefExports;
 
 };
 
