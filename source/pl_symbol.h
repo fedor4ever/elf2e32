@@ -32,8 +32,7 @@ using std::string;
 enum SymbolStatus {Matching,Missing,New};
 /**
  * This class is shared among all that use the symbol information. To name them,
- * DefFileHandler, UseCaseController, DSOHandler. To be finalized by
- * DefFileHandler.
+ * DefFile, UseCaseBase. To be finalized by DefFile.
  */
 class Symbol
 {
@@ -47,8 +46,7 @@ public:
 	Symbol(Symbol& aSymbol, SymbolType aCodeDataType, bool aAbsent);
 
 	Symbol(Symbol& aSymbol);
-	/*Symbol(char* aName,CDType aCodeDataType, PLUINT32	aOrd = UnAssignedOrdNum,\
-		char* aComment = nullptr, bool aAbsent = false);*/
+
 	~Symbol();
 
 	bool operator==(const Symbol* aSym) const;

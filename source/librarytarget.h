@@ -28,13 +28,12 @@
 #include "usecasebase.h"
 
 class Symbol;
-class DSOHandler;
 class DefFile;
 
 /**
 This class is derived from the base class UseCaseBase and is responsible for creation of
 Library Target.It passes the input DEF file to the DEFfile parser to get the Symbol list
-and then passes the Symbol List to the DSOHandler to generate the DSO file.
+and then passes the Symbol List to the ElfFileSupplied to generate the DSO file.
 
 @internalComponent
 @released

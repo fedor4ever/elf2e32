@@ -25,7 +25,7 @@
 #include <string>
 
 //enum for section index
-typedef enum _SECTION_INDEX_ {
+enum SECTION_INDEX {
 	DUMMY_SECTION=0,
 	CODE_SECTION,
 	DYNAMIC_SECTION,
@@ -36,10 +36,10 @@ typedef enum _SECTION_INDEX_ {
 	SYMBOL_SECTION,
 	SH_STR_SECTION,
 	MAX_SECTIONS=SH_STR_SECTION
-}SECTION_INDEX;
+};
 
 //enum for DYN entries
-typedef enum _DYN_ENTRIES_ {
+enum DYN_ENTRIES {
 	DSO_DT_DSONAME=0,
 	DSO_DT_SYMTAB,
 	DSO_DT_SYMENT,
@@ -51,7 +51,7 @@ typedef enum _DYN_ENTRIES_ {
 	DSO_DT_HASH,
 	DSO_DT_NULL,
 	MAX_DYN_ENTS=DSO_DT_NULL,
-}DYN_ENTRIES;
+};
 
 using std::string;
 
@@ -74,11 +74,6 @@ public:
 	void WriteElfFile(char* aDsoFullName,char* aDsoFileName, char* aLinkAs);
 
 private:
-	/**
-	 * This list is passed from the UseCaseHandler via the DSOHandler to this class.
-	 * This is used to create the export info when only a def file is available and
-	 * the DSO needs to be generated for that.
-	 */
 
 	/** The proxy DSO file name*/
 	string			iDSOName;

@@ -32,17 +32,17 @@
 using std::cout;
 
 /**
-Constructor for class ElfFileSupplied to initialize members and create instance of class DSOHandler
-@param aParameterManager - Instance of class ParameterManager
+Constructor for class ElfFileSupplied
+@param aManager - Instance of class ParameterManager
 @internalComponent
 @released
 */
-ElfFileSupplied::ElfFileSupplied(ParameterManager* aParameterManager) :
-    UseCaseBase(aParameterManager), iNumAbsentExports(-1),iExportBitMap(nullptr),
+ElfFileSupplied::ElfFileSupplied(ParameterManager* aManager) :
+    UseCaseBase(aManager), iNumAbsentExports(-1),iExportBitMap(nullptr),
 	iE32ImageFile(nullptr), iReader(nullptr), iExportDescSize(0), iExportDescType(0)
 {
-	iElfProducer = new ElfProducer(aParameterManager->ElfInput());
-	iReader = new ElfReader(aParameterManager->ElfInput());
+	iElfProducer = new ElfProducer(aManager->ElfInput());
+	iReader = new ElfReader(aManager->ElfInput());
 }
 
 /**
