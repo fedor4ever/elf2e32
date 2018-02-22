@@ -1,6 +1,6 @@
 /*
 * Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
-* Copyright (c) 2017 Strizhniou Fiodar
+* Copyright (c) 2017-2018 Strizhniou Fiodar
 * All rights reserved.
 * This component and the accompanying materials are made available
 * under the terms of "Eclipse Public License v1.0"
@@ -391,7 +391,7 @@ public:
 	};
 
 
-typedef TUint8* (*TMemoryMoveFunction)(TAny* aTrg,const TAny* aSrc,TInt aLength);
+typedef TUint8* (*TMemoryMoveFunction)(void* aTrg,const void* aSrc,TInt aLength);
 
 const TInt KDeflateLengthMag=8;
 const TInt KDeflateDistanceMag=12;
@@ -417,105 +417,7 @@ public:
 
 const TInt KDeflationCodes=TEncoding::ELitLens+TEncoding::EDistances;
 
-CInflater : public CBase
-	{
-public:
-	enum {EBufSize = 0x800, ESafetyZone=8};
-public:
-	static CInflater* NewLC(TBitInput& aInput);
-	~CInflater();
-	TInt ReadL(TUint8* aBuffer,TInt aLength, TMemoryMoveFunction aMemMovefn);
-	TInt SkipL(TInt aLength);
-private:
-	CInflater(TBitInput& aInput);
-	void ConstructL();
-	void InitL();
-	TInt InflateL();
-private:
-	TBitInput* iBits;
-	const TUint8* iRptr;
-	TInt iLen;
-	const TUint8* iAvail;
-	const TUint8* iLimit;
-	TEncoding* iEncoding;
-	TUint8* iOut;
-	};
-
 void DeflateL(const TUint8* aBuf, TInt aLength, TBitOutput& aOutput);
-
-
-/**
-Class derived from TBitInput
-@internalComponent
-@released
-*/
-TFileInput : public TBitInput
-{
-public:
-	TFileInput(unsigned char* source,int size);
-	virtual ~TFileInput();
-private:
-	void UnderflowL();
-private:
-	TUint8* iReadBuf;
-	TInt iSize;
-};
-
-class TFileNameInfo
-	{
-public:
-	enum
-    	{
-    	EIncludeDrive=1,
-    	EIncludePath=2,
-    	EIncludeBase=4,
-    	EIncludeVer=8,
-    	EForceVer=16,
-    	EIncludeUid=32,
-    	EForceUid=64,
-    	EIncludeExt=128,
-    	EIncludeDrivePath=EIncludeDrive|EIncludePath,
-    	EIncludeBaseExt=EIncludeBase|EIncludeExt,
-    	EIncludeDrivePathBaseExt=EIncludeDrive|EIncludePath|EIncludeBase|EIncludeExt,
-    	};
-	enum
-		{
-		EAllowUid=1,
-		EAllowPlaceholder=2,
-		EAllowDecimalVersion=4,
-		};
-public:
-	TFileNameInfo();
-	TInt Set(const TDesC8& aFileName, TUint aFlags);
-	void Dump() const;
-public:
-	inline TInt DriveLen() const {return iPathPos;}
-	inline TInt PathLen() const {return iBasePos-iPathPos;}
-	inline TInt BaseLen() const {return iVerPos-iBasePos;}
-	inline TInt VerLen() const {return iUidPos-iVerPos;}
-	inline TInt UidLen() const {return iExtPos-iUidPos;}
-	inline TInt ExtLen() const {return iLen-iExtPos;}
-	inline TPtrC8 Drive() const {return TPtrC8(iName, iPathPos);}
-	inline TPtrC8 Path() const {return TPtrC8(iName+iPathPos, iBasePos-iPathPos);}
-	inline TPtrC8 DriveAndPath() const {return TPtrC8(iName, iBasePos);}
-	inline TPtrC8 Base() const {return TPtrC8(iName+iBasePos, iVerPos-iBasePos);}
-	inline TPtrC8 VerStr() const {return TPtrC8(iName+iVerPos, iUidPos-iVerPos);}
-	inline TPtrC8 UidStr() const {return TPtrC8(iName+iUidPos, iExtPos-iUidPos);}
-	inline TPtrC8 Ext() const {return TPtrC8(iName+iExtPos, iLen-iExtPos);}
-	inline TUint32 Version() const {return iVersion;}
-	inline TUint32 Uid() const {return iUid;}
-	void GetName(TDes8& aName, TUint aFlags) const;
-public:
-	const TText8* iName;
-	TInt iPathPos;
-	TInt iBasePos;
-	TInt iVerPos;
-	TInt iUidPos;
-	TInt iExtPos;
-	TInt iLen;
-	TUint32 iVersion;
-	TUint32 iUid;
-	};
 
 
 #endif // __LAUNCHERE32IMAGEHEADERS_H__
