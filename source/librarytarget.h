@@ -45,7 +45,7 @@ public:
 	explicit LibraryTarget(ParameterManager* aParameterManager);
 	virtual ~LibraryTarget();
 	int Execute();
-	Symbols* ReadInputDefFile();
+	Symbols* ReadDefFile();
 
 private:
 	DefFile *iDefFile;

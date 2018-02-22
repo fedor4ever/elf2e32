@@ -58,7 +58,7 @@ DEF file. The DSO file is generated on passing the symbols.
 */
 int LibraryTarget::Execute()
 {
-    Symbols *tmp = ReadInputDefFile();
+    Symbols *tmp = ReadDefFile();
     iSymbols.splice(iSymbols.begin(), *tmp);
 	WriteDSOFile();
 	return EXIT_SUCCESS;
@@ -72,7 +72,7 @@ Function to read the symbols from the DEF file.
 
 @return the list of symbols read from the DEF file.
 */
-Symbols* LibraryTarget::ReadInputDefFile()
+Symbols* LibraryTarget::ReadDefFile()
 {
 	char * aDEFFileName = UseCaseBase::DefInput();
 
