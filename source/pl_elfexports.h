@@ -45,7 +45,7 @@ class ElfExports
 {
 
 public:
-	typedef std::vector<Symbol*>	Exports;
+	typedef std::vector<Symbol*> Exports;
 
 
 	struct PtrELFExportNameCompare :
@@ -70,7 +70,7 @@ public:
 	ElfExports();
 	~ElfExports();
 
-	bool ValidExportP(ElfImage * aElfImage, Symbol * aSym);
+	bool IsValidExport(ElfImage * aElfImage, Symbol * aSym);
 	void FilterExports();
 	Symbol* Add(char *aDll, ElfImage * aExecutable, Symbol *aSym);
 	void Add(char *aDll, Symbol *aSym);
@@ -82,7 +82,7 @@ public:
 	bool ExportsFilteredP() {return iExportsFilteredP;}
 
 	char* DllName();
-	Exports& GetExports(bool) ;
+	Exports& GetExports(bool aSorted) ;
 	Exports& GetExportsInOrdinalOrder();
 	size_t GetNumExports();
 	Exports iFilteredExports;
@@ -93,8 +93,6 @@ private:
 	bool iSorted;
 	bool iExportsFilteredP;
 };
-
-
 
 
 #endif // !defined(_PL_ELFEXPORTS_H_)

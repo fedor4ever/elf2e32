@@ -67,7 +67,7 @@ are not valid export symbols and are discarded.
 @internalComponent
 @released
 */
-bool ElfExports::ValidExportP(ElfImage * aElfImage, Symbol * aSym)
+bool ElfExports::IsValidExport(ElfImage * aElfImage, Symbol * aSym)
 {
 	char * aSymName = aElfImage->GetSymbolName(aSym->iSymbolIndex);
 	int result = strncmp(aSymName, "_ZTS", strlen("_ZTS"));
@@ -85,7 +85,7 @@ This function adds export symbols into exports list.
 */
 Symbol* ElfExports::Add(char *aDll, ElfImage * aExecutable, Symbol *aSym)
 {
-	if (ValidExportP(aExecutable, aSym))
+	if (IsValidExport(aExecutable, aSym))
 	{
 		if( !iDllName )
 			iDllName = aDll;
