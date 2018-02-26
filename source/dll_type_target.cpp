@@ -46,7 +46,7 @@ and E32 image.
 @internalComponent
 @released
 */
-void DLLTarget::GenerateOutput()
+void DLLTarget::BuildAll()
 {
 	WriteDefFile();
 	WriteDSOFile();

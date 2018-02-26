@@ -43,13 +43,13 @@ class ElfFileSupplied : public UseCaseBase
 
 public:
 	explicit ElfFileSupplied(ParameterManager* aParameterManager);
-	~ElfFileSupplied();
+	virtual ~ElfFileSupplied();
 	int Execute();
 
 	void ReadElfFile();
 	virtual void ProcessExports();
-	virtual void GenerateOutput();
-	void ValidateExports(Symbols* aDefExports);
+	virtual void BuildAll();
+	void ValidateDefExports(Symbols* aDefExports);
 	void CreateExports();
 	void WriteDefFile();
 	void WriteDSOFile();
@@ -63,7 +63,7 @@ public:
 	void CreateExportBitMap();
 	virtual size_t GetNumExports();
 	virtual size_t GetExportOffset();
-	virtual bool AllocateExportTableP();
+	virtual bool AllocExpTable();
 	virtual char * GetExportTable();
 	virtual size_t GetExportTableSize();
 

@@ -37,7 +37,7 @@ public:
 	~DLLTarget();
 
 	bool ImageIsDll();
-	void GenerateOutput();
+	void BuildAll();
 
 protected:
 	Symbols *iDefExports;

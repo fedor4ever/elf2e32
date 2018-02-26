@@ -35,7 +35,7 @@ class ExportTypeRebuildTarget : public DLLTarget
 {
 public:
 	explicit ExportTypeRebuildTarget(ParameterManager* aParameterManager);
-	~ExportTypeRebuildTarget();
+	virtual ~ExportTypeRebuildTarget();
 	void ProcessExports();
 protected:
 	DefFile *iDefFile;

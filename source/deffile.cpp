@@ -829,7 +829,7 @@ Symbols* DefFile::ReadDefFile(char *defFile)
 	defFileEntries=OpenDefFile(defFile);
 	ParseDefFile(defFileEntries);
 
-	delete[] defFileEntries;//Free the memory which was required to read def file
+	delete defFileEntries;//Free the memory which was required to read def file
 
 	return iSymbolList;
 

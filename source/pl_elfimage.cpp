@@ -1218,7 +1218,7 @@ Function to get the exports in ordinal number order.
 @internalComponent
 @released
 */
-ElfExports::ExportList &ElfImage::GetExportsInOrdinalOrder() {
+ElfExports::Exports &ElfImage::GetExportsInOrdinalOrder() {
 	return iExports->GetExportsInOrdinalOrder();
 }
 

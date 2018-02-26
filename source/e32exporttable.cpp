@@ -41,10 +41,10 @@ This function updates the e32 export table.
 @internalComponent
 @released
 */
-void E32ExportTable::CreateExportTable(ElfImage * aElfImage, ElfExports::ExportList & aExports)
+void E32ExportTable::CreateExportTable(ElfImage * aElfImage, ElfExports::Exports & aExports)
 {
 	iElfImage = aElfImage;
-	// ELFExports::ExportList aExportList = aElfImage->GetExportsInOrdinalOrder();
+	// ELFExports::Exports aExports = aElfImage->GetExportsInOrdinalOrder();
 	// The export table has a header containing the number of entries
 	// before the entries themselves. So add 1 to number of exports
 	iNumExports = aExports.size();
@@ -66,7 +66,7 @@ void E32ExportTable::CreateExportTable(ElfImage * aElfImage, ElfExports::ExportL
 	// i.e. copy it from iTable.
 	iAllocateP = true;
 	bool aDelSym;
-	ElfExports::ExportList::iterator first = aExports.begin();
+	ElfExports::Exports::iterator first = aExports.begin();
 	for (uint32_t i = 1; i < aSize; i++, first++)
 	{
 		Elf32_Sym * sym;

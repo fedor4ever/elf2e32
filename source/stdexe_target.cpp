@@ -49,7 +49,7 @@ Function to write E32 image. Here, no def file or Dso file is generated.
 
 @result void
 */
-void StdExeTarget::GenerateOutput()
+void StdExeTarget::BuildAll()
 {
 	WriteE32();
 }

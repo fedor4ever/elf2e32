@@ -44,7 +44,7 @@ ExportTypeRebuildTarget::~ExportTypeRebuildTarget()
 
 /**
 Function to process the symbols to be exported. The symbols from the DEF File are read
-and passed to ValidateExports() to validate against the symbols present in the ELF file.
+and passed to ValidateDefExports() to validate against the symbols present in the ELF file.
 The final list of exports symbols is created.
 
 @internalComponent
@@ -54,6 +54,6 @@ void ExportTypeRebuildTarget::ProcessExports()
 {
   	iDefExports = iDefFile->ReadDefFile( iParameterManager->DefInput() );
 
-	ValidateExports(iDefExports);
+	ValidateDefExports(iDefExports);
 	CreateExports();
 }

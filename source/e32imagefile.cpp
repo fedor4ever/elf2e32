@@ -673,7 +673,7 @@ void E32ImageFile::ComputeE32ImageLayout()
 
 	iExportOffset = iChunks.GetOffset() + 4;
 	iHdr->iExportDirOffset = aExportTableNeeded ? iUseCase->GetExportOffset() : 0;
-	if ( aExportTableNeeded && iUseCase->AllocateExportTableP())
+	if ( aExportTableNeeded && iUseCase->AllocExpTable())
 		iChunks.AddChunk(iUseCase->GetExportTable(), iUseCase->GetExportTableSize(), iChunks.GetOffset(), "Export Table");
 
 	// Symbol info next
@@ -1762,7 +1762,7 @@ void E32ImageFile::ProcessSymbolInfo()
 		return;
 
 	// Donot disturb the internal list sorting.
-	ElfExports::ExportList aList = iElfImage->iExports->GetExports(false);
+	ElfExports::Exports aList = iElfImage->iExports->GetExports(false);
 
 	std::cout << "aList.size() is: " << aList.size() << "\n";
 

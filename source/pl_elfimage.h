@@ -77,7 +77,7 @@ public:
 	ElfRelocations::Relocations & GetCodeRelocations();
 	ElfRelocations::Relocations & GetDataRelocations();
 	bool ExeceptionsPresentP();
-	ElfExports::ExportList& GetExportsInOrdinalOrder();
+	ElfExports::Exports& GetExportsInOrdinalOrder();
 	Elf32_Sym* LookupStaticSymbol(char * aName);
 public:
 	/**

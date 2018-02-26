@@ -37,7 +37,7 @@ class StdExeTarget : public DLLTarget
 public:
 	explicit StdExeTarget(ParameterManager* aParameterManager);
 	virtual ~StdExeTarget();
-	void GenerateOutput();
+	void BuildAll();
 	bool WarnForNewExports();
 };
 

@@ -43,7 +43,7 @@ public:
 	explicit POLYDLLFBTarget(ParameterManager* aParameterManager);
 	~POLYDLLFBTarget();
 	void ProcessExports();
-	void GenerateOutput();
+	void BuildAll();
 
 };
 

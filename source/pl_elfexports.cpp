@@ -40,10 +40,10 @@ Destructor for class ElfExports
 */
 ElfExports::~ElfExports()
 {
-	if(iExportList.size())
+	if(iElfExports.size())
 	{
-		ExportList::iterator aItr = iExportList.begin();
-		ExportList::iterator last = iExportList.end();
+		Exports::iterator aItr = iElfExports.begin();
+		Exports::iterator last = iElfExports.end();
 		Symbol *temp;
 
 		while( aItr != last)
@@ -54,7 +54,7 @@ ElfExports::~ElfExports()
 			temp = nullptr;
 		}
 	}
-	iExportList.clear();
+	iElfExports.clear();
 
 }
 
@@ -90,7 +90,7 @@ Symbol* ElfExports::Add(char *aDll, ElfImage * aExecutable, Symbol *aSym)
 		if( !iDllName )
 			iDllName = aDll;
 
-		iExportList.push_back(aSym);
+		iElfExports.push_back(aSym);
 		iSorted = false;
 		return aSym;
 	}
@@ -108,7 +108,7 @@ void ElfExports::Add(char *aDll, Symbol *aSym)
 {
 	if( !iDllName )
 		iDllName = aDll;
-	iExportList.push_back(aSym);
+	iElfExports.push_back(aSym);
 	iSorted = false;
 }
 
@@ -125,7 +125,7 @@ void ElfExports::Sort()
 			std::sort(iFilteredExports.begin(), iFilteredExports.end(), PtrELFExportNameCompare());
 		}
 		else {
-			std::sort(iExportList.begin(), iExportList.end(), PtrELFExportNameCompare());
+			std::sort(iElfExports.begin(), iElfExports.end(), PtrELFExportNameCompare());
 		}
 		iSorted = true;
 	}
@@ -138,14 +138,14 @@ Function to get exports list.
 @internalComponent
 @released
 */
-ElfExports::ExportList & ElfExports::GetExports(bool aSorted)
+ElfExports::Exports & ElfExports::GetExports(bool aSorted)
 {
 	if (aSorted) Sort();
 
 	if(iExportsFilteredP)
 		return iFilteredExports;
 	else
-		return iExportList;
+		return iElfExports;
 }
 
 /**
@@ -154,7 +154,7 @@ Function to get exports in ordinal order
 @internalComponent
 @released
 */
-ElfExports::ExportList & ElfExports::GetExportsInOrdinalOrder()
+ElfExports::Exports & ElfExports::GetExportsInOrdinalOrder()
 {
 	if (iExportsFilteredP)
 	{
@@ -163,8 +163,8 @@ ElfExports::ExportList & ElfExports::GetExportsInOrdinalOrder()
 	}
 	else
 	{
-		std::sort(iExportList.begin(), iExportList.end(), PtrELFExportOrdinalCompare());
-		return iExportList;
+		std::sort(iElfExports.begin(), iElfExports.end(), PtrELFExportOrdinalCompare());
+		return iElfExports;
 	}
 }
 
@@ -175,13 +175,13 @@ Function to process the filtered exports
 */
 void ElfExports::FilterExports()
 {
-	std::sort(iExportList.begin(), iExportList.end(), PtrELFExportNameCompare());
+	std::sort(iElfExports.begin(), iElfExports.end(), PtrELFExportNameCompare());
 	std::sort(iFilteredExports.begin(), iFilteredExports.end(), PtrELFExportNameCompare());
 
-	ExportList aNewList(iExportList.size());
-	ExportList::iterator aNewListBegin = aNewList.begin();
+	Exports aNewList(iElfExports.size());
+	Exports::iterator aNewListBegin = aNewList.begin();
 
-	ExportList::iterator aNewListEnd = set_difference(iExportList.begin(), iExportList.end(), \
+	Exports::iterator aNewListEnd = set_difference(iElfExports.begin(), iElfExports.end(), \
 		iFilteredExports.begin(), iFilteredExports.end(), aNewListBegin, PtrELFExportNameCompare());
 
 	iFilteredExports.clear();
@@ -200,7 +200,7 @@ Function to get number of exports
 */
 size_t ElfExports::GetNumExports()
 {
-	return iExportList.size();
+	return iElfExports.size();
 }
 
 /**

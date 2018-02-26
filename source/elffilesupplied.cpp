@@ -80,7 +80,7 @@ int ElfFileSupplied::Execute()
 		WriteDefFile();
 		throw aSme;
 	}
-	GenerateOutput();
+	BuildAll();
 	return 0;
 }
 
@@ -101,7 +101,7 @@ Function to process exports
 */
 void ElfFileSupplied::ProcessExports()
 {
-	ValidateExports(nullptr);
+	ValidateDefExports(nullptr);
 	CreateExports();
 }
 
@@ -138,7 +138,7 @@ Function to validate exports
 @internalComponent
 @released
 */
-void ElfFileSupplied::ValidateExports(Symbols *aDefExports)
+void ElfFileSupplied::ValidateDefExports(Symbols *aDefExports)
 {
 	/**
 	 * Symbols from DEF file (DEF_Symbols) => Valid_DEF + Absent
@@ -328,7 +328,7 @@ exports are available.
 @internalComponent
 @released
 */
-void ElfFileSupplied::GenerateOutput()
+void ElfFileSupplied::BuildAll()
 {
 	if (iReader->iExports)
 	{
@@ -471,7 +471,7 @@ Function to create export table
 */
 void ElfFileSupplied::CreateExportTable()
 {
-	ElfExports::ExportList aList;
+	ElfExports::Exports aList;
 
 	if(iReader->iExports)
 		aList = iReader->GetExportsInOrdinalOrder();
@@ -521,7 +521,7 @@ Function to check export table is required.
 @internalComponent
 @released
 */
-bool ElfFileSupplied::AllocateExportTableP()
+bool ElfFileSupplied::AllocExpTable()
 {
 	return iExportTable.AllocateP();
 }

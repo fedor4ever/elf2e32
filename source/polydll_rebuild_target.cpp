@@ -107,7 +107,7 @@ void POLYDLLRebuildTarget::ProcessExports()
     delete iSysDefExports;
     iSysDefExports = nullptr;
     if(aSymbolEntry) delete aSymbolEntry;
-	ValidateExports(iDefExports);
+	ValidateDefExports(iDefExports);
 	CreateExports();
 }
 
@@ -118,7 +118,7 @@ DEF file and the corresponding DSO file should be generated.
 @internalComponent
 @released
 */
-void POLYDLLRebuildTarget::GenerateOutput() {
+void POLYDLLRebuildTarget::BuildAll() {
 
 	if( UseCaseBase::DefOutput() ) {
 		WriteDefFile();

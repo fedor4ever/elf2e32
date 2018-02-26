@@ -35,7 +35,7 @@ class for E32 Export Table
 class E32ExportTable {
  public:
   ~E32ExportTable();
-  void CreateExportTable(ElfImage * aElfImage, ElfExports::ExportList & aExportList);
+  void CreateExportTable(ElfImage * aElfImage, ElfExports::Exports & aExports);
   size_t GetNumExports();
   bool AllocateP();
   size_t GetExportTableSize();

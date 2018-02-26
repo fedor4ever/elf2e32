@@ -38,7 +38,7 @@ public:
 	explicit ExeTarget(ParameterManager* aParameterManager);
 	virtual ~ExeTarget();
 	void ProcessExports();
-	void GenerateOutput();
+	void BuildAll();
 
 	bool ImageIsDll();
 

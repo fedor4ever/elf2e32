@@ -80,7 +80,7 @@ void POLYDLLFBTarget::ProcessExports()
 		iDefExports->push_back(aSymbolEntry);
 	}
 
-	ValidateExports(iDefExports);
+	ValidateDefExports(iDefExports);
 	CreateExports();
 }
 
@@ -91,7 +91,7 @@ DEF file and the corresponding DSO file should be generated.
 @internalComponent
 @released
 */
-void POLYDLLFBTarget::GenerateOutput() {
+void POLYDLLFBTarget::BuildAll() {
 
 	if( UseCaseBase::DefOutput() ) {
 		WriteDefFile();

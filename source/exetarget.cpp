@@ -59,7 +59,7 @@ Function to generate the output E32 image.
 @internalComponent
 @released
 */
-void ExeTarget::GenerateOutput()
+void ExeTarget::BuildAll()
 {
 	WriteE32();
 }
