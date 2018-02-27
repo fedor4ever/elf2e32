@@ -31,6 +31,7 @@
 #include "pl_elflocalrelocation.h"
 
 using std::list;
+using std::cout;
 
 /**
 Constructor for class ElfImage
@@ -1350,4 +1351,30 @@ ESegmentType ElfImage::Segment(Elf32_Sym *aSym)
 
 	return type;
 }
+
+void ElfImage::ElfInfo()
+{
+	cout << "**************************" << "\n";
+	cout << "File " << iElfInput << "\n";
+    cout << "GetROBase(): " << GetROBase() << "\ttext: " << GetROSize() << "\n";
+    cout << "GetRWBase(): " << GetRWBase() << "\tdata: " << GetRWSize() << "\n";
+    cout << "bss: " << GetBssSize() << "\n";
+
+    cout << "\ntext relocs count: " << iElfRelocations.GetRelocations(ESegmentRO).size() << "\n";
+    cout << "text relocs begin at addr:";
+    printf("%08x\n", iElfRelocations.GetRelocations(ESegmentRO).front()->iAddr);
+
+    cout << "\ndata relocs count: " << iElfRelocations.GetRelocations(ESegmentRW).size() << "\n";
+    cout << "data relocs begin at addr:";
+    printf("%08x\n", iElfRelocations.GetRelocations(ESegmentRW).front()->iAddr);
+
+    auto RelTmp  = iElfRelocations.GetRelocations(ESegmentRW);
+    for(auto x: RelTmp)
+    {
+    	printf("%08x\n", x->iAddr);
+    //	cout << x->iAddr << "\n";
+    }
+    cout << "**************************" << "\n";
+}
+
 

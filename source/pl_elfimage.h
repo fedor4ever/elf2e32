@@ -44,6 +44,7 @@ class ElfImage
 public:
 	explicit ElfImage(const std::string& aElfInput);
 	virtual ~ElfImage();
+	void ElfInfo();
 
 	PLUINT32 ProcessElfFile(Elf32_Ehdr *aElfHdr);
 
