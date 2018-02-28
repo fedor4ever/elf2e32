@@ -46,7 +46,7 @@ public:
 	virtual ~ElfImage();
 	void ElfInfo();
 
-	PLUINT32 ProcessElfFile(Elf32_Ehdr *aElfHdr);
+	void ProcessElfFile(Elf32_Ehdr *aElfHdr);
 
 	PLUINT32 ProcessSymbols();
 	ElfImports::ImportLibs GetImports();

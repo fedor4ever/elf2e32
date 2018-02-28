@@ -74,7 +74,7 @@ Function to process Elf file
 @internalComponent
 @released
 */
-PLUINT32  ElfImage::ProcessElfFile(Elf32_Ehdr *aElfHdr) {
+void ElfImage::ProcessElfFile(Elf32_Ehdr *aElfHdr) {
 
 	iElfHeader = aElfHdr;
 	iEntryPoint = aElfHdr->e_entry;
@@ -142,8 +142,6 @@ PLUINT32  ElfImage::ProcessElfFile(Elf32_Ehdr *aElfHdr) {
 		ProcessSymbols();
 		ProcessRelocations();
 	}
-
-	return 0;
 }
 
 /**
@@ -1363,17 +1361,24 @@ void ElfImage::ElfInfo()
     cout << "\ntext relocs count: " << iElfRelocations.GetRelocations(ESegmentRO).size() << "\n";
     cout << "text relocs begin at addr:";
     printf("%08x\n", iElfRelocations.GetRelocations(ESegmentRO).front()->iAddr);
+    auto RelTmp  = iElfRelocations.GetRelocations(ESegmentRO);
+    for(auto x: RelTmp)
+    {
+    	printf("%08x .text\n", x->iAddr);
+    //	cout << x->iAddr << "\n";
+    }
 
     cout << "\ndata relocs count: " << iElfRelocations.GetRelocations(ESegmentRW).size() << "\n";
     cout << "data relocs begin at addr:";
     printf("%08x\n", iElfRelocations.GetRelocations(ESegmentRW).front()->iAddr);
 
-    auto RelTmp  = iElfRelocations.GetRelocations(ESegmentRW);
+    RelTmp  = iElfRelocations.GetRelocations(ESegmentRW);
     for(auto x: RelTmp)
     {
-    	printf("%08x\n", x->iAddr);
+    	printf("%08x .data\n", x->iAddr);
     //	cout << x->iAddr << "\n";
     }
+
     cout << "**************************" << "\n";
 }
 

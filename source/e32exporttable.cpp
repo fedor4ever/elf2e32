@@ -60,7 +60,7 @@ void E32ExportTable::CreateExportTable(ElfImage * aElfImage, ElfExports::Exports
 	Elf32_Phdr * aROHdr = aElfImage->iCodeSegmentHdr;
 	// The export table starts after the header. NB this is a virtual address in the RO
 	// segment of the E32Image. It is outside the ELF RO segment.
-	Elf32_Addr * aPlace =  ELF_ENTRY_PTR(Elf32_Addr, aROHdr->p_vaddr, aROHdr->p_filesz) + 1;
+	Elf32_Addr * aPlace =  ELF_ENTRY_PTR(Elf32_Addr, (intptr_t)aROHdr->p_vaddr, aROHdr->p_filesz) + 1;
 	iExportTableAddress = (uintptr_t)aPlace;
 	// Tell the E32Image constructor that it must allocate the export table
 	// i.e. copy it from iTable.
