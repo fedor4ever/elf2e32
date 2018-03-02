@@ -53,7 +53,6 @@ public:
 	ElfExports* GetExports();
 	Symbol* AddToExports(char* aDll, Symbol* aSymbol);
 	void AddToImports(ElfImportRelocation* aReloc);
-	PLUINT32 AddToRelocations(ElfRelocation* aReloc);
 	void AddToLocalRelocations(ElfRelocation* aReloc);
 	void ProcessVerInfo();
 

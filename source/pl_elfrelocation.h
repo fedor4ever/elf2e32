@@ -44,7 +44,7 @@ public:
 	static bool ValidRelocEntry(PLUCHAR aType);
 	static ElfRelocation* NewRelocEntry(ElfImage *aElfImage, PLMemAddr32 aAddr,
 		PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,
-		void* aRel, bool aImportRel);
+		Elf32_Rel& aRel, bool aImportRel);
 
 	virtual void Add() = 0;
 

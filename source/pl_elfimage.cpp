@@ -706,8 +706,11 @@ void ElfImage::ProcessRelocations(T *aElfRel, size_t aSize){
 			PLUINT32 aSymIdx = ELF32_R_SYM(aElfRel->r_info);
 			bool aImported = ImportedSymbol( &iElfDynSym[aSymIdx] );
 			Elf32_Word aAddend = Addend(aElfRel);
+			Elf32_Rel tmp;
+			tmp.r_offset = aElfRel->r_offset;
+			tmp.r_info = aElfRel->r_info;
 			ElfRelocation *aRel = ElfRelocation::NewRelocEntry(this, aElfRel->r_offset, aAddend,
-				aSymIdx, aType, aElfRel, aImported);
+				aSymIdx, aType, tmp, aImported);
 
 			if(aRel) {
 				aRel->Add();

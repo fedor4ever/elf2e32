@@ -384,8 +384,7 @@ string E32ImageFile::FindDSO(string aName)
 
 void E32ImageFile::ReadInputELFFile(string aName, size_t & aFileSize, Elf32_Ehdr * & aELFFile )
 {
-	ifstream aInput;
-	aInput.open(aName, ifstream::binary|ifstream::in);
+	ifstream aInput(aName, ifstream::binary|ifstream::in);
 	if (aInput.is_open())
 	{
 		aInput.seekg(0,ios::end);

@@ -44,7 +44,9 @@ ElfImportRelocation::ElfImportRelocation(ElfImage *aElfImage,PLMemAddr32 aAddr,
 }
 
 
-ElfImportRelocation::~ElfImportRelocation(){}
+ElfImportRelocation::~ElfImportRelocation(){
+	delete iVerRecord;
+}
 
 /**
 Function to add import relocation

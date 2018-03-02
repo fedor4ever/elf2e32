@@ -21,8 +21,6 @@
 #ifndef E32IMAGEFILE_H
 #define E32IMAGEFILE_H
 
-#include "pl_elfrelocation.h"
-#include "pl_elfrelocations.h"
 #include <portable.h>
 #include <elfdefs.h>
 
@@ -31,9 +29,11 @@
 #include <iostream>
 
 using std::vector;
-using std::ifstream;
 using std::string;
+using std::ifstream;
 
+class ElfImage;
+class ElfRelocation;
 class ELFExecutable;
 class ElfFileSupplied;
 
@@ -83,8 +83,6 @@ class E32ImageChunks {
 typedef unsigned char uint8;
 typedef uint16_t uint16;
 typedef uint32_t uint32;
-
-class ElfFileSupplied;
 
 /**
 Class E32ImageFile for fields of an E32 image.

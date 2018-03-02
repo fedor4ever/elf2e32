@@ -57,13 +57,13 @@ Function to create new relocation entry
 */
 ElfRelocation* ElfRelocation::NewRelocEntry(ElfImage *aElfExec, PLMemAddr32 aAddr,
         PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,
-        void* aRel, bool aImportRel)
+		Elf32_Rel& aRel, bool aImportRel)
 {
 	ElfRelocation	*aReloc = nullptr;
 	if(aImportRel)
-		aReloc = new ElfImportRelocation(aElfExec, aAddr, aAddend, aIndex, aRelType, (Elf32_Rel*)aRel);
+		aReloc = new ElfImportRelocation(aElfExec, aAddr, aAddend, aIndex, aRelType, &aRel);
 	else
-		aReloc = new ElfLocalRelocation(aElfExec, aAddr, aAddend, aIndex, aRelType, (Elf32_Rel*)aRel);
+		aReloc = new ElfLocalRelocation(aElfExec, aAddr, aAddend, aIndex, aRelType, &aRel);
 
 	return aReloc;
 }

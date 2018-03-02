@@ -35,7 +35,7 @@ public:
 	ElfImportRelocation(ElfImage *aElfImage, PLMemAddr32 aAddr,
 			PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,
 			Elf32_Rel* aRel);
-	~ElfImportRelocation();
+	virtual ~ElfImportRelocation();
 	void Add();
 
 	VersionInfo *iVerRecord = nullptr;
