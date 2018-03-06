@@ -1,5 +1,5 @@
 // Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
-// Copyright (c) 2017 Strizhniou Fiodar.
+// Copyright (c) 2017-2018 Strizhniou Fiodar.
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -39,34 +39,6 @@ ElfRelocation::ElfRelocation(ElfImage *aElfExec, PLMemAddr32 aAddr,
 		Elf32_Rel* aRel) : iAddr(aAddr), iAddend(aAddend),
 		iSymNdx(aIndex), iRelType(aRelType), iRel(aRel),
 		iElfImage(aElfExec) {}
-
-ElfRelocation::~ElfRelocation(){}
-
-
-/**
-Function to create new relocation entry
-@param aElfExec - Instance of class ElfImage
-@param aAddr    - location where the relocation refers to.
-@param aAddend  - addend for the relocation entry
-@param aIndex   - symbol index
-@param aRelType - Relocation type
-@param aRel     - Elf relocation entry
-@param aImportRel - Import relocation
-@internalComponent
-@released
-*/
-ElfRelocation* ElfRelocation::NewRelocEntry(ElfImage *aElfExec, PLMemAddr32 aAddr,
-        PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,
-		Elf32_Rel& aRel, bool aImportRel)
-{
-	ElfRelocation	*aReloc = nullptr;
-	if(aImportRel)
-		aReloc = new ElfImportRelocation(aElfExec, aAddr, aAddend, aIndex, aRelType, &aRel);
-	else
-		aReloc = new ElfLocalRelocation(aElfExec, aAddr, aAddend, aIndex, aRelType, &aRel);
-
-	return aReloc;
-}
 
 
 /**

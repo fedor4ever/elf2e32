@@ -91,7 +91,7 @@ void E32ExportTable::CreateExportTable(ElfImage * aElfImage, ElfExports::Exports
 		ElfLocalRelocation * aRel = new ElfLocalRelocation(iElfImage,
                 iExportTableAddress, 0, i, R_ARM_ABS32, nullptr, ESegmentRO, sym, aDelSym);
 	    aPlace++; /// TODO (Administrator#1#06/02/17): why that val never used??!!
-		aRel->Add();
+	    iElfImage->AddToLocalRelocations(aRel);
 	}
 }
 

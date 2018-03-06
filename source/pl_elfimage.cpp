@@ -1,5 +1,5 @@
 // Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
-// Copyright (c) 2017 Strizhniou Fiodar.
+// Copyright (c) 2017-2018 Strizhniou Fiodar.
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -272,14 +272,11 @@ void ElfImage::ProcessVeneers()
 				 */
 				if (aInstruction == 0xE51FF004 && !aRelocEntryFound && aIsThumbSymbol)
 				{
-					ElfLocalRelocation	*aRel;
-					PLUCHAR	aType = R_ARM_NONE;
-
-					aRel = new ElfLocalRelocation(this, aOffset, 0, 0, aType, nullptr,
+					ElfLocalRelocation *aRel = new ElfLocalRelocation(this, aOffset, 0, 0, R_ARM_NONE, nullptr,
                                     ESegmentRO, aSym, false, true);
 					if(aRel)
 					{
-						aRel->Add();
+					    AddToLocalRelocations(aRel);
 					}
 				}
 			}
@@ -390,20 +387,17 @@ This function adds imports into the map
 */
 void ElfImage::AddToImports(ElfImportRelocation* aReloc){
 	SetVersionRecord(aReloc);
-	//char *aDll = iVerInfo[iVersionTbl[aReloc->iSymNdx]].iLinkAs;
-	char *aDll = aReloc->iVerRecord->iLinkAs;
-	iImports.Add( (const char*)aDll, aReloc );
-
+	iImports.Add(aReloc);
 }
 
 /**
 This function adds local relocation into a list
-@param aReloc - Instance of class ElfImportRelocation
+@param aReloc - Instance of class ElfLocalRelocation
 @internalComponent
 @released
 */
-void ElfImage::AddToLocalRelocations(ElfRelocation* aReloc) {
-	iElfRelocations.Add((ElfLocalRelocation*)aReloc);
+void ElfImage::AddToLocalRelocations(ElfLocalRelocation* aReloc) {
+	iElfRelocations.Add(aReloc);
 }
 
 /**
@@ -709,11 +703,18 @@ void ElfImage::ProcessRelocations(T *aElfRel, size_t aSize){
 			Elf32_Rel tmp;
 			tmp.r_offset = aElfRel->r_offset;
 			tmp.r_info = aElfRel->r_info;
-			ElfRelocation *aRel = ElfRelocation::NewRelocEntry(this, aElfRel->r_offset, aAddend,
-				aSymIdx, aType, tmp, aImported);
-
-			if(aRel) {
-				aRel->Add();
+			ElfRelocation *aRel = nullptr;
+			if(aImported)
+			{
+				aRel = new ElfImportRelocation(this, aElfRel->r_offset, aAddend,
+						aSymIdx, aType, &tmp);
+				AddToImports((ElfImportRelocation*)aRel);
+			}
+			else
+            {
+				 aRel = new ElfLocalRelocation(this, aElfRel->r_offset, aAddend,
+						aSymIdx, aType, &tmp);
+				 AddToLocalRelocations((ElfLocalRelocation*)aRel);
 			}
 		}
 		aElfRel++;

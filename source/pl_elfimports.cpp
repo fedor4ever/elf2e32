@@ -1,5 +1,5 @@
 // Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
-// Copyright (c) 2017 Strizhniou Fiodar.
+// Copyright (c) 2017-2018 Strizhniou Fiodar.
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -57,7 +57,8 @@ Function to add imports
 @internalComponent
 @released
 */
-void ElfImports::Add(const char* aDllName, ElfImportRelocation *aReloc){
+void ElfImports::Add(ElfImportRelocation *aReloc){
+    char *aDllName = aReloc->iVerRecord->iLinkAs;
 	iImports[aDllName].insert(iImports[aDllName].end(), aReloc);
 }
 

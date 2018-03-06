@@ -1,5 +1,5 @@
 // Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
-// Copyright (c) 2017 Strizhniou Fiodar.
+// Copyright (c) 2017-2018 Strizhniou Fiodar.
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -53,7 +53,7 @@ public:
 	ElfExports* GetExports();
 	Symbol* AddToExports(char* aDll, Symbol* aSymbol);
 	void AddToImports(ElfImportRelocation* aReloc);
-	void AddToLocalRelocations(ElfRelocation* aReloc);
+	void AddToLocalRelocations(ElfLocalRelocation* aReloc);
 	void ProcessVerInfo();
 
 	Elf32_Sym* FindSymbol(char* aSymName);

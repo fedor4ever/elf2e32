@@ -1,5 +1,5 @@
 // Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
-// Copyright (c) 2017 Strizhniou Fiodar.
+// Copyright (c) 2017-2018 Strizhniou Fiodar.
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -39,14 +39,9 @@ class ElfRelocation
 public:
 	ElfRelocation(ElfImage *aElfImage, PLMemAddr32 aAddr, PLUINT32 aAddend,
 			PLUINT32 aIndex, PLUCHAR aRelType, Elf32_Rel* aRel);
-	virtual ~ElfRelocation();
+	virtual ~ElfRelocation(){}
 
 	static bool ValidRelocEntry(PLUCHAR aType);
-	static ElfRelocation* NewRelocEntry(ElfImage *aElfImage, PLMemAddr32 aAddr,
-		PLUINT32 aAddend, PLUINT32 aIndex, PLUCHAR aRelType,
-		Elf32_Rel& aRel, bool aImportRel);
-
-	virtual void Add() = 0;
 
 	PLMemAddr32 iAddr;
 	PLUINT32	iAddend;
@@ -58,8 +53,6 @@ public:
 	Elf32_Phdr	*iSegment = nullptr;
 	ESegmentType iSegmentType = ESegmentUndefined;
 };
-
-
 
 
 #endif // !defined(_PL_ELFRELOCATION_H_)

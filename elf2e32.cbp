@@ -30,7 +30,7 @@
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters='--sid=0x101ff1ec  --version=10.0 --uid1=0x10000079 --uid2=0x10009d8d --uid3=0x101ff1ec --capability=ProtServ --fpu=softvfp --targettype=PLUGIN --output=&quot;tests\AlternateReaderRecogE32.dll&quot; --ignorenoncallable --dso=tests\AlternateReaderRecog{000a0000}.dso --defoutput=tests\AlternateReaderRecog{000a0000}.def --elfinput=&quot;tests\AlternateReaderRecog.dll&quot; --linkas=tests\AlternateReaderRecog{000a0000}[101ff1ec].dll --libpath=&quot;D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib&quot; --sysdef=_Z24ImplementationGroupProxyRi,1;' />
+				<Option parameters='--capability=All-TCB --definput=&quot;tests\libcryptou.def&quot; --defoutput=&quot;tests\out.def&quot; --elfinput=&quot;tests\libcrypto.dll&quot; --output=&quot;tests\libcrypto-2.4.5.tst.dll&quot; --libpath=&quot;D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib&quot; --linkas=&quot;tests\libcrypto{000a0000}.dll&quot; --dso=&quot;tests\libcrypto{000a0000}.dso&quot; --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --dlldata --ignorenoncallable --debuggable --smpsafe --uncompressed' />
 				<Compiler>
 					<Add option="-O2" />
 				</Compiler>
@@ -100,22 +100,22 @@
 		<Unit filename="source/parametermanager.h" />
 		<Unit filename="source/pl_common.cpp" />
 		<Unit filename="source/pl_common.h" />
-		<Unit filename="source/pl_dso_handler.cpp" />
-		<Unit filename="source/pl_dso_handler.h" />
-		<Unit filename="source/pl_elfconsumer.cpp" />
-		<Unit filename="source/pl_elfconsumer.h" />
-		<Unit filename="source/pl_elfexecutable.cpp" />
-		<Unit filename="source/pl_elfexecutable.h" />
 		<Unit filename="source/pl_elfexports.cpp" />
 		<Unit filename="source/pl_elfexports.h" />
+		<Unit filename="source/pl_elfimage.cpp" />
+		<Unit filename="source/pl_elfimage.h" />
 		<Unit filename="source/pl_elfimportrelocation.cpp" />
 		<Unit filename="source/pl_elfimportrelocation.h" />
 		<Unit filename="source/pl_elfimports.cpp" />
 		<Unit filename="source/pl_elfimports.h" />
 		<Unit filename="source/pl_elflocalrelocation.cpp" />
 		<Unit filename="source/pl_elflocalrelocation.h" />
+		<Unit filename="source/pl_elfparser.cpp" />
+		<Unit filename="source/pl_elfparser.h" />
 		<Unit filename="source/pl_elfproducer.cpp" />
 		<Unit filename="source/pl_elfproducer.h" />
+		<Unit filename="source/pl_elfreader.cpp" />
+		<Unit filename="source/pl_elfreader.h" />
 		<Unit filename="source/pl_elfrelocation.cpp" />
 		<Unit filename="source/pl_elfrelocation.h" />
 		<Unit filename="source/pl_elfrelocations.cpp" />

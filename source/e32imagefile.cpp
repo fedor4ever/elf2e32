@@ -1,5 +1,5 @@
 // Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
-// Copyright (c) 2017 Strizhniou Fiodar
+// Copyright (c) 2017-2018 Strizhniou Fiodar
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -1750,7 +1750,7 @@ void E32ImageFile::ProcessSymbolInfo()
 	// Create a relocation entry for the 0th ordinal.
 	ElfLocalRelocation *aRel = new ElfLocalRelocation(iElfImage, aPlace, 0, 0, R_ARM_ABS32, \
 		nullptr, ESegmentRO, nullptr, false);
-	aRel->Add();
+	iElfImage->AddToLocalRelocations(aRel);
 
 	aPlace += iUseCase->GetExportTableSize();// aPlace now points to the symInfo
 	uint32 *aZerothOrd = (uint32*)iUseCase->GetExportTable();
@@ -1773,7 +1773,7 @@ void E32ImageFile::ProcessSymbolInfo()
 //            std::cout << "ABSENT exported function at pos: " << i << "\n";
 //	}
 
-	char aPad[] = {'\0', '\0', '\0', '\0'};
+	const char aPad[] = {'\0', '\0', '\0', '\0'};
 /** TODO (Administrator#1#04/15/17): The nullptr iElfSym position corresponds to the Absent function in def file */
 	for(auto x: aList ) {
 		if(!x->iElfSym) continue;
@@ -1795,7 +1795,7 @@ void E32ImageFile::ProcessSymbolInfo()
 		aRel = new ElfLocalRelocation(iElfImage, aPlace, 0, 0, R_ARM_ABS32, nullptr,
 			ESegmentRO, x->iElfSym, false);
 		aPlace += sizeof(uint32);
-		aRel->Add();
+		iElfImage->AddToLocalRelocations(aRel);
 	}
 }
 
