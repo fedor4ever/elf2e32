@@ -26,13 +26,8 @@
 
 using std::min;
 
-const TInt KDeflateMinLength=3;
-const TInt KDeflateMaxLength=KDeflateMinLength-1 + (1<<KDeflateLengthMag);
-const TInt KDeflateMaxDistance=(1<<KDeflateDistanceMag);
 
-// hashing
-const TUint KDeflateHashMultiplier=0xAC4B9B19u;
-const TInt KDeflateHashShift=24;
+void DeflateL(const TUint8* aBuf, TInt aLength, TBitOutput& aOutput);
 
 /**
 Class HDeflateHash

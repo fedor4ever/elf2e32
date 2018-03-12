@@ -119,21 +119,21 @@ Good for reading bit streams for packed, compressed or huffman data algorithms.
 */
 class TBitInput
 {
-	public:
-		TBitInput();
-		TBitInput(const TUint8* aPtr, TInt aLength, TInt aOffset=0);
-		void Set(const TUint8* aPtr, TInt aLength, TInt aOffset=0);
-		TUint ReadL();
-		TUint ReadL(TInt aSize);
-		TUint HuffmanL(const TUint32* aTree);
-		virtual ~TBitInput();
-	private:
-		virtual void UnderflowL();
-	private:
-		TInt iCount;
-		TUint iBits;
-		TInt iRemain;
-		const TUint32* iPtr;
+public:
+    TBitInput();
+    TBitInput(const TUint8* aPtr, TInt aLength, TInt aOffset=0);
+    void Set(const TUint8* aPtr, TInt aLength, TInt aOffset=0);
+    TUint ReadL();
+    TUint ReadL(TInt aSize);
+    TUint HuffmanL(const TUint32* aTree);
+    virtual ~TBitInput();
+private:
+    virtual void UnderflowL();
+private:
+    TInt iCount;
+    TUint iBits;
+    TInt iRemain;
+    const TUint32* iPtr;
 };
 
 /**
@@ -199,6 +199,9 @@ struct TNode
 
 const TInt KDeflateLengthMag=8;
 const TInt KDeflateDistanceMag=12;
+const TInt KDeflateMaxDistance=(1<<KDeflateDistanceMag);
+
+const TInt KDeflateDistCodeBase=0x200;
 
 /**
 class for TEncoding
@@ -216,7 +219,13 @@ class TEncoding
 		TUint32 iDistance[EDistances];
 };
 
+// hashing
+const TUint KDeflateHashMultiplier=0xAC4B9B19u;
+const TInt KDeflateHashShift=24;
+
 const TInt KDeflationCodes=TEncoding::ELitLens+TEncoding::EDistances;
+const TInt KDeflateMinLength=3;
+const TInt KDeflateMaxLength=KDeflateMinLength-1 + (1<<KDeflateLengthMag);
 
 #endif
 

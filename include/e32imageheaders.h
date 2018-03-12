@@ -24,57 +24,6 @@
 #include <portable.h>
 
 
-/** Bit input stream. Good for reading bit streams for packed, compressed or huffman
-	data algorithms.
-*/
-class TBitInput
-	{
-public:
-	TBitInput();
-	TBitInput(const TUint8* aPtr, TInt aLength, TInt aOffset=0);
-	void Set(const TUint8* aPtr, TInt aLength, TInt aOffset=0);
-//
-	TUint ReadL();
-	TUint ReadL(TInt aSize);
-	TUint HuffmanL(const TUint32* aTree);
-private:
-	virtual void UnderflowL();
-private:
-	TInt iCount;
-	TUint iBits;
-	TInt iRemain;
-	const TUint32* iPtr;
-	};
-
-/** Huffman code toolkit.
-
-	This class builds a huffman encoding from a frequency table and builds
-	a decoding tree from a code-lengths table
-
-	The encoding generated is based on the rule that given two symbols s1 and s2, with
-	code length l1 and l2, and huffman codes h1 and h2:
-
-		if l1<l2 then h1<h2 when compared lexicographically
-		if l1==l2 and s1<s2 then h1<h2 ditto
-
-	This allows the encoding to be stored compactly as a table of code lengths
-*/
-class Huffman
-{
-public:
-	enum {KMaxCodeLength=27};
-	enum {KMetaCodes=KMaxCodeLength+1};
-	enum {KMaxCodes=0x8000};
-public:
-	static void HuffmanL(const TUint32 aFrequency[],TInt aNumCodes,TUint32 aHuffman[]);
-	static void Encoding(const TUint32 aHuffman[],TInt aNumCodes,TUint32 aEncodeTable[]);
-	static bool IsValid(const TUint32 aHuffman[],TInt aNumCodes);
-	static void ExternalizeL(TBitOutput& aOutput,const TUint32 aHuffman[],TInt aNumCodes);
-	static void Decoding(const TUint32 aHuffman[],TInt aNumCodes,TUint32 aDecodeTree[],TInt aSymbolBase=0);
-	static void InternalizeL(TBitInput& aInput,TUint32 aHuffman[],TInt aNumCodes);
-};
-
-
 enum TCpu
 	{
 	ECpuUnknown=0, ECpuX86=0x1000, ECpuArmV4=0x2000, ECpuArmV5=0x2001, ECpuArmV6=0x2002, ECpuMCore=0x4000
@@ -371,53 +320,6 @@ inline const TUint* E32ImportBlock::Imports() const
 	{
 	return (const TUint*)(this + 1);
 	}
-/**
-Header for the Import Section in an image, as referenced by E32ImageHeader::iImportOffset.
-Immediately following this structure are an array of E32ImportBlock structures.
-The number of these is given by E32ImageHeader::iDllRefTableCount.
-*/
-class E32ImportSection
-	{
-public:
-	TInt iSize;					// size of this section
-//	E32ImportBlock[iDllRefTableCount];
-	};
-
-class E32RelocSection
-	{
-public:
-	TInt iSize;					// size of this relocation section
-	TInt iNumberOfRelocs;		// number of relocations in this section
-	};
-
-
-typedef TUint8* (*TMemoryMoveFunction)(void* aTrg,const void* aSrc,TInt aLength);
-
-const TInt KDeflateLengthMag=8;
-const TInt KDeflateDistanceMag=12;
-const TInt KDeflateMinLength=3;
-const TInt KDeflateMaxLength=KDeflateMinLength-1 + (1<<KDeflateLengthMag);
-const TInt KDeflateMaxDistance=(1<<KDeflateDistanceMag);
-const TInt KDeflateDistCodeBase=0x200;
-const TUint KDeflateHashMultiplier=0xAC4B9B19u;
-const TInt KDeflateHashShift=24;
-const TInt KInflateWindowSize=0x8000;
-
-
-class TEncoding
-	{
-public:
-	enum {ELiterals=256,ELengths=(KDeflateLengthMag-1)*4,ESpecials=1,EDistances=(KDeflateDistanceMag-1)*4};
-	enum {ELitLens=ELiterals+ELengths+ESpecials};
-	enum {EEos=ELiterals+ELengths};
-public:
-	TUint32 iLitLen[ELitLens];
-	TUint32 iDistance[EDistances];
-	};
-
-const TInt KDeflationCodes=TEncoding::ELitLens+TEncoding::EDistances;
-
-void DeflateL(const TUint8* aBuf, TInt aLength, TBitOutput& aOutput);
 
 
 #endif // __LAUNCHERE32IMAGEHEADERS_H__

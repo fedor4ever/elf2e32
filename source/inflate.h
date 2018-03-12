@@ -25,10 +25,6 @@
 #include "huffman.h"
 
 
-const TInt KDeflateMinLength=3;
-const TInt KDeflateMaxDistance=(1<<KDeflateDistanceMag);
-const TInt KDeflateDistCodeBase=0x200;
-
 /**
 Class for inflater
 @internalComponent
