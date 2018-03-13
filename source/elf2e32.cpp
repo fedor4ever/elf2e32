@@ -25,7 +25,6 @@
 #include "exetarget.h"
 #include "polydll_fb_target.h"
 #include "polydll_rebuild_target.h"
-#include "stdexe_target.h"
 #include "filedump.h"
 
 #include <iostream>
@@ -162,6 +161,7 @@ UseCaseBase * Elf2E32::SelectUseCase()
 		return iUseCase;
 	case ELib:
         return iUseCase = new LibraryTarget(iPrmManager);
+	case EStdExe: // fallthru
 	case EExe:
 		return iUseCase = new ExeTarget(iPrmManager);
 	case EPolyDll:
@@ -176,8 +176,6 @@ UseCaseBase * Elf2E32::SelectUseCase()
 		else if (deffilein)
 			iUseCase = new ExportTypeRebuildTarget(iPrmManager);
 		return iUseCase;
-	case EStdExe:
-		return iUseCase = new StdExeTarget(iPrmManager);
 	default:
 		throw Elf2e32Error(INVALIDINVOCATIONERROR);
 	}
