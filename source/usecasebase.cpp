@@ -137,7 +137,7 @@ const char * UseCaseBase::OutputDSOFileName()
 }
 
 /**
-This function gets the E32 image file name freom the parameter manager
+This function gets the E32 image file name from the parameter manager
 
 @internalComponent
 @released

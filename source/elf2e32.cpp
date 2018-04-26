@@ -133,13 +133,13 @@ UseCaseBase * Elf2E32::SelectUseCase()
 		if (elfin)
 		{
 			if (deffilein)
-				return iUseCase = new ExportTypeRebuildTarget(iPrmManager);
+				return new ExportTypeRebuildTarget(iPrmManager);
 			else
-				return iUseCase = new ElfFileSupplied(iPrmManager);
+				return new ElfFileSupplied(iPrmManager);
 		}
 		else if (filedumpoption || e32in)
 		{
-			return iUseCase = new FileDump(iPrmManager);
+			return new FileDump(iPrmManager);
 		}
 		else if (deffilein)
 		{
@@ -154,28 +154,25 @@ UseCaseBase * Elf2E32::SelectUseCase()
 	switch (iTargetType)
 	{
 	case EDll:
-		if (!deffilein)
-			iUseCase = new DLLTarget(iPrmManager);
-		else if (deffilein)
-			iUseCase = new ExportTypeRebuildTarget(iPrmManager);
-		return iUseCase;
+		if (deffilein)
+			return new ExportTypeRebuildTarget(iPrmManager);
+		else if (!deffilein)
+			return new DLLTarget(iPrmManager);
 	case ELib:
-        return iUseCase = new LibraryTarget(iPrmManager);
+        return new LibraryTarget(iPrmManager);
 	case EStdExe: // fallthru
 	case EExe:
-		return iUseCase = new ExeTarget(iPrmManager);
+		return new ExeTarget(iPrmManager);
 	case EPolyDll:
 		if (!deffilein)
-			iUseCase = new POLYDLLFBTarget(iPrmManager);
+			return new POLYDLLFBTarget(iPrmManager);
 		else if (deffilein)
-			iUseCase = new POLYDLLRebuildTarget(iPrmManager);
-		return iUseCase;
+			return new POLYDLLRebuildTarget(iPrmManager);
 	case EExexp:
 		if (!deffilein)
-			iUseCase = new DLLTarget(iPrmManager);
+			return new DLLTarget(iPrmManager);
 		else if (deffilein)
-			iUseCase = new ExportTypeRebuildTarget(iPrmManager);
-		return iUseCase;
+			return new ExportTypeRebuildTarget(iPrmManager);
 	default:
 		throw Elf2e32Error(INVALIDINVOCATIONERROR);
 	}

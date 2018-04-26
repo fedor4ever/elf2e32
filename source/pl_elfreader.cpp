@@ -187,11 +187,5 @@ PLUINT32 ElfReader::ProcessElfFile(){
 	{
 		throw;
 	}
-	/*catch(...) // If there are any other unhandled exception,they are handled here.
-	{
-		//Warning to indicate that there had been an exception at this point.
-		MessageHandler::GetInstance()->ReportWarning(ELFFILEERROR,(char*)iPrmManager->ElfInput());
-		throw;
-	} */
 	return 0;
 }
