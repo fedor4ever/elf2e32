@@ -641,7 +641,7 @@ This function finds out if the --definput option is passed to the program.
 */
 bool ParameterManager::DefFileInOption()
 {
-	return iDefFileInOption;
+	return iDefInput;
 }
 
 /**
@@ -654,7 +654,7 @@ This function finds out if the --e32input option is passed to the program.
 */
 bool ParameterManager::E32ImageInOption()
 {
-	return iE32ImageInOption;
+	return iE32Input;
 }
 
 /**
@@ -667,7 +667,7 @@ This function finds out if the --elfinput option is passed to the program.
 */
 bool ParameterManager::ElfFileInOption()
 {
-	return iElfFileInOption;
+	return iElfInput;
 }
 
 /**
@@ -680,7 +680,7 @@ This function finds out if the --dso option is passed to the program.
 */
 bool ParameterManager::DSOFileOutOption()
 {
-	return iDSOFileOutOption;
+	return iDSOOutput;
 }
 
 /**
@@ -693,7 +693,7 @@ This function finds out if the --defoutput option is passed to the program.
 */
 bool ParameterManager::DefFileOutOption()
 {
-	return iDefFileOutOption;
+	return iDefOutput;
 }
 
 /**
@@ -720,7 +720,7 @@ This function finds out if the --linkas option is passed to the program.
 */
 bool ParameterManager::LinkAsOption()
 {
-	return iLinkAsOption;
+	return iLinkDLLName;
 }
 
 /**
@@ -759,7 +759,7 @@ This function finds out if the --log option is passed to the program.
 */
 bool ParameterManager::LogFileOption()
 {
-	return iLogFileOption;
+	return iLogFileName;
 }
 
 /**
@@ -772,7 +772,7 @@ This function finds out if the --messagefile option is passed to the program.
 */
 bool ParameterManager::MessageFileOption()
 {
-	return iMessageFileOption;
+	return iMessageFileName;
 }
 
 /**
@@ -785,7 +785,7 @@ This function finds out if the --dumpmessagefile option is passed to the program
 */
 bool ParameterManager::DumpMessageFileOption()
 {
-	return iDumpMessageFileOption;
+	return iDumpMessageFileName;
 }
 
 /**
@@ -799,19 +799,6 @@ This function finds out if the --fixedaddress option is passed to the program.
 bool ParameterManager::FixedAddress()
 {
 	return iFixedAddress;
-}
-
-/**
-This function finds out if the --uncompressed option is passed to the program.
-
-@internalComponent
-@released
-
-@return True if --uncompressed option is passed in or False.
-*/
-bool ParameterManager::Compress()
-{
-	return iCompress;
 }
 
 
@@ -930,7 +917,7 @@ This function finds out if the --dump option is passed to the program.
 */
 bool ParameterManager::FileDumpOption()
 {
-	return iFileDumpOption;
+	return iFileDumpSubOptions;
 }
 
 /**
@@ -943,7 +930,7 @@ This function finds out if the --fpu option is passed to the program.
 */
 bool ParameterManager::FPUOption()
 {
-	return iFPUOption;
+	return iFPU;
 }
 
 
@@ -2084,7 +2071,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseUncompressed)
 {
 	INITIALISE_PARAM_PARSER;
 	CheckInput(aValue, "--uncompressed");
-	aPM->SetCompress(false);
+	aPM->SetCompressionMethod(0);
 }
 
 
@@ -3094,7 +3081,6 @@ Name of the input target type if provided as input through --targettype or 0.
 */
 void ParameterManager::SetTargetTypeName(ETargetType aTargetTypeVal)
 {
-	iTargetTypeOption = true;
 	iTargetTypeName = aTargetTypeVal;
 }
 
@@ -3110,7 +3096,6 @@ Name of the input DEF file if provided as input through --definput or 0.
 */
 void ParameterManager::SetDefInput(char * aDefInputVal)
 {
-	iDefFileInOption = true;
 	iDefInput = aDefInputVal;
 }
 
@@ -3126,7 +3111,6 @@ Name of the output DSO file if provided as input through --dso or 0.
 */
 void ParameterManager::SetDSOOutput(char * aDSOOutputVal)
 {
-	iDSOFileOutOption = true;
 	iDSOOutput = aDSOOutputVal;
 }
 
@@ -3141,7 +3125,6 @@ Name of the input Elf file if provided as input through --dsoin or 0.
 */
 void ParameterManager::SetElfInput(char * aElfInputVal)
 {
-	iElfFileInOption = true;
 	iElfInput = aElfInputVal;
 }
 
@@ -3156,7 +3139,6 @@ Name of the input E32 image if provided as input through --e32dump or 0.
 */
 void ParameterManager::SetE32Input(char * aSetE32Input)
 {
-	iE32ImageInOption = true;
 	iE32Input = aSetE32Input;
 }
 
@@ -3171,7 +3153,6 @@ Dump sub options passed to --dump option
 */
 void ParameterManager::SetFileDumpOptions(char * aSetFileDumpOptions)
 {
-	iFileDumpOption = true;
 	iFileDumpSubOptions = aSetFileDumpOptions;
 
 	if (aSetFileDumpOptions)
@@ -3224,7 +3205,6 @@ Name of the output DEF file if provided as input through --defoutput or 0.
 */
 void ParameterManager::SetDefOutput(char * aSetDefOutput)
 {
-	iDefFileOutOption = true;
 	iDefOutput = aSetDefOutput;
 }
 
@@ -3240,7 +3220,6 @@ The DLL name with which the DSO is to be linked with
 */
 void ParameterManager::SetLinkDLLName(char * aSetLinkDLLName)
 {
-	iLinkAsOption = true;
 	iLinkDLLName = aSetLinkDLLName;
 }
 
@@ -3302,7 +3281,7 @@ Position of the predefined symbol
 */
 void ParameterManager::SetSysDefs(unsigned int aOrdinalnum, string aSymbol, int aCount)
 {
-	iSysDefOption = 1;
+	iSysDefOption = true;
 	iSysDefSymbols[aCount].iSysDefOrdinalNum = aOrdinalnum;
 	iSysDefSymbols[aCount].iSysDefSymbolName = aSymbol;
 	iSysDefCount = (aCount+1);
@@ -3319,7 +3298,6 @@ Name of the output LOG file if provided as input through --log or 0.
 */
 void ParameterManager::SetLogFile(char * aSetLogFile)
 {
-	iLogFileOption = true;
 	iLogFileName = aSetLogFile;
 }
 
@@ -3334,7 +3312,6 @@ Name of the Message file if provided as input through --messagefile or 0.
 */
 void ParameterManager::SetMessageFile(char * aMessageFile)
 {
-	iMessageFileOption = true;
 	iMessageFileName = aMessageFile;
 }
 
@@ -3349,7 +3326,6 @@ Name of the Message file to be dumped if provided as input through --dumpmessage
 */
 void ParameterManager::SetDumpMessageFile(char * aDumpMessageFile)
 {
-	iDumpMessageFileOption = true;
 	iDumpMessageFileName = aDumpMessageFile;
 }
 
@@ -3367,22 +3343,9 @@ void ParameterManager::SetFixedAddress(bool aSetFixedAddress)
 	iFixedAddress = aSetFixedAddress;
 }
 
-/**
-This function sets iCompress if --uncompressed is passed in.
-
-@internalComponent
-@released
-
-@param aVal
-True if --uncompressed is passed in.
-*/
-void ParameterManager::SetCompress(bool aSetCompress)
-{
-	iCompress = aSetCompress;
-}
 
 /**
-This function sets iCompress if --uncompressed is passed in.
+This function sets iCompressionMethod.
 
 @internalComponent
 @released
@@ -3592,7 +3555,6 @@ FPU type passed to the '--fpu' option.
 */
 void  ParameterManager::SetFPU(UINT aFPU)
 {
-	iFPUOption = true;
 	iFPU = aFPU;
 }
 

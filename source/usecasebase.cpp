@@ -392,7 +392,7 @@ This function returns if compression is enabled.
 */
 bool UseCaseBase::GetCompress()
 {
-		return iParameterManager->Compress();
+		return iParameterManager->CompressionMethod();
 }
 
 /**

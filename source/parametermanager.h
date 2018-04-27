@@ -178,7 +178,7 @@ public:
 	void SetUID2(UINT aSetUINT2);
 	void SetUID3(UINT aSetUINT3);
 	void SetFixedAddress(bool aSetFixedAddress);
-	void SetCompress(bool aSetCompress);
+
 	void SetCompressionMethod(UINT aCompressionMethod);
 	void SetSecureId(UINT aSetSecureID);
 	void SetVendorId(UINT aSetVendorID);
@@ -375,7 +375,7 @@ public:
 	UINT VendorId();
 	UINT Version();
 	bool FixedAddress();
-	bool Compress();
+
 	UINT CompressionMethod();
 	uint32_t HeapCommittedSize();
 	uint32_t HeapReservedSize();
@@ -414,30 +414,6 @@ private:
 	/** REVISIT */
 	char * iImageName = nullptr;
 
-	/** To check if the --targettypeoption (Option to pass the target type of the final image) is provided */
-	bool iTargetTypeOption = false;
-
-	/** To check if the --definput (Option to pass the input DEF File) is passed as input */
-	bool iDefFileInOption = false;
-
-	/** To check if the --defoutput (Option to pass the output DEF File name) is passed as input */
-	bool iDefFileOutOption = false;
-
-	/** To check if the --dump is passed as input */
-	bool iFileDumpOption = false;
-
-	/** To check if the --dso (Option to pass the output DSO File name) is passed as input */
-	bool iDSOFileOutOption = false;
-
-	/** To check if the --elfinput (Option to pass the input Elf File) is passed as input */
-	bool iElfFileInOption = false;
-
-	/** To check if the --e32input (Option to pass the input E32 File) is passed as input */
-	bool iE32ImageInOption = false;
-
-	/** To check if the --linkas (Option to pass DLL name to be linked with) is passed as input */
-	bool iLinkAsOption = false;
-
 	bool iSecureIDOption = false;
 	bool iVendorIDOption = false;
 
@@ -454,7 +430,6 @@ private:
 
 	UINT iVendorID = 0;
 
-	bool iCompress = true;
 	UINT iCompressionMethod = KUidCompressionDeflate;
 
 	bool iFixedAddress = false;
@@ -509,11 +484,8 @@ private:
 
 	bool iSysDefOption = false;
 	char * iLogFileName = nullptr;
-	bool iLogFileOption = false;
-	char * iMessageFileName;
-	bool iMessageFileOption = false;
+	char * iMessageFileName = nullptr;
 	char * iDumpMessageFileName = nullptr;
-	bool iDumpMessageFileOption = false;
 
 	bool iDllData = false;
 
@@ -528,7 +500,6 @@ private:
 	bool iVersionOption = false;
 	bool iCallEntryPoint = true;
 	UINT iFPU = 0;
-	bool iFPUOption = false;
 
 	bool iCodePaged			= false;
 	bool iCodeUnpaged		= false;
