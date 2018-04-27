@@ -55,9 +55,9 @@ int FileDump::Execute()
 	if(iParameterManager->FileDumpOption() && iParameterManager->E32OutOption() && iParameterManager->DefFileInOption()) //DumpAsm
 	{
 		if(!(iParameterManager->DumpOptions() & EDumpAsm))
-			throw Elf2e32Error(INVALIDARGUMENTERROR,(!iParameterManager->FileDumpSubOptions()?"":iParameterManager->FileDumpSubOptions()) ,"--dump");
+			throw Elf2e32Error(INVALIDARGUMENTERROR,(!iParameterManager->FileDumpSubOptions()?"":iParameterManager->FileDumpSubOptions()), "--dump");
 		if(iParameterManager->DumpOptions() & 31)
-			throw Elf2e32Error(INVALIDARGUMENTERROR,(!iParameterManager->FileDumpSubOptions()?"":iParameterManager->FileDumpSubOptions()),"--dump");
+			throw Elf2e32Error(INVALIDARGUMENTERROR,(!iParameterManager->FileDumpSubOptions()?"":iParameterManager->FileDumpSubOptions()), "--dump");
 		if(!iParameterManager->E32ImageOutput())
 			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--output");
 		if(!iParameterManager->DefInput())

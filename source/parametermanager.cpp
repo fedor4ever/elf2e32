@@ -18,6 +18,10 @@
 //
 //
 
+#include <iostream>
+#include <cstring>
+#include <stdlib.h>
+
 // This must go before ParameterManager.h
 #define INCLUDE_CAPABILITY_NAMES
 #include <e32capability.h>
@@ -25,15 +29,21 @@
 #include "pl_common.h"
 #include "parametermanager.h"
 #include "errorhandler.h"
-#include <iostream>
-#include <cstring>
-#include <stdlib.h>
 
 #include "h_ver.h"
 
 using std::endl;
 using std::cerr;
 void ValidateDSOGeneration(ParameterManager *param);
+
+/** The short prefix '-' used for the command line options for the program */
+const char* ParamShortPrefix = "-";
+
+/** The normal prefix '--' used for the command line options for the program */
+const char* ParamPrefix = "--";
+
+/** The '=' used for passing the arguments to the command line options for the program */
+const char ParamEquals = '=';
 
 /**
 Constructor for the ParameterManager.
@@ -188,10 +198,6 @@ static bool GetUInt(UINT & aVal, const char * aArg)
 	}
 	return false;
 }
-
-const char * ParameterManager::iParamPrefix = "--";
-const char * ParameterManager::iParamShortPrefix = "-";
-const char ParameterManager::iParamEquals = '=';
 
 // Option Map
 const ParameterManager::OptionDesc ParameterManager::iOptions[] =
@@ -492,8 +498,8 @@ void ParameterManager::ParameterAnalyser()
 {
 	InitParamParser();
 	const OptionDesc * aHelpDesc = iOptionMap["help"];
-	int prefixLen = strlen(iParamPrefix);
-	int prefixShortLen = strlen(iParamShortPrefix);
+	int prefixLen = strlen(ParamPrefix);
+	int prefixShortLen = strlen(ParamShortPrefix);
 	int ArgCount = iArgumentCount-1;
 	RecordImageLocation();
 	ParamList::iterator p = iParamList.begin()+1;
@@ -518,9 +524,9 @@ void ParameterManager::ParameterAnalyser()
 		// Check if the option provided is correct and display help on getting incorrect options
 		try
 		{
-			if (!strncmp(*p, iParamPrefix, prefixLen))
+			if (!strncmp(*p, ParamPrefix, prefixLen))
 				Prefix = 1;
-			else if (!strncmp(*p, iParamShortPrefix, prefixShortLen))
+			else if (!strncmp(*p, ParamShortPrefix, prefixShortLen))
 				ShortPrefix = 1;
 			else // Option is neither preceeded by '-' or by '--'
 				throw Elf2e32Error(OPTIONNAMEERROR,*p);
@@ -546,7 +552,7 @@ void ParameterManager::ParameterAnalyser()
 			option = *p + prefixShortLen;
 			}
 
-		char * pos = strchr(*p, iParamEquals);
+		char * pos = strchr(*p, ParamEquals);
 
 		char *end = pos ? pos : *p + strlen(*p);
 
@@ -3014,15 +3020,14 @@ DEFINE_PARAM_PARSER(ParameterManager::ParamHelp)
 	int lim = aPM->NumOptions();
 	for (int i = 0; i < lim; i++)
 	{
+        cerr << '\t' << ParamPrefix << aPM->iOptions[i].iName;
 		if (aPM->iOptions[i].iName == aHelpDesc->iName)
 		{
-			cerr << '\t' << aPM->iParamPrefix << aPM->iOptions[i].iName
-				<< " : This command." << endl;
+			cerr << " : This command." << endl;
 		}
 		else
 		{
-			cerr << '\t' << aPM->iParamPrefix << aPM->iOptions[i].iName;
-			if (aPM->iOptions[i].iDoc) cerr << aPM->iParamEquals << aPM->iOptions[i].iDoc;
+			if (aPM->iOptions[i].iDoc) cerr << ParamEquals << aPM->iOptions[i].iDoc;
 			cerr << endl;
 		}
 	}

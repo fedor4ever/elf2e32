@@ -27,10 +27,6 @@
 #include <string>
 
 
-class UseCaseBase;
-class Symbol;
-
-
 enum ETargetType
 {
 	ETargetTypeNotSet = - 2,
@@ -58,6 +54,9 @@ class ParameterManager
 {
 
 public:
+
+    ParameterManager(int aArgc, char** aArgv);
+	virtual ~ParameterManager();
 
 	void CheckOptions();
 
@@ -162,9 +161,6 @@ public:
 	DECLARE_PARAM_PARSER(ParseSymNamedLookup);
 	DECLARE_PARAM_PARSER(ParseDebuggable);
 	DECLARE_PARAM_PARSER(ParseSmpSafe);
-
-	ParameterManager(int aArgc, char** aArgv);
-	virtual ~ParameterManager();
 
 	/**
     This function parses the command line options and sets the appropriate values based on the
@@ -391,7 +387,6 @@ public:
 	uint32_t StackCommittedSize();
 	bool Unfrozen();
 	bool IgnoreNonCallable();
-	UseCaseBase * SelectUseCase();
 	SCapabilitySet Capability();
 	void ParseCapability1(string CapabilityList, SCapabilitySet& aCapabilities, bool invert);
 	void ParseCapabilitiesArg(SCapabilitySet& aCapabilities, const char *aText);
@@ -479,15 +474,6 @@ private:
 	/** List of the parameters */
 	ParamList iParamList;
 
-	/** The short prefix '-' used for the command line options for the program */
-	static const char * iParamShortPrefix;
-
-	/** The normal prefix '--' used for the command line options for the program */
-	static const char * iParamPrefix;
-
-	/** The '=' used for passing the arguments to the command line options for the program */
-	static const char iParamEquals;
-
 	/** The list of command line options (with normal prefix '--') that will be accepted by the program */
 	static const OptionDesc iOptions[];
 
@@ -499,9 +485,6 @@ private:
 
 	/** The map between the command line option (with short prefix '-') and the corresponding function */
 	OptionMap iShortOptionMap;
-
-	/** The usecase that is selected, could either be LibraryTarget or DLLTarget or EXETarget */
-	UseCaseBase *iUseCase = nullptr;
 
 	/** Target Type that is passed as input to the --targettype option */
 	ETargetType iTargetTypeName;
