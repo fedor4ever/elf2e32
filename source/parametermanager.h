@@ -31,7 +31,7 @@ enum ETargetType
 {
 	ETargetTypeNotSet = - 2,
 	EInvalidTargetType = - 1,
-	/** Target type is Library */
+	/** Target type is static Library */
 	ELib,
 	/** Target type is DLL */
 	EDll,
@@ -42,20 +42,16 @@ enum ETargetType
 };
 
 typedef uint32_t UINT;
-using std::string;
 
-/**
-This class is base class.
-
-@internalComponent
-@released
-*/
 class ParameterManager
 {
+private:
+    ParameterManager(){}
+    ParameterManager(const ParameterManager& other) = delete;
+    ParameterManager& operator=(const ParameterManager&) = delete;
 
 public:
-
-    ParameterManager(int aArgc, char** aArgv);
+    static ParameterManager *GetInstance(int aArgc, char** aArgv);
 	virtual ~ParameterManager();
 
 	void CheckOptions();
@@ -88,15 +84,14 @@ public:
 	struct SysDefs
 	{
 		int iSysDefOrdinalNum;
-		string iSysDefSymbolName;
+		std::string iSysDefSymbolName;
 	};
 
 	typedef struct SysDefs Sys;
 
-	typedef std::less<string> OptionCompare;
-	typedef std::map<string, const OptionDesc *, OptionCompare> OptionMap;
-	typedef std::vector<string> LibSearchPaths;
-	typedef std::vector<char *> ParamList;
+	typedef std::less<std::string> OptionCompare;
+	typedef std::map<std::string, const OptionDesc *, OptionCompare> OptionMap;
+	typedef std::vector<std::string> LibSearchPaths;
 
 	typedef void (*ParserFn)(ParameterManager *, char *, char *, const OptionDesc *);
 
@@ -194,7 +189,7 @@ public:
 	void SetIgnoreNonCallable(bool aVal);
 	void SetCapability(unsigned int newVal);
 	void SetCapability(SCapabilitySet & newVal);
-	void SetSysDefs(unsigned int aSysDefOrdinal, string aSysDefSymbol, int aCount);
+	void SetSysDefs(unsigned int aSysDefOrdinal, std::string aSysDefSymbol, int aCount);
 	void SetLogFile(char * aSetLogFile);
 	void SetMessageFile(char *aMessageFile);
 	void SetDumpMessageFile(char *aDumpMessageFile);
@@ -388,7 +383,7 @@ public:
 	bool Unfrozen();
 	bool IgnoreNonCallable();
 	SCapabilitySet Capability();
-	void ParseCapability1(string CapabilityList, SCapabilitySet& aCapabilities, bool invert);
+	void ParseCapability1(std::string CapabilityList, SCapabilitySet& aCapabilities, bool invert);
 	void ParseCapabilitiesArg(SCapabilitySet& aCapabilities, const char *aText);
 	uint32_t FPU();
 
@@ -411,7 +406,7 @@ private:
 	int iArgc;
 
 	/** The listing of all the arguments */
-	char ** iArgv;
+	std::vector<char *> iArgv;
 
 	/** REVISIT */
 	char * iImageLocation = nullptr;
@@ -447,32 +442,28 @@ private:
 	bool iVendorIDOption = false;
 
 	/** System level identifier, identifies the general type of a Symbian OS object */
-	UINT iUID1;
+	UINT iUID1 = 0;
 
 	/** Interface identifier, distinguishes within a type (i.e.within a UID1) */
-	UINT iUID2;
+	UINT iUID2 = 0;
 
 	/** Project identifier, identifies a particular subtype */
-	UINT iUID3;
+	UINT iUID3 = 0;
 
-	UINT iSecureID;
+	UINT iSecureID = 0;
 
-	UINT iVendorID;
+	UINT iVendorID = 0;
 
-	bool iCompress;
-	UINT iCompressionMethod;
+	bool iCompress = true;
+	UINT iCompressionMethod = KUidCompressionDeflate;
 
-	bool iFixedAddress;
+	bool iFixedAddress = false;
 
-	uint32_t iHeapCommittedSize;
-	uint32_t iHeapReservedSize;
-	uint32_t iStackCommittedSize;
-	bool iUnfrozen;
-	bool iIgnoreNonCallable;
-
-
-	/** List of the parameters */
-	ParamList iParamList;
+	uint32_t iHeapCommittedSize = 0x1000;
+	uint32_t iHeapReservedSize = 0x100000;
+	uint32_t iStackCommittedSize = 0x2000;
+	bool iUnfrozen = false;
+	bool iIgnoreNonCallable = false;
 
 	/** The list of command line options (with normal prefix '--') that will be accepted by the program */
 	static const OptionDesc iOptions[];
@@ -487,59 +478,57 @@ private:
 	OptionMap iShortOptionMap;
 
 	/** Target Type that is passed as input to the --targettype option */
-	ETargetType iTargetTypeName;
+	ETargetType iTargetTypeName = ETargetTypeNotSet;
 
 	/** File name of the output DEF file passed as input to the --defoutput option */
-	char * iDefOutput;
+	char * iDefOutput = nullptr;
 
 	/** File name of the output DSO file passed as input to the --dso option */
-	char * iDSOOutput;
+	char * iDSOOutput = nullptr;
 
 	/** File name of the output image passed as input to the --output option */
-	char * iOutFileName;
+	char * iOutFileName = nullptr;
 
 	/** File name of the input DEF file passed as input to the --definput option */
-	char * iDefInput;
+	char * iDefInput = nullptr;
 
 	/** File name of the input DSO file passed as input to the --dsoin option */
-	char * iElfInput;
+	char * iElfInput = nullptr;
 
 	/** File name of the input E32 image passed as input to the --e32dump option */
-	char * iE32Input;
+	char * iE32Input = nullptr;
 
 	/** File name of the DLL to be linked with passed as input to the --linkas option */
-	char * iLinkDLLName;
+	char * iLinkDLLName = nullptr;
 
 	/** Path name of the intermediate libraries passed as input to the --libpath option */
 	char * iLibPath = nullptr;
 
-	int iDumpOptions;
-	char *iFileDumpSubOptions;
+	int iDumpOptions = 61; //TDumpFlags::EDumpDefaults
+	char *iFileDumpSubOptions = nullptr;
 
-	bool iSysDefOption;
-	char * iLogFileName;
-	bool iLogFileOption;
+	bool iSysDefOption = false;
+	char * iLogFileName = nullptr;
+	bool iLogFileOption = false;
 	char * iMessageFileName;
-	bool iMessageFileOption;
-	char * iDumpMessageFileName;
-	bool iDumpMessageFileOption;
+	bool iMessageFileOption = false;
+	char * iDumpMessageFileName = nullptr;
+	bool iDumpMessageFileOption = false;
 
-	bool iDllData;
+	bool iDllData = false;
 
 	LibSearchPaths iLibPathList;
 	SCapabilitySet iCapability;
 	//struct SysDefs iSysDefSymbols[10];
 	Sys iSysDefSymbols[10];
-	int iSysDefCount;
-	bool iPriorityOption;
-	TProcessPriority iPriorityVal;
-	UINT iVersion;
-	bool iVersionOption;
-	bool iCallEntryPoint;
-	UINT iFPU;
-	bool iFPUOption;
-
-	int iArgumentCount;
+	int iSysDefCount = 0;
+	bool iPriorityOption = false;
+	TProcessPriority iPriorityVal = (TProcessPriority)0;
+	UINT iVersion = 0x000a0000u;
+	bool iVersionOption = false;
+	bool iCallEntryPoint = true;
+	UINT iFPU = 0;
+	bool iFPUOption = false;
 
 	bool iCodePaged			= false;
 	bool iCodeUnpaged		= false;
@@ -549,11 +538,11 @@ private:
 	bool iDataUnpaged		= false;
 	bool iDataDefaultPaged	= false;
 
-	bool iExcludeUnwantedExports;
-	bool iCustomDllTarget;
-	bool iSymNamedLookup;
-	bool iDebuggable;
-	bool iSmpSafe;
+	bool iExcludeUnwantedExports = false;
+	bool iCustomDllTarget = false;
+	bool iSymNamedLookup = false;
+	bool iDebuggable = false;
+	bool iSmpSafe = false;
 	bool iSSTDDll = false;
 };
 

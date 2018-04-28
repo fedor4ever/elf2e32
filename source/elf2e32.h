@@ -22,36 +22,21 @@
 #define ELF2E32_H
 
 #include "pl_common.h"
-#include "parametermanager.h"
 
 class UseCaseBase;
-class ParameterManager;
 /**
-This class gets the single instance of the ParameterManager.
+This class calls the single instance of the ParameterManager.
 
 @internalComponent
 @released
 */
-class Elf2E32
+struct Elf2E32
 {
-
-public:
 	Elf2E32();
 	Elf2E32(int argc, char** argv);
-	virtual ~Elf2E32();
+	~Elf2E32(){}
 	UseCaseBase * SelectUseCase();
 	int Execute();
-	static ParameterManager * GetInstance(int aArgc, char ** aArgv);
-
-private:
-
-	ETargetType iTargetType;
-
-	/** Pointer to the ParameterListInterface which is the abstract base class */
-	ParameterManager * iPrmManager = nullptr;
-
-	/** Static Pointer to the ParameterListInterface */
-	static ParameterManager * iInstance;
 };
 
 

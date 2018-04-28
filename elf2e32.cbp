@@ -129,8 +129,6 @@
 		<Unit filename="source/polydll_rebuild_target.h" />
 		<Unit filename="source/portable.cpp" />
 		<Unit filename="source/staticlibsymbols.h" />
-		<Unit filename="source/stdexe_target.cpp" />
-		<Unit filename="source/stdexe_target.h" />
 		<Unit filename="source/usecasebase.cpp" />
 		<Unit filename="source/usecasebase.h" />
 		<Extensions>

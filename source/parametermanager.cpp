@@ -34,6 +34,7 @@
 
 using std::endl;
 using std::cerr;
+using std::vector;
 void ValidateDSOGeneration(ParameterManager *param);
 
 /** The short prefix '-' used for the command line options for the program */
@@ -56,69 +57,20 @@ Constructor for the ParameterManager.
 @param aArgv
  The listing of all the arguments
 */
-ParameterManager::ParameterManager(int aArgc, char** aArgv) :
-	iArgc(aArgc),
-	iArgv(aArgv),
-	iUID1(0),
-	iUID2(0),
-	iUID3(0),
-	iSecureID(0),
-	iVendorID(0),
-	iCompress(true),
-	iCompressionMethod(KUidCompressionDeflate),
-	iFixedAddress(false),
-	iHeapCommittedSize(0x1000),
-	iHeapReservedSize(0x100000),
-	iStackCommittedSize(0x2000),
-	iUnfrozen(false),
-	iIgnoreNonCallable(false),
-	iTargetTypeName(ETargetTypeNotSet),
-	iDefOutput(nullptr),
-	iDSOOutput(nullptr),
-	iOutFileName(nullptr),
-	iDefInput(nullptr),
-	iElfInput(nullptr),
-	iE32Input(nullptr),
-	iLinkDLLName(nullptr),
-	iDumpOptions(EDumpDefaults),
-	iFileDumpSubOptions(nullptr),
-	iSysDefOption(false),
-	iLogFileName(nullptr),
-	iLogFileOption(false),
-	iMessageFileName(nullptr),
-	iMessageFileOption(false),
-	iDumpMessageFileName(nullptr),
-	iDumpMessageFileOption(false),
-	iDllData(false),
-	iSysDefCount (0),
-	iPriorityOption(false),
-	iPriorityVal((TProcessPriority)0),
-	iVersion(0x000a0000u),
-	iVersionOption(false),
-	iCallEntryPoint(true),
-	iFPU(0),
-	iFPUOption(false),
-	iArgumentCount(0),
-
-	iExcludeUnwantedExports(false),
-	iCustomDllTarget(false),
-	iSymNamedLookup(false),
-	iDebuggable(false),
-	iSmpSafe(false)
+ParameterManager *ParameterManager::GetInstance(int aArgc, char** aArgv)
 {
-	iArgumentCount = aArgc;
-	ParamList temp(aArgv, aArgv+aArgc);
-	iParamList = temp;
-	iCapability.iCaps[0] = 0;
-	iCapability.iCaps[1] = 0;
+    static ParameterManager* iInstance;
+    if(!iInstance)
+    {
+        iInstance = new ParameterManager();
+        iInstance->iArgc = aArgc;
+        iInstance->iArgv.assign(aArgv, aArgv + aArgc);
+        iInstance->iCapability.iCaps[0] = 0;
+        iInstance->iCapability.iCaps[1] = 0;
+    }
+    return iInstance;
 }
 
-/**
-Destructor for the ParameterManager.
-
-@internalComponent
-@released
-*/
 ParameterManager::~ParameterManager()
 {
 	DELETE_PTR_ARRAY(iImageLocation);
@@ -500,14 +452,14 @@ void ParameterManager::ParameterAnalyser()
 	const OptionDesc * aHelpDesc = iOptionMap["help"];
 	int prefixLen = strlen(ParamPrefix);
 	int prefixShortLen = strlen(ParamShortPrefix);
-	int ArgCount = iArgumentCount-1;
+	int ArgCount = iArgc-1;
 	RecordImageLocation();
-	ParamList::iterator p = iParamList.begin()+1;
+	std::vector<char *>::iterator p = iArgv.begin()+1;
 
 	int OnlyLoggingOption = 0;
 
 	// Have to have some arguments. Otherwise, assume this is a request for --help and display the usage information
-	if (p == iParamList.end())
+	if (p == iArgv.end())
 	{
 		ParserFn parser = (ParserFn)aHelpDesc->iParser ;
 		parser(this, "help", nullptr, aHelpDesc);
@@ -516,7 +468,7 @@ void ParameterManager::ParameterAnalyser()
 	if ( (ArgCount ==1) && (!strncmp(*p,"--log",5)) )
 		OnlyLoggingOption = 1;
 
-	for (; p != iParamList.end(); p++)
+	for (; p != iArgv.end(); p++)
 	{
 		int Prefix=0, ShortPrefix=0;
 		ArgCount--;
@@ -566,7 +518,7 @@ void ParameterManager::ParameterAnalyser()
 			// Check to ensure that optval points to the correct option value
 				optval=end+1;
 			}
-			if ( ((p+1) != iParamList.end()) && (**(p+1) != '-') )
+			if ( ((p+1) != iArgv.end()) && (**(p+1) != '-') )
 			{
 				pos = nullptr;
 			}
@@ -576,10 +528,10 @@ void ParameterManager::ParameterAnalyser()
 			// The option is not immediately preceeded by '='
 			// Space may be used to separate the input option and the paramters
 			// '=' may be enclosed within space
-			//if ((p+1) != iParamList.end())
+			//if ((p+1) != iArgv.end())
 			if (ArgCount != 0) //To find if we have consumed all the arguments
 			{
-				while ( ((p+1) != iParamList.end()) && (**(p+1) != '-') )
+				while ( ((p+1) != iArgv.end()) && (**(p+1) != '-') )
 				{
 					end = *(p+1);
 					if (*end == '=')

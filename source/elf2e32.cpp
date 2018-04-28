@@ -32,7 +32,8 @@
 using std::cout;
 using std::endl;
 
-ParameterManager * Elf2E32::iInstance=nullptr;
+/** Static Pointer to the ParameterManager */
+static ParameterManager * iInstance = nullptr;
 
 /**
 Constructor for Elf2E32
@@ -47,37 +48,9 @@ Constructor for Elf2E32
 */
 Elf2E32::Elf2E32(int aArgc, char **aArgv)
 {
-	iPrmManager = GetInstance(aArgc, aArgv);
+	iInstance = ParameterManager::GetInstance(aArgc, aArgv);
 }
 
-
-Elf2E32::~Elf2E32()
-{
-	delete iInstance;
-}
-
-/**
-This function creates a single instance of the ParameterManager which is derived from
-ParameterListInterface which is the abstract base class.
-
-@internalComponent
-@released
-
-@param aArgc
- The number of command line arguments passed into the program
-@param aArgv
- The listing of all the arguments
-
-@return A pointer to the newly created ParameterListInterface object which is the
- abstract interface
-*/
-ParameterManager * Elf2E32::GetInstance(int aArgc, char ** aArgv)
-{
-	if (!iInstance)
-		iInstance = new ParameterManager(aArgc, aArgv);
-
-	return iInstance;
-}
 
 /**
 This function is to select the appropriate use case based on the input values.
@@ -93,18 +66,18 @@ This function is to select the appropriate use case based on the input values.
 */
 UseCaseBase * Elf2E32::SelectUseCase()
 {
-	bool definputoption = iPrmManager->DefFileInOption();
-	bool elfinputoption = iPrmManager->ElfFileInOption();
-	char * deffilein = iPrmManager->DefInput();
-	char * elfin = iPrmManager->ElfInput();
-	bool filedumpoption = iPrmManager->FileDumpOption();
-	int dumpOptions = iPrmManager->DumpOptions();
-	char *filedumpsuboptions = iPrmManager->FileDumpSubOptions();
+	bool definputoption = iInstance->DefFileInOption();
+	bool elfinputoption = iInstance->ElfFileInOption();
+	char * deffilein = iInstance->DefInput();
+	char * elfin = iInstance->ElfInput();
+	bool filedumpoption = iInstance->FileDumpOption();
+	int dumpOptions = iInstance->DumpOptions();
+	char *filedumpsuboptions = iInstance->FileDumpSubOptions();
 
-	bool e32inputoption = iPrmManager->E32ImageInOption();
-	char * e32in = iPrmManager->E32Input();
+	bool e32inputoption = iInstance->E32ImageInOption();
+	char * e32in = iInstance->E32Input();
 
-	bool dumpMessageFileOption = iPrmManager->DumpMessageFileOption();
+	bool dumpMessageFileOption = iInstance->DumpMessageFileOption();
 
 	if (definputoption && !deffilein)
 		throw Elf2e32Error(NOARGUMENTERROR, "--definput");
@@ -123,7 +96,7 @@ UseCaseBase * Elf2E32::SelectUseCase()
         throw Elf2e32Error(NOARGUMENTERROR, "--e32input");
 	}
 
-	iTargetType = iPrmManager->TargetTypeName();
+	ETargetType iTargetType = iInstance->TargetTypeName();
 
 //	if (iTargetType == ETargetTypeNotSet) // Will get this warning in build
 //		cout << "Warning: Target Type is not specified explicitly" << endl;
@@ -133,13 +106,13 @@ UseCaseBase * Elf2E32::SelectUseCase()
 		if (elfin)
 		{
 			if (deffilein)
-				return new ExportTypeRebuildTarget(iPrmManager);
+				return new ExportTypeRebuildTarget(iInstance);
 			else
-				return new ElfFileSupplied(iPrmManager);
+				return new ElfFileSupplied(iInstance);
 		}
 		else if (filedumpoption || e32in)
 		{
-			return new FileDump(iPrmManager);
+			return new FileDump(iInstance);
 		}
 		else if (deffilein)
 		{
@@ -155,24 +128,24 @@ UseCaseBase * Elf2E32::SelectUseCase()
 	{
 	case EDll:
 		if (deffilein)
-			return new ExportTypeRebuildTarget(iPrmManager);
+			return new ExportTypeRebuildTarget(iInstance);
 		else if (!deffilein)
-			return new DLLTarget(iPrmManager);
+			return new DLLTarget(iInstance);
 	case ELib:
-        return new LibraryTarget(iPrmManager);
+        return new LibraryTarget(iInstance);
 	case EStdExe: // fallthru
 	case EExe:
-		return new ExeTarget(iPrmManager);
+		return new ExeTarget(iInstance);
 	case EPolyDll:
 		if (!deffilein)
-			return new POLYDLLFBTarget(iPrmManager);
+			return new POLYDLLFBTarget(iInstance);
 		else if (deffilein)
-			return new POLYDLLRebuildTarget(iPrmManager);
+			return new POLYDLLRebuildTarget(iInstance);
 	case EExexp:
 		if (!deffilein)
-			return new DLLTarget(iPrmManager);
+			return new DLLTarget(iInstance);
 		else if (deffilein)
-			return new ExportTypeRebuildTarget(iPrmManager);
+			return new ExportTypeRebuildTarget(iInstance);
 	default:
 		throw Elf2e32Error(INVALIDINVOCATIONERROR);
 	}
@@ -184,8 +157,8 @@ UseCaseBase * Elf2E32::SelectUseCase()
 This function:
  1. Calls the ParameterAnalyser() which parses the command line options and extracts the inputs.
  2. Calls the CheckOptions() to find and fix wrong input options
- 2. Calls the SelectUseCase() to select the appropriate use case based on the input values.
- 3. Calls the Execute() of the selected use case.
+ 3. Calls the SelectUseCase() to select the appropriate use case based on the input values.
+ 4. Calls the Execute() of the selected use case.
 @internalComponent
 @released
 
@@ -199,11 +172,11 @@ int Elf2E32::Execute()
 
 	try
 	{
-		iPrmManager->ParameterAnalyser();
-		iPrmManager->CheckOptions();
+		iInstance->ParameterAnalyser();
+		iInstance->CheckOptions();
 
-		bool dumpMessageFileOption = iPrmManager->DumpMessageFileOption();
-		char * dumpMessageFile = iPrmManager->DumpMessageFile();
+		bool dumpMessageFileOption = iInstance->DumpMessageFileOption();
+		char * dumpMessageFile = iInstance->DumpMessageFile();
 
 	 	if(dumpMessageFileOption)
 		{
