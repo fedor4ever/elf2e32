@@ -36,6 +36,7 @@ class ElfImage;
 class ElfRelocation;
 class ELFExecutable;
 class ElfFileSupplied;
+class Elfparser;
 
 /**
 Class E32ImageChunkDesc for different sections in the E32 image.
@@ -45,7 +46,7 @@ Class E32ImageChunkDesc for different sections in the E32 image.
 class E32ImageChunkDesc {
     public:
         E32ImageChunkDesc(char * aData, size_t aSize, size_t aOffset, char * aDoc);
-        virtual ~E32ImageChunkDesc();
+        ~E32ImageChunkDesc();
         void Init(char * aPlace);
 
     public:
@@ -55,6 +56,7 @@ class E32ImageChunkDesc {
         char * iDoc;
     };
 
+typedef vector<E32ImageChunkDesc *> ChunkList;
 /**
 Class E32ImageChunks for a list of sections in the E32 image.
 @internalComponent
@@ -62,16 +64,13 @@ Class E32ImageChunks for a list of sections in the E32 image.
 */
 class E32ImageChunks {
     public:
-
-        typedef vector<E32ImageChunkDesc *> ChunkList;
-
-    public:
-        virtual ~E32ImageChunks();
+        ~E32ImageChunks();
 
         void AddChunk(char * aData, size_t aSize, size_t aOffset, char * aDoc);
         size_t GetOffset();
         void SetOffset(size_t aOffset);
         ChunkList & GetChunks();
+        void SectionsInfo();
 
     private:
         ChunkList iChunks;
@@ -91,8 +90,6 @@ Class E32ImageFile for fields of an E32 image.
 */
 class E32ImageFile {
     public:
-
-//public:
         E32ImageFile(ElfImage * aElfImage, ElfFileSupplied * aUseCase);
         virtual ~E32ImageFile();
 
@@ -201,7 +198,6 @@ class E32ImageFile {
         TUint TextOffset();
         TUint DataOffset();
         TUint BssOffset();
-        TUint32 Capability();
 
         void Dump(const char *aFileName,TInt aDumpFlags);
         void DumpHeader(TInt aDumpFlags);
@@ -244,6 +240,8 @@ class E32ImageFile {
         TInt iError=0;
         TUint iOrigHdrOffsetAdj=0;
         TInt iFileSize=0;
+    private:
+        Elfparser *aParser=nullptr;
     };
 
 ifstream &operator>>(ifstream &is, E32ImageFile &aImage);

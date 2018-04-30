@@ -129,7 +129,7 @@ This function returns the list of chunks.
 @internalComponent
 @released
 */
-E32ImageChunks::ChunkList & E32ImageChunks::GetChunks()
+ChunkList & E32ImageChunks::GetChunks()
 {
 	return iChunks;
 }
@@ -154,6 +154,14 @@ was added into the list of chunks.
 void E32ImageChunks::SetOffset(size_t aOffset)
 {
 	iOffset = aOffset;
+}
+
+void E32ImageChunks::SectionsInfo()
+{
+    for(auto x: iChunks)
+    {
+        printf("Added Chunks has size: %06zx for section: %s at address: %08zx\n", x->iSize, x->iDoc, x->iOffset);
+    }
 }
 
 /**
@@ -1172,7 +1180,7 @@ void E32ImageFile::SetSmpSafe()
 }
 
 /**
-This function sets the named symol-lookup attribute in the E32 image.
+This function sets the named symbol-lookup attribute in the E32 image.
 @internalComponent
 @released
 */
@@ -1283,7 +1291,7 @@ void E32ImageFile::AllocateE32Image()
 	iE32Image = new char[aImageSize];
 	memset(iE32Image, 0, aImageSize);
 
-	E32ImageChunks::ChunkList aChunkList = iChunks.GetChunks();
+	ChunkList aChunkList = iChunks.GetChunks();
 	for(auto p: aChunkList)
 	{
 		p->Init(iE32Image);
@@ -1492,7 +1500,6 @@ TUint E32ImageFile::BssOffset()
 {
 	return DataOffset()+iHdr->iDataSize;
 }
-
 
 /**
 This function creates the bitmap after reading the E32 image file
