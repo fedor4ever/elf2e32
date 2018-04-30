@@ -71,6 +71,7 @@ class E32ImageChunks {
         void SetOffset(size_t aOffset);
         ChunkList & GetChunks();
         void SectionsInfo();
+        void DisasmChunk(uint16_t index, uint32_t length = 0, uint32_t pos = 0);
 
     private:
         ChunkList iChunks;

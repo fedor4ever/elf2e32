@@ -164,6 +164,29 @@ void E32ImageChunks::SectionsInfo()
     }
 }
 
+/** @brief Disasm section content
+If lenth > 0 prints specified section size
+*/
+void E32ImageChunks::DisasmChunk(uint16_t index, uint32_t length, uint32_t pos)
+{
+    E32ImageChunkDesc *tmp = iChunks[index];
+    if(!length) length = tmp->iSize;
+    printf("Disassembled section: %s at addr: %08zx\n",tmp->iDoc, tmp->iOffset+pos);
+    printf("Has data:\n");
+    for(auto i = 0, sep = 0; i < length; i++, sep++)
+    {
+        size_t k = *(uint8_t *)(tmp->iData + i + pos);
+
+        printf("%02zx", k);
+        if(sep == 16)
+        {
+            sep = 0;
+            cout << "\n";
+        }
+        if((sep == 4)||(sep == 8)||(sep == 12)) cout << "   ";
+    }
+//    printf("%*.*zx", length, length, tmp->iData);
+}
 /**
 Constructor for E32ImageFile class.
 @internalComponent
@@ -654,6 +677,7 @@ void E32ImageFile::InitE32ImageHeader()
 
 /**
 This function creates the E32 image layout.
+Insert call to E32ImageChunks::DisasmChunk() here if see content nedeed
 @internalComponent
 @released
 */
