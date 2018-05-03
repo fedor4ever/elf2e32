@@ -185,7 +185,6 @@ void E32ImageChunks::DisasmChunk(uint16_t index, uint32_t length, uint32_t pos)
         }
         if((sep == 4)||(sep == 8)||(sep == 12)) cout << "   ";
     }
-//    printf("%*.*zx", length, length, tmp->iData);
 }
 /**
 Constructor for E32ImageFile class.
@@ -468,9 +467,9 @@ void CreateRelocations(ElfRelocations::Relocations & aRelocations, char * & aRel
 		//add for cleanup to be done later..
 		aRelocs = new char[aRelocsSize];
 		memset(aRelocs, 0, aRelocsSize);
-		E32RelocSection * aRelocSection = (E32RelocSection * )aRelocs;
+		E32RelocSection * e32reloc = (E32RelocSection * )aRelocs;
 
-		uint16 * data = (uint16 *)(aRelocSection + 1);
+		uint16 * data = (uint16 *)(e32reloc + 1);
 		E32RelocPageDesc * startofblock = (E32RelocPageDesc *)data;
 
 		int page = -1;
@@ -1777,24 +1776,24 @@ TInt E32ImageFile::Open(const char* aFileName)
 
 void E32ImageFile::ProcessSymbolInfo()
 {
-	Elf32_Addr aPlace = iUseCase->GetExportTableAddress() - 4;// This location points to 0th ord.
+	Elf32_Addr elfAddr = iUseCase->GetExportTableAddress() - 4;// This location points to 0th ord.
 	// Create a relocation entry for the 0th ordinal.
-	ElfLocalRelocation *aRel = new ElfLocalRelocation(iElfImage, aPlace, 0, 0, R_ARM_ABS32, \
+	ElfLocalRelocation *rel = new ElfLocalRelocation(iElfImage, elfAddr, 0, 0, R_ARM_ABS32,
 		nullptr, ESegmentRO, nullptr, false);
-	iElfImage->AddToLocalRelocations(aRel);
+	iElfImage->AddToLocalRelocations(rel);
 
-	aPlace += iUseCase->GetExportTableSize();// aPlace now points to the symInfo
-	uint32 *aZerothOrd = (uint32*)iUseCase->GetExportTable();
-	*aZerothOrd = aPlace;
-	aPlace += sizeof(E32EpocExpSymInfoHdr);// aPlace now points to the symbol address
+	elfAddr += iUseCase->GetExportTableSize();// aPlace now points to the symInfo
+	uint32 *zerothOrd = (uint32*)iUseCase->GetExportTable();
+	*zerothOrd = elfAddr;
+	elfAddr += sizeof(E32EpocExpSymInfoHdr);// aPlace now points to the symbol address
 											// which is just after the syminfo header.
 	if(!iElfImage->iExports)
 		return;
 
 	// Donot disturb the internal list sorting.
-	ElfExports::Exports aList = iElfImage->iExports->GetExports(false);
+	ElfExports::Exports exports = iElfImage->iExports->GetExports(false);
 
-	std::cout << "aList.size() is: " << aList.size() << "\n";
+//	std::cout << "aList.size() is: " << aList.size() << "\n";
 
 //	int i = 0;
 //	for(auto x: aList)
@@ -1806,7 +1805,7 @@ void E32ImageFile::ProcessSymbolInfo()
 
 	const char aPad[] = {'\0', '\0', '\0', '\0'};
 /** TODO (Administrator#1#04/15/17): The nullptr iElfSym position corresponds to the Absent function in def file */
-	for(auto x: aList ) {
+	for(auto x: exports ) {
 		if(!x->iElfSym) continue;
 
 		iSymAddrTab.push_back(x->iElfSym->st_value);
@@ -1816,17 +1815,17 @@ void E32ImageFile::ProcessSymbolInfo()
 
 		iSymbolNames += x->SymbolName();
 		iSymbolNames += '\0';
-		TUint aNameLen = iSymbolNames.size();
-		TUint aAlign = Align(aNameLen, sizeof(int));
-		aAlign -= aNameLen;
-		if(aAlign % 4){
-			iSymbolNames.append(aPad, aAlign);
+		TUint nameLen = iSymbolNames.size();
+		TUint align = Align(nameLen, sizeof(int));
+		align -= nameLen;
+		if(align % 4){
+			iSymbolNames.append(aPad, align);
 		}
 		//Create a relocation entry...
-		aRel = new ElfLocalRelocation(iElfImage, aPlace, 0, 0, R_ARM_ABS32, nullptr,
+		rel = new ElfLocalRelocation(iElfImage, elfAddr, 0, 0, R_ARM_ABS32, nullptr,
 			ESegmentRO, x->iElfSym, false);
-		aPlace += sizeof(uint32);
-		iElfImage->AddToLocalRelocations(aRel);
+		elfAddr += sizeof(uint32);
+		iElfImage->AddToLocalRelocations(rel);
 	}
 }
 

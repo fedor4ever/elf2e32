@@ -41,7 +41,6 @@ public:
 			Elf32_Rel* aRel, ESegmentType aSegmentType,
 			Elf32_Sym* aSym, bool aDelSym, bool aVeneerSymbol=false);
 	~ElfLocalRelocation();
-	void Add();
 
 	bool ExportTableReloc();
 	PLUINT16 Fixup();
