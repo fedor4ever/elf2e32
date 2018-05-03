@@ -61,7 +61,6 @@ void E32ExportTable::CreateExportTable(ElfImage * aElfImage, ElfExports::Exports
 	// The export table starts after the header. NB this is a virtual address in the RO
 	// segment of the E32Image. It is outside the ELF RO segment.
 	Elf32_Addr * aPlace =  ELF_ENTRY_PTR(Elf32_Addr, (intptr_t)aROHdr->p_vaddr, aROHdr->p_filesz) + 1;
-	iExportTableAddress = (uintptr_t)aPlace;
 	// Tell the E32Image constructor that it must allocate the export table
 	// i.e. copy it from iTable.
 	iAllocateP = true;
@@ -69,6 +68,7 @@ void E32ExportTable::CreateExportTable(ElfImage * aElfImage, ElfExports::Exports
 	ElfExports::Exports::iterator first = aExports.begin();
 	for (uint32_t i = 1; i < aSize; i++, first++)
 	{
+        iExportTableAddress = (uintptr_t)aPlace;
 		Elf32_Sym * sym;
 
 		uint32_t ptr;
@@ -90,7 +90,7 @@ void E32ExportTable::CreateExportTable(ElfImage * aElfImage, ElfExports::Exports
 		iTable[i] = ptr;
 		ElfLocalRelocation * aRel = new ElfLocalRelocation(iElfImage,
                 iExportTableAddress, 0, i, R_ARM_ABS32, nullptr, ESegmentRO, sym, aDelSym);
-	    aPlace++; /// TODO (Administrator#1#06/02/17): why that val never used??!!
+	    aPlace++;
 	    iElfImage->AddToLocalRelocations(aRel);
 	}
 }
