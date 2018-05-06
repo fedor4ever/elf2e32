@@ -1,5 +1,5 @@
 // Copyright (c) 2007-2009 Nokia Corporation and/or its subsidiary(-ies).
-// Copyright (c) 2017 Strizhniou Fiodar
+// Copyright (c) 2017-2018 Strizhniou Fiodar
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -52,7 +52,7 @@ file dump options
 */
 int FileDump::Execute()
 {
-	if(iParameterManager->FileDumpOptions() && iParameterManager->E32OutOption() && iParameterManager->DefInput()) //DumpAsm
+	if(iParameterManager->FileDumpOptions() && iParameterManager->E32ImageOutput() && iParameterManager->DefInput()) //DumpAsm
 	{
 		if(!(iParameterManager->DumpOptions() & EDumpAsm))
 			throw Elf2e32Error(INVALIDARGUMENTERROR,(!iParameterManager->FileDumpOptions()?"":iParameterManager->FileDumpOptions()), "--dump");

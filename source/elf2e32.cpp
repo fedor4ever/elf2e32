@@ -1,5 +1,5 @@
 // Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
-// Copyright (c) 2017 Strizhniou Fiodar
+// Copyright (c) 2017-2018 Strizhniou Fiodar
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -77,13 +77,16 @@ UseCaseBase * Elf2E32::SelectUseCase()
 		throw Elf2e32Error(INVALIDARGUMENTERROR,filedumpoptions,"--dump");
 	}
 
+    if (iInstance->DumpMessageFile())
+        return nullptr;
+    if (filedumpoptions || e32in){
+        return new FileDump(iInstance);
+    }
+
 	ETargetType iTargetType = iInstance->TargetTypeName();
-
-//	if (iTargetType == ETargetTypeNotSet) // Will get this warning in build
-//		cout << "Warning: Target Type is not specified explicitly" << endl;
-
 	if (iTargetType == EInvalidTargetType || iTargetType == ETargetTypeNotSet)
 	{
+	    Message::GetInstance()->ReportMessage(WARNING, NOREQUIREDOPTIONERROR,"--targettype");
 		if (elfin)
 		{
 			if (deffilein)
@@ -91,16 +94,11 @@ UseCaseBase * Elf2E32::SelectUseCase()
 			else
 				return new ElfFileSupplied(iInstance);
 		}
-		else if (filedumpoptions || e32in)
-		{
-			return new FileDump(iInstance);
-		}
 		else if (deffilein)
 		{
 			iTargetType = ELib;
+			if(iInstance->DefOutput()) iTargetType = EDll;
 		}
-		else if (iInstance->DumpMessageFile())
-			return nullptr;
 		else
 			throw Elf2e32Error(INVALIDINVOCATIONERROR); //REVISIT
 	}

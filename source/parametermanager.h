@@ -1,5 +1,5 @@
 // Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
-// Copyright (c) 2017 Strizhniou Fiodar.
+// Copyright (c) 2017-2018 Strizhniou Fiodar.
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -263,24 +263,6 @@ public:
     */
 	char * E32Input();
 
-	/**
-    This function finds out if the --dso option is passed to the program.
-    @internalComponent
-    @released
-    @return True if --dso option is passed in or False.
-    */
-	bool DSOFileOutOption();
-
-	bool E32OutOption();
-
-	/**
-    This function finds out if the --linkas option is passed to the program.
-    @internalComponent
-    @released
-    @return True if --linkas option is passed in or False.
-    */
-	bool LinkAsOption();
-	bool Uid1Option();
 	bool SecureIdOption();
 	bool VendorIdOption();
 	bool SysDefOption();

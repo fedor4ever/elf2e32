@@ -1,5 +1,5 @@
 // Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
-// Copyright (c) 2017 Strizhniou Fiodar.
+// Copyright (c) 2017-2018 Strizhniou Fiodar.
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -42,7 +42,7 @@ char* SECTION_NAME[] = {
 
 /**
 Constructor for class ElfProducer
-@param aParameterListInterface - instance of class ParameterListInterface
+@param aElfInput - name of input elf file
 @internalComponent
 @released
 */

@@ -1,5 +1,5 @@
 // Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
-// Copyright (c) 2017 Strizhniou Fiodar
+// Copyright (c) 2017-2018 Strizhniou Fiodar
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -27,7 +27,7 @@ Constructor for the ExportTypeRebuildTarget Class
 @internalComponent
 @released
 */
-ExportTypeRebuildTarget::ExportTypeRebuildTarget(ParameterManager* aParameterManager) : DLLTarget(aParameterManager) {
+ExportTypeRebuildTarget::ExportTypeRebuildTarget(ParameterManager* aParams) : DLLTarget(aParams) {
 	iDefFile = new DefFile();
 }
 

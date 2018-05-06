@@ -1,5 +1,5 @@
 // Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
-// Copyright (c) 2017 Strizhniou Fiodar.
+// Copyright (c) 2017-2018 Strizhniou Fiodar.
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -73,7 +73,7 @@ ParameterManager *ParameterManager::GetInstance(int aArgc, char** aArgv)
 
 ParameterManager::~ParameterManager()
 {
-	DELETE_PTR_ARRAY(iImageLocation);
+	delete iImageLocation;
 }
 
 /**
@@ -629,46 +629,6 @@ void ParameterManager::RecordImageLocation()
 {
 	iImageLocation = Path(iArgv[0]);
 	iImageName = FileName(iArgv[0]);
-}
-
-/**
-This function finds out if the --dso option is passed to the program.
-
-@internalComponent
-@released
-
-@return True if --dso option is passed in or False.
-*/
-bool ParameterManager::DSOFileOutOption()
-{
-	return iDSOOutput;
-}
-
-/**
-This function finds out if the --output option is passed to the program.
-
-
-@internalComponent
-@released
-
-@return true if --output option is passed else return False.
-*/
-bool ParameterManager::E32OutOption()
-{
-	return (iOutFileName != nullptr);
-}
-
-/**
-This function finds out if the --linkas option is passed to the program.
-
-@internalComponent
-@released
-
-@return True if --linkas option is passed in or False.
-*/
-bool ParameterManager::LinkAsOption()
-{
-	return iLinkDLLName;
 }
 
 /**
@@ -1362,7 +1322,6 @@ void ParameterManager::CheckOptions()
 		if (!E32ImageOutput())
 			throw Elf2e32Error(NOARGUMENTERROR,"--output");
 
-		ValidateDSOGeneration(this);
 		if(iUID1 != KDynamicLibraryUidValue) //< guard against wrong uids
 		{
 			cerr << "********************\n";
@@ -1418,7 +1377,6 @@ void ParameterManager::CheckOptions()
 			throw Elf2e32Error(NOARGUMENTERROR,"--defoutput");
 		if (!E32ImageOutput())
 			throw Elf2e32Error(NOARGUMENTERROR,"--output");
-		ValidateDSOGeneration(this);
 
 		if(iUID1 != KExecutableImageUidValue)
 		{
@@ -3537,19 +3495,13 @@ void ParameterManager::SetSmpSafe(bool aVal)
 
 void ValidateDSOGeneration(ParameterManager *param)
 {
-	bool dsofileoutoption = param->DSOFileOutOption();
-	bool linkasoption = param->LinkAsOption();
 	char * dsofileout = param->DSOOutput();
 	char * linkas	  = param->LinkAsDLLName();
 
-	if (dsofileoutoption && !dsofileout)
-		throw Elf2e32Error(NOARGUMENTERROR, "--dso");
-	else if (linkasoption && !linkas)
-		throw Elf2e32Error(NOFILENAMEERROR,"--linkas");
-	else if (!dsofileoutoption && !linkasoption)
-		throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--dso, --linkas");
-	else if (!dsofileoutoption)
-		throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--dso");
-	else if (!linkasoption)
+	if (!linkas)
 		throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--linkas");
+	else if (!dsofileout && !linkas)
+		throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--dso, --linkas");
+	else if (!dsofileout)
+		throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--dso");
 }
