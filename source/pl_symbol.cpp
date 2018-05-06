@@ -181,7 +181,7 @@ This function returns the comment against this def file.
 @internalComponent
 @released
 */
-string Symbol::Comment() {
+std::string Symbol::Comment() {
 	return iComment;
 }
 

@@ -66,34 +66,15 @@ This function is to select the appropriate use case based on the input values.
 */
 UseCaseBase * Elf2E32::SelectUseCase()
 {
-	bool definputoption = iInstance->DefFileInOption();
-	bool elfinputoption = iInstance->ElfFileInOption();
 	char * deffilein = iInstance->DefInput();
 	char * elfin = iInstance->ElfInput();
-	bool filedumpoption = iInstance->FileDumpOption();
-	int dumpOptions = iInstance->DumpOptions();
-	char *filedumpsuboptions = iInstance->FileDumpSubOptions();
-
-	bool e32inputoption = iInstance->E32ImageInOption();
+	char *filedumpoptions = iInstance->FileDumpOptions();
 	char * e32in = iInstance->E32Input();
 
-	bool dumpMessageFileOption = iInstance->DumpMessageFileOption();
-
-	if (definputoption && !deffilein)
-		throw Elf2e32Error(NOARGUMENTERROR, "--definput");
-
-	if (elfinputoption && !elfin)
-		throw Elf2e32Error(NOARGUMENTERROR, "--elfinput");
-
-	if(filedumpoption && !dumpOptions)
+	if(filedumpoptions && !iInstance->DumpOptions())
 	{
 		//throw for wrong options
-		throw Elf2e32Error(INVALIDARGUMENTERROR,filedumpsuboptions,"--dump");
-	}
-
-	if(e32inputoption && !e32in)
-	{
-        throw Elf2e32Error(NOARGUMENTERROR, "--e32input");
+		throw Elf2e32Error(INVALIDARGUMENTERROR,filedumpoptions,"--dump");
 	}
 
 	ETargetType iTargetType = iInstance->TargetTypeName();
@@ -110,7 +91,7 @@ UseCaseBase * Elf2E32::SelectUseCase()
 			else
 				return new ElfFileSupplied(iInstance);
 		}
-		else if (filedumpoption || e32in)
+		else if (filedumpoptions || e32in)
 		{
 			return new FileDump(iInstance);
 		}
@@ -118,7 +99,7 @@ UseCaseBase * Elf2E32::SelectUseCase()
 		{
 			iTargetType = ELib;
 		}
-		else if (dumpMessageFileOption)
+		else if (iInstance->DumpMessageFile())
 			return nullptr;
 		else
 			throw Elf2e32Error(INVALIDINVOCATIONERROR); //REVISIT
@@ -168,39 +149,26 @@ This function:
 int Elf2E32::Execute()
 {
 	int result = EXIT_SUCCESS;
-	UseCaseBase * usecase=nullptr;
+	UseCaseBase * usecase = nullptr;
 
 	try
 	{
 		iInstance->ParameterAnalyser();
 		iInstance->CheckOptions();
 
-		bool dumpMessageFileOption = iInstance->DumpMessageFileOption();
 		char * dumpMessageFile = iInstance->DumpMessageFile();
-
-	 	if(dumpMessageFileOption)
+	 	if(dumpMessageFile)
 		{
-			if (dumpMessageFile)
-			{
-				//create message file
-				Message::GetInstance()->CreateMessageFile(dumpMessageFile);
-				//return result;
-			}
-			else
-			//dumpmessage file name is not provided as input
-                throw Elf2e32Error(NOARGUMENTERROR, "--dumpmessagefile");
+			//create message file
+            Message::GetInstance()->CreateMessageFile(dumpMessageFile);
+            return result;
 		}
 
 		usecase = SelectUseCase();
 		if (usecase)
 		{
 			result = usecase->Execute();
-		}
-		else if (dumpMessageFileOption)
-		{
-			return result;
-		}
-		else
+		}else
 		{
 			result = EXIT_FAILURE;
 		}

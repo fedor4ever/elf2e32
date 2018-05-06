@@ -52,12 +52,12 @@ file dump options
 */
 int FileDump::Execute()
 {
-	if(iParameterManager->FileDumpOption() && iParameterManager->E32OutOption() && iParameterManager->DefFileInOption()) //DumpAsm
+	if(iParameterManager->FileDumpOptions() && iParameterManager->E32OutOption() && iParameterManager->DefInput()) //DumpAsm
 	{
 		if(!(iParameterManager->DumpOptions() & EDumpAsm))
-			throw Elf2e32Error(INVALIDARGUMENTERROR,(!iParameterManager->FileDumpSubOptions()?"":iParameterManager->FileDumpSubOptions()), "--dump");
+			throw Elf2e32Error(INVALIDARGUMENTERROR,(!iParameterManager->FileDumpOptions()?"":iParameterManager->FileDumpOptions()), "--dump");
 		if(iParameterManager->DumpOptions() & 31)
-			throw Elf2e32Error(INVALIDARGUMENTERROR,(!iParameterManager->FileDumpSubOptions()?"":iParameterManager->FileDumpSubOptions()), "--dump");
+			throw Elf2e32Error(INVALIDARGUMENTERROR,(!iParameterManager->FileDumpOptions()?"":iParameterManager->FileDumpOptions()), "--dump");
 		if(!iParameterManager->E32ImageOutput())
 			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--output");
 		if(!iParameterManager->DefInput())
@@ -70,7 +70,7 @@ int FileDump::Execute()
 		if(!iParameterManager->E32Input())
 			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--e32input");
 		if(iParameterManager->DumpOptions() & EDumpAsm )
-			throw Elf2e32Error(INVALIDARGUMENTERROR,iParameterManager->FileDumpSubOptions() ,"--dump");
+			throw Elf2e32Error(INVALIDARGUMENTERROR,iParameterManager->FileDumpOptions() ,"--dump");
 		DumpE32Image(iParameterManager->E32Input());
 	}
 	return 0;

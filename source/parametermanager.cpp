@@ -632,45 +632,6 @@ void ParameterManager::RecordImageLocation()
 }
 
 /**
-This function finds out if the --definput option is passed to the program.
-
-@internalComponent
-@released
-
-@return True if --definput option is passed in or False.
-*/
-bool ParameterManager::DefFileInOption()
-{
-	return iDefInput;
-}
-
-/**
-This function finds out if the --e32input option is passed to the program.
-
-@internalComponent
-@released
-
-@return True if --e32input option is passed in or False.
-*/
-bool ParameterManager::E32ImageInOption()
-{
-	return iE32Input;
-}
-
-/**
-This function finds out if the --elfinput option is passed to the program.
-
-@internalComponent
-@released
-
-@return True if --elfinput option is passed in or False.
-*/
-bool ParameterManager::ElfFileInOption()
-{
-	return iElfInput;
-}
-
-/**
 This function finds out if the --dso option is passed to the program.
 
 @internalComponent
@@ -681,19 +642,6 @@ This function finds out if the --dso option is passed to the program.
 bool ParameterManager::DSOFileOutOption()
 {
 	return iDSOOutput;
-}
-
-/**
-This function finds out if the --defoutput option is passed to the program.
-
-@internalComponent
-@released
-
-@return True if --defoutput option is passed in or False.
-*/
-bool ParameterManager::DefFileOutOption()
-{
-	return iDefOutput;
 }
 
 /**
@@ -776,19 +724,6 @@ bool ParameterManager::MessageFileOption()
 }
 
 /**
-This function finds out if the --dumpmessagefile option is passed to the program.
-
-@internalComponent
-@released
-
-@return True if --dumpmessagefile option is passed in or False.
-*/
-bool ParameterManager::DumpMessageFileOption()
-{
-	return iDumpMessageFileName;
-}
-
-/**
 This function finds out if the --fixedaddress option is passed to the program.
 
 @internalComponent
@@ -855,18 +790,6 @@ bool ParameterManager::HasDllData()
  	return iDllData;
 }
 
-/**
-This function finds out if the --version option is passed to the program.
-
-@internalComponent
-@released
-
-@return True if --version option is passed in or False.
-*/
-bool ParameterManager::VersionOption()
-{
-	return iVersionOption;
-}
 
 /**
 This function finds out if the --callentry option is passed to the program.
@@ -905,32 +828,6 @@ This function finds out if the --sysdef option is passed to the program.
 bool ParameterManager::SysDefOption()
 {
 	return iSysDefOption;
-}
-
-/**
-This function finds out if the --dump option is passed to the program.
-
-@internalComponent
-@released
-
-@return True if --dump option is passed in or False
-*/
-bool ParameterManager::FileDumpOption()
-{
-	return iFileDumpSubOptions;
-}
-
-/**
-This function finds out if the --fpu option is passed to the program.
-
-@internalComponent
-@released
-
-@return True if --fup option is passed in or False.
-*/
-bool ParameterManager::FPUOption()
-{
-	return iFPU;
 }
 
 
@@ -1074,7 +971,7 @@ This function extracts the E32 image dump options passed as input through the --
 
 @return the name of the dump options if provided as input through --dump or 0.
 */
-char * ParameterManager::FileDumpSubOptions()
+char * ParameterManager::FileDumpOptions()
 {
 	return iFileDumpSubOptions;
 }
@@ -1462,10 +1359,6 @@ void ParameterManager::CheckOptions()
 	case EDll:
 		if (!ElfInput())
 			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--elfinput");
-		if (!DefFileOutOption())
-			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--defoutput");
-		if (!DefOutput())
-			throw Elf2e32Error(NOARGUMENTERROR,"--defoutput");
 		if (!E32ImageOutput())
 			throw Elf2e32Error(NOARGUMENTERROR,"--output");
 
@@ -1505,10 +1398,6 @@ void ParameterManager::CheckOptions()
 	case EPolyDll:
 		if (!ElfInput())
 			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--elfinput");
-		if (!DefFileOutOption())
-			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--defoutput");
-		if (!DefOutput())
-			throw Elf2e32Error(NOARGUMENTERROR,"--defoutput");
 		if (!E32ImageOutput())
 			throw Elf2e32Error(NOARGUMENTERROR,"--output");
 		if(iUID1 != KDynamicLibraryUidValue)
@@ -1525,8 +1414,6 @@ void ParameterManager::CheckOptions()
 	case EExexp:
 		if (!ElfInput())
 			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--elfinput");
-		if (!DefFileOutOption())
-			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--defoutput");
 		if (!DefOutput())
 			throw Elf2e32Error(NOARGUMENTERROR,"--defoutput");
 		if (!E32ImageOutput())
@@ -1547,8 +1434,6 @@ void ParameterManager::CheckOptions()
 	case EStdExe:
 		if (!ElfInput())
 			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--elfinput");
-		if (!DefOutput())
-			throw Elf2e32Error(NOARGUMENTERROR,"--defoutput");
 		if (!E32ImageOutput())
 			throw Elf2e32Error(NOARGUMENTERROR,"--output");
 		if(iUID1 != KExecutableImageUidValue)
@@ -3327,6 +3212,12 @@ Name of the Message file to be dumped if provided as input through --dumpmessage
 void ParameterManager::SetDumpMessageFile(char * aDumpMessageFile)
 {
 	iDumpMessageFileName = aDumpMessageFile;
+	if(!iDumpMessageFileName)
+	{
+        cerr << "********************\n";
+        Message::GetInstance()->ReportMessage(WARNING, NOARGUMENTERROR, "--dumpmessagefile");
+        cerr << "********************\n";
+	}
 }
 
 /**

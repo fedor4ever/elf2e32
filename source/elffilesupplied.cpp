@@ -113,8 +113,9 @@ Function to write DEF File
 void ElfFileSupplied::WriteDefFile()
 {
 	char * aDEFFileName = UseCaseBase::DefOutput();
-	DefFile deffile;
+	if(!aDEFFileName) return;
 
+	DefFile deffile;
 	deffile.WriteDefFile(aDEFFileName, &iSymbols);
 }
 

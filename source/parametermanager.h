@@ -264,26 +264,6 @@ public:
 	char * E32Input();
 
 	/**
-    This function finds out if the --definput option is passed to the program.
-    @internalComponent
-    @released
-    @return True if --definput option is passed in or False.
-    */
-	bool DefFileInOption();
-
-	bool DefFileOutOption();
-
-	/**
-    This function finds out if the --elfinput option is passed to the program.
-    @internalComponent
-    @released
-    @return True if --elfinput option is passed in or False.
-    */
-	bool ElfFileInOption();
-	bool E32ImageInOption();
-	bool FileDumpOption();
-
-	/**
     This function finds out if the --dso option is passed to the program.
     @internalComponent
     @released
@@ -306,13 +286,10 @@ public:
 	bool SysDefOption();
 	bool LogFileOption();
 	bool MessageFileOption();
-	bool DumpMessageFileOption();
 	bool HasDllData();
 	TProcessPriority Priority();
 	bool PriorityOption();
-	bool VersionOption();
 	bool CallEntryPoint();
-	bool FPUOption();
 
 	/**
     This function extracts the output DEF file name that is passed as input through the --defoutput option.
@@ -361,7 +338,6 @@ public:
 	char * MessageFile();
 	char * DumpMessageFile();
 	char * FileDumpOptions();
-	char * FileDumpSubOptions();
 	int DumpOptions();
 	int SysDefCount();
 

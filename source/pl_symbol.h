@@ -27,7 +27,6 @@
 #include "pl_sym_type.h"
 
 #define UnAssignedOrdNum -1;
-using std::string;
 
 enum SymbolStatus {Matching,Missing,New};
 /**
@@ -39,7 +38,7 @@ class Symbol
 
 public:
 
-    Symbol(string aName, SymbolType aCodeDataType);
+    Symbol(std::string aName, SymbolType aCodeDataType);
 
 	Symbol(char* aName, SymbolType aType, Elf32_Sym* aElfSym, PLUINT32 aSymbolIndex);
 
@@ -58,7 +57,7 @@ public:
 	bool R3unused();
 	bool Absent();
 	void SetAbsent(bool aAbsent);
-	string Comment();
+	std::string Comment();
 	int GetSymbolStatus();
 	void SetOrdinal(PLUINT32 aOrdinalNum);
 	void SetSymbolStatus(SymbolStatus aSymbolStatus);
@@ -81,15 +80,15 @@ public:
 
 private:
 /** TODO (Administrator#1#04/20/17): Find why and where this used unitialized!!!! */
-	SymbolStatus iSymbolStatus;// = Missing; /*should fail if not init!!! */
-	string		iSymbolName;
-	string		iExportName;
-	SymbolType	iSymbolType = SymbolTypeNotDefined; //should fail if not init!!!
-	PLUINT32	iOrdinalNumber  = -1; // default value in ctor
-	string		iComment;
-	bool		iAbsent = false;
-	bool		iR3Unused = false;
-	PLUINT32	iSize = 0;
+	SymbolStatus    iSymbolStatus;// = Missing; /* TODO: should fail if not init!!! */
+	std::string		iSymbolName;
+	std::string		iExportName;
+	SymbolType	    iSymbolType = SymbolTypeNotDefined; //should fail if not init!!!
+	PLUINT32	    iOrdinalNumber  = -1; // default value in ctor
+	std::string		iComment;
+	bool		    iAbsent = false;
+	bool		    iR3Unused = false;
+	PLUINT32	    iSize = 0;
 };
 
 #endif // !defined(_PL_SYMBOL_H_)
