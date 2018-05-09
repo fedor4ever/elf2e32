@@ -24,95 +24,103 @@ tail=r" --dlldata --ignorenoncallable --debuggable --smpsafe --uncompressed"
 
 
 print elf2e32
-subprocess.check_call(elf2e32)
+# subprocess.check_call(elf2e32)
 
-longtail=e32bin %counter+implibs+linkas+dsoout %counter+fpu+iud1+uid2+uid3+tgttype+tail
+longtail=e32bin+implibs+linkas+dsoout+fpu+iud1+uid2+uid3+tgttype+tail
 
+args1=(
+("Test #%d: Full options list",
+elf2e32+caps+defin+defout %counter+elfin+longtail,
+"Full options list!",
+),
+("Test #%d: defin without args",
+elf2e32+caps+defin.split("=")[0]+defout %counter+elfin+longtail,
+defin.split("=")[0],
+),
+("Test #%d: defin and defout without args",
+elf2e32+caps+defin.split("=")[0]+defout.split("=")[0]+elfin+longtail,
+defin.split("=")[0]+defout.split("=")[0],
+),
+("Test #%d: create all except defoutput",
+elf2e32+caps+defin+defout.split("=")[0]+elfin+longtail,
+defout.split("=")[0],
+),
+("Test #%d: dso2def conversion",
+elf2e32+""" --elfinput="libcrypto{000a0000}.dso" """+defout %counter,
+elf2e32+""" --elfinput="libcrypto{000a0000}.dso" """+defout %counter,
+),
+("Test #%d: def2def conversion",
+elf2e32+defin+ """ --defoutput="tmp\def2def.def" """,
+elf2e32+defin+ """ --defoutput="tmp\def2def.def" """,
+),
+("Test #%d: simple binary creation",
+elf2e32+elfin+""" --output="tmp\elf2baree32.dll" """+implibs+tgttype+linkas+tail,
+elf2e32+elfin+""" --output="tmp\elf2baree32.dll" """+implibs+tgttype+linkas+tail,
+) )
 
-try:
-   print "Test #%d" %counter
-   print elf2e32+caps+defin+defout %counter+elfin+longtail
-   subprocess.check_call(elf2e32+caps+defin+defout %counter+elfin+longtail)
-except:
-   print "Unexpectable test failure: Full options list!"
-finally:
-   print "\n"
-   counter+=1
-longtail=e32bin %counter+implibs+linkas+dsoout %counter+fpu+iud1+uid2+uid3+tgttype+tail
+def SuceededTests(*args):
+   """These tests must alwais pass!"""
+   global counter
+   tmp=args[0]
+   try:
+      longtail=e32bin %counter+implibs+linkas+dsoout %counter+fpu+iud1+uid2+uid3+tgttype+tail
+      print tmp[0] %counter
+      tmp1=tmp[1].replace("%02d", str(counter))
+      print tmp1
+      subprocess.check_call(tmp1)
+   except:
+      print "Unexpectable test failure: %s" %tmp[2]
+   finally:
+      print "\n"
+      counter+=1
 
-try:
-   print "Test #%d" %counter
-   print elf2e32+caps+defin.split("=")[0]+defout %counter+elfin+longtail
-   subprocess.check_call(elf2e32+caps+defin.split("=")[0]+defout %counter+elfin+longtail)
-except:
-   print "Unexpectable test failure: %s!" %defin.split("=")[0]
-finally:
-   print "\n"
-   counter+=1
-longtail=e32bin %counter+implibs+linkas+dsoout %counter+fpu+iud1+uid2+uid3+tgttype+tail
-   
-try:
-   print "Test #%d" %counter
-   print elf2e32+caps+defin.split("=")[0]+defout.split("=")[0]+elfin+longtail
-   subprocess.check_call(elf2e32+caps+defin.split("=")[0]+defout.split("=")[0]+elfin+longtail)
-except:
-   print "Unexpectable test failure: --definput, --defoutput!"
-finally:
-   print "\n"
-   counter+=1
-longtail=e32bin %counter+implibs+linkas+dsoout %counter+fpu+iud1+uid2+uid3+tgttype+tail
+args=(
+("Test #%d: elfin without args",
+elf2e32+caps+defin+defout+elfin.split("=")[0]+longtail,
+elfin.split("=")[0],
+),
+("Test #%d: e32image creation without args in params defin defout elfin",
+elf2e32+caps+defin.split("=")[0]+defout.split("=")[0]+elfin.split("=")[0]+longtail,
+elf2e32+caps+defin.split("=")[0]+defout.split("=")[0]+elfin.split("=")[0]+longtail,
+),
+("Test #%d: elf2e32 conversion without other options",
+elf2e32+elfin+""" --output="tmp\elf2baree32.dll" """,
+elf2e32+elfin+""" --output="tmp\elf2baree32.dll" """,
+) )
 
-try:
-   print "Test #%d" %counter
-   print elf2e32+caps+defin+defout.split("=")[0]+elfin+longtail
-   subprocess.check_call(elf2e32+caps+defin+defout.split("=")[0]+elfin+longtail)
-except:
-   print "Unexpectable test failure: --defoutput!"
-finally:
-   print "\n"
-   counter+=1
-longtail=e32bin %counter+implibs+linkas+dsoout %counter+fpu+iud1+uid2+uid3+tgttype+tail
+# try:
+   # print  %counter
+   # print 
+   # subprocess.check_call()
+# except:
+   # print "Unexpectable test failure: %s" %()
+# finally:
+   # print "\n"
+   # counter+=1
 
-try:
-   print "Test #%d" %counter
-   print elf2e32+caps+defin+defout %counter+elfin.split("=")[0]+longtail
-   subprocess.check_call(elf2e32+caps+defin+defout %counter+elfin.split("=")[0]+longtail)
-except:
-   print "Expectable test failure: %s!" %elfin.split("=")[0]
-finally:
-   print "\n"
-   counter+=1
-longtail=e32bin %counter+implibs+linkas+dsoout %counter+fpu+iud1+uid2+uid3+tgttype+tail
+def FailureTests(*arg):
+   """These tests must alwais fail!"""
+   global counter
+   tmp=arg[0]
+   try:
+      longtail=e32bin %counter+implibs+linkas+dsoout %counter+fpu+iud1+uid2+uid3+tgttype+tail
+      print tmp[0] %counter
+      tmp1=tmp[1].replace("%02d", str(counter))
+      print tmp1
+      subprocess.check_call(tmp1)
+   except:
+      print "Expectable test failure: %s" %tmp[2]
+   finally:
+      print "\n"
+      counter+=1
 
-try:
-   print "Test #%d" %counter
-   print elf2e32+caps+defin.split("=")[0]+defout.split("=")[0]+elfin.split("=")[0]+longtail
-   subprocess.check_call(elf2e32+caps+defin.split("=")[0]+defout.split("=")[0]+elfin.split("=")[0]+longtail)
-except:
-   print "Expectable test failure: %s" %(defin.split("=")[0] + " " + defout.split("=")[0] + " " + elfin.split("=")[0])
-finally:
-   print "\n"
-   counter+=1
-longtail=e32bin %counter+implibs+linkas+dsoout %counter+fpu+iud1+uid2+uid3+tgttype+tail
+def run():
+   print "running"
+   for x in args1:
+      SuceededTests(x)
+   for y in args:
+      FailureTests(y)
 
-try:
-   print "Test #%d" %counter
-   print elf2e32+""" --elfinput="libcrypto{000a0000}.dso" """+defout %counter
-   subprocess.check_call(elf2e32+""" --elfinput="tmp\libcrypto{000a0000}.(03).dso" """+defout %counter)
-except:
-   print "Unexpectable test failure: %s" %(""" --elfinput="libcrypto{000a0000}.dso" """+defout)
-finally:
-   print "\n"
-   counter+=1
-longtail=e32bin %counter+implibs+linkas+dsoout %counter+fpu+iud1+uid2+uid3+tgttype+tail
-
-try:
-   print "Test #%d" %counter
-   print elf2e32+defin+ """ --defoutput="tmp\def2def.def" """
-   subprocess.check_call(elf2e32+defin+ """ --defoutput="tmp\def2def.def" """)
-except:
-   print "Unexpectable test failure: %s" %(elf2e32+defin+ """ --defoutput="tmp\def2def.def" """)
-finally:
-   print "\n"
-   counter+=1
-
+if __name__ == "__main__":
+    # execute only if run as a script
+    run()
