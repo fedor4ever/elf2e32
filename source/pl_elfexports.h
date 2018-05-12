@@ -67,7 +67,7 @@ public:
 	};
 
 
-	ElfExports();
+	ElfExports(){}
 	~ElfExports();
 
 	bool IsValidExport(ElfImage * aElfImage, Symbol * aSym);
@@ -89,9 +89,9 @@ public:
 
 private:
 	Exports	iElfExports;
-	char		*iDllName;
-	bool iSorted;
-	bool iExportsFilteredP;
+	char *iDllName = nullptr;
+	bool iSorted = false;
+	bool iExportsFilteredP = false;
 };
 
 

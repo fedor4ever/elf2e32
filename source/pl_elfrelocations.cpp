@@ -28,16 +28,15 @@ Destructor for class ElfRelocations to release allocated memory
 */
 ElfRelocations::~ElfRelocations()
 {
-	if(iCodeRelocations.size())
+	if(!iCodeRelocations.empty())
 	{
 		for(auto x: iCodeRelocations) delete x;
-
 		iCodeRelocations.clear();
 	}
-	if(iDataRelocations.size())
-	{
-		for(auto x: iCodeRelocations) delete x;
 
+	if(!iDataRelocations.empty())
+	{
+		for(auto x: iDataRelocations) delete x;
 		iDataRelocations.clear();
 	}
 }

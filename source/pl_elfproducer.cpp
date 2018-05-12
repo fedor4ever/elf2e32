@@ -150,16 +150,13 @@ void ElfProducer::InitElfContents() {
 
 	CreateElfHeader();
 
-	SymbolList::iterator aItr = iSymbolsList->begin();
-	SymbolList::iterator aEnd = iSymbolsList->end();
-	Symbol		*aSym;
 	PLUINT32	aIdx = 1;
 
 	memset( &iElfDynSym[0], 0, sizeof(Elf32_Sym));
 	iDSOSymNameStrTbl.insert(iDSOSymNameStrTbl.end(), 0);
 
-	while(aItr != aEnd) {
-		aSym = *aItr;
+	for(auto aSym: *iSymbolsList)
+    {
 		string aSymName(aSym->SymbolName());
 		//set symbol info..
 		iElfDynSym[aIdx].st_name = iDSOSymNameStrTbl.size();
@@ -172,7 +169,7 @@ void ElfProducer::InitElfContents() {
 		//set version table info...
 		iVersionTbl[aIdx] = DEFAULT_VERSION;
 		AddToHashTable(aSym->SymbolName(), aIdx);
-		++aItr;++aIdx;
+        ++aIdx;
 	}
 
 	CreateVersionTable();

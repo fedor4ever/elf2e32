@@ -22,10 +22,8 @@
 #include "pl_symbol.h"
 
 Symbol::Symbol(std::string aName, SymbolType aCodeDataType):
-    iSymbolType(aCodeDataType)
-    {
-        iSymbolName = aName;
-    }
+    iSymbolType(aCodeDataType), iSymbolName(aName)
+    {}
 
 /**
 This constructor sets the symbol members.
@@ -213,16 +211,6 @@ void Symbol::SetSymbolStatus(SymbolStatus aSymbolStatus) {
 	iSymbolStatus = aSymbolStatus;
 }
 
-/**
-This function sets the symbol name.
-@param aSymbolName - Symbol Name
-@internalComponent
-@released
-*/
-void Symbol::SymbolName(char *aSymbolName)
-{
-	iSymbolName = aSymbolName;
-}
 /**
 This function sets the export name of the symbol.
 @param aComment - aExportName

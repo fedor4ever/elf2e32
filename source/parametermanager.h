@@ -217,7 +217,6 @@ public:
 	int NumShortOptions();
 	void InitParamParser();
 	void ParseCommandLine();
-	void RecordImageLocation();
 	char * Path(char * aArg);
 
 	/**

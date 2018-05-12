@@ -160,8 +160,8 @@ void ElfFileSupplied::ValidateDefExports(Symbols *aDefExports)
 	typedef Symbols::iterator Iterator;
 
 
-	//Symbols *aDefExports, aDefValidExports, aDefAbsentExports, aElfExports;
-	Symbols aDefValidExports, aDefAbsentExports, aElfExports;
+	//Symbols *aDefExports, defValidExports, defAbsentExports, elfExports;
+	Symbols defValidExports, defAbsentExports, elfExports;
 
 	//aDefExports = iDefIfc->GetSymbolEntryList();
 	if (aDefExports)
@@ -170,10 +170,10 @@ void ElfFileSupplied::ValidateDefExports(Symbols *aDefExports)
 		for(auto x: *aDefExports)
 			{
 				if( x->Absent() ){
-					aDefAbsentExports.push_back(x);
+					defAbsentExports.push_back(x);
 				}
 				else {
-					aDefValidExports.push_back(x);
+					defValidExports.push_back(x);
 				}
 
 				if( aMaxOrdinal < x->OrdNum() ){
@@ -182,27 +182,27 @@ void ElfFileSupplied::ValidateDefExports(Symbols *aDefExports)
 			}
 		}
 
-	iSymbols = aDefValidExports;
+	iSymbols = defValidExports;
 
 	if (iReader->iExports)
-		iReader->GetElfSymbols( aElfExports );
+		iReader->GetElfSymbols( elfExports );
 	else if (!aDefExports)
 		return;
 
 	// REVISIT - return back if elfexports and defexports is NULL
 
-	aDefValidExports.sort(ElfExports::PtrELFExportNameCompare());
-	aElfExports.sort(ElfExports::PtrELFExportNameCompare());
+	defValidExports.sort(ElfExports::PtrELFExportNameCompare());
+	elfExports.sort(ElfExports::PtrELFExportNameCompare());
 
-	aDefAbsentExports.sort(ElfExports::PtrELFExportNameCompare());
+	defAbsentExports.sort(ElfExports::PtrELFExportNameCompare());
 
 	//Check for Case 1... {Valid_DEF - ELF_Symbols}
 	{
-		Symbols aResult(aDefValidExports.size());
+		Symbols aResult(defValidExports.size());
 		Iterator aResultPos = aResult.begin();
 
-		Iterator aMissingListEnd = set_difference(aDefValidExports.begin(), aDefValidExports.end(), \
-			aElfExports.begin(), aElfExports.end(), aResultPos, ElfExports::PtrELFExportNameCompareUpdateAttributes());
+		Iterator aMissingListEnd = set_difference(defValidExports.begin(), defValidExports.end(), \
+			elfExports.begin(), elfExports.end(), aResultPos, ElfExports::PtrELFExportNameCompareUpdateAttributes());
 
 		std::list<string> aMissingSymNameList;
 		while (aResultPos != aMissingListEnd) {
@@ -222,13 +222,13 @@ void ElfFileSupplied::ValidateDefExports(Symbols *aDefExports)
 
 	//Check for Case 2... intersection set {Absent,ELF_Symbols}
 	{
-		if(aDefAbsentExports.size())
+		if(!defAbsentExports.empty())
 		{
-			Symbols aResult(aDefAbsentExports.size());
+			Symbols aResult(defAbsentExports.size());
 			Iterator aResultPos = aResult.begin();
 
-			Iterator aAbsentListEnd = set_intersection(aDefAbsentExports.begin(), aDefAbsentExports.end(), \
-				aElfExports.begin(), aElfExports.end(), aResultPos, ElfExports::PtrELFExportNameCompareUpdateAttributes());
+			Iterator aAbsentListEnd = set_intersection(defAbsentExports.begin(), defAbsentExports.end(), \
+				elfExports.begin(), elfExports.end(), aResultPos, ElfExports::PtrELFExportNameCompareUpdateAttributes());
 
 			while( aResultPos != aAbsentListEnd )
 			{
@@ -243,11 +243,11 @@ void ElfFileSupplied::ValidateDefExports(Symbols *aDefExports)
 
 	//Do 3
 	{
-		Symbols aResult(aElfExports.size());
+		Symbols aResult(elfExports.size());
 		Iterator aResultPos = aResult.begin();
 
-		Iterator aNewListEnd = set_difference(aElfExports.begin(), aElfExports.end(), \
-			aDefValidExports.begin(), aDefValidExports.end(), aResultPos, ElfExports::PtrELFExportNameCompare());
+		Iterator aNewListEnd = set_difference(elfExports.begin(), elfExports.end(), \
+			defValidExports.begin(), defValidExports.end(), aResultPos, ElfExports::PtrELFExportNameCompare());
 
 		bool aIgnoreNonCallable = GetIgnoreNonCallable();
 		bool aIsCustomDll = IsCustomDllTarget();
@@ -292,24 +292,23 @@ void ElfFileSupplied::ValidateDefExports(Symbols *aDefExports)
 
 	//Do 4
 	{
-		if(aDefAbsentExports.size())
+		if(!defAbsentExports.empty())
 		{
-			Symbols aResult(aDefAbsentExports.size());
+			Symbols aResult(defAbsentExports.size());
 			Iterator aResultPos = aResult.begin();
 
-			Iterator aAbsentListEnd = set_difference(aDefAbsentExports.begin(), aDefAbsentExports.end(), \
-				aElfExports.begin(), aElfExports.end(), aResultPos, ElfExports::PtrELFExportNameCompareUpdateAttributes());
+			Iterator aAbsentListEnd = set_difference(defAbsentExports.begin(), defAbsentExports.end(), \
+				elfExports.begin(), elfExports.end(), aResultPos, ElfExports::PtrELFExportNameCompareUpdateAttributes());
 
-			Symbol *aSymbol;
 			while( aResultPos != aAbsentListEnd  ) {
 				//aElfExports.insert(aElfExports.end(), *aResultPos);
-				aSymbol = new Symbol( *(*aResultPos), SymbolTypeCode, true);
-				iReader->iExports->Add(iReader->iSOName, aSymbol);
+				Symbol *sym = new Symbol( *(*aResultPos), SymbolTypeCode, true);
+				iReader->iExports->Add(iReader->iSOName, sym);
 				//aElfExports.insert(aElfExports.end(), (Symbol*)aSymbol);
-				iSymbols.push_back((Symbol*)aSymbol);
+				iSymbols.push_back(sym);
 				++aResultPos;
 			}
-			aElfExports.sort(ElfExports::PtrELFExportOrdinalCompare());
+			elfExports.sort(ElfExports::PtrELFExportOrdinalCompare());
 			iSymbols.sort(ElfExports::PtrELFExportOrdinalCompare());
 		}
 	}
@@ -318,9 +317,9 @@ void ElfFileSupplied::ValidateDefExports(Symbols *aDefExports)
 		iReader->iExports->FilterExports();
 	}
 
-	aElfExports.clear();
-	aDefAbsentExports.clear();
-	aDefValidExports.clear();
+	elfExports.clear();
+	defAbsentExports.clear();
+	defValidExports.clear();
 }
 
 /**

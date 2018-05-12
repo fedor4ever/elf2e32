@@ -664,11 +664,10 @@ void E32ImageFile::DumpSymbolInfo(E32EpocExpSymInfoHdr *aSymInfoHdr)
 		 * must be same as the offset of the dependency table entry (relative to
 		 * the code section).
 		 */
-		bool aZerothFound;
 		for(int aDep = 0; aDep < aSymInfoHdr->iDllCount; aDep++)
 		{
 			const E32ImportBlock* b = (const E32ImportBlock*)(isection + 1);
-			aZerothFound = false;
+			bool aZerothFound = false;
 			for (TInt d=0; d<iOrigHdr->iDllRefTableCount; d++)
 			{
 				char* dllname = iData + iOrigHdr->iImportOffset + b->iOffsetOfDllName;

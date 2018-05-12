@@ -26,36 +26,17 @@
 using std::set_difference;
 
 /**
-Constructor for class ElfExports
-@internalComponent
-@released
-*/
-ElfExports::ElfExports() : iDllName(nullptr), iSorted(false), iExportsFilteredP(false){
-}
-
-/**
 Destructor for class ElfExports
 @internalComponent
 @released
 */
 ElfExports::~ElfExports()
 {
-	if(iElfExports.size())
+	if(!iElfExports.empty())
 	{
-		Exports::iterator aItr = iElfExports.begin();
-		Exports::iterator last = iElfExports.end();
-		Symbol *temp;
-
-		while( aItr != last)
-		{
-			temp = *aItr;
-			++aItr;
-			delete temp;
-			temp = nullptr;
-		}
+	    for(auto x: iElfExports) delete x;
 	}
 	iElfExports.clear();
-
 }
 
 /**

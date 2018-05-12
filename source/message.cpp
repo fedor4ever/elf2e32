@@ -227,9 +227,6 @@ The index of the information and the corresponding arguments.
 */
 void Message::ReportMessage(int aMessageType, int aMsgIndex,...)
 {
-	char intStr[16];
-	char mssgNo[MAXMSSGNOLENGTH];
-
 	va_list ap;
 	va_start(ap,aMsgIndex);
 
@@ -253,6 +250,7 @@ void Message::ReportMessage(int aMessageType, int aMsgIndex,...)
             default: break;
 		}
 		int mssgIndex = BASEMSSGNO + aMsgIndex;
+        char mssgNo[MAXMSSGNOLENGTH];
 		sprintf(mssgNo,"%d",mssgIndex);
 		message += mssgNo;
 		message += colSpace;
@@ -270,6 +268,7 @@ void Message::ReportMessage(int aMessageType, int aMsgIndex,...)
 			switch(ptr[0])
 			{
 				case 'd':
+                    char intStr[16];
 					k = va_arg(ap, int);
 					sprintf(intStr,"%d",k);
 					message += intStr;
@@ -362,10 +361,8 @@ Name of the Message file passed in
 */
 void Message::InitializeMessages(char *aFileName)
 {
-	char index[16];
-	char *message, *errStr;
-
-	FILE *fptr;
+	char *errStr = nullptr;
+	FILE *fptr = nullptr;
 
 	if(aFileName && (fptr=fopen(aFileName,"rb"))!=NULL)
 	{
@@ -404,7 +401,9 @@ void Message::InitializeMessages(char *aFileName)
 				lineToken[strlen(lineToken)-1]='\0';
 			}
 
-			message=strchr(lineToken,',');
+			char *message=strchr(lineToken,',');
+            char index[16];
+
 			strncpy(index,lineToken,message-lineToken);
 			index[message-lineToken]='\0';
 			errStr = new char[strlen(message+1) + 1];

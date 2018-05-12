@@ -63,7 +63,6 @@ public:
 	void SetSymbolStatus(SymbolStatus aSymbolStatus);
 	void SetSymbolName(char *aSymbolName);
 
-	void SymbolName(char *aSymbolName);
 	void Comment(char *aComment);
 	void CodeDataType(SymbolType aType);
 	void R3Unused(bool aR3Unused);

@@ -238,12 +238,10 @@ void ElfImage::ProcessVeneers()
 				Elf32_Word	aInstruction = FindValueAtLoc(r_offset);
 				bool aRelocEntryFound = false;
 
-				ElfRelocations::Relocations::iterator r;
-				for (r = iLocalCodeRelocs.begin(); r != iLocalCodeRelocs.end(); r++)
+				for(auto x: iLocalCodeRelocs)
 				{
-					ElfLocalRelocation * aReloc = *r;
 					// Check if there is a relocation entry for the veneer symbol
-					if (aReloc->iAddr == aOffset)
+					if (x->iAddr == aOffset)
 					{
 						aRelocEntryFound = true;
 						break;
@@ -306,26 +304,25 @@ Function to process Elf symbols
 */
 PLUINT32  ElfImage::ProcessSymbols(){
 	PLUINT32	aSymIdx = 0;
-	char		*aDllName;
-	char		*aSymName;
-	SymbolType	aType;
+	char		*aDllName = nullptr;
+	SymbolType	type;
 
 	while( aSymIdx < iNSymbols ) {
 
-		aSymName = ELF_ENTRY_PTR(char, iStringTable, iElfDynSym[aSymIdx].st_name );
+		char *aSymName = ELF_ENTRY_PTR(char, iStringTable, iElfDynSym[aSymIdx].st_name );
 
 		if( ExportedSymbol( &iElfDynSym[aSymIdx] ) ){
 
 			if( FunctionSymbol( &iElfDynSym[aSymIdx] ))
-				aType = SymbolTypeCode;
+				type = SymbolTypeCode;
 			else
-				aType = SymbolTypeData;
+				type = SymbolTypeData;
 
 			aSymName = ELF_ENTRY_PTR(char, iStringTable, iElfDynSym[aSymIdx].st_name );
 			aDllName = iVerInfo[iVersionTbl[aSymIdx]].iLinkAs;
 			char *aNewSymName = new char[strlen(aSymName)+1];
 			strcpy(aNewSymName, aSymName);
-			Symbol *aSymbol = new Symbol( aNewSymName, aType, &iElfDynSym[aSymIdx], aSymIdx);
+			Symbol *aSymbol = new Symbol( aNewSymName, type, &iElfDynSym[aSymIdx], aSymIdx);
 			aSymbol->SetSymbolSize(iElfDynSym[aSymIdx].st_size);
 
 			//Putting the symbols into a hash table - Used later while processing relocations
@@ -339,9 +336,9 @@ PLUINT32  ElfImage::ProcessSymbols(){
 		else if( ImportedSymbol( &iElfDynSym[aSymIdx] ) ){
 
 			if( FunctionSymbol( &iElfDynSym[aSymIdx] ))
-				aType = SymbolTypeCode;
+				type = SymbolTypeCode;
 			else
-				aType = SymbolTypeData;
+				type = SymbolTypeData;
 
 			aSymName = ELF_ENTRY_PTR(char, iStringTable, iElfDynSym[aSymIdx].st_name );
 
@@ -352,7 +349,7 @@ PLUINT32  ElfImage::ProcessSymbols(){
 				throw Elf2e32Error(UNDEFINEDSYMBOLERROR, iElfInput, aSymName);
 			}
 			aDllName = iVerInfo[iVersionTbl[aSymIdx]].iLinkAs;
-			//aSymbol = new DllSymbol( aSymName, aType, &iElfDynSym[aSymIdx], aSymIdx);
+			//aSymbol = new DllSymbol( aSymName, type, &iElfDynSym[aSymIdx], aSymIdx);
 
 			//Putting the symbols into a hash table
 			//iSymbolTable[aSymIdx] = aSymbol ;
@@ -575,10 +572,8 @@ PLUINT32 ElfImage::ProcessDynamicEntries(){
 		iSOName = ELF_ENTRY_PTR(char, iStringTable, iSONameOffset);
 	}
 
-	std::list<PLUINT32>::iterator aItr = aNeeded.begin();
-	char *aStr;
-	for( ; aItr != aNeeded.end();aItr++ ) {
-		aStr = ELF_ENTRY_PTR(char, iStringTable, *aItr);
+	for(auto x: aNeeded) {
+		char *aStr = ELF_ENTRY_PTR(char, iStringTable, x);
 		iNeeded.push_back( aStr );
 	}
 
@@ -628,14 +623,13 @@ void ElfImage::ProcessVerInfo() {
 	PLUINT32 aSz = iVerNeedCount + iVerDefCount + 1;
 	iVerInfo = new VersionInfo[aSz];
 
-	Elf32_Verdef	*aDef = iVersionDef;
-	Elf32_Verdaux	*aDaux;
-	char			*aSoName;
-	char			*aLinkAs;
+	Elf32_Verdef *aDef = iVersionDef;
+	char    *aSoName = nullptr;
+	char	*aLinkAs = nullptr;
 
 	while( aDef ) {
-		aDaux = ELF_ENTRY_PTR( Elf32_Verdaux, aDef, aDef->vd_aux);
-		aLinkAs = ELF_ENTRY_PTR(char, iStringTable, aDaux->vda_name );
+		Elf32_Verdaux *daux = ELF_ENTRY_PTR( Elf32_Verdaux, aDef, aDef->vd_aux);
+		aLinkAs = ELF_ENTRY_PTR(char, iStringTable, daux->vda_name );
 		aSoName = iSOName;
 		iVerInfo[aDef->vd_ndx].iLinkAs = aLinkAs;
 		iVerInfo[aDef->vd_ndx].iSOName = aSoName;

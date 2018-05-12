@@ -43,19 +43,12 @@ Destructor to release all the allocated memory
 */
 DefFile::~DefFile()
 {
-	if(iSymbolList && iSymbolList->size())
+	if(iSymbolList && !iSymbolList->empty())
 	{
-		Symbols::iterator aItr = iSymbolList->begin();
-		Symbols::iterator last = iSymbolList->end();
-		Symbol *temp;
-
-		while(aItr != last)
-		{
-			temp = *aItr;
-			++aItr;
-			delete temp;
-		}
-		iSymbolList->clear();
+		for(auto x: *iSymbolList)
+        {
+            delete x;
+        }
 	}
 	delete iSymbolList;
 }
@@ -484,7 +477,7 @@ void LineToken::NextToken()
 			strncpy(aSymbolName, iLine+ iOffset, aCurrentPos);
 			aSymbolName[aCurrentPos] = '\0';
 		}
-		iSymbol->SymbolName(aSymbolName);
+		iSymbol->SetSymbolName(aSymbolName);
 
 		IncrOffset(aCurrentPos);
 
@@ -663,9 +656,8 @@ Return Value - True, if the string starts with one of the patterns.
 */
 bool LineToken::IsPattern(char* aStr, int& aTill, int& aIndex)
 {
-	int pos = 0;
 	int size = sizeof(DefFilePatterns)/sizeof(char*);
-	while(size > pos)
+	for(int pos = 0; size > pos; pos++)
 	{
 		int aLength = strlen(DefFilePatterns[pos]);
 		if(!strncmp(aStr, DefFilePatterns[pos], aLength))
@@ -674,7 +666,6 @@ bool LineToken::IsPattern(char* aStr, int& aTill, int& aIndex)
 			aIndex = pos;
 			return true;
 		}
-		pos++;
 	}
 	return false;
 }

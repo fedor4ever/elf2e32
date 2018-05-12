@@ -453,7 +453,10 @@ void ParameterManager::ParameterAnalyser()
 	int prefixLen = strlen(ParamPrefix);
 	int prefixShortLen = strlen(ParamShortPrefix);
 	int ArgCount = iArgc-1;
-	RecordImageLocation();
+
+    iImageLocation = Path(iArgv[0]);
+	iImageName = FileName(iArgv[0]);
+
 	std::vector<char *>::iterator p = iArgv.begin()+1;
 
 	int OnlyLoggingOption = 0;
@@ -470,7 +473,7 @@ void ParameterManager::ParameterAnalyser()
 
 	for (; p != iArgv.end(); p++)
 	{
-		int Prefix=0, ShortPrefix=0;
+		int Prefix=0;
 		ArgCount--;
 
 		// Check if the option provided is correct and display help on getting incorrect options
@@ -478,8 +481,6 @@ void ParameterManager::ParameterAnalyser()
 		{
 			if (!strncmp(*p, ParamPrefix, prefixLen))
 				Prefix = 1;
-			else if (!strncmp(*p, ParamShortPrefix, prefixShortLen))
-				ShortPrefix = 1;
 			else // Option is neither preceeded by '-' or by '--'
 				throw Elf2e32Error(OPTIONNAMEERROR,*p);
 		}
@@ -544,8 +545,8 @@ void ParameterManager::ParameterAnalyser()
 					{
 						optionval += end;
 					}
-					p++;
-					ArgCount-- ;
+					++p;
+					ArgCount--;
 				}
 				if (optionval.length())
 				{
@@ -616,19 +617,6 @@ char * ParameterManager::Path(char * aPathName)
 	}
 	else
 		return nullptr;
-}
-
-
-/**
-This function extracts the location where the image is to be dumped and the image name.
-
-@internalComponent
-@released
-*/
-void ParameterManager::RecordImageLocation()
-{
-	iImageLocation = Path(iArgv[0]);
-	iImageName = FileName(iArgv[0]);
 }
 
 /**

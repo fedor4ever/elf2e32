@@ -293,10 +293,8 @@ void E32ImageFile::ProcessImports()
 		ElfImage aElfImage(iElfImage->iElfInput);
 		aElfImage.ProcessElfFile(aElfFile);
 
-		ElfImports::RelocationList::iterator q;
-		for (q = aImports.begin(); q != aImports.end(); q++)
+		for(auto aReloc: aImports)
 		{
-			ElfImportRelocation * aReloc = *q;
 			char * aSymName = iElfImage->GetSymbolName(aReloc->iSymNdx);
 			unsigned int aOrdinal = aElfImage.GetSymbolOrdinal(aSymName);
 
@@ -521,10 +519,8 @@ size_t RelocationsSize(ElfRelocations::Relocations & aRelocs)
 {
 	size_t bytecount = 0;
 	int page = -1;
-	ElfRelocations::Relocations::iterator r;
-	for (r = aRelocs.begin(); r != aRelocs.end(); r++)
+	for(auto aReloc: aRelocs)
 	{
-		ElfLocalRelocation * aReloc = *r;
 		int p = aReloc->iAddr & 0xfffff000;
 		if (page != p)
 			{
