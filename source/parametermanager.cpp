@@ -1266,6 +1266,31 @@ bool ParameterManager::IsDebuggable()
  */
 void ParameterManager::CheckOptions()
 {
+
+    if(E32Input() && !FileDumpOptions())
+    {
+        SetFileDumpOptions("h");
+        return;
+    }
+
+    if(!LinkAsDLLName())
+    {
+        string linkas;
+        if(E32ImageOutput())
+        {
+            linkas = E32ImageOutput();
+            linkas.insert(linkas.find_last_of("."), "{000a0000}");
+            SetLinkDLLName( (char*)linkas.c_str() );
+        }else if(DSOOutput())
+        {
+            linkas = DefOutput();
+            linkas.insert(linkas.find_last_of("."), "{000a0000}");
+            linkas.erase(linkas.find_last_of("."));
+            linkas += ".dll";
+            SetLinkDLLName( (char*)linkas.c_str() );
+        }
+    }
+
 	unsigned check = IsCodePaged() + IsCodeUnpaged() +
 		IsCodeDefaultPaged();
 	if (check > 1)

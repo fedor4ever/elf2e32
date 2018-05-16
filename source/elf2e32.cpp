@@ -68,18 +68,11 @@ UseCaseBase * Elf2E32::SelectUseCase()
 {
 	char * deffilein = iInstance->DefInput();
 	char * elfin = iInstance->ElfInput();
-	char *filedumpoptions = iInstance->FileDumpOptions();
 	char * e32in = iInstance->E32Input();
-
-	if(filedumpoptions && !iInstance->DumpOptions())
-	{
-		//throw for wrong options
-		throw Elf2e32Error(INVALIDARGUMENTERROR,filedumpoptions,"--dump");
-	}
 
     if (iInstance->DumpMessageFile())
         return nullptr;
-    if (filedumpoptions || e32in){
+    if (e32in){
         return new FileDump(iInstance);
     }
 
