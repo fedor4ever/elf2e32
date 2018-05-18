@@ -11,7 +11,7 @@ tgttype=r" --targettype=implib"
 
 
 dsodefTests=(
-(elf2e32+defin+dsoout+linkas+tgttype,"Simple def2dso creation. Options are: %s\n"),
+(elf2e32+defin+dsoout+linkas+tgttype, "Simple def2dso creation. Options are: %s\n"),
 (""" --elfinput="libcrypto.SDK.dso" """ + """ --defoutput="tmp\dso2def.(01).def" """,
 "dso2def creation with simplified syntax. Options are: %s\n"),
 (""" --definput="tmp\dso2def.(01).def" """ + """ --dso="tmp\dso2def2dso.(02).dso" """,
@@ -23,31 +23,19 @@ dsodefTests=(
 
 def SuceededTests(*args):
    """These tests must alwais pass!"""
-   global counter
    tmp=args[0]
    try:
-      longtail=e32bin %counter+implibs+linkas+dsoout %counter+fpu+iud1+uid2+uid3+tgttype+tail
-      print tmp[0] %counter
-      print tmp1
-      subprocess.check_call(tmp1)
+      print "\n"+tmp[0]
+      subprocess.check_call(tmp[0])
    except:
-      print "Unexpectable test failure: %s" %tmp[2]
+      print "Unexpectable test failure: %s\n" %tmp[0]
    finally:
-      print "\n"
-      counter+=1
+      str=tmp[1] %tmp[0]
+      print "Test succeeded: %s!\n" %str
 
 def run():
-   """These tests must alwais pass!"""
-   global counter
-   try:
-      print "Simple def2dso creation. Options are: %s\n" %tail
-      subprocess.check_call(tail)
-      print "dso from def created!"
-   except:
-      print "Unexpectable test failure: dso->def"
-      print "With options: %s" %tail
-   finally:
-      print "\n"
+   for x in dsodefTests:
+      SuceededTests(x)
 
 if __name__ == "__main__":
    # execute only if run as a script
