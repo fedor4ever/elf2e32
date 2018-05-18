@@ -349,7 +349,6 @@ void ElfFileSupplied::WriteDSOFile()
 	char * aDSOName = UseCaseBase::DSOOutput();
 	if(!aDSOName)
 	{
-	    std::cerr << "--dso option not specified!\n";
 	    return;
 	}
 
@@ -372,7 +371,6 @@ void ElfFileSupplied::WriteE32()
 
     if(!aE32FileName)
 	{
-	    std::cerr << "--output option not specified!\n";
 	    return;
 	}
 

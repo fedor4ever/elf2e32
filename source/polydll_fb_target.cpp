@@ -68,14 +68,12 @@ void POLYDLLFBTarget::ProcessExports()
 		++i;
 	}
 
-	Symbol *aSymbolEntry;
-
 	iDefExports = new Symbols;
 
 	for (int k=0; k < count; k++)
 	{
 		SymbolType aType = SymbolTypeCode;
-		aSymbolEntry = new Symbol(aSysDefSymbols[k].iSysDefSymbolName, aType);
+		Symbol *aSymbolEntry = new Symbol(aSysDefSymbols[k].iSysDefSymbolName, aType);
 		aSymbolEntry->SetOrdinal(aSysDefSymbols[k].iSysDefOrdinalNum);
 		iDefExports->push_back(aSymbolEntry);
 	}
@@ -84,20 +82,3 @@ void POLYDLLFBTarget::ProcessExports()
 	CreateExports();
 }
 
-/**
-Function to generate the output E32 image. Incase of an output DEF file, then the
-DEF file and the corresponding DSO file should be generated.
-
-@internalComponent
-@released
-*/
-void POLYDLLFBTarget::BuildAll() {
-
-	if( UseCaseBase::DefOutput() ) {
-		WriteDefFile();
-	}
-	if(UseCaseBase::DSOOutput() && UseCaseBase::LinkAsDLLName()) {
-		WriteDSOFile();
-	}
-	WriteE32();
-}

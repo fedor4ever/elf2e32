@@ -43,7 +43,6 @@ public:
 	explicit POLYDLLRebuildTarget(ParameterManager* aParameterManager);
 	~POLYDLLRebuildTarget();
 	void ProcessExports();
-	void BuildAll();
 };
 
 

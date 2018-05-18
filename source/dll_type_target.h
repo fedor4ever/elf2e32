@@ -35,13 +35,10 @@ class DLLTarget : public ElfFileSupplied
 public:
 	explicit DLLTarget(ParameterManager* aParameterManager);
 	~DLLTarget();
-
 	bool ImageIsDll();
-	void BuildAll();
 
 protected:
 	Symbols *iDefExports;
-
 };
 
 

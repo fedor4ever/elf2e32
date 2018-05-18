@@ -111,20 +111,3 @@ void POLYDLLRebuildTarget::ProcessExports()
 	CreateExports();
 }
 
-/**
-Function to generate the output E32 image. Incase of an output DEF file, then the
-DEF file and the corresponding DSO file should be generated.
-
-@internalComponent
-@released
-*/
-void POLYDLLRebuildTarget::BuildAll() {
-
-	if( UseCaseBase::DefOutput() ) {
-		WriteDefFile();
-	}
-	if(UseCaseBase::DSOOutput() && UseCaseBase::LinkAsDLLName()) {
-		WriteDSOFile();
-	}
-	WriteE32();
-}

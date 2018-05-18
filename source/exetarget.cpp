@@ -54,17 +54,6 @@ void ExeTarget::ProcessExports()
 }
 
 /**
-Function to generate the output E32 image.
-
-@internalComponent
-@released
-*/
-void ExeTarget::BuildAll()
-{
-	WriteE32();
-}
-
-/**
 Function to check if the provided input is a DLL.
 
 @internalComponent

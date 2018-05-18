@@ -815,15 +815,10 @@ Function to Read def file and get the internal representation in structure.
 */
 Symbols* DefFile::ReadDefFile(char *defFile)
 {
-	char *defFileEntries;
-
-	defFileEntries=OpenDefFile(defFile);
+	char *defFileEntries = OpenDefFile(defFile);
 	ParseDefFile(defFileEntries);
-
 	delete defFileEntries;//Free the memory which was required to read def file
-
 	return iSymbolList;
-
 }
 
 /**
@@ -843,7 +838,6 @@ Symbols* DefFile::GetSymbolEntryList(char *defFile)
 		iSymbolList=ReadDefFile(defFile);
 		return iSymbolList;
 	}
-
 }
 
 /**
