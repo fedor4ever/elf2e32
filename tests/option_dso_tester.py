@@ -12,12 +12,12 @@ tgttype=r" --targettype=implib"
 
 dsodefTests=(
 (elf2e32+defin+dsoout+linkas+tgttype, "Simple def2dso creation. Options are: %s\n"),
-(""" --elfinput="libcrypto.SDK.dso" """ + """ --defoutput="tmp\dso2def.(01).def" """,
+(elf2e32+""" --elfinput="libcrypto.SDK.dso" """ + """ --defoutput="tmp\dso2def.(01).def" """,
 "dso2def creation with simplified syntax. Options are: %s\n"),
-(""" --definput="tmp\dso2def.(01).def" """ + """ --dso="tmp\dso2def2dso.(02).dso" """,
+(elf2e32+""" --definput="tmp\dso2def.(01).def" """ + """ --dso="tmp\dso2def2dso.(02).dso" """,
 "Make dso from def generated from dso. Options are: %s\n"),
-(defin+ """--dso="tmp\def2dso.(03).dso""", "Make dso from def which made from dso... Options are: %s\n"),
-("""--elfinput="tmp\def2dso.(03).dso""" + """ --defoutput="tmp\def2dso2def.(04).def" """,
+(elf2e32+defin+ """--dso="tmp\def2dso.(03).dso""", "Make dso from def which made from dso... Options are: %s\n"),
+(elf2e32+"""--elfinput="tmp\def2dso.(03).dso""" + """ --defoutput="tmp\def2dso2def.(04).def" """,
 "Make def from dso which made from def... Options are: %s\n"),
 )
 
@@ -29,7 +29,7 @@ def SuceededTests(*args):
       subprocess.check_call(tmp[0])
    except:
       print "Unexpectable test failure: %s\n" %tmp[0]
-   finally:
+   else:
       str=tmp[1] %tmp[0]
       print "Test succeeded: %s!\n" %str
 
