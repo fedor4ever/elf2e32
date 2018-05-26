@@ -22,7 +22,7 @@
 #include "pl_symbol.h"
 
 Symbol::Symbol(std::string aName, SymbolType aCodeDataType):
-    iSymbolType(aCodeDataType), iSymbolName(aName)
+    iSymbolName(aName), iSymbolType(aCodeDataType)
     {}
 
 /**
