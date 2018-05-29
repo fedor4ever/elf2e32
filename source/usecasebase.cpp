@@ -117,7 +117,7 @@ This function calls the ElfInput() from ParameterManager through the interface.
 @return the name of the Input ELF file if provided as input through --elfinput or 0.
 
 */
-char * UseCaseBase::InputElfFileName()
+const std::string& UseCaseBase::InputElfFileName()
 {
 	return iParameterManager->ElfInput();
 }

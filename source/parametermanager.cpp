@@ -800,7 +800,7 @@ This function extracts the Elf file name that is passed as input through the --e
 
 @return the name of the input Elf file if provided as input through --elfinput or nullptr.
 */
-char * ParameterManager::ElfInput()
+const string& ParameterManager::ElfInput()
 {
 	return iElfInput;
 }
@@ -1330,7 +1330,7 @@ void ParameterManager::CheckOptions()
 			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--definput");
 		break;
 	case EDll:
-		if (!ElfInput())
+		if (ElfInput().empty())
 			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--elfinput");
 		if (!E32ImageOutput())
 			throw Elf2e32Error(NOARGUMENTERROR,"--output");
@@ -1353,7 +1353,7 @@ void ParameterManager::CheckOptions()
 		if(!iUID3) cerr << "Missed --uid3 option!\n";
 		break;
 	case EExe:
-		if (!ElfInput())
+		if (ElfInput().empty())
 			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--elfinput");
 		if (!E32ImageOutput())
 			throw Elf2e32Error(NOARGUMENTERROR,"--output");
@@ -1368,7 +1368,7 @@ void ParameterManager::CheckOptions()
 		if(!iUID3) cerr << "Missed --uid3 option!\n";
 		break;
 	case EPolyDll:
-		if (!ElfInput())
+		if (ElfInput().empty())
 			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--elfinput");
 		if (!E32ImageOutput())
 			throw Elf2e32Error(NOARGUMENTERROR,"--output");
@@ -1384,7 +1384,7 @@ void ParameterManager::CheckOptions()
 		if(!iUID3) cerr << "Missed --uid3 option!\n";
 		break;
 	case EExexp:
-		if (!ElfInput())
+		if (ElfInput().empty())
 			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--elfinput");
 		if (!DefOutput())
 			throw Elf2e32Error(NOARGUMENTERROR,"--defoutput");
@@ -1403,7 +1403,7 @@ void ParameterManager::CheckOptions()
 		if(!iUID3) cerr << "Missed --uid3 option!\n";
 		break;
 	case EStdExe:
-		if (!ElfInput())
+		if (ElfInput().empty())
 			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--elfinput");
 		if (!E32ImageOutput())
 			throw Elf2e32Error(NOARGUMENTERROR,"--output");
@@ -2945,15 +2945,17 @@ and sets the flag if the --dso option is passed in.
 @released
 
 @param aDSOOutputVal
-Name of the output DSO file if provided as input through --dso or 0.
+Name of the output DSO file if provided as input through --elfinput.
 */
 void ParameterManager::SetDSOOutput(char * aDSOOutputVal)
 {
+    if(!aDSOOutputVal)
+        return;
 	iDSOOutput = aDSOOutputVal;
 }
 
 /**
-This function sets the Elf file name that is passed as input through the --dsoin option.
+This function sets the Elf file name that is passed as input through the --elfinput option.
 
 @internalComponent
 @released

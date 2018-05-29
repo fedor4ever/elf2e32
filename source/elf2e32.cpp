@@ -67,7 +67,6 @@ This function is to select the appropriate use case based on the input values.
 UseCaseBase * Elf2E32::SelectUseCase()
 {
 	char * deffilein = iInstance->DefInput();
-	char * elfin = iInstance->ElfInput();
 	char * e32in = iInstance->E32Input();
 
     if (iInstance->DumpMessageFile())
@@ -80,7 +79,8 @@ UseCaseBase * Elf2E32::SelectUseCase()
 	if (iTargetType == EInvalidTargetType || iTargetType == ETargetTypeNotSet)
 	{
 	    Message::GetInstance()->ReportMessage(WARNING, NOREQUIREDOPTIONERROR,"--targettype");
-		if (elfin)
+        string elfin = iInstance->ElfInput();
+		if (!elfin.empty())
 		{
 			if (deffilein)
 				return new ExportTypeRebuildTarget(iInstance);

@@ -247,12 +247,12 @@ public:
 	char * DefInput();
 
 	/**
-    This function extracts the Elf file name that is passed as input through the --dsoin option.
+    This function return the Elf file name that is passed as input through the --elfinput option.
     @internalComponent
     @released
-    @return the name of the input Elf file if provided as input through --dsoin or 0.
+    @return the name of the input Elf file if provided as input through --elfinput or 0.
     */
-	char * ElfInput();
+	const std::string& ElfInput();
 
     /**
     This function extracts the E32 image name that is passed as input through the --e32dump option.
@@ -424,8 +424,8 @@ private:
 	/** File name of the input DEF file passed as input to the --definput option */
 	char * iDefInput = nullptr;
 
-	/** File name of the input DSO file passed as input to the --dsoin option */
-	char * iElfInput = nullptr;
+	/** File name of the input DSO file passed as input to the --elfinput option */
+	std::string iElfInput;
 
 	/** File name of the input E32 image passed as input to the --e32dump option */
 	char * iE32Input = nullptr;

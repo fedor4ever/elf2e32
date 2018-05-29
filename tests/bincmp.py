@@ -3,7 +3,7 @@ from __future__ import with_statement
 import binascii
 
 orig = "D:/codeblock/elf2e32/tests/libcrypto-2.4.5.tst.dll"
-tgt = "D:/codeblock/elf2e32/tests/libcrypto-2.4.5.tst_.dll"
+tgt = "D:/codeblock/elf2e32/tests/libcrypto-2.4.5.SDK.dll"
 
 with open(orig, 'rb') as my_file:
     my_bytes = my_file.read()

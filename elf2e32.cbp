@@ -11,9 +11,9 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters=' --capability=All-TCB --elfinput=&quot;tests\libcrypto.dll&quot; --output=&quot;tests\tmp\elf2baree32.dll&quot; --libpath=&quot;D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib&quot; --dlldata --targettype=STDDLL --linkas=&quot;libcrypto{000a0000}.dll&quot;' />
+				<Option parameters='--definput=&quot;tests\libcryptou.def&quot;  --dso=&quot;tests\tmp\libcrypto{000a0000}.def2dso.dso&quot;  --linkas=&quot;libcrypto{000a0000}.dll&quot;  --targettype=implib' />
 				<Compiler>
-					<Add option="-pg" />
+					<Add option="-std=c++14" />
 					<Add option="-g -O0" />
 					<Add option="-g3" />
 					<Add option="-fvar-tracking" />
@@ -21,7 +21,6 @@
 					<Add directory="include" />
 				</Compiler>
 				<Linker>
-					<Add option="-pg -lgmon" />
 					<Add option="-Wl,--stack,104857600" />
 				</Linker>
 			</Target>
@@ -33,6 +32,7 @@
 				<Option parameters='--capability=All-TCB --definput=&quot;tests\libcryptou.def&quot; --defoutput=&quot;tests\out.def&quot; --elfinput=&quot;tests\libcrypto.dll&quot; --output=&quot;tests\libcrypto-2.4.5.tst.dll&quot; --libpath=&quot;D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib&quot; --linkas=&quot;tests\libcrypto{000a0000}.dll&quot; --dso=&quot;tests\libcrypto{000a0000}.dso&quot; --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --dlldata --ignorenoncallable --debuggable --smpsafe --uncompressed' />
 				<Compiler>
 					<Add option="-O2" />
+					<Add directory="source" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />

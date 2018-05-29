@@ -214,7 +214,7 @@ void ElfFileSupplied::ValidateDefExports(Symbols *aDefExports)
 		}
 		if( aMissingSymNameList.size() ) {
 			if (!Unfrozen())
-				throw SymbolMissingFromElfError(SYMBOLMISSINGFROMELFERROR, aMissingSymNameList, UseCaseBase::InputElfFileName());
+				throw SymbolMissingFromElfError(SYMBOLMISSINGFROMELFERROR, aMissingSymNameList, UseCaseBase::InputElfFileName().c_str());
 			else
 				cout << "Elf2e32: Warning: " << aMissingSymNameList.size() << " Frozen Export(s) missing from the ELF file" << "\n";
 		}

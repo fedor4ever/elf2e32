@@ -50,7 +50,7 @@ class UseCaseBase {
         char *LogFile();
         bool LogFileOption();
 
-        char * InputElfFileName();
+        const std::string& InputElfFileName();
 
         const char * OutputDSOFileName();
 
