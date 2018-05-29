@@ -19,6 +19,7 @@
 //
 
 #include "inflate.h"
+#include "memory.h"
 #include "errorhandler.h"
 
 /*

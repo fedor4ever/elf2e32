@@ -2519,17 +2519,8 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseCodePaging)
     {
         aPM->SetCodeUnpaged(true);
     }
-	else if (strnicmp(aValue, "default", 7)==0)
-    {
-        aPM->SetCodeDefaultPaged(true);
-    }
 	else
     {
-		cerr << "********************\n";
-		cerr << "Code paging option not set!\n";
-		cerr << "Use param paged, unpaged or defaultpaged\n";
-		cerr << "Treat as --codepaging=default!\n";
-		cerr << "********************\n";
 		aPM->SetCodeDefaultPaged(true);
     }
 }
@@ -2550,17 +2541,8 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseDataPaging)
 	{
 		aPM->SetDataUnpaged(true);
 	}
-	else if (strnicmp(aValue, "default", 7)==0)
-	{
-		aPM->SetDataDefaultPaged(true);
-	}
 	else
 	{
-		cerr << "********************\n";
-		cerr << "Data paging option not set!\n";
-		cerr << "Use paged, unpaged or defaultpaged\n";
-		cerr << "Treat as --datapaging=default!\n";
-		cerr << "********************\n";
 		aPM->SetDataDefaultPaged(true);
 	}
 }

@@ -25,6 +25,8 @@
 #endif
 
 #include <iostream>
+#include <string>
+#include <sstream>
 #include <stdio.h>
 #include <cstring>
 #include "errorhandler.h"
@@ -54,7 +56,11 @@ ErrorHandler::ErrorHandler(int aMessageIndex) :
     iMessageIndex(aMessageIndex)
 {
 	iMessage=errMssgPrefix;
-	iMessage+=std::to_string(BASEMSSGNO+iMessageIndex);
+//	iMessage+=std::to_string(BASEMSSGNO+iMessageIndex); // hack: doesn't available in mingw
+
+    std::ostringstream s;
+    s << BASEMSSGNO+iMessageIndex;
+    iMessage+=s.str();
 	iMessage+=colonSpace;
 };
 

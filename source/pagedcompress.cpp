@@ -17,6 +17,7 @@
 //
 
 #include <stdlib.h>
+#include <memory.h>
 
 #include <fstream>
 #include <sstream>
