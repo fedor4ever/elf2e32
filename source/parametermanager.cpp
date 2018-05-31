@@ -904,7 +904,7 @@ This function extracts the total number of predefined symbols passed to --sysdef
 @internalComponent
 @released
 
-@return the total number of predefined symbols passed through --elfinput or 0.
+@return the total number of predefined symbols passed through --sysdef or 0.
 */
 int ParameterManager::SysDefCount()
 {
@@ -917,7 +917,7 @@ This function extracts the E32 image dump options passed as input through the --
 /@internalComponent
 @released
 
-@return the name of the dump options if provided as input through --dump or 0.
+@return the name of the dump options if provided as input through --dump or nullptr.
 */
 char * ParameterManager::FileDumpOptions()
 {
@@ -1027,7 +1027,7 @@ This function extracts the Log file name that is passed as input through the --l
 @internalComponent
 @released
 
-@return the name of the Log file if provided as input through --log or 0.
+@return the name of the Log file if provided as input through --log or nullptr.
 */
 char * ParameterManager::LogFile()
 {
@@ -1040,7 +1040,7 @@ This function extracts the Message file name that is passed as input through the
 @internalComponent
 @released
 
-@return the name of the Message file if provided as input through --messagefile or 0.
+@return the name of the Message file if provided as input through --messagefile or nullptr.
 */
 char * ParameterManager::MessageFile()
 {
@@ -1053,7 +1053,7 @@ This function extracts the Message file name that is passed as input through the
 @internalComponent
 @released
 
-@return the name of the Message file to be dumped if provided as input through --dumpmessagefile or 0.
+@return the name of the Message file to be dumped if provided as input through --dumpmessagefile or nullptr.
 */
 char * ParameterManager::DumpMessageFile()
 {
