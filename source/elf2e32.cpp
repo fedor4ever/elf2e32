@@ -110,7 +110,7 @@ UseCaseBase * Elf2E32::SelectUseCase()
 		return new ElfFileSupplied(iInstance);
 	case EPolyDll:
 		if (!deffilein)
-			return new POLYDLLFBTarget(iInstance);
+			return new ElfFileSupplied(iInstance);
 		else if (deffilein)
 			return new POLYDLLRebuildTarget(iInstance);
 	default:

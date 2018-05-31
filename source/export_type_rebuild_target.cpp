@@ -28,7 +28,6 @@ Constructor for the ExportTypeRebuildTarget Class
 @released
 */
 ExportTypeRebuildTarget::ExportTypeRebuildTarget(ParameterManager* aParams) : DLLTarget(aParams) {
-	iDefFile = new DefFile();
 }
 
 /**
@@ -39,7 +38,6 @@ Destructor for the ExportTypeRebuildTarget Class
 */
 ExportTypeRebuildTarget::~ExportTypeRebuildTarget()
 {
-	delete iDefFile;
 }
 
 /**
@@ -52,8 +50,10 @@ The final list of exports symbols is created.
 */
 void ExportTypeRebuildTarget::ProcessExports()
 {
-  	iDefExports = iDefFile->ReadDefFile( iParameterManager->DefInput() );
+    DefFile *def = new DefFile();
+  	iDefExports = def->ReadDefFile( iParameterManager->DefInput() );
+	delete def;
 
-	ValidateDefExports(iDefExports);
+	ValidateDefExports(*iDefExports);
 	CreateExports();
 }

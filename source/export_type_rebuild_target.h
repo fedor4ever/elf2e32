@@ -37,8 +37,6 @@ public:
 	explicit ExportTypeRebuildTarget(ParameterManager* aParameterManager);
 	virtual ~ExportTypeRebuildTarget();
 	void ProcessExports();
-protected:
-	DefFile *iDefFile;
 };
 
 #endif // EXPORT_TYPE_REBUILD_TARGET_H

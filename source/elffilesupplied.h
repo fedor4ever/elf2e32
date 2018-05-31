@@ -49,7 +49,7 @@ public:
 	void ReadElfFile();
 	virtual void ProcessExports();
 	virtual void BuildAll();
-	void ValidateDefExports(Symbols* aDefExports);
+	void ValidateDefExports(Symbols& aDefExports);
 	void CreateExports();
 	void WriteDefFile();
 	void WriteDSOFile();
@@ -58,6 +58,8 @@ public:
 	virtual bool WarnForNewExports();
 	SymbolType SymbolTypeF(char * aName);
 	E32ImageHeaderV * AllocateE32ImageHeader();
+
+	void GetSymbolsFromSysdefoption(Symbols& aSysdef);
 
 	virtual void CreateExportTable();
 	void CreateExportBitMap();

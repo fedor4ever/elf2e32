@@ -101,7 +101,12 @@ Function to process exports
 */
 void ElfFileSupplied::ProcessExports()
 {
-	ValidateDefExports(nullptr);
+    Symbols symbols;
+    if(EPolyDll == iParameterManager->TargetTypeName())
+    {
+        GetSymbolsFromSysdefoption(symbols);;
+    }
+	ValidateDefExports(symbols);
 	CreateExports();
 }
 
@@ -134,12 +139,41 @@ void ElfFileSupplied::CreateExports()
 }
 
 /**
+Function to convert params in --sysdef option to symbols for EPolyDll target
+@internalComponent
+@released
+*/
+/// FIXME (Administrator#1#05/31/18): Rewrite to allow symbols in random order from --sysdef option
+void ElfFileSupplied::GetSymbolsFromSysdefoption(Symbols &aIn)
+{
+    if(EPolyDll != iParameterManager->TargetTypeName())
+        return;
+
+    int count = iParameterManager->SysDefCount();
+	ParameterManager::Sys aSysDefSymbols[10];
+
+	int i = 0;
+	while (i < count)
+	{
+		aSysDefSymbols[i] = iParameterManager->SysDefSymbols(i);
+		++i;
+	}
+
+	for (int k=0; k < count; k++)
+	{
+		Symbol *aSymbolEntry = new Symbol(aSysDefSymbols[k].iSysDefSymbolName, SymbolTypeCode);
+		aSymbolEntry->SetOrdinal(aSysDefSymbols[k].iSysDefOrdinalNum);
+		aIn.push_back(aSymbolEntry);
+	}
+}
+
+/**
 Function to validate exports
 @param aDefExports - List of export symbols from Def file and/or sysdef.
 @internalComponent
 @released
 */
-void ElfFileSupplied::ValidateDefExports(Symbols *aDefExports)
+void ElfFileSupplied::ValidateDefExports(Symbols &aDefExports)
 {
 	/**
 	 * Symbols from DEF file (DEF_Symbols) => Valid_DEF + Absent
@@ -164,10 +198,10 @@ void ElfFileSupplied::ValidateDefExports(Symbols *aDefExports)
 	Symbols defValidExports, defAbsentExports, elfExports;
 
 	//aDefExports = iDefIfc->GetSymbolEntryList();
-	if (aDefExports)
+	if (!aDefExports.empty())
 		{
 
-		for(auto x: *aDefExports)
+		for(auto x: aDefExports)
 			{
 				if( x->Absent() ){
 					defAbsentExports.push_back(x);
@@ -186,7 +220,7 @@ void ElfFileSupplied::ValidateDefExports(Symbols *aDefExports)
 
 	if (iReader->iExports)
 		iReader->GetElfSymbols( elfExports );
-	else if (!aDefExports)
+	else if (aDefExports.empty())
 		return;
 
 	// REVISIT - return back if elfexports and defexports is NULL
@@ -201,8 +235,9 @@ void ElfFileSupplied::ValidateDefExports(Symbols *aDefExports)
 		Symbols aResult(defValidExports.size());
 		Iterator aResultPos = aResult.begin();
 
-		Iterator aMissingListEnd = set_difference(defValidExports.begin(), defValidExports.end(), \
-			elfExports.begin(), elfExports.end(), aResultPos, ElfExports::PtrELFExportNameCompareUpdateAttributes());
+		Iterator aMissingListEnd = set_difference(defValidExports.begin(), defValidExports.end(),
+                elfExports.begin(), elfExports.end(), aResultPos,
+                ElfExports::PtrELFExportNameCompareUpdateAttributes());
 
 		std::list<string> aMissingSymNameList;
 		while (aResultPos != aMissingListEnd) {

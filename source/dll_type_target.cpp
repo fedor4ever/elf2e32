@@ -35,7 +35,16 @@ Destructor for the DLLTarget Class
 @internalComponent
 @released
 */
-DLLTarget::~DLLTarget() {
+DLLTarget::~DLLTarget()
+{
+    if(iDefExports)
+	{
+		for(auto x: *iDefExports)
+		{
+			delete x;
+		}
+		iDefExports->clear();
+	}
 }
 
 /**

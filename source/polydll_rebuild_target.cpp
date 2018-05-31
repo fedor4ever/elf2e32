@@ -56,34 +56,17 @@ symbols coming from the DEF file and ELF file.
 */
 void POLYDLLRebuildTarget::ProcessExports()
 {
-	int count = iParameterManager->SysDefCount();
-	ParameterManager::Sys aSysDefSymbols[10];
+    Symbols iSysdefin;
+    GetSymbolsFromSysdefoption(iSysdefin);
 
-	int i = 0;
-	while (i < count)
-	{
-		aSysDefSymbols[i] = iParameterManager->SysDefSymbols(i);
-		++i;
-	}
-
-	Symbol *aSymbolEntry = nullptr;
-
-	Symbols *iSysDefExports = new Symbols;
-
+    DefFile *iDefFile = new DefFile();
 	iDefExports = iDefFile->ReadDefFile(iParameterManager->DefInput());
-
-	for (int k=0; k < count; k++)
-	{
-		SymbolType aType = SymbolTypeCode;
-		aSymbolEntry = new Symbol(aSysDefSymbols[k].iSysDefSymbolName, aType);
-		aSymbolEntry->SetOrdinal(aSysDefSymbols[k].iSysDefOrdinalNum);
-		iSysDefExports->push_back(aSymbolEntry);
-	}
+	delete iDefFile;
 
 	// Check if the Sysdefs and the DEF file are matching.
 
-	auto aBegin = iSysDefExports->begin();
-	auto aEnd = iSysDefExports->end();
+	auto aBegin = iSysdefin.begin();
+	auto aEnd = iSysdefin.end();
 
 	auto aDefBegin = iDefExports->begin();
 	auto aDefEnd = iDefExports->end();
@@ -98,16 +81,12 @@ void POLYDLLRebuildTarget::ProcessExports()
 		++aDefBegin;
 	}
 
-	if( aMissingSysDefList.size() )
+	if( aMissingSysDefList.empty() )
     {
-        delete iSysDefExports;
 		throw SysDefMismatchError(SYSDEFSMISMATCHERROR, aMissingSysDefList, UseCaseBase::DefInput());
     }
 
-    delete iSysDefExports;
-    iSysDefExports = nullptr;
-    if(aSymbolEntry) delete aSymbolEntry;
-	ValidateDefExports(iDefExports);
+	ValidateDefExports(*iDefExports);
 	CreateExports();
 }
 
