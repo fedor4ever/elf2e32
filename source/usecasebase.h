@@ -27,7 +27,7 @@
 
 /**
 This class is the base class for the use cases. The appropriate usecases like LibraryTarget,
-DLLTarget, EXETarget are derived from this class.
+DLLTarget are derived from this class.
 
 Other classes like ParameterManager are dependant on this class.
 

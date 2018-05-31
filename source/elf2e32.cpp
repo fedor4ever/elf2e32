@@ -22,7 +22,6 @@
 #include "elf2e32.h"
 #include "errorhandler.h"
 #include "librarytarget.h"
-#include "exetarget.h"
 #include "polydll_fb_target.h"
 #include "polydll_rebuild_target.h"
 #include "filedump.h"
@@ -98,26 +97,22 @@ UseCaseBase * Elf2E32::SelectUseCase()
 
 	switch (iTargetType)
 	{
-	case EDll:
+	case EDll: // fallthru
+	case EExexp:
 		if (deffilein)
 			return new ExportTypeRebuildTarget(iInstance);
 		else if (!deffilein)
-			return new DLLTarget(iInstance);
+			return new ElfFileSupplied(iInstance);
 	case ELib:
         return new LibraryTarget(iInstance);
 	case EStdExe: // fallthru
 	case EExe:
-		return new ExeTarget(iInstance);
+		return new ElfFileSupplied(iInstance);
 	case EPolyDll:
 		if (!deffilein)
 			return new POLYDLLFBTarget(iInstance);
 		else if (deffilein)
 			return new POLYDLLRebuildTarget(iInstance);
-	case EExexp:
-		if (!deffilein)
-			return new DLLTarget(iInstance);
-		else if (deffilein)
-			return new ExportTypeRebuildTarget(iInstance);
 	default:
 		throw Elf2e32Error(INVALIDINVOCATIONERROR);
 	}
