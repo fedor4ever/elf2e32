@@ -306,7 +306,7 @@ void ElfFileSupplied::ValidateDefExports(Symbols &aDefExports)
 			++aResultPos;
 			//throw error
 		}
-		if( aMissingSymNameList.size() ) {
+		if( !aMissingSymNameList.empty() ) {
 			if (!iManager->Unfrozen())
 				throw SymbolMissingFromElfError(SYMBOLMISSINGFROMELFERROR, aMissingSymNameList, iManager->ElfInput().c_str());
 			else

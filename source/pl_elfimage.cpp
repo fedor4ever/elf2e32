@@ -971,10 +971,9 @@ Elf32_Sym* ElfImage::FindSymbol(char* aName) {
 	Elf32_Sword aIdx = aHashVal % iHashTbl->nBuckets;
 	aIdx = aBuckets[aIdx];
 
-	char	*aSymName;
 	do {
-		aSymName = ELF_ENTRY_PTR(char, iStringTable, iElfDynSym[aIdx].st_name);
-		if( !strcmp(aSymName, aName) ) {
+		char *symName = ELF_ENTRY_PTR(char, iStringTable, iElfDynSym[aIdx].st_name);
+		if( !strcmp(symName, aName) ) {
 			return &iElfDynSym[aIdx];
 		}
 		aIdx = aChains[aIdx];

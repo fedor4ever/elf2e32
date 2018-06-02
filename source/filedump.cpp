@@ -56,31 +56,19 @@ int FileDump::Execute()
 {
     char *options = iParam->FileDumpOptions();
     char *output = iParam->E32ImageOutput();
-    char *defin = iParam->DefInput();
-    int dumpopt = iParam->DumpOptions();
 
-	if(options && output && defin) //DumpAsm
+    char *e32in = iParam->E32Input();
+
+	if(options && output) //DumpAsm
 	{
-		if(!(dumpopt & EDumpAsm))
-			throw Elf2e32Error(INVALIDARGUMENTERROR, (!options?"":options), "--dump");
-		if(dumpopt & 31)
-			throw Elf2e32Error(INVALIDARGUMENTERROR, (!options?"":options), "--dump");
-		if(!output)
-			throw Elf2e32Error(NOREQUIREDOPTIONERROR, "--output");
-		if(!defin)
-			throw Elf2e32Error(NOREQUIREDOPTIONERROR, "--definput");
-
 		GenerateAsmFile(output);
 	}
-	else
+	else if(e32in)
 	{
-	    char *e32in = iParam->E32Input();
-		if(!e32in)
-			throw Elf2e32Error(NOREQUIREDOPTIONERROR, "--e32input");
-		if(dumpopt & EDumpAsm )
-			throw Elf2e32Error(INVALIDARGUMENTERROR, options, "--dump");
 		DumpE32Image(e32in);
 	}
+	else
+        throw Elf2e32Error(INVALIDARGUMENTERROR, options, "--dump");
 	return 0;
 }
 
@@ -93,9 +81,19 @@ Function to generate ASM File.
 */
 int FileDump::GenerateAsmFile(const char* afileName)//DumpAsm
 {
+    char *options = iParam->FileDumpOptions();
+    int dumpopt = iParam->DumpOptions();
+    if(!(dumpopt & EDumpAsm))
+        throw Elf2e32Error(INVALIDARGUMENTERROR, (!options?"":options), "--dump");
+    if(dumpopt & 31)
+        throw Elf2e32Error(INVALIDARGUMENTERROR, (!options?"":options), "--dump");
+
+    char *defin = iParam->DefInput();
+    if(!defin)
+        throw Elf2e32Error(NOREQUIREDOPTIONERROR, "--definput");
+
 	DefFile *iDefFile = new DefFile();
-	Symbols *aSymList;
-	aSymList = iDefFile->ReadDefFile(iParam->DefInput());
+	Symbols *aSymList = iDefFile->ReadDefFile(defin);
 
 	FILE *fptr;
 
