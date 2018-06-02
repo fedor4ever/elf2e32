@@ -446,6 +446,10 @@ void ElfFileSupplied::WriteDSOFile()
 	    return;
 	}
 
+	ETargetType target = iParameterManager->TargetTypeName();
+	if(target == ELib)
+        SymbolsFromDEF(iSymbols);
+
 	char * aDSOFileName = UseCaseBase::FileName(aDSOName);
 	/** This member is responsible for generating the proxy DSO file. */
 

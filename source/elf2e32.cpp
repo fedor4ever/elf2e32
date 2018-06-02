@@ -18,13 +18,13 @@
 //
 //
 
+#include <iostream>
+
 #include "parametermanager.h"
 #include "elf2e32.h"
 #include "errorhandler.h"
-#include "librarytarget.h"
+#include "elffilesupplied.h"
 #include "filedump.h"
-
-#include <iostream>
 
 using std::cout;
 using std::endl;
@@ -76,15 +76,9 @@ UseCaseBase * Elf2E32::SelectUseCase()
 	if (iTargetType == EInvalidTargetType || iTargetType == ETargetTypeNotSet)
 	{
 	    Message::GetInstance()->ReportMessage(WARNING, NOREQUIREDOPTIONERROR,"--targettype");
-        string elfin = iInstance->ElfInput();
-		if (!elfin.empty())
-		{
-            return new ElfFileSupplied(iInstance);
-		}
-		else if (deffilein)
+        if (deffilein)
 		{
 			iTargetType = ELib;
-			if(iInstance->DefOutput()) iTargetType = EDll;
 		}
 		else
 			throw Elf2e32Error(INVALIDINVOCATIONERROR); //REVISIT
@@ -93,7 +87,6 @@ UseCaseBase * Elf2E32::SelectUseCase()
 	switch (iTargetType)
 	{
 	case ELib:
-        return new LibraryTarget(iInstance);
 	case EDll: // fallthru
 	case EPolyDll: // fallthru
 	case EExe: // fallthru
