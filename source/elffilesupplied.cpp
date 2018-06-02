@@ -95,6 +95,22 @@ void ElfFileSupplied::ReadElfFile()
 }
 
 /**
+Function to get symbols from .def file
+@internalComponent
+@released
+*/
+void ElfFileSupplied::SymbolsFromDEF(Symbols& aDef)
+{
+    char * def = iParameterManager->DefInput();
+    if(!def)
+        return;
+    DefFile *iDefFile = new DefFile();
+	auto tmp = iDefFile->ReadDefFile(def);
+	delete iDefFile;
+	aDef.splice(aDef.begin(), *tmp);
+}
+
+/**
 Function to compare symbols from .def file and --sysdef input
 @internalComponent
 @released
@@ -106,17 +122,16 @@ void ElfFileSupplied::CompareSymbolsFromDEFwithSysdef(Symbols &aIn)
     if(!iParameterManager->DefInput())
         return;
 
-    DefFile *iDefFile = new DefFile();
-	auto iDefExports = iDefFile->ReadDefFile(iParameterManager->DefInput());
-	delete iDefFile;
+    Symbols iDefExports;
+	SymbolsFromDEF(iDefExports);
 
 	// Check if the Sysdefs and the DEF file are matching.
 
 	auto aBegin = aIn.begin();
 	auto aEnd = aIn.end();
 
-	auto aDefBegin = iDefExports->begin();
-	auto aDefEnd = iDefExports->end();
+	auto aDefBegin = iDefExports.begin();
+	auto aDefEnd = iDefExports.end();
 
 	std::list<string> aMissingSysDefList;
 
@@ -132,7 +147,7 @@ void ElfFileSupplied::CompareSymbolsFromDEFwithSysdef(Symbols &aIn)
     {
 		throw SysDefMismatchError(SYSDEFSMISMATCHERROR, aMissingSysDefList, UseCaseBase::DefInput());
     };
-    aIn.swap(*iDefExports);
+    aIn.swap(iDefExports);
 }
 
 /**
@@ -172,9 +187,12 @@ Function to process exports
 void ElfFileSupplied::ProcessExports()
 {
     Symbols symbols;
+    ETargetType target = iParameterManager->TargetTypeName();
 
     GetSymbolsFromSysdefoption(symbols);
     CompareSymbolsFromDEFwithSysdef(symbols);
+    if(target == EInvalidTargetType || target == ETargetTypeNotSet ||  target == EExexp)
+        SymbolsFromDEF(symbols);
 
 	ValidateDefExports(symbols);
 	CreateExports();

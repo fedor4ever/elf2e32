@@ -46,9 +46,6 @@ public:
 	virtual ~LibraryTarget();
 	int Execute();
 	Symbols* ReadDefFile();
-
-private:
-	DefFile *iDefFile;
 };
 
 

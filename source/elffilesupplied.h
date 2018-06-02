@@ -61,6 +61,7 @@ public:
 
 	void GetSymbolsFromSysdefoption(Symbols& aSysdef);
 	void CompareSymbolsFromDEFwithSysdef(Symbols& aSysdef);
+	void SymbolsFromDEF(Symbols& aDef);
 
 	virtual void CreateExportTable();
 	void CreateExportBitMap();

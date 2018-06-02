@@ -32,7 +32,6 @@ Constructor for the Library Class
 LibraryTarget::LibraryTarget(ParameterManager* aParameterManager):
 ElfFileSupplied(aParameterManager)
 {
-	iDefFile = new DefFile();
 }
 
 
@@ -44,7 +43,6 @@ Destructor for the Library Class
 */
 LibraryTarget::~LibraryTarget()
 {
-	delete iDefFile;
 }
 
 /**
@@ -58,24 +56,9 @@ DEF file. The DSO file is generated on passing the symbols.
 */
 int LibraryTarget::Execute()
 {
-    Symbols *tmp = ReadDefFile();
-    iSymbols.splice(iSymbols.begin(), *tmp);
+    SymbolsFromDEF(iSymbols);
+
 	WriteDSOFile();
 	return EXIT_SUCCESS;
-}
-
-/**
-Function to read the symbols from the DEF file.
-
-@internalComponent
-@released
-
-@return the list of symbols read from the DEF file.
-*/
-Symbols* LibraryTarget::ReadDefFile()
-{
-	char * aDEFFileName = UseCaseBase::DefInput();
-
-	return iDefFile->ReadDefFile(aDEFFileName);
 }
 

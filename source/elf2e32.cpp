@@ -22,7 +22,6 @@
 #include "elf2e32.h"
 #include "errorhandler.h"
 #include "librarytarget.h"
-#include "export_type_rebuild_target.h"
 #include "filedump.h"
 
 #include <iostream>
@@ -80,10 +79,7 @@ UseCaseBase * Elf2E32::SelectUseCase()
         string elfin = iInstance->ElfInput();
 		if (!elfin.empty())
 		{
-			if (deffilein)
-				return new ExportTypeRebuildTarget(iInstance);
-			else
-				return new ElfFileSupplied(iInstance);
+            return new ElfFileSupplied(iInstance);
 		}
 		else if (deffilein)
 		{
@@ -96,17 +92,13 @@ UseCaseBase * Elf2E32::SelectUseCase()
 
 	switch (iTargetType)
 	{
-	case EDll: // fallthru
-	case EExexp:
-		if (deffilein)
-			return new ExportTypeRebuildTarget(iInstance);
-		else if (!deffilein)
-			return new ElfFileSupplied(iInstance);
 	case ELib:
         return new LibraryTarget(iInstance);
-	case EStdExe: // fallthru
+	case EDll: // fallthru
+	case EPolyDll: // fallthru
 	case EExe: // fallthru
-	case EPolyDll:
+	case EExexp: // fallthru
+	case EStdExe:
 		return new ElfFileSupplied(iInstance);
 	default:
 		throw Elf2e32Error(INVALIDINVOCATIONERROR);
