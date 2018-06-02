@@ -22,8 +22,6 @@
 #define ELF2E32_H
 
 #include "pl_common.h"
-
-class UseCaseBase;
 /**
 This class calls the single instance of the ParameterManager.
 
@@ -35,7 +33,6 @@ struct Elf2E32
 	Elf2E32();
 	Elf2E32(int argc, char** argv);
 	~Elf2E32(){}
-	UseCaseBase * SelectUseCase();
 	int Execute();
 };
 

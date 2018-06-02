@@ -20,15 +20,14 @@
 
 #ifndef __FILEDUMP_H__
 #define __FILEDUMP_H__
-
-#include "usecasebase.h"
+class ParameterManager;
 
 /**
 class for dumping e32image file or dumping asm file
 @internalComponent
 @released
 */
-class FileDump : public UseCaseBase
+class FileDump
 {
 public:
     explicit FileDump(ParameterManager* aParameterManager);
@@ -37,6 +36,8 @@ public:
 private:
     int DumpE32Image(const char * fileName);
     int GenerateAsmFile(const char* afileName);//DumpAsm
+
+    ParameterManager* iParam;
 };
 
 #endif

@@ -22,40 +22,42 @@
 #define __ELFFILESUPPLIED_H_
 
 #include <list>
-#include "usecasebase.h"
+#include "pl_sym_type.h"
 #include "e32exporttable.h"
 
 class Symbol;
 class ElfReader;
 class ElfProducer;
+class E32ImageFile;
+class E32ImageHeaderV;
 class ParameterManager;
 
 typedef std::list<Symbol*> Symbols;
 
 /**
-This class is derived from the base class UseCaseBase and handles case for elf file supplied.
+This class responsible for target generation.
 
 @internalComponent
 @released
 */
-class ElfFileSupplied : public UseCaseBase
+class ElfFileSupplied
 {
 
 public:
 	explicit ElfFileSupplied(ParameterManager* aParameterManager);
-	virtual ~ElfFileSupplied();
+	~ElfFileSupplied();
 	int Execute();
 
 	void ReadElfFile();
-	virtual void ProcessExports();
-	virtual void BuildAll();
+	void ProcessExports();
+	void BuildAll();
 	void ValidateDefExports(Symbols& aDefExports);
 	void CreateExports();
 	void WriteDefFile();
 	void WriteDSOFile();
 	void WriteE32();
-	virtual bool ImageIsDll();
-	virtual bool WarnForNewExports();
+	bool ImageIsDll();
+	bool WarnForNewExports();
 	SymbolType SymbolTypeF(char * aName);
 	E32ImageHeaderV * AllocateE32ImageHeader();
 
@@ -63,13 +65,13 @@ public:
 	void CompareSymbolsFromDEFwithSysdef(Symbols& aSysdef);
 	void SymbolsFromDEF(Symbols& aDef);
 
-	virtual void CreateExportTable();
+	void CreateExportTable();
 	void CreateExportBitMap();
-	virtual size_t GetNumExports();
-	virtual size_t GetExportOffset();
-	virtual bool AllocExpTable();
-	virtual char * GetExportTable();
-	virtual size_t GetExportTableSize();
+	size_t GetNumExports();
+	size_t GetExportOffset();
+	bool AllocExpTable();
+	char * GetExportTable();
+	size_t GetExportTableSize();
 
 	PLUINT16 GetExportDescSize();
 	PLUINT8 GetExportDescType();
@@ -77,19 +79,21 @@ public:
 	//Method to check whether a symbol name is unwanted
 	bool UnWantedSymbol(const char * aSymbol);
 
-protected:
+private:
 	Symbols iSymbols;
 
+	ParameterManager * iManager = nullptr;
+
 	E32ExportTable iExportTable;
-	int iNumAbsentExports;
-	PLUINT8 * iExportBitMap;
+	int iNumAbsentExports = -1;
+	PLUINT8 * iExportBitMap = nullptr;
 
-	E32ImageFile * iE32ImageFile;
-	ElfReader *iReader;
-	ElfProducer* iElfProducer;
+	E32ImageFile * iE32ImageFile = nullptr;
+	ElfReader * iReader = nullptr;
+	ElfProducer * iElfProducer = nullptr;
 
-	PLUINT16 iExportDescSize;
-	PLUINT8 iExportDescType;
+	PLUINT16 iExportDescSize = 0;
+	PLUINT8 iExportDescType = 0;
 };
 
 

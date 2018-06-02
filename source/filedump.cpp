@@ -18,19 +18,21 @@
 //
 //
 
-#include "pl_common.h"
-#include "filedump.h"
-#include "e32imagefile.h"
-#include "deffile.h"
-#include "errorhandler.h"
 #include <stdio.h>
+#include "deffile.h"
+#include "filedump.h"
+#include "pl_symbol.h"
+#include "pl_common.h"
+#include "e32imagefile.h"
+#include "errorhandler.h"
+#include "parametermanager.h"
 /**
 Constructor for class FileDump
 @param aParameterListInterface - Instance of class ParameterListInterface
 @internalComponent
 @released
 */
-FileDump::FileDump(ParameterManager* aParameterManager) : UseCaseBase(aParameterManager)
+FileDump::FileDump(ParameterManager* aParameterManager) : iParam(aParameterManager)
 {
 }
 
@@ -52,26 +54,32 @@ file dump options
 */
 int FileDump::Execute()
 {
-	if(iParameterManager->FileDumpOptions() && iParameterManager->E32ImageOutput() && iParameterManager->DefInput()) //DumpAsm
-	{
-		if(!(iParameterManager->DumpOptions() & EDumpAsm))
-			throw Elf2e32Error(INVALIDARGUMENTERROR,(!iParameterManager->FileDumpOptions()?"":iParameterManager->FileDumpOptions()), "--dump");
-		if(iParameterManager->DumpOptions() & 31)
-			throw Elf2e32Error(INVALIDARGUMENTERROR,(!iParameterManager->FileDumpOptions()?"":iParameterManager->FileDumpOptions()), "--dump");
-		if(!iParameterManager->E32ImageOutput())
-			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--output");
-		if(!iParameterManager->DefInput())
-			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--definput");
+    char *options = iParam->FileDumpOptions();
+    char *output = iParam->E32ImageOutput();
+    char *defin = iParam->DefInput();
+    int dumpopt = iParam->DumpOptions();
 
-		GenerateAsmFile(iParameterManager->E32ImageOutput());
+	if(options && output && defin) //DumpAsm
+	{
+		if(!(dumpopt & EDumpAsm))
+			throw Elf2e32Error(INVALIDARGUMENTERROR, (!options?"":options), "--dump");
+		if(dumpopt & 31)
+			throw Elf2e32Error(INVALIDARGUMENTERROR, (!options?"":options), "--dump");
+		if(!output)
+			throw Elf2e32Error(NOREQUIREDOPTIONERROR, "--output");
+		if(!defin)
+			throw Elf2e32Error(NOREQUIREDOPTIONERROR, "--definput");
+
+		GenerateAsmFile(output);
 	}
 	else
 	{
-		if(!iParameterManager->E32Input())
-			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--e32input");
-		if(iParameterManager->DumpOptions() & EDumpAsm )
-			throw Elf2e32Error(INVALIDARGUMENTERROR,iParameterManager->FileDumpOptions() ,"--dump");
-		DumpE32Image(iParameterManager->E32Input());
+	    char *e32in = iParam->E32Input();
+		if(!e32in)
+			throw Elf2e32Error(NOREQUIREDOPTIONERROR, "--e32input");
+		if(dumpopt & EDumpAsm )
+			throw Elf2e32Error(INVALIDARGUMENTERROR, options, "--dump");
+		DumpE32Image(e32in);
 	}
 	return 0;
 }
@@ -87,7 +95,7 @@ int FileDump::GenerateAsmFile(const char* afileName)//DumpAsm
 {
 	DefFile *iDefFile = new DefFile();
 	Symbols *aSymList;
-	aSymList = iDefFile->ReadDefFile(iParameterManager->DefInput());
+	aSymList = iDefFile->ReadDefFile(iParam->DefInput());
 
 	FILE *fptr;
 
@@ -177,7 +185,7 @@ int FileDump::DumpE32Image(const char* afileName)
 		throw Elf2e32Error(FILEREADERROR, afileName);
 	}
 
-	int dumpOptions=iParameterManager->DumpOptions();
+	int dumpOptions=iParam->DumpOptions();
 
 	aE32Imagefile->Dump(afileName, dumpOptions);
 	delete aE32Imagefile;

@@ -18,21 +18,9 @@
 //
 //
 
-#include "pl_elfimage.h"
-
 // get E32ImageHeader class...
 #define INCLUDE_E32IMAGEHEADER_IMPLEMENTATION
 #define RETURN_FAILURE(_r) return (fprintf(stderr, "line %d\n", __LINE__),_r)
-
-#include "e32imagefile.h"
-
-#include "pl_elfimportrelocation.h"
-#include "pl_elflocalrelocation.h"
-#include "pl_elfimports.h"
-#include "elffilesupplied.h"
-#include "h_ver.h"
-#include "checksum.h"
-#include "errorhandler.h"
 
 #include <string>
 #include <vector>
@@ -43,6 +31,18 @@
 #endif
 #include <time.h>
 #include <stdio.h>
+
+#include "h_ver.h"
+#include "checksum.h"
+#include "pl_elfimage.h"
+#include "pl_symbol.h"
+#include "e32imagefile.h"
+#include "errorhandler.h"
+#include "pl_elfimports.h"
+#include "elffilesupplied.h"
+#include "parametermanager.h"
+#include "pl_elflocalrelocation.h"
+#include "pl_elfimportrelocation.h"
 
 using namespace std;
 
@@ -191,16 +191,14 @@ Constructor for E32ImageFile class.
 @internalComponent
 @released
 */
-E32ImageFile::E32ImageFile(ElfImage * aElfImage, ElfFileSupplied *aUseCase) :
+E32ImageFile::E32ImageFile(ElfImage * aElfImage = nullptr, ElfFileSupplied *aUseCase = nullptr,
+           ParameterManager * aManager = nullptr) :
 	iElfImage(aElfImage),
-	iUseCase(aUseCase){}
+	iUseCase(aUseCase),
+	iManager(aManager)
+	{}
 
-/**
-Constructor for E32ImageFile class.
-@internalComponent
-@released
-*/
-E32ImageFile::E32ImageFile(): E32ImageFile::E32ImageFile(nullptr, nullptr){}
+E32ImageFile::E32ImageFile(): E32ImageFile::E32ImageFile(nullptr, nullptr, nullptr){}
 
 /**
 This function generates the E32 image.
@@ -209,7 +207,7 @@ This function generates the E32 image.
 */
 void E32ImageFile::GenerateE32Image()
 {
-	if( iUseCase->GetNamedSymLookup() ){
+	if( iManager->SymNamedLookup() ){
 		ProcessSymbolInfo();
 	}
 	ProcessImports();
@@ -231,7 +229,7 @@ void E32ImageFile::ProcessImports()
 	vector<int> aStrTabOffsets;
 	int aNumDlls = 0;
 	int aNumImports = 0;
-	bool aNamedLookup = iUseCase->GetNamedSymLookup();
+	bool aNamedLookup = iManager->SymNamedLookup();
 
 	ElfImports::ImportLibs aImportMap = iElfImage->GetImports();
 
@@ -394,7 +392,7 @@ string E32ImageFile::FindDSO(string aName)
 		return aDSOName;
 	}
 
-	ParameterManager::LibSearchPaths & paths = iUseCase->GetLibSearchPaths();
+	ParameterManager::LibSearchPaths & paths = iManager->LibPath();
 	for (auto x: paths)
 	{
 		string path(x);
@@ -691,7 +689,7 @@ void E32ImageFile::ComputeE32ImageLayout()
 	// Call out to the use case so it can decide how we do this
 	// record exporttable offset for default case
 
-	bool aSymLkupEnabled = iUseCase->GetNamedSymLookup();
+	bool aSymLkupEnabled = iManager->SymNamedLookup();
 	// The export table is required either when:
 	//	a. there are exported symbols
 	//	b. symbol lookup is enabled - because this table also indicates the dependencies
@@ -854,6 +852,23 @@ void E32ImageFile::AddExportDescription()
 	}
 }
 
+bool E32ImageFile::AllowDllData()
+{
+    ETargetType type = iManager->TargetTypeName();
+
+    if(iManager->HasDllData())
+        return true;
+
+    switch(type)
+    {
+        case EDll: case EPolyDll: case EExe: case EExexp: case EStdExe:
+            return true;
+        default:
+            return false;
+    }
+	return false;
+}
+
 /**
 This function sets the fields of the E32 image.
 @internalComponent
@@ -873,26 +888,28 @@ void E32ImageFile::FinalizeE32Image()
 	if (isDllp)
 	{
 		iHdr->iFlags |= KImageDll;
-		if (iHdr->iDataSize && !iUseCase->AllowDllData())
-			throw Elf2e32Error(DLLHASINITIALISEDDATAERROR, iUseCase->InputElfFileName());
-
-		if (iHdr->iBssSize  && !iUseCase->AllowDllData())
-			throw Elf2e32Error(DLLHASUNINITIALISEDDATAERROR, iUseCase->InputElfFileName());
+		if(!AllowDllData())
+        {
+		if (iHdr->iDataSize)
+			throw Elf2e32Error(DLLHASINITIALISEDDATAERROR, iManager->ElfInput());
+		if (iHdr->iBssSize)
+			throw Elf2e32Error(DLLHASUNINITIALISEDDATAERROR, iManager->ElfInput());
+        }
 
 	}
 
-	iHdr->iHeapSizeMin = iUseCase->HeapCommittedSize();
-	iHdr->iHeapSizeMax = iUseCase->HeapReservedSize();
-	iHdr->iStackSize = iUseCase->StackCommittedSize();
+	iHdr->iHeapSizeMin = iManager->HeapCommittedSize();
+	iHdr->iHeapSizeMax = iManager->HeapReservedSize();
+	iHdr->iStackSize = iManager->StackCommittedSize();
 
 
 	iHdr->iEntryPoint = EntryPointOffset();
 
 	EEntryPointStatus r = ValidateEntryPoint();
 	if (r == EEntryPointCorrupt)
-		throw Elf2e32Error(ENTRYPOINTCORRUPTERROR, iUseCase->InputElfFileName());
+		throw Elf2e32Error(ENTRYPOINTCORRUPTERROR, iManager->ElfInput());
 	else if (r == EEntryPointNotSupported)
-		throw Elf2e32Error(ENTRYPOINTNOTSUPPORTEDERROR, iUseCase->InputElfFileName());
+		throw Elf2e32Error(ENTRYPOINTNOTSUPPORTEDERROR, iManager->ElfInput());
 
 	SetUpExceptions();
 	SetUids();
@@ -984,7 +1001,7 @@ void E32ImageFile::SetUpExceptions()
 		//check its in RO segment
 		if (aSymVaddr < aROBase || aSymVaddr >= (aROBase + aROSize))
 		{
-			throw Elf2e32Error(EXCEPTIONDESCRIPTOROUTSIDEROERROR, iUseCase->InputElfFileName());
+			throw Elf2e32Error(EXCEPTIONDESCRIPTOROUTSIDEROERROR, iManager->ElfInput());
 		}
 		// Set bottom bit so 0 in header slot means an old binary.
 		// The decriptor is always aligned on a 4 byte boundary.
@@ -999,9 +1016,9 @@ This function sets the UIDs of the E32 image .
 */
 void E32ImageFile::SetUids()
 {
-	iHdr->iUid1=iUseCase->GetUid1();
-	iHdr->iUid2=iUseCase->GetUid2();
-	iHdr->iUid3=iUseCase->GetUid3();
+	iHdr->iUid1=iManager->Uid1();
+	iHdr->iUid2=iManager->Uid2();
+	iHdr->iUid3=iManager->Uid3();
 }
 
 /**
@@ -1011,10 +1028,10 @@ This function sets the secure ID of the E32 image as passed in the command line.
 */
 void E32ImageFile::SetSecureId()
 {
-	if (iUseCase->GetSecureIdOption())
-		iHdr->iS.iSecureId = iUseCase->GetSecureId();
+	if (iManager->SecureIdOption())
+		iHdr->iS.iSecureId = iManager->SecureId();
 	else
-		iHdr->iS.iSecureId = iUseCase->GetUid3();
+		iHdr->iS.iSecureId = iManager->Uid3();
 }
 
 /**
@@ -1024,7 +1041,7 @@ This function sets the vendor Id of the E32 image as passed in command line.
 */
 void E32ImageFile::SetVendorId()
 {
-	iHdr->iS.iVendorId = iUseCase->GetVendorId();
+	iHdr->iS.iVendorId = iManager->VendorId();
 }
 
 /**
@@ -1034,7 +1051,7 @@ This function sets the call entry point of the E32 image .
 */
 void E32ImageFile::SetCallEntryPoints()
 {
-	if (iUseCase->GetCallEntryPoints())
+	if (iManager->CallEntryPoint())
 		iHdr->iFlags|=KImageNoCallEntryPoint;
 	else
 		iHdr->iFlags&=~KImageNoCallEntryPoint;
@@ -1047,7 +1064,7 @@ This function sets the capcbility of the E32 image as specified in the command l
 */
 void E32ImageFile::SetCapability()
 {
-	iHdr->iS.iCaps = iUseCase->GetCapability();
+	iHdr->iS.iCaps = iManager->Capability();
 }
 
 /**
@@ -1057,14 +1074,14 @@ This function sets the priority of the E32 exe.
 */
 void E32ImageFile::SetPriority(bool isDllp)
 {
-	if (iUseCase->GetPriority())
+	if (iManager->Priority())
 	{
 		if (isDllp)
 		{
 			cerr << "Warning: Cannot set priority of a DLL." << endl;
 		}
 		else
-			iHdr->iProcessPriority = (unsigned short)iUseCase->GetPriority();
+			iHdr->iProcessPriority = (unsigned short)iManager->Priority();
 	}
 }
 
@@ -1075,7 +1092,7 @@ This function sets the fixed address flag of the E32 image .
 */
 void E32ImageFile::SetFixedAddress(bool isDllp)
 {
-	if (iUseCase->GetFixedAddress())
+	if (iManager->FixedAddress())
 	{
 		if (isDllp)
 		{
@@ -1095,7 +1112,7 @@ This function sets the version of the E32 image .
 */
 void E32ImageFile::SetVersion()
 {
-	iHdr->iModuleVersion = iUseCase->GetVersion();
+	iHdr->iModuleVersion = iManager->Version();
 }
 
 /**
@@ -1105,8 +1122,8 @@ This function sets the compression type of the E32 image .
 */
 void E32ImageFile::SetCompressionType()
 {
-	if(iUseCase->GetCompress())
-		iHdr->iCompressionType = iUseCase->GetCompressionMethod();
+	if(iManager->CompressionMethod())
+		iHdr->iCompressionType = iManager->CompressionMethod();
 	else
 		iHdr->iCompressionType = KFormatNotCompressed;
 }
@@ -1120,7 +1137,7 @@ void E32ImageFile::SetFPU()
 {
 	iHdr->iFlags &=~ KImageHWFloatMask;
 
-	if (iUseCase->GetFPU() == 1)
+	if (iManager->FPU() == 1)
 		iHdr->iFlags |= KImageHWFloat_VFPv2;
 }
 
@@ -1133,17 +1150,17 @@ void E32ImageFile::SetPaged()
 {
 	// Code paging.
 
-	if ( iUseCase->IsCodePaged() )
+	if ( iManager->IsCodePaged() )
 	{
 		iHdr->iFlags |= KImageCodePaged;
 		iHdr->iFlags &= ~KImageCodeUnpaged;
 	}
-	else if ( iUseCase->IsCodeUnpaged() )
+	else if ( iManager->IsCodeUnpaged() )
 	{
 		iHdr->iFlags |= KImageCodeUnpaged;
 		iHdr->iFlags &= ~KImageCodePaged;
 	}
-	else if ( iUseCase->IsCodeDefaultPaged() )
+	else if ( iManager->IsCodeDefaultPaged() )
 	{
 		iHdr->iFlags &= ~KImageCodePaged;
 		iHdr->iFlags &= ~KImageCodeUnpaged;
@@ -1151,17 +1168,17 @@ void E32ImageFile::SetPaged()
 
 	// Data paging.
 
-	if ( iUseCase->IsDataPaged() )
+	if ( iManager->IsDataPaged() )
 	{
 		iHdr->iFlags |=  KImageDataPaged;
 		iHdr->iFlags &= ~KImageDataUnpaged;
 	}
-	else if ( iUseCase->IsDataUnpaged() )
+	else if ( iManager->IsDataUnpaged() )
 	{
 		iHdr->iFlags |=  KImageDataUnpaged;
 		iHdr->iFlags &= ~KImageDataPaged;
 	}
-	else if ( iUseCase->IsDataDefaultPaged() )
+	else if ( iManager->IsDataDefaultPaged() )
 	{
 		iHdr->iFlags &= ~KImageDataPaged;
 		iHdr->iFlags &= ~KImageDataUnpaged;
@@ -1175,7 +1192,7 @@ This function sets the Debuggable attribute in the E32 image.
 */
 void E32ImageFile::SetDebuggable()
 {
-	if (iUseCase->IsDebuggable() == true)
+	if (iManager->IsDebuggable() == true)
 	{
 		iHdr->iFlags |= KImageDebuggable;
 	}
@@ -1188,7 +1205,7 @@ void E32ImageFile::SetDebuggable()
 
 void E32ImageFile::SetSmpSafe()
 {
-	if ( iUseCase->IsSmpSafe() )
+	if ( iManager->IsSmpSafe() )
 	{
 		iHdr->iFlags |= KImageSMPSafe;
 	}
@@ -1205,7 +1222,7 @@ This function sets the named symbol-lookup attribute in the E32 image.
 */
 void E32ImageFile::SetSymbolLookup()
 {
-	if(iUseCase->GetNamedSymLookup())
+	if(iManager->SymNamedLookup())
 	{
 		iHdr->iFlags |= KImageNmdExpData;
 	}
@@ -1319,7 +1336,7 @@ void E32ImageFile::AllocateE32Image()
 	E32ImageHeaderV* header = (E32ImageHeaderV*)iE32Image;
 	TInt headerSize = header->TotalSize();
 	if(KErrNone!=header->ValidateWholeImage(iE32Image+headerSize,GetE32ImageSize()-headerSize))
-		throw Elf2e32Error(VALIDATIONERROR, iUseCase->OutputE32FileName());
+		throw Elf2e32Error(VALIDATIONERROR, iManager->E32ImageOutput());
 }
 
 /**

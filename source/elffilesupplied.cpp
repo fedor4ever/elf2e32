@@ -18,16 +18,18 @@
 #include <iostream>
 #include <cstring>
 
-#include "elffilesupplied.h"
-#include "pl_elfimage.h"
-#include "errorhandler.h"
 #include "deffile.h"
-#include "pl_elfexports.h"
-#include "pl_symbol.h"
 #include "elf2e32.h"
-#include "staticlibsymbols.h"
-#include "pl_elfproducer.h"
+#include "pl_symbol.h"
+#include "pl_elfimage.h"
 #include "pl_elfreader.h"
+#include "errorhandler.h"
+#include "e32imagefile.h"
+#include "pl_elfexports.h"
+#include "pl_elfproducer.h"
+#include "elffilesupplied.h"
+#include "staticlibsymbols.h"
+#include "parametermanager.h"
 
 using std::cout;
 
@@ -38,8 +40,7 @@ Constructor for class ElfFileSupplied
 @released
 */
 ElfFileSupplied::ElfFileSupplied(ParameterManager* aManager) :
-    UseCaseBase(aManager), iNumAbsentExports(-1),iExportBitMap(nullptr),
-	iE32ImageFile(nullptr), iReader(nullptr), iExportDescSize(0), iExportDescType(0)
+    iManager(aManager)
 {
 	iElfProducer = new ElfProducer(aManager->ElfInput());
 	iReader = new ElfReader(aManager->ElfInput());
@@ -101,7 +102,7 @@ Function to get symbols from .def file
 */
 void ElfFileSupplied::SymbolsFromDEF(Symbols& aDef)
 {
-    char * def = iParameterManager->DefInput();
+    char * def = iManager->DefInput();
     if(!def)
         return;
     DefFile *iDefFile = new DefFile();
@@ -117,9 +118,9 @@ Function to compare symbols from .def file and --sysdef input
 */
 void ElfFileSupplied::CompareSymbolsFromDEFwithSysdef(Symbols &aIn)
 {
-    if(EPolyDll != iParameterManager->TargetTypeName())
+    if(EPolyDll != iManager->TargetTypeName())
         return;
-    if(!iParameterManager->DefInput())
+    if(!iManager->DefInput())
         return;
 
     Symbols iDefExports;
@@ -145,7 +146,7 @@ void ElfFileSupplied::CompareSymbolsFromDEFwithSysdef(Symbols &aIn)
 
 	if( aMissingSysDefList.empty() )
     {
-		throw SysDefMismatchError(SYSDEFSMISMATCHERROR, aMissingSysDefList, UseCaseBase::DefInput());
+		throw SysDefMismatchError(SYSDEFSMISMATCHERROR, aMissingSysDefList, iManager->DefInput());
     };
     aIn.swap(iDefExports);
 }
@@ -158,16 +159,16 @@ Function to convert params in --sysdef option to symbols for EPolyDll target
 /// FIXME (Administrator#1#05/31/18): Rewrite to allow symbols in any order from --sysdef option
 void ElfFileSupplied::GetSymbolsFromSysdefoption(Symbols &aIn)
 {
-    if(EPolyDll != iParameterManager->TargetTypeName())
+    if(EPolyDll != iManager->TargetTypeName())
         return;
 
-    int count = iParameterManager->SysDefCount();
+    int count = iManager->SysDefCount();
 	ParameterManager::Sys aSysDefSymbols[10];
 
 	int i = 0;
 	while (i < count)
 	{
-		aSysDefSymbols[i] = iParameterManager->SysDefSymbols(i);
+		aSysDefSymbols[i] = iManager->SysDefSymbols(i);
 		++i;
 	}
 
@@ -187,7 +188,7 @@ Function to process exports
 void ElfFileSupplied::ProcessExports()
 {
     Symbols symbols;
-    ETargetType target = iParameterManager->TargetTypeName();
+    ETargetType target = iManager->TargetTypeName();
 
     GetSymbolsFromSysdefoption(symbols);
     CompareSymbolsFromDEFwithSysdef(symbols);
@@ -205,7 +206,7 @@ Function to write DEF File
 */
 void ElfFileSupplied::WriteDefFile()
 {
-	char * aDEFFileName = UseCaseBase::DefOutput();
+	char * aDEFFileName = iManager->DefOutput();
 	if(!aDEFFileName) return;
 
 	DefFile deffile;
@@ -219,7 +220,7 @@ Function to create exports
 */
 void ElfFileSupplied::CreateExports()
 {
-	if (iReader->iExports || GetNamedSymLookup())
+	if (iReader->iExports || iManager->SymNamedLookup())
 	{
 		CreateExportTable();
 		CreateExportBitMap();
@@ -307,8 +308,8 @@ void ElfFileSupplied::ValidateDefExports(Symbols &aDefExports)
 			//throw error
 		}
 		if( aMissingSymNameList.size() ) {
-			if (!Unfrozen())
-				throw SymbolMissingFromElfError(SYMBOLMISSINGFROMELFERROR, aMissingSymNameList, UseCaseBase::InputElfFileName().c_str());
+			if (!iManager->Unfrozen())
+				throw SymbolMissingFromElfError(SYMBOLMISSINGFROMELFERROR, aMissingSymNameList, iManager->ElfInput().c_str());
 			else
 				cout << "Elf2e32: Warning: " << aMissingSymNameList.size() << " Frozen Export(s) missing from the ELF file" << "\n";
 		}
@@ -343,9 +344,9 @@ void ElfFileSupplied::ValidateDefExports(Symbols &aDefExports)
 		Iterator aNewListEnd = set_difference(elfExports.begin(), elfExports.end(), \
 			defValidExports.begin(), defValidExports.end(), aResultPos, ElfExports::PtrELFExportNameCompare());
 
-		bool aIgnoreNonCallable = GetIgnoreNonCallable();
-		bool aIsCustomDll = IsCustomDllTarget();
-		bool aExcludeUnwantedExports = ExcludeUnwantedExports();
+		bool aIgnoreNonCallable = iManager->IgnoreNonCallable();
+		bool aIsCustomDll = iManager->IsCustomDllTarget();
+		bool aExcludeUnwantedExports = iManager->ExcludeUnwantedExports();
 
 		while( aResultPos != aNewListEnd )
 		{
@@ -439,18 +440,18 @@ Function to write DSO file.
 */
 void ElfFileSupplied::WriteDSOFile()
 {
-	char * aLinkAs = UseCaseBase::LinkAsDLLName();
-	char * aDSOName = UseCaseBase::DSOOutput();
+	char * aLinkAs = iManager->LinkAsDLLName();
+	char * aDSOName = iManager->DSOOutput();
 	if(!aDSOName)
 	{
 	    return;
 	}
 
-	ETargetType target = iParameterManager->TargetTypeName();
+	ETargetType target = iManager->TargetTypeName();
 	if(target == ELib)
         SymbolsFromDEF(iSymbols);
 
-	char * aDSOFileName = UseCaseBase::FileName(aDSOName);
+	char * aDSOFileName = iManager->FileName(aDSOName);
 	/** This member is responsible for generating the proxy DSO file. */
 
 	iElfProducer->SetSymbolList(iSymbols);
@@ -465,14 +466,14 @@ Function to write E32 Image file.
 void ElfFileSupplied::WriteE32()
 {
 
-	const char * aE32FileName = OutputE32FileName();
+	const char * aE32FileName = iManager->E32ImageOutput();
 
     if(!aE32FileName)
 	{
 	    return;
 	}
 
-	iE32ImageFile = new E32ImageFile(iReader, this);
+	iE32ImageFile = new E32ImageFile(iReader, this, iManager);
 
 	try
 	{

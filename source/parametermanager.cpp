@@ -1318,7 +1318,17 @@ void ParameterManager::CheckOptions()
 		SetDataUnpaged(false);
 	}
 
-	switch(iTargetTypeName)
+	ETargetType iTargetType = TargetTypeName();
+	if (iTargetType == EInvalidTargetType || iTargetType == ETargetTypeNotSet)
+	{
+	    Message::GetInstance()->ReportMessage(WARNING, NOREQUIREDOPTIONERROR,"--targettype");
+        if (DefInput())
+		{
+			iTargetType = ELib;
+		}
+	}
+
+	switch(iTargetType)
 	{
 	case ETargetTypeNotSet:
 		break;

@@ -30,8 +30,8 @@
 
 enum SymbolStatus {Matching,Missing,New};
 /**
- * This class is shared among all that use the symbol information. To name them,
- * DefFile, UseCaseBase. To be finalized by DefFile.
+ * This class is shared among all that use the symbol information.
+ * To be finalized by DefFile.
  */
 class Symbol
 {

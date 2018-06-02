@@ -21,22 +21,24 @@
 #ifndef E32IMAGEFILE_H
 #define E32IMAGEFILE_H
 
-#include <portable.h>
-#include <elfdefs.h>
 
-#include <fstream>
 #include <vector>
+#include <fstream>
 #include <iostream>
+
+#include "elfdefs.h"
+#include "portable.h"
 
 using std::vector;
 using std::string;
 using std::ifstream;
 
 class ElfImage;
+class Elfparser;
 class ElfRelocation;
 class ELFExecutable;
 class ElfFileSupplied;
-class Elfparser;
+class ParameterManager;
 
 /**
 Class E32ImageChunkDesc for different sections in the E32 image.
@@ -91,7 +93,8 @@ Class E32ImageFile for fields of an E32 image.
 */
 class E32ImageFile {
     public:
-        E32ImageFile(ElfImage * aElfImage, ElfFileSupplied * aUseCase);
+        E32ImageFile(ElfImage * aElfImage, ElfFileSupplied * aUseCase, ParameterManager * aManager);
+        E32ImageFile();
         virtual ~E32ImageFile();
 
         void GenerateE32Image();
@@ -123,6 +126,8 @@ class E32ImageFile {
         void FinalizeE32Image();
         uint16_t GetCpuIdentifier();
         uint32_t EntryPointOffset();
+
+        bool AllowDllData();
 
         enum EEntryPointStatus {
             EEntryPointOK,
@@ -159,7 +164,10 @@ class E32ImageFile {
         ElfImage * iElfImage=nullptr;
 
         char* iData=nullptr;
+
         ElfFileSupplied * iUseCase=nullptr;
+        ParameterManager * iManager=nullptr;
+
         E32ImageHeaderV * iHdr=nullptr;
         size_t iHdrSize=sizeof(E32ImageHeaderV);
 
@@ -191,7 +199,6 @@ class E32ImageFile {
         uint32_t    iSymNameOffset=0;
 
     public:
-        E32ImageFile();
         TInt ReadHeader(ifstream& is);
         TInt Open(const char* aFileName);
         void Adjust(int32_t aSize, bool aAllowShrink=true);

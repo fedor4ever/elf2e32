@@ -48,64 +48,11 @@ Elf2E32::Elf2E32(int aArgc, char **aArgv)
 	iInstance = ParameterManager::GetInstance(aArgc, aArgv);
 }
 
-
-/**
-This function is to select the appropriate use case based on the input values.
-1. If the input is only DEF file, then the usecase is the Create Library Target.
-   For Library Creation, alongwith the DEF file input, the DSO file option and
-   the link as option SHOULD be passed. Otherwise, appropriate error message will
-   be generated.
-@internalComponent
-@released
-
-@return A pointer to the newly created UseCaseBase object
-
-*/
-UseCaseBase * Elf2E32::SelectUseCase()
-{
-	char * deffilein = iInstance->DefInput();
-	char * e32in = iInstance->E32Input();
-
-    if (iInstance->DumpMessageFile())
-        return nullptr;
-    if (e32in){
-        return new FileDump(iInstance);
-    }
-
-	ETargetType iTargetType = iInstance->TargetTypeName();
-	if (iTargetType == EInvalidTargetType || iTargetType == ETargetTypeNotSet)
-	{
-	    Message::GetInstance()->ReportMessage(WARNING, NOREQUIREDOPTIONERROR,"--targettype");
-        if (deffilein)
-		{
-			iTargetType = ELib;
-		}
-		else
-			throw Elf2e32Error(INVALIDINVOCATIONERROR); //REVISIT
-	}
-
-	switch (iTargetType)
-	{
-	case ELib:
-	case EDll: // fallthru
-	case EPolyDll: // fallthru
-	case EExe: // fallthru
-	case EExexp: // fallthru
-	case EStdExe:
-		return new ElfFileSupplied(iInstance);
-	default:
-		throw Elf2e32Error(INVALIDINVOCATIONERROR);
-	}
-
-	return nullptr;
-}
-
 /**
 This function:
  1. Calls the ParameterAnalyser() which parses the command line options and extracts the inputs.
  2. Calls the CheckOptions() to find and fix wrong input options
- 3. Calls the SelectUseCase() to select the appropriate use case based on the input values.
- 4. Calls the Execute() of the selected use case.
+ 3. Calls the Execute() of the selected use case.
 @internalComponent
 @released
 
@@ -115,7 +62,6 @@ This function:
 int Elf2E32::Execute()
 {
 	int result = EXIT_SUCCESS;
-	UseCaseBase * usecase = nullptr;
 
 	try
 	{
@@ -130,14 +76,16 @@ int Elf2E32::Execute()
             return result;
 		}
 
-		usecase = SelectUseCase();
-		if (usecase)
-		{
-			result = usecase->Execute();
-		}else
-		{
-			result = EXIT_FAILURE;
-		}
+        if (iInstance->E32Input()){
+            FileDump *f = new FileDump(iInstance);
+            result = f->Execute();
+            delete f;
+			return result;
+        }
+
+        ElfFileSupplied *job = new ElfFileSupplied(iInstance);
+        result = job->Execute();
+        delete job;
 	}
 	catch(ErrorHandler& error)
 	{
@@ -149,6 +97,5 @@ int Elf2E32::Execute()
 		result = EXIT_FAILURE;
 		Message::GetInstance()->ReportMessage(ERROR, POSTLINKERERROR);
 	}
-	delete usecase;
 	return result;
 }
