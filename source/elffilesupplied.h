@@ -60,6 +60,7 @@ public:
 	E32ImageHeaderV * AllocateE32ImageHeader();
 
 	void GetSymbolsFromSysdefoption(Symbols& aSysdef);
+	void CompareSymbolsFromDEFwithSysdef(Symbols& aSysdef);
 
 	virtual void CreateExportTable();
 	void CreateExportBitMap();

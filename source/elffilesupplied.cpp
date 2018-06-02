@@ -95,6 +95,76 @@ void ElfFileSupplied::ReadElfFile()
 }
 
 /**
+Function to compare symbols from .def file and --sysdef input
+@internalComponent
+@released
+*/
+void ElfFileSupplied::CompareSymbolsFromDEFwithSysdef(Symbols &aIn)
+{
+    if(EPolyDll != iParameterManager->TargetTypeName())
+        return;
+    if(!iParameterManager->DefInput())
+        return;
+
+    DefFile *iDefFile = new DefFile();
+	auto iDefExports = iDefFile->ReadDefFile(iParameterManager->DefInput());
+	delete iDefFile;
+
+	// Check if the Sysdefs and the DEF file are matching.
+
+	auto aBegin = aIn.begin();
+	auto aEnd = aIn.end();
+
+	auto aDefBegin = iDefExports->begin();
+	auto aDefEnd = iDefExports->end();
+
+	std::list<string> aMissingSysDefList;
+
+	while ((aDefBegin != aDefEnd) && (aBegin != aEnd))
+	{
+		if (strcmp((*aBegin)->SymbolName(), (*aDefBegin)->SymbolName()))
+			aMissingSysDefList.push_back((*aBegin)->SymbolName());
+		++aBegin;
+		++aDefBegin;
+	}
+
+	if( aMissingSysDefList.empty() )
+    {
+		throw SysDefMismatchError(SYSDEFSMISMATCHERROR, aMissingSysDefList, UseCaseBase::DefInput());
+    };
+    aIn.swap(*iDefExports);
+}
+
+/**
+Function to convert params in --sysdef option to symbols for EPolyDll target
+@internalComponent
+@released
+*/
+/// FIXME (Administrator#1#05/31/18): Rewrite to allow symbols in any order from --sysdef option
+void ElfFileSupplied::GetSymbolsFromSysdefoption(Symbols &aIn)
+{
+    if(EPolyDll != iParameterManager->TargetTypeName())
+        return;
+
+    int count = iParameterManager->SysDefCount();
+	ParameterManager::Sys aSysDefSymbols[10];
+
+	int i = 0;
+	while (i < count)
+	{
+		aSysDefSymbols[i] = iParameterManager->SysDefSymbols(i);
+		++i;
+	}
+
+	for (int k=0; k < count; k++)
+	{
+		Symbol *aSymbolEntry = new Symbol(aSysDefSymbols[k].iSysDefSymbolName, SymbolTypeCode);
+		aSymbolEntry->SetOrdinal(aSysDefSymbols[k].iSysDefOrdinalNum);
+		aIn.push_back(aSymbolEntry);
+	}
+}
+
+/**
 Function to process exports
 @internalComponent
 @released
@@ -102,10 +172,10 @@ Function to process exports
 void ElfFileSupplied::ProcessExports()
 {
     Symbols symbols;
-    if(EPolyDll == iParameterManager->TargetTypeName())
-    {
-        GetSymbolsFromSysdefoption(symbols);;
-    }
+
+    GetSymbolsFromSysdefoption(symbols);
+    CompareSymbolsFromDEFwithSysdef(symbols);
+
 	ValidateDefExports(symbols);
 	CreateExports();
 }
@@ -135,35 +205,6 @@ void ElfFileSupplied::CreateExports()
 	{
 		CreateExportTable();
 		CreateExportBitMap();
-	}
-}
-
-/**
-Function to convert params in --sysdef option to symbols for EPolyDll target
-@internalComponent
-@released
-*/
-/// FIXME (Administrator#1#05/31/18): Rewrite to allow symbols in random order from --sysdef option
-void ElfFileSupplied::GetSymbolsFromSysdefoption(Symbols &aIn)
-{
-    if(EPolyDll != iParameterManager->TargetTypeName())
-        return;
-
-    int count = iParameterManager->SysDefCount();
-	ParameterManager::Sys aSysDefSymbols[10];
-
-	int i = 0;
-	while (i < count)
-	{
-		aSysDefSymbols[i] = iParameterManager->SysDefSymbols(i);
-		++i;
-	}
-
-	for (int k=0; k < count; k++)
-	{
-		Symbol *aSymbolEntry = new Symbol(aSysDefSymbols[k].iSysDefSymbolName, SymbolTypeCode);
-		aSymbolEntry->SetOrdinal(aSysDefSymbols[k].iSysDefOrdinalNum);
-		aIn.push_back(aSymbolEntry);
 	}
 }
 

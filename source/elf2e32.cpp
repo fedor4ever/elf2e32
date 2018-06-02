@@ -22,8 +22,7 @@
 #include "elf2e32.h"
 #include "errorhandler.h"
 #include "librarytarget.h"
-#include "polydll_fb_target.h"
-#include "polydll_rebuild_target.h"
+#include "export_type_rebuild_target.h"
 #include "filedump.h"
 
 #include <iostream>
@@ -106,13 +105,9 @@ UseCaseBase * Elf2E32::SelectUseCase()
 	case ELib:
         return new LibraryTarget(iInstance);
 	case EStdExe: // fallthru
-	case EExe:
-		return new ElfFileSupplied(iInstance);
+	case EExe: // fallthru
 	case EPolyDll:
-		if (!deffilein)
-			return new ElfFileSupplied(iInstance);
-		else if (deffilein)
-			return new POLYDLLRebuildTarget(iInstance);
+		return new ElfFileSupplied(iInstance);
 	default:
 		throw Elf2e32Error(INVALIDINVOCATIONERROR);
 	}
