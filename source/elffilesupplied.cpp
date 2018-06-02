@@ -247,6 +247,9 @@ void ElfFileSupplied::ValidateDefExports(Symbols &aDefExports)
 	 *		absent symbol(using PtrELFExportNameCompareUpdateOrdinal).
 	 **/
 
+    if (aDefExports.empty())
+		return;
+
 	PLUINT32 aMaxOrdinal = 0;
 	int len = strlen("_ZTI");
 
@@ -257,30 +260,24 @@ void ElfFileSupplied::ValidateDefExports(Symbols &aDefExports)
 	Symbols defValidExports, defAbsentExports, elfExports;
 
 	//aDefExports = iDefIfc->GetSymbolEntryList();
-	if (!aDefExports.empty())
-		{
+    for(auto x: aDefExports)
+    {
+        if( x->Absent() ){
+            defAbsentExports.push_back(x);
+        }
+        else {
+            defValidExports.push_back(x);
+        }
 
-		for(auto x: aDefExports)
-			{
-				if( x->Absent() ){
-					defAbsentExports.push_back(x);
-				}
-				else {
-					defValidExports.push_back(x);
-				}
-
-				if( aMaxOrdinal < x->OrdNum() ){
-					aMaxOrdinal = x->OrdNum();
-				}
-			}
-		}
+        if( aMaxOrdinal < x->OrdNum() ){
+            aMaxOrdinal = x->OrdNum();
+        }
+    }
 
 	iSymbols = defValidExports;
 
 	if (iReader->iExports)
 		iReader->GetElfSymbols( elfExports );
-	else if (aDefExports.empty())
-		return;
 
 	// REVISIT - return back if elfexports and defexports is NULL
 
@@ -653,17 +650,6 @@ Function to get export table Virtual address
 size_t ElfFileSupplied::GetExportTableAddress()
 {
 	return iExportTable.iExportTableAddress;
-}
-
-/**
-Function to get export offset
-@return size of export offset
-@internalComponent
-@released
-*/
-size_t ElfFileSupplied::GetExportOffset()
-{
-	return iE32ImageFile->GetExportOffset();
 }
 
 /**

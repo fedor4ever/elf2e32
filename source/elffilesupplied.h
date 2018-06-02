@@ -68,7 +68,6 @@ public:
 	void CreateExportTable();
 	void CreateExportBitMap();
 	size_t GetNumExports();
-	size_t GetExportOffset();
 	bool AllocExpTable();
 	char * GetExportTable();
 	size_t GetExportTableSize();

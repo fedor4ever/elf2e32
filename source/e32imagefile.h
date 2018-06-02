@@ -185,7 +185,6 @@ class E32ImageFile {
         char * iDataRelocs=nullptr;
         size_t iDataRelocsSize=0;
 
-        size_t iExportOffset=0;
         bool   iLayoutDone=false;
 
         int iMissingExports=0;

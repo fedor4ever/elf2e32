@@ -695,8 +695,7 @@ void E32ImageFile::ComputeE32ImageLayout()
 	//	b. symbol lookup is enabled - because this table also indicates the dependencies
 	bool aExportTableNeeded = (iHdr->iExportDirCount || aSymLkupEnabled) ? 1 : 0;
 
-	iExportOffset = iChunks.GetOffset() + 4;
-	iHdr->iExportDirOffset = aExportTableNeeded ? iUseCase->GetExportOffset() : 0;
+	iHdr->iExportDirOffset = iChunks.GetOffset() + 4;
 	if ( aExportTableNeeded && iUseCase->AllocExpTable())
 		iChunks.AddChunk(iUseCase->GetExportTable(), iUseCase->GetExportTableSize(), iChunks.GetOffset(), "Export Table");
 
@@ -749,7 +748,7 @@ export table starts.
 */
 size_t E32ImageFile::GetExportOffset()
 {
-	return iExportOffset;
+	return iChunks.GetOffset() + 4;
 }
 
 /**
