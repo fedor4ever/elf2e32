@@ -11,7 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters='--definput=&quot;tests\libcryptou.def&quot;  --dso=&quot;tests\tmp\libcrypto{000a0000}.def2dso.dso&quot;  --linkas=&quot;libcrypto{000a0000}.dll&quot;  --targettype=implib' />
+				<Option parameters='--capability=ProtServ --defoutput=tests\tmp\AlternateReaderRecog{000a0000}.def --elfinput=&quot;tests\AlternateReaderRecog.dll&quot; --output=&quot;tests\tmp\AlternateReaderRecogE32.dll&quot; --libpath=tests\SDK_libs --linkas=AlternateReaderRecog{000a0000}[101ff1ec].dll --dso=tests\tmp\AlternateReaderRecog{000a0000}.dso --fpu=softvfp --uid1=0x10000079 --uid2=0x10009d8d --uid3=0x101ff1ec --targettype=PLUGIN --sid=0x101ff1ec --version=10.0 --ignorenoncallable --uncompressed --sysdef=_Z24ImplementationGroupProxyRi,1;' />
 				<Compiler>
 					<Add option="-std=c++14" />
 					<Add option="-g -O0" />
@@ -64,24 +64,16 @@
 		<Unit filename="source/deffile.cpp" />
 		<Unit filename="source/deffile.h" />
 		<Unit filename="source/deflatecompress.cpp" />
-		<Unit filename="source/dll_type_target.cpp" />
-		<Unit filename="source/dll_type_target.h" />
 		<Unit filename="source/e32exporttable.cpp" />
 		<Unit filename="source/e32exporttable.h" />
 		<Unit filename="source/e32imagefile.cpp">
 			<Option compiler="gcc" use="0" buildCommand="$compiler $options -save-temps $file" />
 		</Unit>
 		<Unit filename="source/e32imagefile.h" />
-		<Unit filename="source/elf2e32.cpp" />
-		<Unit filename="source/elf2e32.h" />
 		<Unit filename="source/elffilesupplied.cpp" />
 		<Unit filename="source/elffilesupplied.h" />
 		<Unit filename="source/errorhandler.cpp" />
 		<Unit filename="source/errorhandler.h" />
-		<Unit filename="source/exetarget.cpp" />
-		<Unit filename="source/exetarget.h" />
-		<Unit filename="source/export_type_rebuild_target.cpp" />
-		<Unit filename="source/export_type_rebuild_target.h" />
 		<Unit filename="source/farray.h" />
 		<Unit filename="source/filedump.cpp" />
 		<Unit filename="source/filedump.h" />
@@ -90,8 +82,6 @@
 		<Unit filename="source/imgdump.cpp" />
 		<Unit filename="source/inflate.cpp" />
 		<Unit filename="source/inflate.h" />
-		<Unit filename="source/librarytarget.cpp" />
-		<Unit filename="source/librarytarget.h" />
 		<Unit filename="source/main.cpp" />
 		<Unit filename="source/message.cpp" />
 		<Unit filename="source/message.h" />
@@ -123,14 +113,8 @@
 		<Unit filename="source/pl_sym_type.h" />
 		<Unit filename="source/pl_symbol.cpp" />
 		<Unit filename="source/pl_symbol.h" />
-		<Unit filename="source/polydll_fb_target.cpp" />
-		<Unit filename="source/polydll_fb_target.h" />
-		<Unit filename="source/polydll_rebuild_target.cpp" />
-		<Unit filename="source/polydll_rebuild_target.h" />
 		<Unit filename="source/portable.cpp" />
 		<Unit filename="source/staticlibsymbols.h" />
-		<Unit filename="source/usecasebase.cpp" />
-		<Unit filename="source/usecasebase.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

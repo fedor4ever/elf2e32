@@ -1,5 +1,5 @@
 // Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
-// Copyright (c) 2017 Strizhniou Fiodar
+// Copyright (c) 2017-2018 Strizhniou Fiodar
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -19,7 +19,15 @@
 //
 
 //
-#include "elf2e32.h"
+#include <stdlib.h>
+
+#include "message.h"
+#include "filedump.h"
+#include "errorhandler.h"
+#include "elffilesupplied.h"
+#include "parametermanager.h"
+
+static ParameterManager * Instance = nullptr;
 
 /**
 This function creates an instance of Elf2E32 and calls Execute() of Elf2E32 to generate
@@ -38,7 +46,43 @@ the appropriate target.
 */
 int main(int argc, char** argv)
 {
-  Elf2E32 aElf2E32(argc, argv);
-  return aElf2E32.Execute();
+    int result = EXIT_SUCCESS;
+
+    try
+    {
+        Instance = ParameterManager::GetInstance(argc, argv);
+        Instance->ParameterAnalyser();
+		Instance->CheckOptions();
+
+        char * dumpMessageFile = Instance->DumpMessageFile();
+	 	if(dumpMessageFile){
+			//create message file
+            Message::GetInstance()->CreateMessageFile(dumpMessageFile);
+            return result;
+		}
+
+        if (Instance->E32Input()){
+            FileDump *f = new FileDump(Instance);
+            result = f->Execute();
+            delete f;
+			return result;
+        }
+
+        ElfFileSupplied *job = new ElfFileSupplied(Instance);
+        result = job->Execute();
+        delete job;
+        return result;
+    }
+	catch(ErrorHandler& error)
+	{
+		result = EXIT_FAILURE;
+		error.Report();
+	}
+	catch(...) // If there are any other unhandled exception,they are handled here.
+	{
+		result = EXIT_FAILURE;
+		Message::GetInstance()->ReportMessage(ERROR, POSTLINKERERROR);
+	}
+	return result;
 }
 

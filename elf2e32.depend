@@ -210,22 +210,21 @@
 
 1527944493 d:\codeblock\elf2e32\source\filedump.h
 
-1527950885 source:d:\codeblock\elf2e32\source\elffilesupplied.cpp
+1527972296 source:d:\codeblock\elf2e32\source\elffilesupplied.cpp
 	<algorithm>
 	<iostream>
 	<cstring>
-	"elffilesupplied.h"
-	"pl_elfimage.h"
-	"errorhandler.h"
 	"deffile.h"
-	"pl_elfexports.h"
 	"pl_symbol.h"
-	"elf2e32.h"
-	"staticlibsymbols.h"
-	"pl_elfproducer.h"
+	"pl_elfimage.h"
 	"pl_elfreader.h"
-	"parametermanager.h"
+	"errorhandler.h"
 	"e32imagefile.h"
+	"pl_elfexports.h"
+	"pl_elfproducer.h"
+	"elffilesupplied.h"
+	"staticlibsymbols.h"
+	"parametermanager.h"
 
 1527624744 d:\codeblock\elf2e32\source\staticlibsymbols.h
 
@@ -254,12 +253,12 @@
 	"export_type_rebuild_target.h"
 	"deffile.h"
 
-1527945480 source:d:\codeblock\elf2e32\source\filedump.cpp
+1527955571 source:d:\codeblock\elf2e32\source\filedump.cpp
 	<stdio.h>
 	"deffile.h"
+	"filedump.h"
 	"pl_symbol.h"
 	"pl_common.h"
-	"filedump.h"
 	"e32imagefile.h"
 	"errorhandler.h"
 	"parametermanager.h"
@@ -296,8 +295,13 @@
 	<iostream>
 	<stdlib.h>
 
-1527624957 source:d:\codeblock\elf2e32\source\main.cpp
-	"elf2e32.h"
+1527972640 source:d:\codeblock\elf2e32\source\main.cpp
+	<stdlib.h>
+	"message.h"
+	"filedump.h"
+	"errorhandler.h"
+	"elffilesupplied.h"
+	"parametermanager.h"
 
 1526127757 source:d:\codeblock\elf2e32\source\message.cpp
 	"message.h"

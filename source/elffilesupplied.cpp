@@ -19,7 +19,6 @@
 #include <cstring>
 
 #include "deffile.h"
-#include "elf2e32.h"
 #include "pl_symbol.h"
 #include "pl_elfimage.h"
 #include "pl_elfreader.h"
