@@ -2955,7 +2955,7 @@ and sets the flag if the --dso option is passed in.
 @released
 
 @param aDSOOutputVal
-Name of the output DSO file if provided as input through --elfinput.
+Name of the output DSO file if provided as input through --dso.
 */
 void ParameterManager::SetDSOOutput(char * aDSOOutputVal)
 {
@@ -2971,11 +2971,12 @@ This function sets the Elf file name that is passed as input through the --elfin
 @released
 
 @param aSetElfInput
-Name of the input Elf file if provided as input through --dsoin or 0.
+Name of the input Elf file if provided as input through --elfinput or 0.
 */
 void ParameterManager::SetElfInput(char * aElfInputVal)
 {
-	iElfInput = aElfInputVal;
+    if(aElfInputVal)
+        iElfInput = aElfInputVal;
 }
 
 /**
