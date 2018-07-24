@@ -1,10 +1,6 @@
 ﻿# encoding=utf-8
 import os, subprocess
 
-elf2e32=r"D:\codeblock\elf2e32\bin\Debug\elf2e32.exe"
-tstdir=r"D:\codeblock\elf2e32\tests"
-counter=0
-
 caps=" --capability=All-TCB"
 defin=r""" --definput="libcryptou.def" """
 defout=r""" --defoutput="tmp\out.(%02d).def" """
@@ -18,23 +14,25 @@ iud1=r" --uid1=0x10000079"
 uid2=r" --uid2=0x20004c45"
 uid3=r" --uid3=0x00000000"
 tgttype=r" --targettype=STDDLL"
-tail=r" --dlldata --ignorenoncallable --debuggable --smpsafe --uncompressed"
+tail=r" --dlldata --ignorenoncallable --uncompressed"
+
+elf2e32=r"D:\codeblock\elf2e32\bin\Debug\elf2e32.exe"
+elf2e32+=r" --debuggable --smpsafe"
+
+# elf2e32=r"elf2e32.exe"
 
 # --capability=All-TCB --definput="tests\libcryptou.def" --defoutput="tests\out.def" --elfinput="tests\libcrypto.dll" --output="tests\libcrypto-2.4.5.tst.dll" --libpath="D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib" --linkas="libcrypto{000a0000}.dll" --dso="tests\libcrypto{000a0000}.dso" --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --dlldata --ignorenoncallable --debuggable --smpsafe --uncompressed
 
-
-print elf2e32
-# subprocess.check_call(elf2e32)
-
+counter=0
 longtail=e32bin+implibs+linkas+dsoout+fpu+iud1+uid2+uid3+tgttype+tail
 
 args1=(
 ("Test #%d: Full options list",
-elf2e32+caps+defin+defout %counter+elfin+longtail,
+elf2e32+caps+defin+defout+elfin+longtail,
 "Full options list!",
 ),
 ("Test #%d: defin without args",
-elf2e32+caps+defin.split("=")[0]+defout %counter+elfin+longtail,
+elf2e32+caps+defin.split("=")[0]+defout+elfin+longtail,
 defin.split("=")[0],
 ),
 ("Test #%d: defin and defout without args",
@@ -46,8 +44,8 @@ elf2e32+caps+defin+defout.split("=")[0]+elfin+longtail,
 defout.split("=")[0],
 ),
 ("Test #%d: dso2def conversion",
-elf2e32+""" --elfinput="libcrypto{000a0000}.dso" """+defout %counter,
-elf2e32+""" --elfinput="libcrypto{000a0000}.dso" """+defout %counter,
+elf2e32+""" --elfinput="libcrypto{000a0000}.dso" """+defout,
+elf2e32+""" --elfinput="libcrypto{000a0000}.dso" """+defout,
 ),
 ("Test #%d: def2def conversion",
 elf2e32+defin+ """ --defoutput="tmp\def2def.def" """,
