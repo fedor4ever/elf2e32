@@ -93,7 +93,7 @@ int FileDump::GenerateAsmFile(const char* afileName)//DumpAsm
         throw Elf2e32Error(NOREQUIREDOPTIONERROR, "--definput");
 
 	DefFile *iDefFile = new DefFile();
-	Symbols *aSymList = iDefFile->ReadDefFile(defin);
+	Symbols aSymList = iDefFile->GetSymbols(defin);
 
 	FILE *fptr;
 
@@ -103,8 +103,8 @@ int FileDump::GenerateAsmFile(const char* afileName)//DumpAsm
 	}
 	else
 	{
-		Symbols::iterator aItr = aSymList->begin();
-		Symbols::iterator last = aSymList->end();
+		Symbols::iterator aItr = aSymList.begin();
+		Symbols::iterator last = aSymList.end();
 		Symbol *aSym;
 
 		while( aItr != last)
@@ -134,7 +134,7 @@ int FileDump::GenerateAsmFile(const char* afileName)//DumpAsm
 
         fputs("\tDCB \"#<SYMEDIT>#\\n\"\n", fptr);
 
-		aItr = aSymList->begin();
+		aItr = aSymList.begin();
 		while (aItr != last)
 		{
 			aSym = *aItr;
