@@ -1,5 +1,4 @@
-// Copyright (c) 2004-2009 Nokia Corporation and/or its subsidiary(-ies).
-// Copyright (c) 2017 Strizhniou Fiodar
+// Copyright (c) 2018 Strizhniou Fiodar
 // All rights reserved.
 // This component and the accompanying materials are made available
 // under the terms of "Eclipse Public License v1.0"
@@ -7,9 +6,9 @@
 // at the URL "http://www.eclipse.org/legal/epl-v10.html".
 //
 // Initial Contributors:
-// Nokia Corporation - initial contribution.
+// Strizhniou Fiodar - initial contribution.
 //
-// Contributors: Strizhniou Fiodar - fix build and runtime errors, refactoring.
+// Contributors:
 //
 // Description:
 // Implementation of the Class DefFile for the elf2e32 tool
@@ -19,946 +18,256 @@
 //
 
 //
-#include <stdio.h>
+#include <fstream>
 #include <stdlib.h>
 #include <string.h>
+#include <sstream>
 
-#include "pl_symbol.h"
 #include "deffile.h"
+#include "pl_symbol.h"
 #include "errorhandler.h"
 
-#ifdef __LINUX__
-    #define STRUPR strupr
-#else
-    #define STRUPR _strupr
-#endif
-
-#define SUCCESS 1
-#define FAILURE 0
-
-/**
-Destructor to release all the allocated memory
-@internalComponent
-@released
-*/
-DefFile::~DefFile()
-{
-	if(iSymbolList && !iSymbolList->empty())
-	{
-		for(auto x: *iSymbolList)
-        {
-            delete x;
-        }
-	}
-	delete iSymbolList;
-}
-/**
-Function to Get File Size.
-@param fptrDef - File pointer to DEF file
-@internalComponent
-@released
-*/
-int DefFile::GetFileSize(FILE *fptrDef)
-{
-	int fileSize,status;
-
-	status=fseek(fptrDef, 0, SEEK_END);
-	if(status!=0)
-	{
-		throw Elf2e32Error(FILEREADERROR,iFileName);
-	}
-	fileSize=ftell(fptrDef);
-	rewind(fptrDef);
-
-	return fileSize;
-
-}
-
-/**
-Function to Open File and read it in memory.
-@param defFile - DEF File name
-@internalComponent
-@released
-*/
-char* DefFile::OpenDefFile(char * defFile)
-{
-	int fileSize;
-	char *defFileEntries;
-	FILE *fptrDef;
-
-	iFileName=defFile;
-	if((fptrDef=fopen(defFile,"rb"))== nullptr)
-	{
-		throw Elf2e32Error(FILEOPENERROR,defFile);
-	}
-
-	fileSize=GetFileSize(fptrDef);
-
-	if((defFileEntries= new char[fileSize+2]) == nullptr)
-	{
-		throw Elf2e32Error(MEMORYALLOCATIONERROR,defFile);
-	}
-
-	//Getting whole file in memory
-	if(!fread(defFileEntries, fileSize, 1, fptrDef))
-	{
-	    delete[] defFileEntries;
-	    defFileEntries = nullptr;
-		throw Elf2e32Error(FILEREADERROR,defFile);
-	}
-
-	//Adding ENTER at end
-	*(defFileEntries+fileSize)='\n';
-	//Adding '\0' at end
-	*(defFileEntries+fileSize+1)='\0';
-
-	fclose(fptrDef);
-
-	return defFileEntries;
-
-}
-
-/**
-Function to Parse Def File which has been read in buffer.
-@param defFileEntries - pointer to def file entries which has been read in buffer
-@internalComponent
-@released
-*/
-void DefFile::ParseDefFile(char *defFileEntries)
-{
-	iSymbolList = new Symbols;
-
-	int PreviousOrdinal=0;
-	char MultiLineStatement[1024]="";
-	bool NAMEorLIBRARYallowed=true;
-	int LineNum = 0;
-
-	char *lineToken;
-	int width = 0;
-	unsigned i;
-	char *ptrEntry,*ptrEntryType;
-	char entryType[256];
-	bool entryFlag;
-
-
-	lineToken=strtok(defFileEntries,"\n");
-	while(lineToken != nullptr)
-	{
-		entryType[0]='\0';
-		LineNum++;
-
-		if (lineToken[0]==13)
-		{
-			lineToken=strtok(nullptr,"\n");
-			continue;
-		}
-
-		// comment lines
-		if (lineToken[0] == ';')
-		{
-			lineToken=strtok(nullptr,"\n");
-			continue;
-		}
-
-		ptrEntry=lineToken;
-
-		if((!strstr(lineToken, "NONAME") && ((ptrEntryType=strstr(lineToken, "NAME")) != NULL)) ||
-			((ptrEntryType=strstr(lineToken, "EXPORTS")) != NULL) ||
-			((ptrEntryType=strstr(lineToken, "IMPORTS")) != NULL) ||
-			((ptrEntryType=strstr(lineToken, "SECTIONS")) != NULL) ||
-			((ptrEntryType=strstr(lineToken, "LIBRARY")) != NULL) ||
-			((ptrEntryType=strstr(lineToken, "DESCRIPTION")) != NULL)||
-			((ptrEntryType=strstr(lineToken, "STACKSIZE")) != NULL)||
-			((ptrEntryType=strstr(lineToken, "VERSION")) != NULL)
-			)
-		{
-			entryFlag=true;
-
-			for(i=0; ptrEntry!=ptrEntryType; i++,ptrEntry++)
-			{
-				switch(lineToken[i])
-				{
-				case ' ':
-				case '\t':
-					continue;
-				default:
-					entryFlag=false;
-					break;
-				}
-				if(entryFlag==false)
-					break;
-			}
-
-			if(entryFlag==false && !strcmp(MultiLineStatement,""))
-			{
-				throw DEFFileError(UNRECOGNIZEDTOKEN,iFileName,LineNum,lineToken);
-			}
-
-			if(entryFlag==true)
-			{
-				switch(ptrEntryType[0])
-				{
-				case 'E':
-				case 'I':
-				case 'L':
-				case 'V':
-					width=7;
-					break;
-				case 'S':
-					if(ptrEntryType[1]=='E')
-						width=8;
-					else
-						width=9;
-					break;
-				case 'N':
-					width=4;
-					break;
-				case 'D':
-					width=11;
-					break;
-				}
-			}
-
-			if(entryFlag==true)
-			{
-  				for(i=i+width; i<strlen(lineToken); i++)
-				{
-					switch(lineToken[i])
-					{
-					case ' ':
-					case '\t':
-						continue;
-					case '\r':
-					case '\0':
-						break;
-					default:
-						entryFlag=false;
-						break;
-					}
-
-					if(entryFlag==false)
-						break;
-				}
-			}
-
-			if(entryFlag==false && !strcmp(MultiLineStatement,""))
-			{
-				throw DEFFileError(UNRECOGNIZEDTOKEN,iFileName,LineNum,lineToken+i);
-			}
-
-			if(entryFlag==true)
-			{
-				strncpy(entryType, ptrEntryType, width);
-				entryType[width]='\0';
-
-				switch(ptrEntryType[0])
-				{
-				case 'E':		// check for multi-line sections starting
-					strcpy(MultiLineStatement, STRUPR(entryType)); // Uppercase token
-					NAMEorLIBRARYallowed = false;
-					lineToken = strtok(nullptr, "\n" ); // Get the next line
-					continue;
-				case 'N':
-					break;
-				case 'L':
-					break;
-				case 'D':
-					break;
-				case 'S':
-				case 'V':
-					if(entryType[1]!='E')
-					{
-						// set MULTI-LINE statement to OFF
-						strcpy(MultiLineStatement, STRUPR(entryType)); // Uppercase token
-						// check single-line statements are specified correctly
-						// check NAME or LIBRARY statements aren't supplied incorrectly
-						if (!strcmp(entryType, "NAME") ||
-							!strcmp(entryType, "LIBRARY")
-							)
-						{
-							if (NAMEorLIBRARYallowed == false)
-							{
-								throw DEFFileError(NAMELIBRARYNOTCORRECT,iFileName,LineNum,lineToken);
-							}
-							lineToken=strtok(nullptr,"\n");
-							continue;
-						}
-						NAMEorLIBRARYallowed = false;
-						lineToken=strtok(nullptr,"\n");
-						continue;
-					}
-					continue;
-				case 'I':
-					strcpy(MultiLineStatement, STRUPR(entryType)); // Uppercase token
-					lineToken = strtok(nullptr, "\n" ); // Get the next line
-					continue;
-				}
-			}
-
-		}
-		else
-		{
-			if (!strcmp(MultiLineStatement,""))
-		    {
-				throw DEFFileError(EXPORTSEXPECTED,iFileName,LineNum,lineToken);
-			}
-		}
-
-		// Get Export entries
-		if (!strcmp(MultiLineStatement,"EXPORTS"))
-		{
-			Symbol aSymbol("", SymbolTypeCode);
-			if( Tokenize(lineToken, LineNum, aSymbol) )
-			{
-				Symbol *newSymbolEntry = new Symbol(aSymbol);
-				iSymbolList->push_back(newSymbolEntry);
-
-				int ordinalNo = aSymbol.OrdNum();
-				//Check for ordinal sequence
-				if (ordinalNo != PreviousOrdinal+1)
-		   		{
-					throw DEFFileError(ORDINALSEQUENCEERROR, iFileName, LineNum, (char*)aSymbol.SymbolName());
-				}
-
-				PreviousOrdinal = ordinalNo;
-
-			}
-			lineToken=strtok(nullptr,"\n");
-			continue;
-		}
-		else if(strcmp(MultiLineStatement,"")!=0)//For entry other than exports
-			lineToken = strtok(nullptr, "\n" ); // Get the next line
-
-	}//End of while
-}
-
-/**
-This Function calls LineToken's Tokenize function.
-@param aTokens   - Input string at the current line number
-@param aLineNum  - Current line number
-@param aSymbol   - Symbol to be populated while parsing the line.
-Return value     - It returns true if a valid def file entry is found.
-@internalComponent
-@released
-*/
-bool DefFile::Tokenize(char* aTokens, int aLineNum, Symbol& aSymbol)
-{
-	/*
-	 * Pattern to match is:
-	 * START\s*(\S+)\s+@\s*(d+)\s*(NONAME)?\s*(R3UNUSED)?\s*(ABSENT)?\s*(;\s*(.*))END
-	 */
-	LineToken aLine(iFileName, aLineNum, aTokens, &aSymbol);
-	return aLine.Tokenize();
-}
-
-
-char * DefFilePatterns[] =
-	{
-		"NONAME",//index 0
-		"DATA",
-		"R3UNUSED",
-		"ABSENT"
-	};
-
-#define DEF_NONAME		0
-#define DEF_DATA		1
-#define DEF_R3UNUSED	2
-#define DEF_ABSENT		3
-
-/**
-This constructor creates an instance of LineToken class.
-@param aFileName - Def File Name.
-@param aLineNum  - Current line number
-@param aLn       - Input string at the current line number
-@param aSym      - Symbol to be populated while parsing the line.
-@internalComponent
-@released
-*/
-LineToken::LineToken(char* aFileName, int aLineNum, char *aLn, Symbol* aSym) : \
-		iLine(aLn) , iSymbol(aSym) , iOffset(0), iState(EInitState),iFileName(aFileName), iLineNum(aLineNum)
-{
-}
-
-/**
-This function tokenizes the line and populates a symbol entry
-if there is one.
-Return Value - True, if the current line has a valid def entry.
-@internalComponent
-@released
-*/
-bool LineToken::Tokenize()
-{
-	while (1)
-	{
-		switch( iState )
-		{
-		case EFinalState:
-			return true;
-		case EInitState:
-			if( *(iLine + iOffset) == '\0' ||
-				*(iLine + iOffset) == '\r' ||
-				*(iLine + iOffset) == '\n')
-			{
-				/*
-				 * Skip empty lines.
-				 */
-				return false;
-			}
-			else
-			{
-				NextToken();
-			}
-			break;
-		default:
-			NextToken();
-			break;
-		}
-	}
-	return false;
-}
-
-/**
-This function parses a line of the def file based on the current
-state it is in.
-@internalComponent
-@released
-*/
-void LineToken::NextToken()
-{
-	int aCurrentPos = 0;
-
-	switch( iState )
-	{
-	case EInitState:
-		if(IsWhiteSpace((iLine + iOffset), aCurrentPos))
-		{
-			IncrOffset(aCurrentPos);
-		}
-
-		if(IsWord(iLine + iOffset, aCurrentPos))
-		{
-			SetState(ESymbolName);
-		}
-	break;
-
-	case ESymbolName:
-	{
-		char *aSymbolName = nullptr;
-		// Get the length of the symbol
-		IsWord(iLine + iOffset, aCurrentPos);
-
-		char *cmt = strchr(iLine + iOffset, ';');
-		char *aAlias = strchr(iLine + iOffset, '=');
-
-		if( aAlias && (!cmt || (aAlias < cmt)) )
-		{
-			int aAliasPos = aAlias - (iLine+ iOffset);
-
-			//Check if alias name is also supplied, they should be separated
-			// by whitespace, i.e., SymbolName=AliasName is valid while,
-			// SymbolName =AliasName is invalid.
-			if( aAliasPos > aCurrentPos)
-			{
-				char *aToken = (iLine + iOffset + aCurrentPos);
-				throw DEFFileError(UNRECOGNIZEDTOKEN, iFileName, iLineNum, aToken);
-			}
-
-			aSymbolName = new char[aAliasPos+1];
-			strncpy(aSymbolName, iLine + iOffset, aAliasPos);
-			aSymbolName[aAliasPos] = '\0';
-			char *aExportName = new char[aCurrentPos - aAliasPos + 1];
-			strncpy(aExportName, aAlias +1, (aCurrentPos - aAliasPos));
-			aExportName[(aCurrentPos - aAliasPos)] = '\0';
-			iSymbol->ExportName(aExportName);
-		}
-		else
-		{
-			aSymbolName = new char[aCurrentPos+1];
-			strncpy(aSymbolName, iLine+ iOffset, aCurrentPos);
-			aSymbolName[aCurrentPos] = '\0';
-		}
-		iSymbol->SetSymbolName(aSymbolName);
-
-		IncrOffset(aCurrentPos);
-
-		if(IsWhiteSpace((iLine + iOffset), aCurrentPos))
-		{
-			IncrOffset(aCurrentPos);
-		}
-
-		if(*(iLine+iOffset) == '@')
-		{
-			SetState(EAtSymbol);
-			IncrOffset(1);
-		}
-		else
-		{
-			/*
-			 * The first non-whitespace entry in a line is assumed to be the
-			 * symbol name and a symbol name might also have a '@' char. Hence
-			 * there MUST be a whitespace between symbol name and '@'.
-			 */
-			throw DEFFileError(ATRATEMISSING,iFileName,iLineNum,(iLine+iOffset));
-		}
-	}
-	break;
-
-	case EAtSymbol:
-		if(IsWhiteSpace((iLine + iOffset), aCurrentPos))
-		{
-			IncrOffset(aCurrentPos);
-		}
-
-		SetState(EOrdinal);
-		break;
-	case EOrdinal:
-	{
-		if(!IsDigit(iLine+iOffset, aCurrentPos ) )
-		{
-			throw DEFFileError(ORDINALNOTANUMBER, iFileName, iLineNum, (iLine+iOffset));
-		}
-		char aTmp[32];
-		strncpy(aTmp, iLine+iOffset, aCurrentPos);
-		aTmp[aCurrentPos] = '\0';
-		int aOrdinal = atoi(aTmp);
-		iSymbol->SetOrdinal(aOrdinal);
-
-		IncrOffset(aCurrentPos);
-
-		if(IsWhiteSpace((iLine + iOffset), aCurrentPos))
-		{
-			IncrOffset(aCurrentPos);
-		}
-		SetState(EOptionals);
-	}
-	break;
-
-	case EOptionals:
-		{
-		int aPrevPatternIndex, aPatternIdx = 0;
-		aPrevPatternIndex = -1;
-		while (*(iLine + iOffset) != '\n' || *(iLine + iOffset) != '\r')// don't touch!
-		{
-			if(IsPattern(iLine+iOffset, aCurrentPos, aPatternIdx) )
-			{
-				switch(aPatternIdx)
-				{
-				case DEF_NONAME:
-					break;
-				case DEF_DATA:
-					iSymbol->CodeDataType(SymbolTypeData);
-
-					IncrOffset(aCurrentPos);
-					if(IsWhiteSpace((iLine + iOffset), aCurrentPos))
-					{
-						IncrOffset(aCurrentPos);
-					}
-					if(IsDigit(iLine+iOffset, aCurrentPos ) )
-					{
-						char aSymSz[16];
-						strncpy(aSymSz, (iLine + iOffset), aCurrentPos);
-						aSymSz[aCurrentPos] = '\0';
-						iSymbol->SetSymbolSize(atoi(aSymSz));
-					}
-					break;
-				case DEF_R3UNUSED:
-					iSymbol->R3Unused(true);
-					break;
-				case DEF_ABSENT:
-					iSymbol->SetAbsent(true);
-					break;
-				default:
-					break;
-				}
-
-				/*
-				 * NONAME , DATA, R3UNUSED and ABSENT, all the 3 are optional. But, if more than
-				 * one of them appear, they MUST appear in that order.
-				 * Else, it is not accepted.
-				 */
-				if( aPrevPatternIndex >= aPatternIdx)
-				{
-					throw DEFFileError(UNRECOGNIZEDTOKEN, iFileName, iLineNum,(iLine + iOffset));
-				}
-				aPrevPatternIndex = aPatternIdx;
-
-				IncrOffset(aCurrentPos);
-
-				if(IsWhiteSpace((iLine + iOffset), aCurrentPos))
-				{
-					IncrOffset(aCurrentPos);
-				}
-			}
-			else
-			{
-				if( *(iLine + iOffset) == ';' )
-				{
-					SetState(EComment);
-					IncrOffset(1);
-					return;
-				}
-				else if( *(iLine + iOffset) == '\0' ||
-						 *(iLine + iOffset) == '\r' ||
-						 *(iLine + iOffset) == '\n')
-				{
-					SetState(EFinalState);
-					return;
-				}
-				else
-				{
-					throw DEFFileError(UNRECOGNIZEDTOKEN, iFileName, iLineNum,(iLine + iOffset));
-				}
-			}
-		}
-		}
-	break;
-
-	case EComment:
-	{
-		if(IsWhiteSpace(iLine + iOffset, aCurrentPos))
-		{
-			IncrOffset(aCurrentPos);
-		}
-
-
-		int aLen = strlen(iLine + iOffset);
-		if( *(iLine + iOffset + aLen - 1 ) == '\n' ||  *(iLine + iOffset + aLen - 1 ) == '\r')
-			aLen -=1;
-
-		char * aComment = new char[ aLen + 1];
-		strncpy( aComment, iLine + iOffset, aLen);
-		aComment[aLen] = '\0';
-
-		IncrOffset(aLen);
-
-		iSymbol->Comment(aComment);
-		SetState(EFinalState);
-	}
-	break;
-
-	case EFinalState:
-		return;
-	default:
-		break;
-	}
-}
-
-/**
-This function returns true if the string starts with one
-of the fixed patterns.
-It also updates the length  and index of this pattern.
-@param aChar - Line Token
-@param aTill - Length of the pattern
-@param aTill - Index of the pattern
-Return Value - True, if the string starts with one of the patterns.
-@internalComponent
-@released
-*/
-bool LineToken::IsPattern(char* aStr, int& aTill, int& aIndex)
-{
-	int size = sizeof(DefFilePatterns)/sizeof(char*);
-	for(int pos = 0; size > pos; pos++)
-	{
-		int aLength = strlen(DefFilePatterns[pos]);
-		if(!strncmp(aStr, DefFilePatterns[pos], aLength))
-		{
-			aTill = aLength;
-			aIndex = pos;
-			return true;
-		}
-	}
-	return false;
-}
-
-/**
-This function returns true if the string starts with digits.
-It also updates the length of this digit string.
-@param aChar - Line Token
-@param aTill - Length of the digit string
-Return Value - True, if the string starts with digit(s)
-@internalComponent
-@released
-*/
-bool LineToken::IsDigit(char *aChar, int &aTill)
-{
-	int pos = 0;
-	if( aChar[pos] - '0' >= 0 &&  aChar[pos] - '0' <= 9)
-	{
-		pos++;
-		while(aChar[pos] - '0' >= 0 &&  aChar[pos] - '0' <= 9)
-		{
-			pos++;
-		}
-		aTill = pos;
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
-
-/**
-This function returns true if the string starts with white space.
-It also updates the length of this white string!
-@param aStr - Line Token
-@param aTill - Length of the white string
-Return Value - True, if the string starts with whitespace
-@internalComponent
-@released
-*/
-bool LineToken::IsWhiteSpace(char *aStr, int &aTill)
-{
-	int pos = 0;
-	switch( aStr[pos] )
-	{
-	case ' ':
-	case '\t':
-		break;
-	default:
-		return false;
-	}
-
-	pos++;
-	while( aStr[pos])
-	{
-		switch(aStr[pos])
-		{
-			case ' ':
-			case '\t':
-				pos++;
-			break;
-			default:
-				aTill = pos;
-				return true;
-		}
-
-	}
-	aTill = pos;
-	return true;
-}
-
-/**
-This function returns true if the string starts with non-whitespace.
-It also updates the length of this word.
-@param aStr  - Line Token
-@param aTill - Length of the word
-Return Value - True, if the string starts with non-whitespace chars.
-It also updates the length of the word.
-@internalComponent
-@released
-*/
-bool LineToken::IsWord(char *aStr, int &aTill)
-{
-	int pos = 0;
-	switch( aStr[pos] )
-	{
-	case '\0':
-	case ' ':
-	case '\t':
-	case '\r':
-	case '\n':
-		return false;
-	default:
-		break;
-	}
-
-	pos++;
-	while( aStr[pos])
-	{
-		switch(aStr[pos])
-		{
-			case ' ':
-			case '\t':
-			case '\r':
-			case '\n':
-				aTill = pos;
-				return true;
-			default:
-				pos++;
-				break;
-		}
-
-	}
-	aTill = pos;
-	return true;
-}
-
-/**
-This function increments the current offset.
-@param aOff  - increment by this value
-@internalComponent
-@released
-*/
-void LineToken::IncrOffset(int aOff)
-{
-	iOffset += aOff;
-}
-
-/**
-This function sets the state of the tokenizer that is parsing
-the line.
-@param aState  - next state
-@internalComponent
-@released
-*/
-void LineToken::SetState(DefStates aState)
-{
-	iState = aState;
-}
+using std::fstream;
+using std::string;
+
+void WriteDefString(Symbol *sym, std::fstream &fstr);
+void TokensChecker(const std::vector<std::string> &tokens);
 
 /**
 Function to Read def file and get the internal representation in structure.
 @param defFile - DEF File name
-@internalComponent
-@released
 */
-Symbols* DefFile::ReadDefFile(char *defFile)
+Symbols DefFile::GetSymbols(char *defFile)
 {
-	char *defFileEntries = OpenDefFile(defFile);
-	ParseDefFile(defFileEntries);
-	delete defFileEntries;//Free the memory which was required to read def file
-	return iSymbolList;
+	ReadDefFile(defFile);
+	ParseDefFile();
+	return iSymbols;
 }
 
 /**
-Function to get the internal representation of Def File.
+Function to read def file line by line to std::vector.
 @param defFile - DEF File name
+*/
+void DefFile::ReadDefFile(char * aDefFile)
+{
+    iFileName=aDefFile;
+
+    fstream file(aDefFile, fstream::in /*| fstream::binary | fstream::ate*/);
+
+    if(!file.is_open())
+    {
+        throw Elf2e32Error(FILEOPENERROR, aDefFile);
+    }
+
+    string s;
+    while(file.good())
+    {
+        getline(file, s);
+        iDefFile.push_back(s);
+    }
+}
+
+const std::string trim_chars = " \t\n\v\f\r\0";
+void LTrim(std::string& str)
+{
+    str.erase(0, str.find_first_not_of(trim_chars));
+}
+
+void RTrim(std::string& str)
+{
+    str.erase(str.find_last_not_of(trim_chars) + 1);
+}
+
+void Trim(std::string& str)
+{
+    RTrim(str);
+    LTrim(str);
+}
+
+/**
+Function to Parse Def File which has been read in buffer.
 @internalComponent
 @released
 */
-Symbols* DefFile::GetSymbolEntryList(char *defFile)
+void DefFile::ParseDefFile()
 {
-	if(iSymbolList)
-	{
-		return iSymbolList;
-	}
-	else
-	{
-		iSymbolList=ReadDefFile(defFile);
-		return iSymbolList;
-	}
+	int PreviousOrdinal=0;
+	int LineNum = 0;
+
+	for(auto str: iDefFile)
+    {
+        if(str.find("NONAME") != string::npos)
+        {
+            Symbol aSymbol("", SymbolTypeCode);
+            Trim(str);
+            Tokenizer(str, LineNum);
+            int ordinalNo = iSymbol->OrdNum();
+            if (ordinalNo != PreviousOrdinal+1)
+            {
+                throw DEFFileError(ORDINALSEQUENCEERROR, (char*)iFileName.c_str(), LineNum, (char*)aSymbol.SymbolName());
+            }
+
+            PreviousOrdinal = ordinalNo;
+        }
+        LineNum++;
+    }
 }
+
+void TokensChecker(const std::vector<std::string> &tokens)
+{
+    if(tokens[1] != "@")
+        throw Elf2e32Error(ARGUMENTNAMEERROR, tokens[1]);
+
+    for(auto x: tokens)
+    {
+        if(x.find_first_of(trim_chars) != string::npos)
+            throw Elf2e32Error(ARGUMENTNAMEERROR, x);
+    }
+}
+
+/** @brief Analyze line from .def file
+  *
+  * It split every line to tokens and initialize Symbol class with them
+  * Example string for tokenize:
+  *  "BIGNUM_it @ 2717 NONAME R3UNUSED ABSENT; some comment"
+  *  "BIGNUM_it @ 2717 NONAME DATA 28; some comment"
+  */
+void DefFile::Tokenizer(std::string aLine, size_t aIndex)
+{
+    iSymbol = new Symbol("", SymbolTypeCode);
+
+//    take comments
+    std::size_t pos = aLine.find_first_of(';');
+    if(pos < string::npos)
+    {
+        std::string comment = aLine.substr(pos);
+        aLine.erase(pos);
+    }
+
+//    check optional arguments
+    if(aLine.find(" DATA ") < string::npos)
+        iSymbol->CodeDataType(SymbolTypeData);
+    if(aLine.find(" R3UNUSED") < string::npos)
+        iSymbol->R3Unused(true);
+    if(aLine.find(" ABSENT") < string::npos)
+        iSymbol->SetAbsent(true);
+
+    std::vector<std::string> tokens;
+    std::string token;
+    std::istringstream tokenStream(aLine);
+
+    while (std::getline(tokenStream, token, ' '))
+    {
+        tokens.push_back(token);
+    }
+
+    if((tokens.size() > 4) && (iSymbol->CodeDataType() == SymbolTypeData))
+    {
+        for(auto z: tokens[6]) // size of variable in elf
+        {
+            if(!isdigit(z))
+                throw DEFFileError(UNRECOGNIZEDTOKEN, (char* )iFileName.c_str(),
+                    aIndex, (char* )tokens[6].c_str());
+        }
+        uint32_t lenth = atol( tokens[6].c_str() );
+        iSymbol->SetSymbolSize(lenth);
+    }
+
+    /**< Take SymbolName and maybe AliasName  */
+    if(tokens[0].find('=') == string::npos)
+        iSymbol->SetSymbolName((char* )tokens[0].c_str());
+    else
+    {
+        /**< Symbol name may have alias like SymbolName=AliasName */
+        if(tokens[0].find('=') != tokens[0].rfind('='))
+            throw DEFFileError(UNRECOGNIZEDTOKEN, (char* )iFileName.c_str(),
+                    aIndex, (char* )tokens[0].c_str()); /**< Not allowed like SomeName=OtherName=AnotherName */
+
+        std::string sName =tokens[0].substr(0, tokens[0].find('='));
+        std::string eName =tokens[0].substr(tokens[0].find('='));
+        iSymbol->SetSymbolName( (char* )sName.c_str() );
+        iSymbol->ExportName((char* )eName.c_str());
+    }
+
+    iSymbol->SetOrdinal( atol( tokens[2].c_str() ) );
+
+    iSymbols.push_back(iSymbol);
+}
+
 
 /**
 Function to write DEF file from symbol entry List.
 @param fileName - Def file name
-@param newSymbolList - pointer to Symbols which we get as an input for writing in DEF File
+@param newSymbols - pointer to Symbols which we get as an input for writing in DEF File
 @internalComponent
 @released
 */
-void DefFile::WriteDefFile(char *fileName, Symbols * newSymbolList)
+void DefFile::WriteDefFile(char *fileName, Symbols * newSymbols)
 {
+    std::fstream fs;
+    fs.open(fileName, std::fstream::out | std::fstream::trunc);
+    if(!fs.is_open())
+        throw Elf2e32Error(FILEOPENERROR,fileName);
 
-	char ordinal[6];
-	bool newDefEntry=false;
-	FILE *fptr;
+    bool newSymbol = false;
+    fs << "EXPORTS\n";
 
-	if((fptr=fopen(fileName,"wb"))==NULL)
-		throw Elf2e32Error(FILEOPENERROR,fileName);
+    for(auto x: *newSymbols)
+    {
+        if(x->GetSymbolStatus()==New)
+        {
+            newSymbol = true;
+            continue;
+        }
 
-	Symbols::iterator aItr = newSymbolList->begin();
-	Symbols::iterator last = newSymbolList->end();
-	Symbol *aSym;
+        if(x->GetSymbolStatus()==Missing)
+            fs << "; MISSING:";
+        WriteDefString(x, fs);
+    }
 
-	string current = "EXPORTS\r\n";
-	fputs(current.c_str(), fptr);
-	while( aItr != last)
-	{
-		aSym = *aItr;
-		//Do not write now if its a new entry
-		if(aSym->GetSymbolStatus()==New)
-		{
-			newDefEntry=true;
-			++aItr;
-			continue;
-		}
+//This is for writing new def entry in DEF File
+    if(newSymbol)
+    {
+        fs << "; NEW:\n";
+        for(auto x: *newSymbols)
+        {
+            if(x->GetSymbolStatus() != New)
+                continue;
 
-		//Make it comment if its missing def entry
-		if(aSym->GetSymbolStatus()==Missing)
-			fputs("; MISSING:",fptr);
+            WriteDefString(x, fs);
+        }
+    }
+    fs << "\n";
+    fs.close();
+}
 
-		fputs("\t",fptr);
-		if((aSym->ExportName()) && strcmp(aSym->SymbolName(),aSym->ExportName())!=0)
-			fputs(aSym->ExportName(),fptr);
-		fputs(aSym->SymbolName(),fptr);
-		fputs(" @ ",fptr);
-		sprintf(ordinal,"%u",aSym->OrdNum());
-		fputs(ordinal,fptr);
-		fputs(" NONAME",fptr);
-		if(aSym->CodeDataType()==SymbolTypeData)
-		{
-			fputs(" DATA",fptr);
-			fputs(" ",fptr);
-			char aSymSize[16];
-			sprintf(aSymSize, "%u", aSym->SymbolSize());
-			fputs(aSymSize,fptr);
-		}
-		if(aSym->R3unused())
-			fputs(" R3UNUSED",fptr);
-		if(aSym->Absent())
-			fputs(" ABSENT",fptr);
+void WriteDefString(Symbol *sym, std::fstream &fstr)
+{
+    fstr << "\t";
+    if((sym->ExportName()) && strcmp(sym->SymbolName(),sym->ExportName())!=0)
+        fstr << sym->ExportName();
 
-		if(aSym->Comment().size() > 0)
-		{
-			fputs(" ; ",fptr);
-			fputs(aSym->Comment().c_str(),fptr);
-		}
-		fputs("\r\n",fptr);
-		++aItr;
-	}
+    fstr << sym->SymbolName();
+    fstr << " @ ";
+    fstr << sym->OrdNum();
+    fstr << " NONAME";
 
-	//This is for writing new def entry in DEF File
-	if(newDefEntry)
-	{
-		fputs("; NEW:\r\n",fptr);
-		aItr = newSymbolList->begin();
-		last = newSymbolList->end();
+    if(sym->CodeDataType()==SymbolTypeData)
+    {
+        fstr << " DATA ";
+        fstr << sym->SymbolSize();
+    }
 
-		while( aItr != last)
-		{
-			aSym = *aItr;
-			if(aSym->GetSymbolStatus()!=New)
-			{
-				++aItr;
-				continue;
-			}
-			fputs("\t",fptr);
-			if((aSym->ExportName()) && strcmp(aSym->SymbolName(),aSym->ExportName())!=0)
-				fputs(aSym->ExportName(),fptr);
-			current=aSym->SymbolName();
-			current+=" @ ";
-			sprintf(ordinal,"%u",aSym->OrdNum());
-			current+=ordinal;
-			current+=" NONAME";
-			fputs(current.c_str(),fptr);
+    if(sym->R3unused())
+        fstr << " R3UNUSED";
+    if(sym->Absent())
+        fstr << " ABSENT";
 
-			if(aSym->CodeDataType()==SymbolTypeData)
-			{
-				fputs(" DATA ",fptr);
-				char aSymSize[16] = "";
-				sprintf(aSymSize, "%u", aSym->SymbolSize());
-				fputs(aSymSize,fptr);
-			}
+    if(!sym->Comment().empty())
+    {
+        fstr << " ; ";
+        fstr << sym->Comment();
+    }
 
-			if(aSym->R3unused())
-				fputs(" R3UNUSED",fptr);
-			if(aSym->Absent())
-				fputs(" ABSENT",fptr);
-
-			if(aSym->Comment().size() > 0)
-			{
-                fputs(" ",fptr);
-				if(aSym->CodeDataType()==SymbolTypeNotDefined)
-				{
-					fputs("; ",fptr);
-				}
-				fputs(aSym->Comment().c_str(),fptr);
-			}
-			fputs("\r\n",fptr);
-			++aItr;
-		}
-	}
-	fputs("\r\n",fptr);
-	fclose(fptr);
+    fstr << "\n";
 }
