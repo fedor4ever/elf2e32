@@ -18,12 +18,11 @@
 //
 //
 
-#include "pl_elfproducer.h"
-#include "pl_symbol.h"
 #include <stdio.h>
-#include <string>
 #include <cstring>
+#include "pl_symbol.h"
 #include "errorhandler.h"
+#include "pl_elfproducer.h"
 
 /**
  * Following array is indexed on the SECTION_INDEX enum
