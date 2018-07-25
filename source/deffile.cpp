@@ -141,6 +141,7 @@ void DefFile::Tokenizer(std::string aLine, size_t aIndex)
     if(pos < string::npos)
     {
         std::string comment = aLine.substr(pos);
+        iSymbol->Comment(comment);
         aLine.erase(pos);
     }
 
