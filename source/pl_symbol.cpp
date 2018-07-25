@@ -70,7 +70,7 @@ Symbol::Symbol(Symbol& aSymbol)
 
 	iSymbolName = aSymbol.SymbolName();
 
-	if(aSymbol.Comment().size() > 0)
+	if(aSymbol.Comment().empty())
 	{
 		iComment = aSymbol.Comment();
 	}
@@ -228,7 +228,7 @@ This function sets the comment against the symbol.
 @internalComponent
 @released
 */
-void Symbol::Comment(char *aComment)
+void Symbol::Comment(std::string aComment)
 {
 	iComment = aComment;
 }

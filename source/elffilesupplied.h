@@ -46,7 +46,7 @@ class ElfFileSupplied
 public:
 	explicit ElfFileSupplied(ParameterManager* aParameterManager);
 	~ElfFileSupplied();
-	int Execute();
+	void Execute();
 
 	void ReadElfFile();
 	void ProcessExports();
@@ -65,16 +65,12 @@ public:
 	void CompareSymbolsFromDEFwithSysdef(Symbols& aSysdef);
 	void SymbolsFromDEF(Symbols& aDef);
 
-	void CreateExportTable();
 	void CreateExportBitMap();
 	size_t GetNumExports();
-	bool AllocExpTable();
 	char * GetExportTable();
-	size_t GetExportTableSize();
 
 	PLUINT16 GetExportDescSize();
 	PLUINT8 GetExportDescType();
-	size_t GetExportTableAddress();
 	//Method to check whether a symbol name is unwanted
 	bool UnWantedSymbol(const char * aSymbol);
 

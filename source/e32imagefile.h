@@ -37,6 +37,7 @@ class ElfImage;
 class Elfparser;
 class ElfRelocation;
 class ELFExecutable;
+class E32ExportTable;
 class ElfFileSupplied;
 class ParameterManager;
 
@@ -93,7 +94,8 @@ Class E32ImageFile for fields of an E32 image.
 */
 class E32ImageFile {
     public:
-        E32ImageFile(ElfImage * aElfImage, ElfFileSupplied * aUseCase, ParameterManager * aManager);
+        E32ImageFile(ElfImage * aElfImage, ElfFileSupplied * aUseCase,
+                     ParameterManager * aManager, E32ExportTable *aTable);
         E32ImageFile();
         virtual ~E32ImageFile();
 
@@ -248,7 +250,8 @@ class E32ImageFile {
         TUint iOrigHdrOffsetAdj=0;
         TInt iFileSize=0;
     private:
-        Elfparser *aParser=nullptr;
+        Elfparser *iParser=nullptr;
+        E32ExportTable *iTable=nullptr;
     };
 
 ifstream &operator>>(ifstream &is, E32ImageFile &aImage);

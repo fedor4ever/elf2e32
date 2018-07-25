@@ -69,9 +69,8 @@ int main(int argc, char** argv)
         }
 
         ElfFileSupplied *job = new ElfFileSupplied(Instance);
-        result = job->Execute();
-        delete job;
-        return result;
+        job->Execute();
+       // delete job; // FIXME: app crash if enabled!
     }
 	catch(ErrorHandler& error)
 	{

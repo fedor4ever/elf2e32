@@ -41,9 +41,14 @@ This function updates the e32 export table.
 @internalComponent
 @released
 */
-void E32ExportTable::CreateExportTable(ElfImage * aElfImage, ElfExports::Exports & aExports)
+void E32ExportTable::CreateExportTable(ElfImage * aElfImage)
 {
 	iElfImage = aElfImage;
+
+    ElfExports::Exports aExports;
+    if(iElfImage->iExports)
+        aExports = iElfImage->GetExportsInOrdinalOrder();
+
 	// ELFExports::Exports aExports = aElfImage->GetExportsInOrdinalOrder();
 	// The export table has a header containing the number of entries
 	// before the entries themselves. So add 1 to number of exports

@@ -64,24 +64,11 @@ Execute Function for the Elf File Supplied use case
 @internalComponent
 @released
 */
-int ElfFileSupplied::Execute()
+void ElfFileSupplied::Execute()
 {
-	ReadElfFile();
-	iReader->ProcessElfFile();
-	try
-	{
-        ProcessExports();
-	}
-	catch(SymbolMissingFromElfError& aSme)
-	{
-		/* Only DEF file would be generated if symbols found in
-		 * DEF file are missing from the ELF file.
-		 */
-		WriteDefFile();
-		throw aSme;
-	}
+    ReadElfFile();
+    ProcessExports();
 	BuildAll();
-	return 0;
 }
 
 /**
@@ -91,7 +78,10 @@ Function to read ELF File
 */
 void ElfFileSupplied::ReadElfFile()
 {
+    if(iManager->ElfInput().empty())
+        return;
 	iReader->Read();
+	iReader->ProcessElfFile();
 }
 
 /**
@@ -104,10 +94,10 @@ void ElfFileSupplied::SymbolsFromDEF(Symbols& aDef)
     char * def = iManager->DefInput();
     if(!def)
         return;
-    DefFile *iDefFile = new DefFile();
-	auto tmp = iDefFile->ReadDefFile(def);
+    DefFile * iDefFile = new DefFile();
+	Symbols tmp = iDefFile->GetSymbols(def);
 	delete iDefFile;
-	aDef.splice(aDef.begin(), *tmp);
+	aDef.splice(aDef.begin(), tmp, tmp.begin(), tmp.end());
 }
 
 /**
@@ -191,10 +181,22 @@ void ElfFileSupplied::ProcessExports()
 
     GetSymbolsFromSysdefoption(symbols);
     CompareSymbolsFromDEFwithSysdef(symbols);
-    if(target == EInvalidTargetType || target == ETargetTypeNotSet ||  target == EExexp)
+//    if(target == EInvalidTargetType || target == ETargetTypeNotSet ||  target == EExexp)
         SymbolsFromDEF(symbols);
 
-	ValidateDefExports(symbols);
+    try
+    {
+        ValidateDefExports(symbols);
+    }
+    catch(SymbolMissingFromElfError& aSme)
+	{
+		/* Only DEF file would be generated if symbols found in
+		 * DEF file are missing from the ELF file.
+		 */
+		WriteDefFile();
+		throw aSme;
+	}
+
 	CreateExports();
 }
 
@@ -221,7 +223,7 @@ void ElfFileSupplied::CreateExports()
 {
 	if (iReader->iExports || iManager->SymNamedLookup())
 	{
-		CreateExportTable();
+		iExportTable.CreateExportTable(iReader);;
 		CreateExportBitMap();
 	}
 }
@@ -259,7 +261,6 @@ void ElfFileSupplied::ValidateDefExports(Symbols &aDefExports)
 	//Symbols *aDefExports, defValidExports, defAbsentExports, elfExports;
 	Symbols defValidExports, defAbsentExports, elfExports;
 
-	//aDefExports = iDefIfc->GetSymbolEntryList();
     for(auto x: aDefExports)
     {
         if( x->Absent() ){
@@ -421,7 +422,7 @@ exports are available.
 */
 void ElfFileSupplied::BuildAll()
 {
-	if (iReader->iExports)
+	if ((iReader && iReader->iExports) || (iManager->TargetTypeName() == ELib) )
 	{
 		WriteDefFile();
 		WriteDSOFile();
@@ -469,7 +470,7 @@ void ElfFileSupplied::WriteE32()
 	    return;
 	}
 
-	iE32ImageFile = new E32ImageFile(iReader, this, iManager);
+	iE32ImageFile = new E32ImageFile(iReader, this, iManager, &iExportTable);
 
 	try
 	{
@@ -558,21 +559,6 @@ E32ImageHeaderV * ElfFileSupplied::AllocateE32ImageHeader()
 }
 
 /**
-Function to create export table
-@internalComponent
-@released
-*/
-void ElfFileSupplied::CreateExportTable()
-{
-	ElfExports::Exports aList;
-
-	if(iReader->iExports)
-		aList = iReader->GetExportsInOrdinalOrder();
-
-	iExportTable.CreateExportTable(iReader, aList);
-}
-
-/**
 Function to create export bitmap
 @internalComponent
 @released
@@ -609,17 +595,6 @@ size_t ElfFileSupplied::GetNumExports()
 }
 
 /**
-Function to check export table is required.
-@return True for E32 image if allocation requires space for export table.
-@internalComponent
-@released
-*/
-bool ElfFileSupplied::AllocExpTable()
-{
-	return iExportTable.AllocateP();
-}
-
-/**
 Function to get export table
 @return Pointer to export table
 @internalComponent
@@ -628,28 +603,6 @@ Function to get export table
 char * ElfFileSupplied::GetExportTable()
 {
 	return (char *)iExportTable.GetExportTable();
-}
-
-/**
-Function to get export table size
-@return size of export table
-@internalComponent
-@released
-*/
-size_t ElfFileSupplied::GetExportTableSize()
-{
-	return iExportTable.GetExportTableSize();
-}
-
-/**
-Function to get export table Virtual address
-@return the export table VA
-@internalComponent
-@released
-*/
-size_t ElfFileSupplied::GetExportTableAddress()
-{
-	return iExportTable.iExportTableAddress;
 }
 
 /**
@@ -710,8 +663,8 @@ Function to provide a predicate which checks whether a symbol name is unwanted:
 */
 bool ElfFileSupplied::UnWantedSymbol(const char * aSymbol)
 {
-	int symbollistsize = sizeof(Unwantedruntimesymbols) / sizeof(Unwantedruntimesymbols[0]);
-	for (int i = 0; i<symbollistsize; i++)
+	constexpr size_t symbollistsize = sizeof(Unwantedruntimesymbols) / sizeof(Unwantedruntimesymbols[0]);
+	for (size_t i = 0; i<symbollistsize; i++)
 	{
 		if (strstr(Unwantedruntimesymbols[i], aSymbol))
 			return true;

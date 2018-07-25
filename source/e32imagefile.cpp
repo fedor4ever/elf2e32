@@ -192,13 +192,15 @@ Constructor for E32ImageFile class.
 @released
 */
 E32ImageFile::E32ImageFile(ElfImage * aElfImage = nullptr, ElfFileSupplied *aUseCase = nullptr,
-           ParameterManager * aManager = nullptr) :
+           ParameterManager * aManager = nullptr, E32ExportTable *aTable = nullptr) :
 	iElfImage(aElfImage),
 	iUseCase(aUseCase),
-	iManager(aManager)
+	iManager(aManager),
+	iTable(aTable)
 	{}
 
-E32ImageFile::E32ImageFile(): E32ImageFile::E32ImageFile(nullptr, nullptr, nullptr){}
+E32ImageFile::E32ImageFile():
+    E32ImageFile::E32ImageFile(nullptr, nullptr,nullptr, nullptr){}
 
 /**
 This function generates the E32 image.
@@ -696,8 +698,8 @@ void E32ImageFile::ComputeE32ImageLayout()
 	bool aExportTableNeeded = (iHdr->iExportDirCount || aSymLkupEnabled) ? 1 : 0;
 
 	iHdr->iExportDirOffset = iChunks.GetOffset() + 4;
-	if ( aExportTableNeeded && iUseCase->AllocExpTable())
-		iChunks.AddChunk(iUseCase->GetExportTable(), iUseCase->GetExportTableSize(), iChunks.GetOffset(), "Export Table");
+	if ( aExportTableNeeded && iTable->AllocateP())
+		iChunks.AddChunk((char *)iTable->GetExportTable(), iTable->GetExportTableSize(), iChunks.GetOffset(), "Export Table");
 
 	// Symbol info next
 	if( aSymLkupEnabled ){
@@ -1788,13 +1790,13 @@ TInt E32ImageFile::Open(const char* aFileName)
 
 void E32ImageFile::ProcessSymbolInfo()
 {
-	Elf32_Addr elfAddr = iUseCase->GetExportTableAddress() - 4;// This location points to 0th ord.
+	Elf32_Addr elfAddr = iTable->iExportTableAddress - 4;// This location points to 0th ord.
 	// Create a relocation entry for the 0th ordinal.
 	ElfLocalRelocation *rel = new ElfLocalRelocation(iElfImage, elfAddr, 0, 0, R_ARM_ABS32,
 		nullptr, ESegmentRO, nullptr, false);
 	iElfImage->AddToLocalRelocations(rel);
 
-	elfAddr += iUseCase->GetExportTableSize();// aPlace now points to the symInfo
+	elfAddr += iTable->GetExportTableSize();// aPlace now points to the symInfo
 	uint32 *zerothOrd = (uint32*)iUseCase->GetExportTable();
 	*zerothOrd = elfAddr;
 	elfAddr += sizeof(E32EpocExpSymInfoHdr);// aPlace now points to the symbol address
