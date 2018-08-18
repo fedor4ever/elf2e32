@@ -18,6 +18,7 @@
 //
 
 //
+#include <iostream>
 #include <fstream>
 #include <stdlib.h>
 #include <string.h>
@@ -164,13 +165,13 @@ void DefFile::Tokenizer(std::string aLine, size_t aIndex)
 
     if((tokens.size() > 4) && (iSymbol->CodeDataType() == SymbolTypeData))
     {
-        for(auto z: tokens[6]) // size of variable in elf
+        for(auto z: tokens[5]) // size of variable in elf
         {
             if(!isdigit(z))
                 throw DEFFileError(UNRECOGNIZEDTOKEN, (char* )iFileName.c_str(),
-                    aIndex, (char* )tokens[6].c_str());
+                    aIndex, (char* )tokens[5].c_str());
         }
-        uint32_t lenth = atol( tokens[6].c_str() );
+        uint32_t lenth = atol( tokens[5].c_str() );
         iSymbol->SetSymbolSize(lenth);
     }
 
