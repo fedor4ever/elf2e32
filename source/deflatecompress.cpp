@@ -125,7 +125,6 @@ This function allocates memory for HDeflateHash
 */
 inline HDeflateHash* HDeflateHash::NewLC(TInt aLinks)
 {
-#if __GNUC__ >= 4
 	// Try to detect if the class' layout has changed.
 	static_assert( sizeof(HDeflateHash) == 1028, "sizeof(HDeflateHash) != 1028" );
 	static_assert( sizeof(TOffset) == 2, "sizeof(TOffset) != 2" );
@@ -147,9 +146,6 @@ inline HDeflateHash* HDeflateHash::NewLC(TInt aLinks)
 
 	// ... And create the object in that memory.
 	return new(p) HDeflateHash;
-#else
-	return new(new char[offsetof(HDeflateHash,iOffset[(min)(aLinks,KDeflateMaxDistance)])]) HDeflateHash;
-#endif
 }
 
 /**
