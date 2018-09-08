@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 2.8)
+
 add_executable(elf2e32
     source/byte_pair.h
     source/checksum.h
