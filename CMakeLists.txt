@@ -1,22 +1,19 @@
 cmake_minimum_required(VERSION 2.8)
 
+project(elf2e32)
+
 add_executable(elf2e32
     source/byte_pair.h
     source/checksum.h
     source/deffile.h
-    source/dll_type_target.h
     source/e32exporttable.h
     source/e32imagefile.h
-    source/elf2e32.h
     source/elffilesupplied.h
     source/errorhandler.h
-    source/exetarget.h
-    source/export_type_rebuild_target.h
     source/farray.h
     source/filedump.h
     source/huffman.h
     source/inflate.h
-    source/librarytarget.h
     source/message.h
     source/parametermanager.h
     source/pl_common.h
@@ -31,27 +28,19 @@ add_executable(elf2e32
     source/pl_elfrelocations.h
     source/pl_sym_type.h
     source/pl_symbol.h
-    source/polydll_fb_target.h
-    source/polydll_rebuild_target.h
     source/staticlibsymbols.h
-    source/usecasebase.h
     source/byte_pair.cpp
     source/checksum.cpp
     source/deffile.cpp
     source/deflatecompress.cpp
-    source/dll_type_target.cpp
     source/e32exporttable.cpp
     source/e32imagefile.cpp
-    source/elf2e32.cpp
     source/elffilesupplied.cpp
     source/errorhandler.cpp
-    source/exetarget.cpp
-    source/export_type_rebuild_target.cpp
     source/filedump.cpp
     source/huffman.cpp
     source/imgdump.cpp
     source/inflate.cpp
-    source/librarytarget.cpp
     source/main.cpp
     source/message.cpp
     source/pagedcompress.cpp
@@ -67,9 +56,6 @@ add_executable(elf2e32
     source/pl_elfrelocation.cpp
     source/pl_elfrelocations.cpp
     source/pl_symbol.cpp
-    source/polydll_fb_target.cpp
-    source/polydll_rebuild_target.cpp
-    source/portable.cpp
-    source/usecasebase.cpp)
+    source/portable.cpp)
     
 target_include_directories(elf2e32 PRIVATE include)

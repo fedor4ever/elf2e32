@@ -1,0 +1,23 @@
+platform:
+  - x86
+  
+build:
+  parallel: true
+
+image:
+  Visual Studio 2017
+
+install:
+  - mkdir build
+  - cd build
+  - cmake -G "Visual Studio 15 2017" ..
+  - cd ..
+
+build_script:
+  - msbuild build\elf2e32.sln /maxcpucount:3  /p:Configuration=Release
+  - 7z a -m0=LZMA2 -mx9 elf2e32.7z .\build\Release\*
+  - appveyor AddMessage -Category Information "Done." 
+
+artifacts:
+  - path: elf2e32.7z
+    name: elf2e32
