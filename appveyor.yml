@@ -14,7 +14,7 @@ install:
   - cd ..
 
 build_script:
-  - msbuild build\elf2e32.sln /maxcpucount:3  /p:Configuration=Release
+  - msbuild build\elf2e32.sln /maxcpucount:3  /p:Configuration=Release /p:Platform:x86
   - 7z a -m0=LZMA2 -mx9 elf2e32.7z .\build\Release\*
   - appveyor AddMessage -Category Information "Done." 
 
