@@ -125,7 +125,7 @@ This function allocates memory for HDeflateHash
 */
 inline HDeflateHash* HDeflateHash::NewLC(TInt aLinks)
 {
-#if __GNUC__ >= 4
+#if __GNUC__ >= 4 || _MSC_VER
 	// Try to detect if the class' layout has changed.
 	static_assert( sizeof(HDeflateHash) == 1028, "sizeof(HDeflateHash) != 1028" );
 	static_assert( sizeof(TOffset) == 2, "sizeof(TOffset) != 2" );

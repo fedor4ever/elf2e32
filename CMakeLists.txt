@@ -1,0 +1,61 @@
+cmake_minimum_required(VERSION 2.8)
+
+project(elf2e32)
+
+add_executable(elf2e32
+    source/byte_pair.h
+    source/checksum.h
+    source/deffile.h
+    source/e32exporttable.h
+    source/e32imagefile.h
+    source/elffilesupplied.h
+    source/errorhandler.h
+    source/farray.h
+    source/filedump.h
+    source/huffman.h
+    source/inflate.h
+    source/message.h
+    source/parametermanager.h
+    source/pl_common.h
+    source/pl_elfexports.h
+    source/pl_elfimage.h
+    source/pl_elfimportrelocation.h
+    source/pl_elfimports.h
+    source/pl_elflocalrelocation.h
+    source/pl_elfproducer.h
+    source/pl_elfreader.h
+    source/pl_elfrelocation.h
+    source/pl_elfrelocations.h
+    source/pl_sym_type.h
+    source/pl_symbol.h
+    source/staticlibsymbols.h
+    source/byte_pair.cpp
+    source/checksum.cpp
+    source/deffile.cpp
+    source/deflatecompress.cpp
+    source/e32exporttable.cpp
+    source/e32imagefile.cpp
+    source/elffilesupplied.cpp
+    source/errorhandler.cpp
+    source/filedump.cpp
+    source/huffman.cpp
+    source/imgdump.cpp
+    source/inflate.cpp
+    source/main.cpp
+    source/message.cpp
+    source/pagedcompress.cpp
+    source/parametermanager.cpp
+    source/pl_common.cpp
+    source/pl_elfexports.cpp
+    source/pl_elfimage.cpp
+    source/pl_elfimportrelocation.cpp
+    source/pl_elfimports.cpp
+    source/pl_elflocalrelocation.cpp
+    source/pl_elfproducer.cpp
+    source/pl_elfreader.cpp
+    source/pl_elfrelocation.cpp
+    source/pl_elfrelocations.cpp
+    source/pl_symbol.cpp
+    source/portable.cpp)
+    
+target_include_directories(elf2e32 PRIVATE include)
