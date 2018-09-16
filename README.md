@@ -2,6 +2,8 @@
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/175e7535c4af4c9eae9fc4280bed88a3)](https://www.codacy.com/app/fedor4ever/elf2e32?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=fedor4ever/elf2e32&amp;utm_campaign=Badge_Grade)
 
+[![Build status](https://ci.appveyor.com/api/projects/status/ppmv7ly8d505h9vt?svg=true)](https://ci.appveyor.com/project/fedor4ever/elf2e32)
+
 Based on vanilla elf2e32 v. 2.1.15
 
 All versions elf2e32 have critical bugs, that version may have too.
