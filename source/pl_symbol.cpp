@@ -228,7 +228,7 @@ This function sets the comment against the symbol.
 @internalComponent
 @released
 */
-void Symbol::Comment(std::string aComment)
+void Symbol::Comment(const std::string &aComment)
 {
 	iComment = aComment;
 }
@@ -256,7 +256,7 @@ void Symbol::R3Unused(bool aR3Unused)
 }
 
 /**
-This function sets if R3Unused is true for this symbol.
+This function sets the size of this symbol.
 @param aSize - size of the symbol
 @internalComponent
 @released

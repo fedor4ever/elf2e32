@@ -75,7 +75,7 @@ Funtion for getting elf symbol list
 @internalComponent
 @released
 */
-int ElfReader::GetElfSymbols(list<Symbol*>& aList){
+int ElfReader::GetElfSymbols(list<Symbol*>& aSymbols){
 
 	if( !iExports ) return 0;
 
@@ -85,11 +85,11 @@ int ElfReader::GetElfSymbols(list<Symbol*>& aList){
 	typedef vector<Symbol*> List;
 	List::iterator aItr = aTmpList.begin();
 	while( aItr != aTmpList.end() ){
-		aList.push_back((Symbol*) (*aItr));
+		aSymbols.push_back((Symbol*) (*aItr));
 		++aItr;
 	}
 	aTmpList.clear();
-	return aList.size();
+	return aSymbols.size();
 }
 
 /**

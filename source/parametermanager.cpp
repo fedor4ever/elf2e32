@@ -46,6 +46,8 @@ const char* ParamPrefix = "--";
 /** The '=' used for passing the arguments to the command line options for the program */
 const char ParamEquals = '=';
 
+static ParameterManager* iInstance;
+
 /**
 Constructor for the ParameterManager.
 
@@ -59,7 +61,6 @@ Constructor for the ParameterManager.
 */
 ParameterManager *ParameterManager::GetInstance(int aArgc, char** aArgv)
 {
-    static ParameterManager* iInstance;
     if(!iInstance)
     {
         iInstance = new ParameterManager();
@@ -70,6 +71,14 @@ ParameterManager *ParameterManager::GetInstance(int aArgc, char** aArgv)
     }
     return iInstance;
 }
+
+ParameterManager* ParameterManager::Static()
+{
+    if(!iInstance)
+        return nullptr;
+    return iInstance;
+}
+
 
 ParameterManager::~ParameterManager()
 {
@@ -229,7 +238,7 @@ const ParameterManager::OptionDesc ParameterManager::iOptions[] =
 		(void*)ParameterManager::ParseCompressionMethod,
 		"Input compression method [none|inflate|bytepair]\n\t\tnone     no compress the image.\
 		\n\t\tinflate  compress image with Inflate algorithm.\
-		\n\t\tbytepair tcompress image with BytePair Pak algorithm."
+		\n\t\tbytepair compress image with BytePair Pak algorithm."
 	},
 	{
 		"heap",
@@ -1272,6 +1281,9 @@ void ParameterManager::CheckOptions()
         SetFileDumpOptions("h");
         return;
     }
+
+    if(FileDumpOptions())
+        return;
 
     if(!LinkAsDLLName())
     {

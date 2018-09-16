@@ -193,70 +193,23 @@ class E32ImageFile {
 
         // This table carries the byte offsets in the import table entries corresponding
         // to the 0th ordinal entry of static dependencies.
-        std::vector<int32_t>    iImportTabLocations;
+        std::vector<int32_t>  iImportTabLocations;
         std::vector<uint32_t> iSymAddrTab;
         std::vector<uint32_t> iSymNameOffTab;
         string      iSymbolNames;
         uint32_t    iSymNameOffset=0;
 
     public:
-        TInt ReadHeader(ifstream& is);
-        TInt Open(const char* aFileName);
-        void Adjust(int32_t aSize, bool aAllowShrink=true);
-
-        TUint TextOffset();
-        TUint DataOffset();
-        TUint BssOffset();
-
-        void Dump(const char *aFileName,TInt aDumpFlags);
-        void DumpHeader(TInt aDumpFlags);
-        void DumpData(TInt aDumpFlags);
-        void DumpSymbolInfo(E32EpocExpSymInfoHdr *aSymInfoHdr);
-        void E32ImageExportBitMap();
-        TInt CheckExportDescription();
         void ProcessSymbolInfo();
         char* CreateSymbolInfo(size_t aBaseOffset);
         void SetSymInfo(E32EpocExpSymInfoHdr& aSymInfo);
-    public:
-        inline TUint OffsetUnadjust(TUint a) const {
-            return a ? a-iOrigHdrOffsetAdj : 0;
-            }
-        inline TUint OrigCodeOffset() const {
-            return OffsetUnadjust(iOrigHdr->iCodeOffset);
-            }
-        inline TUint OrigDataOffset() const {
-            return OffsetUnadjust(iOrigHdr->iDataOffset);
-            }
-        inline TUint OrigCodeRelocOffset() const {
-            return OffsetUnadjust(iOrigHdr->iCodeRelocOffset);
-            }
-        inline TUint OrigDataRelocOffset() const {
-            return OffsetUnadjust(iOrigHdr->iDataRelocOffset);
-            }
-        inline TUint OrigImportOffset() const {
-            return OffsetUnadjust(iOrigHdr->iImportOffset);
-            }
-        inline TUint OrigExportDirOffset() const {
-            return OffsetUnadjust(iOrigHdr->iExportDirOffset);
-            }
-        inline void OffsetAdjust(TUint& a) {
-            if (a) a+=iOrigHdrOffsetAdj;
-            }
 
     public:
         TInt iSize=0;
-        E32ImageHeader* iOrigHdr=nullptr;
-        TInt iError=0;
-        TUint iOrigHdrOffsetAdj=0;
-        TInt iFileSize=0;
+
     private:
-        Elfparser *iParser=nullptr;
         E32ExportTable *iTable=nullptr;
     };
-
-ifstream &operator>>(ifstream &is, E32ImageFile &aImage);
-void InflateUnCompress(unsigned char* source, int sourcesize, unsigned char* dest, int destsize);
-
 
 #endif // E32IMAGEFILE_H
 

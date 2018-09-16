@@ -177,12 +177,10 @@ Function to process exports
 void ElfFileSupplied::ProcessExports()
 {
     Symbols symbols;
-    ETargetType target = iManager->TargetTypeName();
 
     GetSymbolsFromSysdefoption(symbols);
+    SymbolsFromDEF(symbols);
     CompareSymbolsFromDEFwithSysdef(symbols);
-//    if(target == EInvalidTargetType || target == ETargetTypeNotSet ||  target == EExexp)
-        SymbolsFromDEF(symbols);
 
     try
     {

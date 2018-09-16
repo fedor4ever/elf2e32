@@ -22,10 +22,12 @@
 #include <stdlib.h>
 
 #include "message.h"
-#include "filedump.h"
 #include "errorhandler.h"
 #include "elffilesupplied.h"
 #include "parametermanager.h"
+
+#define E32COMMON_H_INCLUDED
+#include "e32info.h"
 
 static ParameterManager * Instance = nullptr;
 
@@ -61,9 +63,9 @@ int main(int argc, char** argv)
             return result;
 		}
 
-        if (Instance->E32Input()){
-            FileDump *f = new FileDump(Instance);
-            result = f->Execute();
+        if (Instance->E32Input() || Instance->FileDumpOptions()){
+            E32Info *f = new E32Info(Instance->FileDumpOptions(), Instance->E32Input());
+            f->Run();
             delete f;
 			return result;
         }

@@ -63,7 +63,7 @@ public:
 	void SetSymbolStatus(SymbolStatus aSymbolStatus);
 	void SetSymbolName(char *aSymbolName);
 
-	void Comment(std::string aComment);
+	void Comment(const std::string &aComment);
 	void CodeDataType(SymbolType aType);
 	void R3Unused(bool aR3Unused);
 	void ExportName(char *aExportName);

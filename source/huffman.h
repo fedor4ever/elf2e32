@@ -100,7 +100,7 @@ class TFileOutput : public TBitOutput
 	public:
 		explicit TFileOutput(std::ofstream & os);
 		void FlushL();
-		TUint32 iDataCount;
+		TUint32 iDataCount = 0;
 		virtual ~TFileOutput() = default;
 	private:
 		void OverflowL();

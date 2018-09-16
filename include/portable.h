@@ -278,7 +278,7 @@ struct SCapabilitySet {
         return iCaps[aIndex];
         }
 
-    TUint32 iCaps[ENCapW];
+    TUint32 iCaps[2];
     };
 
 const SCapabilitySet AllSupportedCapabilities = {
@@ -289,7 +289,8 @@ const SCapabilitySet AllSupportedCapabilities = {
         }
     };
 
-enum TProcessPriority {
+enum TProcessPriority
+{
     EPriorityLow=150,
     EPriorityBackground=250,
     EPriorityForeground=350,
@@ -298,7 +299,7 @@ enum TProcessPriority {
     EPriorityFileServer=750,
     EPriorityRealTimeServer=850,
     EPrioritySupervisor=950
-    };
+};
 
 struct E32EpocExpSymInfoHdr {
     TInt iSize=0;      // size of this Table
@@ -642,12 +643,6 @@ typedef struct TRomExceptionSearchTable {
     TLinAddr iEntries[1];
     } TRomExceptionSearchTable;
 
-typedef struct TExceptionDescriptor {
-    TLinAddr iExIdxBase;
-    TLinAddr iExIdxLimit;
-    TLinAddr iROSegmentBase;
-    TLinAddr iROSegmentLimit;
-    } TExceptionDescriptor;
 #endif // 0
 #ifdef __MINGW32__
 #endif // __MINGW32__

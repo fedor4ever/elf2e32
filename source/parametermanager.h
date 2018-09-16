@@ -52,6 +52,7 @@ private:
 
 public:
     static ParameterManager *GetInstance(int aArgc, char** aArgv);
+    static ParameterManager *Static();
 	virtual ~ParameterManager();
 
 	void CheckOptions();

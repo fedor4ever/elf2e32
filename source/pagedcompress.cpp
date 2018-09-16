@@ -279,7 +279,6 @@ void CompressPages(TUint8* bytes, TInt size, std::ofstream& os)
 
 int DecompressPages(TUint8 * bytes, std::ifstream& is)
 {
-	TUint decompressedSize = 0;
 	CBytePairCompressedImage *comprImage = CBytePairCompressedImage::NewLC(0, 0);
 	if( nullptr == comprImage)
 	{
@@ -291,6 +290,7 @@ int DecompressPages(TUint8 * bytes, std::ifstream& is)
 	comprImage->ReadInTable(is, numberOfPages);
 
 	TUint16 iPage = 0;
+	TUint decompressedSize = 0;
 
 	while(iPage < numberOfPages )
 	{
