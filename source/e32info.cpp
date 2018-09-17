@@ -80,7 +80,7 @@ void E32Info::HeaderInfo()
     if (flags & KImageNoCallEntryPoint)
         printf("Entry points are not called\n");
 
-    printf("Image header is format %d\n", hdrfmt>>24);
+    printf("Image header is format %u\n", hdrfmt>>24);
     uint32_t compression = iHdr1->iCompressionType;
 
     switch (compression)
@@ -182,7 +182,7 @@ void E32Info::HeaderInfo()
     }
 
     uint32_t mv = iHdr1->iModuleVersion;
-    printf("Module Version: %d.%d\n", mv>>16, mv&0xffff);
+    printf("Module Version: %u.%u\n", mv>>16, mv&0xffff);
 
     uint32_t impfmt = ImpFmtFromFlags(flags);
     if (impfmt == KImageImpFmt_PE)
@@ -251,7 +251,7 @@ void E32Info::HeaderInfo()
     printf("Bss            %06x\n", iHdr1->iBssSize);
 
     if (iHdr1->iExportDirOffset)
-        printf("Export  %06x %06x                      (%d entries)\n",
+        printf("Export  %06x %06x                      (%u entries)\n",
                iHdr1->iExportDirOffset, iHdr1->iExportDirCount*4, iHdr1->iExportDirCount);
 
     if (iHdr1->iImportOffset)
@@ -350,7 +350,7 @@ void E32Info::DataSection()
 
 void E32Info::ExportTable()
 {
-    printf("\nNumber of exports = %d\n", iHdr1->iExportDirCount);
+    printf("\nNumber of exports = %u\n", iHdr1->iExportDirCount);
     size_t* exports = (uint32_t*)(iE32->GetBufferedImage() + iHdr1->iExportDirOffset);
     uint32_t absoluteEntryPoint = iHdr1->iEntryPoint + iHdr1->iCodeBase;
     uint32_t impfmt = iHdr1->iFlags & KImageImpFmtMask;
@@ -359,9 +359,9 @@ void E32Info::ExportTable()
     {
         uint32_t exp = exports[i];
         if (exp == absentVal)
-            printf("\tOrdinal %5d:\tABSENT\n", i+1);
+            printf("\tOrdinal %5u:\tABSENT\n", i+1);
         else
-            printf("\tOrdinal %5d:\t%08x\n", i+1, exp);
+            printf("\tOrdinal %5u:\t%08x\n", i+1, exp);
     }
 }
 
@@ -395,15 +395,15 @@ void E32Info::ImportTableInfo()
                 uint32_t offset = impd >> 16;
 
                 if (offset)
-                    printf("%10d offset by %d\n", ordinal, offset);
+                    printf("%10u offset by %u\n", ordinal, offset);
                 else
-                    printf("%10d\n", ordinal);
+                    printf("%10u\n", ordinal);
             }
         }
         else
         {
             while (n--)
-                printf("\t%d\n", *iat++);
+                printf("\t%u\n", *iat++);
         }
         b = b->NextBlock(impfmt);
     }
@@ -537,7 +537,7 @@ void E32Info::SymbolInfo()
 
 void E32Info::PrintHexData(void *pos, size_t length)
 {
-    printf("Block length: %d\n", length);
+    printf("Block length: %lu\n", length);
     const unsigned LINE_MAX = 32;
     char *p = (char *)pos;
     char str[LINE_MAX + 1] = {"\n"};
@@ -668,7 +668,7 @@ void DumpRelocs(char *relocs)
 			uint32_t relocType = (a & 0x3000) >> 12;
 			if ((relocType == 1) || (relocType == 3)) //only relocation type1 and type3
 			{
-				printf("%08x(%d) ", page + (a&0x0fff), relocType);
+				printf("%08x(%u) ", page + (a&0x0fff), relocType);
 				printed++;
 				if (printed>3)
 				{
