@@ -6,12 +6,14 @@ add_executable(elf2e32
     source/byte_pair.h
     source/checksum.h
     source/deffile.h
+    source/e32common.h
     source/e32exporttable.h
     source/e32imagefile.h
+    source/e32info.h
+    source/e32parser.h
     source/elffilesupplied.h
     source/errorhandler.h
     source/farray.h
-    source/filedump.h
     source/huffman.h
     source/inflate.h
     source/message.h
@@ -35,11 +37,11 @@ add_executable(elf2e32
     source/deflatecompress.cpp
     source/e32exporttable.cpp
     source/e32imagefile.cpp
+    source/e32info.cpp
+    source/e32parser.cpp
     source/elffilesupplied.cpp
     source/errorhandler.cpp
-    source/filedump.cpp
     source/huffman.cpp
-    source/imgdump.cpp
     source/inflate.cpp
     source/main.cpp
     source/message.cpp
