@@ -69,19 +69,5 @@ struct VersionInfo {
 	char	iVerCategory = VER_CAT_NONE;
 };
 
-//enum for e32 dump flag and dumping asm file flag
-enum TDumpFlags
-{
-	EDumpHeader = 1<<0,
-	EDumpSecurityInfo = 1<<1,
-	EDumpCode = 1<<2,
-	EDumpData = 1<<3,
-	EDumpExports = 1<<4,
-	EDumpImports = 1<<5,
-	EDumpAsm = 1<<6, //Added (Only)option for generating assembly code for deffile input.//DumpAsm
-	EDumpSymbols = 1<<7,//Not added as a default option.
-	EDumpDefaults = EDumpHeader|EDumpCode|EDumpData|EDumpExports|EDumpImports
-};
-
 #endif //_PL_COMMON_H_
 

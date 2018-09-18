@@ -26,6 +26,17 @@
 #include <map>
 #include <string>
 
+struct Arguments
+{
+    char *defInFile = nullptr;
+    char *defOutFile = nullptr;
+    char *E32InFile = nullptr;
+    char *E32OutFile = nullptr; // --output
+    char *dsoOutFile = nullptr;
+    char *elfFile = nullptr; // --elfinput
+    char *fileDumpOpt = nullptr; // --dump
+    char *linkAsOpt = nullptr;
+};
 
 enum ETargetType
 {
@@ -88,7 +99,7 @@ public:
 		std::string iSysDefSymbolName;
 	};
 
-	typedef struct SysDefs Sys;
+	typedef SysDefs Sys;
 
 	typedef std::less<std::string> OptionCompare;
 	typedef std::map<std::string, const OptionDesc *, OptionCompare> OptionMap;
@@ -166,13 +177,6 @@ public:
     */
 	void ParameterAnalyser();
 
-	void SetDefInput(char * aDefInputVal);
-	void SetDSOOutput(char * aDSOOutputVal);
-	void SetElfInput(char * aSetElfInput);
-	void SetE32Input(char * aSetE32Input);
-	void SetFileDumpOptions(char * aSetE32DumpOptions);
-	void SetE32Output(char * aSetE32Output);
-	void SetDefOutput(char * aSetDefOutput);
 	void SetTargetTypeName(ETargetType  aSetTargetTypeName);
 	void SetLinkDLLName(char * aSetLinkDLLName);
 	void SetUID1(UINT aSetUINT1);
@@ -360,6 +364,7 @@ public:
 	bool IsSmpSafe();
 
 private:
+    Arguments iOptionArgs;
 	/** The number of command line arguments passed into the program */
 	int iArgc;
 
@@ -413,32 +418,13 @@ private:
 	/** Target Type that is passed as input to the --targettype option */
 	ETargetType iTargetTypeName = ETargetTypeNotSet;
 
-	/** File name of the output DEF file passed as input to the --defoutput option */
-	char * iDefOutput = nullptr;
-
-	/** File name of the output DSO file passed as input to the --dso option */
-	char * iDSOOutput = nullptr;
-
-	/** File name of the output image passed as input to the --output option */
-	char * iOutFileName = nullptr;
-
-	/** File name of the input DEF file passed as input to the --definput option */
-	char * iDefInput = nullptr;
-
 	/** File name of the input DSO file passed as input to the --elfinput option */
 	std::string iElfInput;
-
-	/** File name of the input E32 image passed as input to the --e32dump option */
-	char * iE32Input = nullptr;
-
-	/** File name of the DLL to be linked with passed as input to the --linkas option */
-	char * iLinkDLLName = nullptr;
 
 	/** Path name of the intermediate libraries passed as input to the --libpath option */
 	char * iLibPath = nullptr;
 
 	int iDumpOptions = 61; //TDumpFlags::EDumpDefaults
-	char *iFileDumpSubOptions = nullptr;
 
 	bool iSysDefOption = false;
 	char * iLogFileName = nullptr;

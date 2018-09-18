@@ -24,13 +24,12 @@
 
 // This must go before ParameterManager.h
 #define INCLUDE_CAPABILITY_NAMES
-#include <e32capability.h>
-
-#include "pl_common.h"
-#include "parametermanager.h"
-#include "errorhandler.h"
+#include "e32capability.h"
 
 #include "h_ver.h"
+#include "pl_common.h"
+#include "errorhandler.h"
+#include "parametermanager.h"
 
 using std::endl;
 using std::cerr;
@@ -798,7 +797,7 @@ This function returns the DEF file name that is passed as input through the --de
 */
 char * ParameterManager::DefInput()
 {
-	return iDefInput;
+	return iOptionArgs.defInFile;
 }
 
 /**
@@ -824,7 +823,7 @@ This function extracts the E32 image name that is passed as input through the --
 */
 char * ParameterManager::E32Input()
 {
-	return iE32Input;
+	return iOptionArgs.E32InFile;
 }
 
 /**
@@ -837,7 +836,7 @@ This function extracts the output DEF file name that is passed as input through 
 */
 char * ParameterManager::DefOutput()
 {
-	return iDefOutput;
+	return iOptionArgs.defOutFile;
 }
 
 /**
@@ -850,7 +849,7 @@ This function extracts the DSO file name that is passed as input through the --d
 */
 char * ParameterManager::DSOOutput()
 {
-	return iDSOOutput;
+	return iOptionArgs.dsoOutFile;
 }
 
 /**
@@ -863,7 +862,7 @@ This function extracts the E32 image output that is passed as input through the 
 */
 char * ParameterManager::E32ImageOutput()
 {
-	return iOutFileName;
+	return iOptionArgs.E32OutFile;
 }
 
 /**
@@ -890,7 +889,7 @@ that is passed as input through the --linkas option.
 */
 char * ParameterManager::LinkAsDLLName()
 {
-	return iLinkDLLName;
+	return iOptionArgs.linkAsOpt;
 }
 
 /**
@@ -930,7 +929,7 @@ This function extracts the E32 image dump options passed as input through the --
 */
 char * ParameterManager::FileDumpOptions()
 {
-	return iFileDumpSubOptions;
+	return iOptionArgs.fileDumpOpt;
 }
 
 /**
@@ -1278,7 +1277,7 @@ void ParameterManager::CheckOptions()
 
     if(E32Input() && !FileDumpOptions())
     {
-        SetFileDumpOptions("h");
+        iOptionArgs.fileDumpOpt = "h";
         return;
     }
 
@@ -1501,7 +1500,7 @@ Pointer to function ParameterManager::ParseDefInput returning void.
 DEFINE_PARAM_PARSER(ParameterManager::ParseDefInput)
 {
 	INITIALISE_PARAM_PARSER;
-	aPM->SetDefInput(aValue);
+	aPM->iOptionArgs.defInFile = aValue;
 }
 
 /**
@@ -1523,8 +1522,9 @@ Pointer to function ParameterManager::ParseElfInput returning void.
 */
 DEFINE_PARAM_PARSER(ParameterManager::ParseElfInput)
 {
-	INITIALISE_PARAM_PARSER;
-	aPM->SetElfInput(aValue);
+    INITIALISE_PARAM_PARSER;
+    if(aValue)
+        aPM->iElfInput = aValue;
 }
 
 /**
@@ -1547,7 +1547,7 @@ Pointer to function ParameterManager::ParseDefOutput returning void.
 DEFINE_PARAM_PARSER(ParameterManager::ParseDefOutput)
 {
 	INITIALISE_PARAM_PARSER;
-	aPM->SetDefOutput(aValue);
+	aPM->iOptionArgs.defOutFile = aValue;
 }
 
 /**
@@ -1569,8 +1569,8 @@ Pointer to function ParameterManager::ParseE32Input returning void.
 */
 DEFINE_PARAM_PARSER(ParameterManager::ParseE32ImageInput)
 {
-      INITIALISE_PARAM_PARSER;
-      aPM->SetE32Input(aValue);
+    INITIALISE_PARAM_PARSER;
+    aPM->iOptionArgs.E32InFile = aValue;
 }
 
 /**
@@ -1593,7 +1593,7 @@ Pointer to function ParameterManager::ParseOutput returning void.
 DEFINE_PARAM_PARSER(ParameterManager::ParseOutput)
 {
 	INITIALISE_PARAM_PARSER;
-	aPM->SetE32Output(aValue);
+	aPM->iOptionArgs.E32OutFile = aValue;
 }
 
 /**
@@ -2779,7 +2779,7 @@ Pointer to function ParameterManager::ParseDSOOutput returning void.
 DEFINE_PARAM_PARSER(ParameterManager::ParseDSOOutput)
 {
 	INITIALISE_PARAM_PARSER;
-	aPM->SetDSOOutput(aValue);
+	aPM->iOptionArgs.dsoOutFile = aValue;
 }
 
 /**
@@ -2925,8 +2925,8 @@ Pointer to function ParameterManager::ParseFileDump returning void.
 */
 DEFINE_PARAM_PARSER(ParameterManager::ParseFileDump)
 {
-      INITIALISE_PARAM_PARSER;
-      aPM->SetFileDumpOptions(aValue);
+    INITIALISE_PARAM_PARSER;
+    aPM->iOptionArgs.fileDumpOpt = aValue;
 }
 
 /**
@@ -2945,133 +2945,6 @@ void ParameterManager::SetTargetTypeName(ETargetType aTargetTypeVal)
 }
 
 /**
-This function sets the DEF file name that is passed as input through the --definput option and
-sets the flag if --definput option is passed in.
-
-@internalComponent
-@released
-
-@param aDefInputVal
-Name of the input DEF file if provided as input through --definput or 0.
-*/
-void ParameterManager::SetDefInput(char * aDefInputVal)
-{
-	iDefInput = aDefInputVal;
-}
-
-/**
-This function sets the DSO file name that is passed as input through the --dso option
-and sets the flag if the --dso option is passed in.
-
-@internalComponent
-@released
-
-@param aDSOOutputVal
-Name of the output DSO file if provided as input through --dso.
-*/
-void ParameterManager::SetDSOOutput(char * aDSOOutputVal)
-{
-    if(!aDSOOutputVal)
-        return;
-	iDSOOutput = aDSOOutputVal;
-}
-
-/**
-This function sets the Elf file name that is passed as input through the --elfinput option.
-
-@internalComponent
-@released
-
-@param aSetElfInput
-Name of the input Elf file if provided as input through --elfinput or 0.
-*/
-void ParameterManager::SetElfInput(char * aElfInputVal)
-{
-    if(aElfInputVal)
-        iElfInput = aElfInputVal;
-}
-
-/**
-This function sets the E32 name that is passed as input through the --e32dump option.
-
-@internalComponent
-@released
-
-@param aSetE32Input
-Name of the input E32 image if provided as input through --e32dump or 0.
-*/
-void ParameterManager::SetE32Input(char * aSetE32Input)
-{
-	iE32Input = aSetE32Input;
-}
-
-/**
-This function sets the E32 dump options that is passed as input through the --dump option.
-
-@internalComponent
-@released
-
-@param aSetFileDumpOptions
-Dump sub options passed to --dump option
-*/
-void ParameterManager::SetFileDumpOptions(char * aSetFileDumpOptions)
-{
-	iFileDumpSubOptions = aSetFileDumpOptions;
-
-	if (aSetFileDumpOptions)
-	{
-		iDumpOptions=0;
-		while (char c = *(aSetFileDumpOptions++))
-		{
-			if (c < 'a')
-				c += 'a'-'A';
-			switch(c)
-			{
-			case 'h': iDumpOptions |= EDumpHeader; break;
-			case 's': iDumpOptions |= EDumpSecurityInfo; break;
-			case 'c': iDumpOptions |= EDumpCode; break;
-			case 'd': iDumpOptions |= EDumpData; break;
-			case 'e': iDumpOptions |= EDumpExports; break;
-			case 'i': iDumpOptions |= EDumpImports; break;
-			case 'a': iDumpOptions |= EDumpAsm; break; //Dump the Assembler code
-			case 't': iDumpOptions |= EDumpSymbols;break;
-			default:
-				iDumpOptions=0;
-				return;
-			}
-		}
-	}
-}
-
-/**
-This function extracts the E32 image output that is passed as input through the --output option.
-
-@internalComponent
-@released
-
-@param aSetE32Output
-Name of the output E32 image output if provided as input through --output or 0.
-*/
-void ParameterManager::SetE32Output(char * aSetE32Output)
-{
-	iOutFileName = aSetE32Output;
-}
-
-/**
-This function sets the output DEF file name that is passed as input through the --defoutput option.
-
-@internalComponent
-@released
-
-@param aSetDefOutput
-Name of the output DEF file if provided as input through --defoutput or 0.
-*/
-void ParameterManager::SetDefOutput(char * aSetDefOutput)
-{
-	iDefOutput = aSetDefOutput;
-}
-
-/**
 This function sets the name of the DLL (that the DSO is to be linked with) that is passed
 as input through the --linkas option and sets the flag if the --linkas option is passed in.
 
@@ -3083,7 +2956,7 @@ The DLL name with which the DSO is to be linked with
 */
 void ParameterManager::SetLinkDLLName(char * aSetLinkDLLName)
 {
-	iLinkDLLName = aSetLinkDLLName;
+	iOptionArgs.linkAsOpt = aSetLinkDLLName;
 }
 
 /**
