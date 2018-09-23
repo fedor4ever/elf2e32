@@ -17,8 +17,8 @@
 //
 //
 
-#ifndef E32PRODUCER_H
-#define E32PRODUCER_H
+#ifndef E32PARSER_H
+#define E32PARSER_H
 
 class E32ImageHeader;
 class E32ImageHeaderJ;
@@ -72,4 +72,4 @@ uint32_t HdrFmtFromFlags(uint32_t flags);
 uint32_t ImpFmtFromFlags(uint32_t flags);
 size_t RoundUp(size_t value, size_t rounding = 4);
 
-#endif // E32PRODUCER_H
+#endif // E32PARSER_H

@@ -11,7 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters=' --capability=All-TCB --definput=&quot;tests\libcryptou.def&quot;  --defoutput=&quot;tests\tmp\out.(00).def&quot;  --elfinput=&quot;tests\libcrypto.dll&quot;  --output=&quot;tests\tmp\libcrypto-2.4.5.(0).dll&quot;  --libpath=&quot;D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib&quot;  --linkas=&quot;libcrypto{000a0000}.dll&quot;  --dso=&quot;tests\tmp\libcrypto{000a0000}.(0).dso&quot;  --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --dlldata --ignorenoncallable --debuggable --smpsafe --uncompressed' />
+				<Option parameters="--dump=i --e32input=tests\AlternateReaderRecogE32_BYTE.dll" />
 				<Compiler>
 					<Add option="-std=c++14" />
 					<Add option="-g -O0" />
@@ -29,7 +29,7 @@
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters='--capability=All-TCB --definput=&quot;tests\libcryptou.def&quot; --defoutput=&quot;tests\out.def&quot; --elfinput=&quot;tests\libcrypto.dll&quot; --output=&quot;tests\libcrypto-2.4.5.tst.dll&quot; --libpath=&quot;D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib&quot; --linkas=&quot;tests\libcrypto{000a0000}.dll&quot; --dso=&quot;tests\libcrypto{000a0000}.dso&quot; --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --dlldata --ignorenoncallable --debuggable --smpsafe --uncompressed' />
+				<Option parameters='--e32input=&quot;tests\AlternateReaderRecogE32SDK.dll&quot;' />
 				<Compiler>
 					<Add option="-O2" />
 					<Add directory="source" />
@@ -53,6 +53,7 @@
 			<Add option="-static" />
 		</Linker>
 		<Unit filename="include/cpudefs.h" />
+		<Unit filename="include/e32capability.h" />
 		<Unit filename="include/e32imageheaders.h" />
 		<Unit filename="include/elfdefs.h" />
 		<Unit filename="include/h_ver.h" />
@@ -64,12 +65,17 @@
 		<Unit filename="source/deffile.cpp" />
 		<Unit filename="source/deffile.h" />
 		<Unit filename="source/deflatecompress.cpp" />
+		<Unit filename="source/e32common.h" />
 		<Unit filename="source/e32exporttable.cpp" />
 		<Unit filename="source/e32exporttable.h" />
 		<Unit filename="source/e32imagefile.cpp">
 			<Option compiler="gcc" use="0" buildCommand="$compiler $options -save-temps $file" />
 		</Unit>
 		<Unit filename="source/e32imagefile.h" />
+		<Unit filename="source/e32info.cpp" />
+		<Unit filename="source/e32info.h" />
+		<Unit filename="source/e32parser.cpp" />
+		<Unit filename="source/e32parser.h" />
 		<Unit filename="source/elffilesupplied.cpp" />
 		<Unit filename="source/elffilesupplied.h" />
 		<Unit filename="source/errorhandler.cpp" />
@@ -100,8 +106,6 @@
 		<Unit filename="source/pl_elfimports.h" />
 		<Unit filename="source/pl_elflocalrelocation.cpp" />
 		<Unit filename="source/pl_elflocalrelocation.h" />
-		<Unit filename="source/pl_elfparser.cpp" />
-		<Unit filename="source/pl_elfparser.h" />
 		<Unit filename="source/pl_elfproducer.cpp" />
 		<Unit filename="source/pl_elfproducer.h" />
 		<Unit filename="source/pl_elfreader.cpp" />

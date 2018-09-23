@@ -22,6 +22,7 @@
 #include <stdlib.h>
 
 #include "message.h"
+#include "e32producer.h"
 #include "errorhandler.h"
 #include "elffilesupplied.h"
 #include "parametermanager.h"
@@ -62,6 +63,13 @@ int main(int argc, char** argv)
             Message::GetInstance()->CreateMessageFile(dumpMessageFile);
             return result;
 		}
+
+        if(Instance->E32Input() && Instance->E32ImageOutput()){
+            E32Producer *f = new E32Producer(Instance);
+            f->Run();
+            delete f;
+			return result;
+        }
 
         if (Instance->E32Input() || Instance->FileDumpOptions()){
             E32Info *f = new E32Info(Instance->FileDumpOptions(), Instance->E32Input());

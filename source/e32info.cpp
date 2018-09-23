@@ -615,7 +615,7 @@ void E32Info::Run()
                 SymbolInfo();
                 break;
             default:
-                throw Elf2e32Error(FILEOPENERROR, iFlags);
+                throw Elf2e32Error(INVALIDARGUMENTERROR, iFlags, "--dump");
         }
     }
 }
