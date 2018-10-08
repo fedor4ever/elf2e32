@@ -4,6 +4,7 @@
 #include "e32common.h"
 #include "e32parser.h"
 #include "e32producer.h"
+#include "errorhandler.h"
 #include "parametermanager.h"
 
 using std::ofstream;

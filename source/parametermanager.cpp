@@ -18,8 +18,8 @@
 //
 //
 
-#include <iostream>
 #include <cstring>
+#include <iostream>
 #include <stdlib.h>
 
 // This must go before ParameterManager.h
@@ -34,6 +34,7 @@
 using std::endl;
 using std::cerr;
 using std::vector;
+
 void ValidateDSOGeneration(ParameterManager *param);
 
 /** The short prefix '-' used for the command line options for the program */
@@ -58,7 +59,7 @@ Constructor for the ParameterManager.
 @param aArgv
  The listing of all the arguments
 */
-ParameterManager *ParameterManager::GetInstance(int aArgc, char** aArgv)
+ParameterManager *ParameterManager::GetInstance(int aArgc, char** aArgv, E32ImageHeader* aHdr)
 {
     if(!iInstance)
     {
@@ -67,6 +68,7 @@ ParameterManager *ParameterManager::GetInstance(int aArgc, char** aArgv)
         iInstance->iArgv.assign(aArgv, aArgv + aArgc);
         iInstance->iCapability.iCaps[0] = 0;
         iInstance->iCapability.iCaps[1] = 0;
+        iInstance->iE32Header = aHdr;
     }
     return iInstance;
 }
@@ -83,6 +85,11 @@ ParameterManager::~ParameterManager()
 {
 	delete iImageLocation;
 }
+
+E32ImageHeader* ParameterManager::GetE32Header(){
+    return iE32Header;
+}
+
 
 /**
 Function to check if the given value is a valid number (decimal value)
@@ -628,32 +635,6 @@ char * ParameterManager::Path(char * aPathName)
 }
 
 /**
-This function finds out if the --sid option is passed to the program.
-
-@internalComponent
-@released
-
-@return True if --sid option is passed in or False.
-*/
-bool ParameterManager::SecureIdOption()
-{
-	return iSecureIDOption;
-}
-
-/**
-This function finds out if the --vid option is passed to the program.
-
-@internalComponent
-@released
-
-@return True if --vid option is passed in or False.
-*/
-bool ParameterManager::VendorIdOption()
-{
-	return iVendorIDOption;
-}
-
-/**
 This function finds out if the --log option is passed to the program.
 
 @internalComponent
@@ -661,8 +642,7 @@ This function finds out if the --log option is passed to the program.
 
 @return True if --log option is passed in or False.
 */
-bool ParameterManager::LogFileOption()
-{
+bool ParameterManager::LogFileOption(){
 	return iLogFileName;
 }
 
@@ -674,24 +654,21 @@ This function finds out if the --messagefile option is passed to the program.
 
 @return True if --messagefile option is passed in or False.
 */
-bool ParameterManager::MessageFileOption()
-{
+bool ParameterManager::MessageFileOption(){
 	return iMessageFileName;
 }
 
 /**
 This function finds out if the --fixedaddress option is passed to the program.
-
+Valid only for EXE targets
 @internalComponent
 @released
 
 @return True if --fixedaddress option is passed in or False.
 */
-bool ParameterManager::FixedAddress()
-{
+bool ParameterManager::FixedAddress(){
 	return iFixedAddress;
 }
-
 
 /**
 This function finds out if the --compressionmethod option is passed to the program.
@@ -701,11 +678,9 @@ This function finds out if the --compressionmethod option is passed to the progr
 
 @return UId if --compressionmethod option is passed in or UId of deflate compressor (compatibility).
 */
-UINT ParameterManager::CompressionMethod()
-{
-	return iCompressionMethod;
+UINT ParameterManager::CompressionMethod(){
+	return iE32Header->iCompressionType;
 }
-
 
 /**
 This function finds out if the --unfrozen option is passed to the program.
@@ -715,8 +690,7 @@ This function finds out if the --unfrozen option is passed to the program.
 
 @return True if --unfrozen option is passed in or False.
 */
-bool ParameterManager::Unfrozen()
-{
+bool ParameterManager::Unfrozen(){
 	return iUnfrozen;
 }
 
@@ -728,8 +702,7 @@ This function finds out if the --ignorenoncallable option is passed to the progr
 
 @return True if --ignorenoncallable option is passed in or False.
 */
-bool ParameterManager::IgnoreNonCallable()
-{
+bool ParameterManager::IgnoreNonCallable(){
 	return iIgnoreNonCallable;
 }
 
@@ -741,8 +714,7 @@ This function finds out if the --dlldata option is passed to the program.
 
 @return True if --dlldata option is passed in or False.
 */
-bool ParameterManager::HasDllData()
-{
+bool ParameterManager::HasDllData(){
  	return iDllData;
 }
 
@@ -755,8 +727,7 @@ This function finds out if the --callentry option is passed to the program.
 
 @return True if --callentry option is passed in or False.
 */
-bool ParameterManager::CallEntryPoint()
-{
+bool ParameterManager::CallEntryPoint(){
 	return iCallEntryPoint;
 }
 
@@ -768,8 +739,7 @@ This function finds out if the --priority option is passed to the program.
 
 @return True if --priority option is passed in or False.
 */
-bool ParameterManager::PriorityOption()
-{
+bool ParameterManager::PriorityOption(){
 	return iPriorityOption;
 }
 
@@ -781,8 +751,7 @@ This function finds out if the --sysdef option is passed to the program.
 
 @return True if --sysdef option is passed in or False.
 */
-bool ParameterManager::SysDefOption()
-{
+bool ParameterManager::SysDefOption(){
 	return iSysDefOption;
 }
 
@@ -795,8 +764,7 @@ This function returns the DEF file name that is passed as input through the --de
 
 @return the name of the input DEF file if provided as input through --definput or nullptr.
 */
-char * ParameterManager::DefInput()
-{
+char * ParameterManager::DefInput(){
 	return iOptionArgs.defInFile;
 }
 
@@ -808,8 +776,7 @@ This function extracts the Elf file name that is passed as input through the --e
 
 @return the name of the input Elf file if provided as input through --elfinput or nullptr.
 */
-const string& ParameterManager::ElfInput()
-{
+const string& ParameterManager::ElfInput(){
 	return iElfInput;
 }
 
@@ -821,8 +788,7 @@ This function extracts the E32 image name that is passed as input through the --
 
 @return the name of the input E32 image if provided as input through --e32input or nullptr.
 */
-char * ParameterManager::E32Input()
-{
+char * ParameterManager::E32Input(){
 	return iOptionArgs.E32InFile;
 }
 
@@ -834,8 +800,7 @@ This function extracts the output DEF file name that is passed as input through 
 
 @return the name of the output DEF file if provided as input through --defoutput or nullptr.
 */
-char * ParameterManager::DefOutput()
-{
+char * ParameterManager::DefOutput(){
 	return iOptionArgs.defOutFile;
 }
 
@@ -847,8 +812,7 @@ This function extracts the DSO file name that is passed as input through the --d
 
 @return the name of the output DSO file if provided as input through --dso or nullptr.
 */
-char * ParameterManager::DSOOutput()
-{
+char * ParameterManager::DSOOutput(){
 	return iOptionArgs.dsoOutFile;
 }
 
@@ -860,8 +824,7 @@ This function extracts the E32 image output that is passed as input through the 
 
 @return the name of the output E32 image output if provided as input through --output or nullptr.
 */
-char * ParameterManager::E32ImageOutput()
-{
+char * ParameterManager::E32ImageOutput(){
 	return iOptionArgs.E32OutFile;
 }
 
@@ -873,8 +836,7 @@ This function extracts the target type that is passed as input through the --tar
 
 @return the name of the input target type if provided as input through --targettype or nullptr.
 */
-ETargetType ParameterManager::TargetTypeName()
-{
+ETargetType ParameterManager::TargetTypeName(){
 	return iTargetTypeName;
 }
 
@@ -887,8 +849,7 @@ that is passed as input through the --linkas option.
 
 @return the name of the DLL name to be linked with if provided as input through --linkas or nullptr.
 */
-char * ParameterManager::LinkAsDLLName()
-{
+char * ParameterManager::LinkAsDLLName(){
 	return iOptionArgs.linkAsOpt;
 }
 
@@ -901,8 +862,7 @@ that is passed as input through the --libpath option.
 
 @return the path if provided as input through --libpath or 0.
 */
-ParameterManager::LibSearchPaths& ParameterManager::LibPath()
-{
+ParameterManager::LibSearchPaths& ParameterManager::LibPath(){
 	return iLibPathList;
 }
 
@@ -914,8 +874,7 @@ This function extracts the total number of predefined symbols passed to --sysdef
 
 @return the total number of predefined symbols passed through --sysdef or 0.
 */
-int ParameterManager::SysDefCount()
-{
+int ParameterManager::SysDefCount(){
 	return iSysDefCount;
 }
 
@@ -927,93 +886,8 @@ This function extracts the E32 image dump options passed as input through the --
 
 @return the name of the dump options if provided as input through --dump or nullptr.
 */
-char * ParameterManager::FileDumpOptions()
-{
+char * ParameterManager::FileDumpOptions(){
 	return iOptionArgs.fileDumpOpt;
-}
-
-/**
-This function extracts the E32 image dump options in integer value passed as character input
-through the --dump option.
-
-@internalComponent
-@released
-
-@return the name of the dump options in integer.
-*/
-int ParameterManager::DumpOptions()
-{
-      return iDumpOptions;
-}
-
-/**
-This function gets the first UID in a compound identifier (UID type) that is passed as
-input through the --uid1 option.UID1 differentiates the executables, DLLs and file stores.
-
-@internalComponent
-@released
-
-@return the System level identifier if provided as input through --uid1 or 0.
-*/
-UINT ParameterManager::Uid1()
-{
-	return iUID1;
-}
-
-/**
-This function gets the UID2 that is passed as input through the --uid2 option.
-UID2 differentiates the static interface (shared library) and polymorphic interface
-(application or plug-in framework) DLLs.
-
-@internalComponent
-@released
-
-@return the Interface identifier if provided as input through --uid2 or 0.
-*/
-UINT ParameterManager::Uid2()
-{
-	return iUID2;
-}
-
-/**
-This function gets the UID3 that is passed as input through the --uid3 option. UID3
-is shared by all objects belonging to a given program, including library DLLs if any,
-framework DLLs, and all documents.
-
-@internalComponent
-@released
-
-@return the Project identifier if provided as input through --uid3 or 0.
-*/
-UINT ParameterManager::Uid3()
-{
-	return iUID3;
-}
-
-/**
-This function gets the Secure Id that is passed as input through the --sid option.
-
-@internalComponent
-@released
-
-@return the Secure Id if provided as input through --sid or 0.
-*/
-UINT ParameterManager::SecureId()
-{
-	return iSecureID;
-}
-
-/**
-This function gets the Vendor Id that is passed as input through the --vid option.
-
-@internalComponent
-@released
-
-@return the Vendor Id if provided as input through --vid or 0.
-*/
-UINT ParameterManager::VendorId()
-{
-	return iVendorID;
 }
 
 /**
@@ -1024,8 +898,7 @@ This function gets the capability value passed to '--capability' option.
 
 @return the capability value passed to '--capability' option.
 */
-SCapabilitySet ParameterManager::Capability()
-{
+SCapabilitySet ParameterManager::Capability(){
 	return iCapability;
 }
 
@@ -1037,8 +910,7 @@ This function extracts the Log file name that is passed as input through the --l
 
 @return the name of the Log file if provided as input through --log or nullptr.
 */
-char * ParameterManager::LogFile()
-{
+char * ParameterManager::LogFile(){
 	return iLogFileName;
 }
 
@@ -1050,8 +922,7 @@ This function extracts the Message file name that is passed as input through the
 
 @return the name of the Message file if provided as input through --messagefile or nullptr.
 */
-char * ParameterManager::MessageFile()
-{
+char * ParameterManager::MessageFile(){
 	return iMessageFileName;
 }
 
@@ -1063,8 +934,7 @@ This function extracts the Message file name that is passed as input through the
 
 @return the name of the Message file to be dumped if provided as input through --dumpmessagefile or nullptr.
 */
-char * ParameterManager::DumpMessageFile()
-{
+char * ParameterManager::DumpMessageFile(){
 	return iDumpMessageFileName;
 }
 
@@ -1077,8 +947,7 @@ the --sysdef option.
 
 @return the list of predefined symbols that is passed as input through the --sysdef option.
 */
-ParameterManager::Sys ParameterManager::SysDefSymbols(int sysdefcount)
-{
+ParameterManager::Sys ParameterManager::SysDefSymbols(int sysdefcount){
 	return iSysDefSymbols[sysdefcount];
 }
 
@@ -1090,9 +959,8 @@ This function extracts the heap commited size passed as input to --heap option.
 
 @return the heap commited size passed as input to --heap option.
 */
-uint32_t ParameterManager::HeapCommittedSize()
-{
- 	return iHeapCommittedSize;
+uint32_t ParameterManager::HeapCommittedSize(){
+ 	return iE32Header->iHeapSizeMin;
 }
 
 /**
@@ -1103,9 +971,8 @@ This function extracts the heap reserved size passed as input to --heap option.
 
 @return the heap reserved size passed as input to --heap option.
 */
-uint32_t ParameterManager::HeapReservedSize()
-{
- 	return iHeapReservedSize;
+uint32_t ParameterManager::HeapReservedSize(){
+ 	return iE32Header->iHeapSizeMax;
 }
 
 /**
@@ -1116,9 +983,8 @@ This function extracts the stack commited size passed as input to --stack option
 
 @return the stack commited size passed as input to --stack option.
 */
-uint32_t ParameterManager::StackCommittedSize()
-{
- 	return iStackCommittedSize;
+uint32_t ParameterManager::StackCommittedSize(){
+ 	return iE32Header->iStackSize;
 }
 
 /**
@@ -1129,8 +995,7 @@ This function extracts the priority value passed as input to --priority option.
 
 @return the priority value passed as input to --priority option
 */
-TProcessPriority ParameterManager::Priority()
-{
+TProcessPriority ParameterManager::Priority(){
 	return iPriorityVal;
 }
 
@@ -1142,8 +1007,7 @@ This function extracts the version information passed as input to --version opti
 
 @return the version information passed as input to --version option.
 */
-UINT ParameterManager::Version()
-{
+UINT ParameterManager::Version(){
 	return iVersion;
 }
 
@@ -1155,8 +1019,7 @@ This function extracts the fpu information passed as input to the --fpu option.
 
 @return the fpu information passed as input to the --fpu option.
 */
-UINT ParameterManager::FPU()
-{
+UINT ParameterManager::FPU(){
 	return iFPU;
 }
 
@@ -1164,8 +1027,7 @@ UINT ParameterManager::FPU()
 @internalComponent
 @released
 */
-bool ParameterManager::IsCodePaged()
-{
+bool ParameterManager::IsCodePaged(){
 	return iCodePaged;
 }
 
@@ -1173,8 +1035,7 @@ bool ParameterManager::IsCodePaged()
 @internalComponent
 @released
 */
-bool ParameterManager::IsCodeUnpaged()
-{
+bool ParameterManager::IsCodeUnpaged(){
 	return iCodeUnpaged;
 }
 
@@ -1182,8 +1043,7 @@ bool ParameterManager::IsCodeUnpaged()
 @internalComponent
 @released
 */
-bool ParameterManager::IsCodeDefaultPaged()
-{
+bool ParameterManager::IsCodeDefaultPaged(){
 	return iCodeDefaultPaged;
 }
 
@@ -1191,8 +1051,7 @@ bool ParameterManager::IsCodeDefaultPaged()
 @internalComponent
 @released
 */
-bool ParameterManager::IsDataPaged()
-{
+bool ParameterManager::IsDataPaged(){
 	return iDataPaged;
 }
 
@@ -1200,8 +1059,7 @@ bool ParameterManager::IsDataPaged()
 @internalComponent
 @released
 */
-bool ParameterManager::IsDataUnpaged()
-{
+bool ParameterManager::IsDataUnpaged(){
 	return iDataUnpaged;
 }
 
@@ -1209,8 +1067,7 @@ bool ParameterManager::IsDataUnpaged()
 @internalComponent
 @released
 */
-bool ParameterManager::IsDataDefaultPaged()
-{
+bool ParameterManager::IsDataDefaultPaged(){
 	return iDataDefaultPaged;
 }
 
@@ -1222,8 +1079,7 @@ This function finds out if the --excludeunwantedexports option is passed to the 
 
 @return true if --excludeunwantedexports option is passed in or False.
 */
-bool ParameterManager::ExcludeUnwantedExports()
-{
+bool ParameterManager::ExcludeUnwantedExports(){
 	return iExcludeUnwantedExports;
 }
 
@@ -1235,8 +1091,7 @@ This function finds out if the --customdlltarget option is passed to the program
 
 @return true if --customdlltarget option is passed in or False.
 */
-bool ParameterManager::IsCustomDllTarget()
-{
+bool ParameterManager::IsCustomDllTarget(){
 	return iCustomDllTarget;
 }
 
@@ -1248,8 +1103,7 @@ This function extracts the SymNamedLookup information passed as input to the --n
 
 @return the namedlookup information passed as input to the --namedlookup option.
 */
-bool ParameterManager::SymNamedLookup()
-{
+bool ParameterManager::SymNamedLookup(){
 	return iSymNamedLookup;
 }
 
@@ -1261,8 +1115,7 @@ This function determines if the -debuggable option is passed to the program.
 
 @return true if --debuggable is passed in or False.
 */
-bool ParameterManager::IsDebuggable()
-{
+bool ParameterManager::IsDebuggable(){
 	return iDebuggable;
 }
 
@@ -1339,6 +1192,10 @@ void ParameterManager::CheckOptions()
 		}
 	}
 
+	uint32_t UID1 = iE32Header->iUid1, UID2 = iE32Header->iUid2, UID3 = iE32Header->iUid3;
+	if(!iSecInfo.iSecureId)
+        iSecInfo.iSecureId = UID3;
+
 	switch(iTargetType)
 	{
 	case ETargetTypeNotSet:
@@ -1356,7 +1213,7 @@ void ParameterManager::CheckOptions()
 		if (!E32ImageOutput())
 			throw Elf2e32Error(NOARGUMENTERROR,"--output");
 
-		if(iUID1 != KDynamicLibraryUidValue) //< guard against wrong uids
+		if(UID1 != KDynamicLibraryUidValue) //< guard against wrong uids
 		{
 			cerr << "********************\n";
 			cerr << "Wrong UID1\n";
@@ -1364,21 +1221,21 @@ void ParameterManager::CheckOptions()
 			cerr << "********************\n";
 		}
 		SetUID1(KDynamicLibraryUidValue);
-		if(!iUID2)
+		if(!UID2)
 		{
 			cerr << "********************\n";
 			cerr << "missed value for UID2\n";
 			cerr << "********************\n";
 		}
-		if(iSSTDDll) SetUID2(0x20004C45); // only that uid2 accepted for STDDLL & STDEXE
-		if(!iUID3) cerr << "Missed --uid3 option!\n";
+		if(iSSTDDll) SetUID2(KSTDTargetUidValue); // only that uid2 accepted for STDDLL & STDEXE
+		if(!UID3) cerr << "Missed --uid3 option!\n";
 		break;
 	case EExe:
 		if (ElfInput().empty())
 			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--elfinput");
 		if (!E32ImageOutput())
 			throw Elf2e32Error(NOARGUMENTERROR,"--output");
-		if(iUID1 != KExecutableImageUidValue)
+		if(UID1 != KExecutableImageUidValue)
 		{
 			cerr << "********************\n";
 			cerr << "Wrong UID1\n";
@@ -1386,14 +1243,14 @@ void ParameterManager::CheckOptions()
 			cerr << "********************\n";
 		}
 		SetUID1(KExecutableImageUidValue);
-		if(!iUID3) cerr << "Missed --uid3 option!\n";
+		if(!UID3) cerr << "Missed --uid3 option!\n";
 		break;
 	case EPolyDll:
 		if (ElfInput().empty())
 			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--elfinput");
 		if (!E32ImageOutput())
 			throw Elf2e32Error(NOARGUMENTERROR,"--output");
-		if(iUID1 != KDynamicLibraryUidValue)
+		if(UID1 != KDynamicLibraryUidValue)
 		{
 			cerr << "********************\n";
 			cerr << "Wrong UID1\n";
@@ -1401,8 +1258,8 @@ void ParameterManager::CheckOptions()
 			cerr << "********************\n";
 		}
 		SetUID1(KDynamicLibraryUidValue);
-		if(!iUID2) cerr << "Missed --uid2 option!\n";
-		if(!iUID3) cerr << "Missed --uid3 option!\n";
+		if(!UID2) cerr << "Missed --uid2 option!\n";
+		if(!UID3) cerr << "Missed --uid3 option!\n";
 		break;
 	case EExexp:
 		if (ElfInput().empty())
@@ -1412,7 +1269,7 @@ void ParameterManager::CheckOptions()
 		if (!E32ImageOutput())
 			throw Elf2e32Error(NOARGUMENTERROR,"--output");
 
-		if(iUID1 != KExecutableImageUidValue)
+		if(UID1 != KExecutableImageUidValue)
 		{
 			cerr << "********************\n";
 			cerr << "Wrong UID1\n";
@@ -1420,15 +1277,15 @@ void ParameterManager::CheckOptions()
 			cerr << "********************\n";
 		}
 		SetUID1(KExecutableImageUidValue);
-		if(!iUID2) cerr << "Missed --uid2 option!\n";
-		if(!iUID3) cerr << "Missed --uid3 option!\n";
+		if(!UID2) cerr << "Missed --uid2 option!\n";
+		if(!UID3) cerr << "Missed --uid3 option!\n";
 		break;
 	case EStdExe:
 		if (ElfInput().empty())
 			throw Elf2e32Error(NOREQUIREDOPTIONERROR,"--elfinput");
 		if (!E32ImageOutput())
 			throw Elf2e32Error(NOARGUMENTERROR,"--output");
-		if(iUID1 != KExecutableImageUidValue)
+		if(UID1 != KExecutableImageUidValue)
         {
 			cerr << "********************\n";
 			cerr << "Wrong UID1\n";
@@ -1436,17 +1293,22 @@ void ParameterManager::CheckOptions()
 			cerr << "********************\n";
         }
 		SetUID1(KExecutableImageUidValue);
-		SetUID2(0x20004C45);
+		SetUID2(KSTDTargetUidValue);
 
-		if(!iUID3) cerr << "Missed --uid3 option!\n";
+		if(!UID3) cerr << "Missed --uid3 option!\n";
 		break;
 	default:
 		break;
 	}
 }
 
-bool ParameterManager::IsSmpSafe()
+SSecurityInfo* ParameterManager::GetSSecurityInfo()
 {
+    return &iSecInfo;
+}
+
+
+bool ParameterManager::IsSmpSafe(){
 	return iSmpSafe;
 }
 
@@ -1902,7 +1764,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseFixedAddress)
 {
 	INITIALISE_PARAM_PARSER;
 	CheckInput(aValue, "--fixedaddress");
-	aPM->SetFixedAddress(true);
+	aPM->iFixedAddress = true;
 }
 
 /**
@@ -2050,7 +1912,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseAllowDllData)
 {
 	INITIALISE_PARAM_PARSER;
 	CheckInput(aValue, "--dlldata");
-	aPM->SetDllData(true);
+	aPM->iDllData = true;
 }
 
 static const ParameterManager::PriorityValueDesc PriorityNames[] =
@@ -2351,7 +2213,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseHeap)
 		if (!(GetUInt(committed, committedval) && GetUInt(reserved, reservedval)))
 			throw Elf2e32Error(INVALIDARGUMENTERROR, aValue, "heap");
 	}
-	aPM->SetHeapCommittedSize(committed);
+	aPM->iE32Header->iHeapSizeMin = committed;
 	aPM->SetHeapReservedSize(reserved);
 }
 
@@ -2954,8 +2816,7 @@ as input through the --linkas option and sets the flag if the --linkas option is
 @param aSetLinkDLLName
 The DLL name with which the DSO is to be linked with
 */
-void ParameterManager::SetLinkDLLName(char * aSetLinkDLLName)
-{
+void ParameterManager::SetLinkDLLName(char * aSetLinkDLLName){
 	iOptionArgs.linkAsOpt = aSetLinkDLLName;
 }
 
@@ -2968,8 +2829,7 @@ This function sets the priority value.
 @param anewVal
 priority value passed in to --priority option.
 */
-void ParameterManager::SetPriority(TProcessPriority anewVal)
-{
+void ParameterManager::SetPriority(TProcessPriority anewVal){
 	iPriorityOption = true;
 	iPriorityVal = anewVal;
 }
@@ -2983,8 +2843,7 @@ This function sets the capability value.
 @param anewVal
 Capability value passed in to --capability option.
 */
-void ParameterManager::SetCapability(unsigned int anewVal)
-{
+void ParameterManager::SetCapability(unsigned int anewVal){
 	iCapability[0] = anewVal;
 }
 
@@ -2997,8 +2856,7 @@ This function sets the capability value.
 @param anewVal
 Capability value passed in to --capability option.
 */
-void ParameterManager::SetCapability(SCapabilitySet & anewVal)
-{
+void ParameterManager::SetCapability(SCapabilitySet & anewVal){
 	iCapability = anewVal;
 }
 
@@ -3032,8 +2890,7 @@ This function sets the output LOG file name that is passed as input through the 
 @param aSetLogFile
 Name of the output LOG file if provided as input through --log or 0.
 */
-void ParameterManager::SetLogFile(char * aSetLogFile)
-{
+void ParameterManager::SetLogFile(char * aSetLogFile){
 	iLogFileName = aSetLogFile;
 }
 
@@ -3046,8 +2903,7 @@ This function sets the Message file name that is passed as input through the --m
 @param aMessageFile
 Name of the Message file if provided as input through --messagefile or 0.
 */
-void ParameterManager::SetMessageFile(char * aMessageFile)
-{
+void ParameterManager::SetMessageFile(char * aMessageFile){
 	iMessageFileName = aMessageFile;
 }
 
@@ -3071,20 +2927,6 @@ void ParameterManager::SetDumpMessageFile(char * aDumpMessageFile)
 	}
 }
 
-/**
-This function sets iFixedAddress if --fixedaddress is passed in.
-
-@internalComponent
-@released
-
-@param aVal
-True if --fixedaddress is passed in.
-*/
-void ParameterManager::SetFixedAddress(bool aSetFixedAddress)
-{
-	iFixedAddress = aSetFixedAddress;
-}
-
 
 /**
 This function sets iCompressionMethod.
@@ -3092,12 +2934,9 @@ This function sets iCompressionMethod.
 @internalComponent
 @released
 
-@param aVal
-True if --uncompressed is passed in.
 */
-void ParameterManager::SetCompressionMethod(UINT aCompressionMethod)
-{
-	iCompressionMethod = aCompressionMethod;
+void ParameterManager::SetCompressionMethod(UINT aCompressionMethod){
+	iE32Header->iCompressionType = aCompressionMethod;
 }
 
 
@@ -3110,8 +2949,7 @@ This function sets iCallEntryPoint if --callentry is passed in.
 @param aVal
 True if --callentry is passed in.
 */
-void ParameterManager::SetCallEntryPoint(bool aSetCallEntryPoint)
-{
+void ParameterManager::SetCallEntryPoint(bool aSetCallEntryPoint){
 	iCallEntryPoint = aSetCallEntryPoint;
 }
 
@@ -3141,7 +2979,7 @@ UID1 passed to '--uid1' option.
 */
 void  ParameterManager::SetUID1(UINT aUID1)
 {
-	iUID1 = aUID1;
+	iE32Header->iUid1 = aUID1;
 }
 
 /**
@@ -3155,7 +2993,7 @@ UID2passed to '--uid2' option.
 */
 void  ParameterManager::SetUID2(UINT aUID2)
 {
-	iUID2 = aUID2;
+	iE32Header->iUid2 = aUID2;
 }
 
 /**
@@ -3169,7 +3007,7 @@ UID3 passed to '--uid3' option.
 */
 void  ParameterManager::SetUID3(UINT aUID3)
 {
-	iUID3 = aUID3;
+	iE32Header->iUid3 = aUID3;
 }
 
 /**
@@ -3181,10 +3019,8 @@ This function sets the Secure ID passed to '--sid' option.
 @param aSetSecureID
 Secure ID passed to '--sid' option.
 */
-void  ParameterManager::SetSecureId(UINT aSetSecureID)
-{
-	iSecureIDOption = true;
-	iSecureID = aSetSecureID;
+void  ParameterManager::SetSecureId(UINT aSetSecureID){
+	iSecInfo.iSecureId = aSetSecureID;
 }
 
 /**
@@ -3196,24 +3032,8 @@ This function sets the Vendor ID passed to '--vid' option.
 @param aSetVendorID
 Vendor ID passed to '--vid' option.
 */
-void  ParameterManager::SetVendorId(UINT aSetVendorID)
-{
-	iVendorIDOption = true;
-	iVendorID = aSetVendorID;
-}
-
-/**
-This function sets the heap committed size passed to '--heap' option.
-
-@internalComponent
-@released
-
-@param aSetHeapCommittedSize
-stack committed size passed to '--heap' option.
-*/
-void  ParameterManager::SetHeapCommittedSize(UINT aSetHeapCommittedSize)
-{
-	iHeapCommittedSize = aSetHeapCommittedSize;
+void  ParameterManager::SetVendorId(UINT aSetVendorID){
+	iSecInfo.iVendorId = aSetVendorID;
 }
 
 /**
@@ -3227,7 +3047,7 @@ stack reserved size passed to '--heap' option.
 */
 void  ParameterManager::SetHeapReservedSize(UINT aSetHeapReservedSize)
 {
-	iHeapReservedSize = aSetHeapReservedSize;
+	iE32Header->iHeapSizeMax = aSetHeapReservedSize;
 }
 
 /**
@@ -3241,7 +3061,7 @@ stack committed size passed to '--stack' option.
 */
 void  ParameterManager::SetStackCommittedSize(UINT aSetStackCommittedSize)
 {
-	iStackCommittedSize = aSetStackCommittedSize;
+	iE32Header->iStackSize = aSetStackCommittedSize;
 }
 
 /**
@@ -3270,20 +3090,6 @@ True if --ignorenoncallable is passed in.
 void ParameterManager::SetIgnoreNonCallable(bool aVal)
 {
 	iIgnoreNonCallable = aVal;
-}
-
-/**
-This function sets iDllData if --dlldata is passed in.
-
-@internalComponent
-@released
-
-@param anewVal
-True if --dlldata is passed in.
-*/
-void ParameterManager::SetDllData(bool anewVal)
-{
-	iDllData = anewVal;
 }
 
 /**

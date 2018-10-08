@@ -1224,7 +1224,7 @@ This function looks up for a symbol in the static symbol table.
 @internalComponent
 @released
 */
-Elf32_Sym * ElfImage::LookupStaticSymbol(char * aName) {
+Elf32_Sym * ElfImage::LookupStaticSymbol(const char * aName) {
 	size_t nShdrs = iElfHeader->e_shnum;
 	if (!nShdrs)
         throw Elf2e32Error(NOSTATICSYMBOLSERROR, iElfInput);

@@ -125,8 +125,7 @@ class E32ImageFile {
         void AddExportDescription();
 
         void AllocateE32Image();
-        void FinalizeE32Image();
-        uint16_t GetCpuIdentifier();
+        void SetE32ImgHdrFields();
         uint32_t EntryPointOffset();
 
         bool AllowDllData();
@@ -140,20 +139,8 @@ class E32ImageFile {
         EEntryPointStatus ValidateEntryPoint();
 
         void SetUpExceptions();
-        void SetUids();
-        void SetSecureId();
-        void SetVendorId();
-        void SetCallEntryPoints();
-        void SetCapability();
         void SetPriority(bool isDllp);
         void SetFixedAddress(bool isDllp);
-        void SetVersion();
-        void SetCompressionType();
-        void SetFPU();
-        void SetPaged();
-        void SetSymbolLookup();
-        void SetDebuggable();
-        void SetSmpSafe();
 
         void UpdateHeaderCrc();
 

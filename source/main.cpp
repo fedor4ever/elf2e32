@@ -50,10 +50,11 @@ the appropriate target.
 int main(int argc, char** argv)
 {
     int result = EXIT_SUCCESS;
+    auto hdr = new E32ImageHeader();
 
     try
     {
-        Instance = ParameterManager::GetInstance(argc, argv);
+        Instance = ParameterManager::GetInstance(argc, argv, hdr);
         Instance->ParameterAnalyser();
 		Instance->CheckOptions();
 
@@ -64,15 +65,15 @@ int main(int argc, char** argv)
             return result;
 		}
 
+
         if(Instance->E32Input() && Instance->E32ImageOutput()){
-            E32Producer *f = new E32Producer(Instance);
+            auto f = new E32Producer(Instance);
             f->Run();
             delete f;
 			return result;
         }
-
         if (Instance->E32Input() || Instance->FileDumpOptions()){
-            E32Info *f = new E32Info(Instance->FileDumpOptions(), Instance->E32Input());
+            auto f = new E32Info(Instance->FileDumpOptions(), Instance->E32Input());
             f->Run();
             delete f;
 			return result;
@@ -92,6 +93,7 @@ int main(int argc, char** argv)
 		result = EXIT_FAILURE;
 		Message::GetInstance()->ReportMessage(ERROR, POSTLINKERERROR);
 	}
+	delete hdr;
 	return result;
 }
 

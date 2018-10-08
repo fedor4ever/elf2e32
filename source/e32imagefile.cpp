@@ -33,6 +33,7 @@
 #include <stdio.h>
 
 #include "h_ver.h"
+#include "e32flags.h"
 #include "checksum.h"
 #include "pl_elfimage.h"
 #include "pl_symbol.h"
@@ -231,7 +232,7 @@ void E32ImageFile::ProcessImports()
 	vector<int> aStrTabOffsets;
 	int numDlls = 0;
 	int aNumImports = 0;
-	bool aNamedLookup = iManager->SymNamedLookup();
+	bool namedLookup = iManager->SymNamedLookup();
 
 	ElfImports::ImportLibs aImportMap = iElfImage->GetImports();
 
@@ -263,7 +264,7 @@ void E32ImageFile::ProcessImports()
 	// This is the 'E32ImportSection' header - fill with 0 for the moment
 	aImportSection.push_back(0);
 
-	if( aNamedLookup ) {
+	if( namedLookup ) {
 		// These are the 0th ordinals imported into the import table, one
 		// entry for each DLL.
 		aImportSectionSize += (sizeof(uint32_t) * numDlls);
@@ -282,7 +283,7 @@ void E32ImageFile::ProcessImports()
 		int nImports = aImports.size();
 
 		// Take the additional 0th ordinal import into account
-		if( aNamedLookup ) nImports++;
+		if( namedLookup ) nImports++;
 
 		aImportSection.push_back(nImports);
 
@@ -329,7 +330,7 @@ void E32ImageFile::ProcessImports()
 			* aRelocPlace = (aReloc->iAddend<<16) | aOrdinal;
 		}
 
-		if( aNamedLookup ) {
+		if( namedLookup ) {
 			TUint aImportTabEntryPos = aImportSection.size();
 			// Keep track of the location of the entry
 			iImportTabLocations.push_back(aImportTabEntryPos);
@@ -566,7 +567,7 @@ void E32ImageFile::ConstructImage()
 {
 	InitE32ImageHeader();
 	ComputeE32ImageLayout();
-	FinalizeE32Image();
+	SetE32ImgHdrFields();
 	AllocateE32Image();
 }
 
@@ -623,6 +624,7 @@ This function initialises the E32 image header fields.
 void E32ImageFile::InitE32ImageHeader()
 {
 	iHdr = iUseCase->AllocateE32ImageHeader();
+	E32Flags *flg = new E32Flags(iManager);
 
 	iHdr->iUid1 = 0;
 	iHdr->iUid2 = 0;
@@ -635,7 +637,7 @@ void E32ImageFile::InitE32ImageHeader()
 	Int64 ltime = timeToInt64(time(nullptr));
 	iHdr->iTimeLo=(uint32)ltime;
 	iHdr->iTimeHi=(uint32)(ltime>>32);
-	iHdr->iFlags = KImageHdrFmt_V;
+	iHdr->iFlags=flg->Run();
 	// Confusingly, CodeSize means everything except writable data
 	iHdr->iCodeSize = 0;
 	iHdr->iDataSize = iElfImage->GetRWSize();
@@ -666,6 +668,7 @@ void E32ImageFile::InitE32ImageHeader()
 	iHdr->iExportDescType = iUseCase->GetExportDescType();
 	if (iHdr->iExportDescSize == 0) iHdr->iExportDesc[0] = 0;
 
+	delete flg;
 }
 
 /**
@@ -853,10 +856,10 @@ void E32ImageFile::AddExportDescription()
 
 bool E32ImageFile::AllowDllData()
 {
-    ETargetType type = iManager->TargetTypeName();
+    if(!iManager->HasDllData())
+        return false;
 
-    if(iManager->HasDllData())
-        return true;
+    ETargetType type = iManager->TargetTypeName();
 
     switch(type)
     {
@@ -873,15 +876,11 @@ This function sets the fields of the E32 image.
 @internalComponent
 @released
 */
-void E32ImageFile::FinalizeE32Image()
+void E32ImageFile::SetE32ImgHdrFields()
 {
+    E32ImageHeader *tmp = iManager->GetE32Header();
 	// Arrange a header for this E32 Image
-	iHdr->iCpuIdentifier = GetCpuIdentifier();
-	// Import format is ELF-derived
-	iHdr->iFlags |= KImageImpFmt_ELF;
-	// ABI is ARM EABI
-	iHdr->iFlags |= KImageABI_EABI;
-	iHdr->iFlags |= KImageEpt_Eka2;
+	iHdr->iCpuIdentifier = (uint16)ECpuArmV5;
 
 	bool isDllp = iUseCase->ImageIsDll();
 	if (isDllp)
@@ -889,10 +888,10 @@ void E32ImageFile::FinalizeE32Image()
 		iHdr->iFlags |= KImageDll;
 		if(!AllowDllData())
         {
-		if (iHdr->iDataSize)
-			throw Elf2e32Error(DLLHASINITIALISEDDATAERROR, iManager->ElfInput());
-		if (iHdr->iBssSize)
-			throw Elf2e32Error(DLLHASUNINITIALISEDDATAERROR, iManager->ElfInput());
+            if (iHdr->iDataSize)
+                throw Elf2e32Error(DLLHASINITIALISEDDATAERROR, iManager->ElfInput());
+            if (iHdr->iBssSize)
+                throw Elf2e32Error(DLLHASUNINITIALISEDDATAERROR, iManager->ElfInput());
         }
 
 	}
@@ -911,33 +910,23 @@ void E32ImageFile::FinalizeE32Image()
 		throw Elf2e32Error(ENTRYPOINTNOTSUPPORTEDERROR, iManager->ElfInput());
 
 	SetUpExceptions();
-	SetUids();
-	SetSecureId();
-	SetVendorId();
-	SetCallEntryPoints();
-	SetCapability();
+
+    iHdr->iUid1=tmp->iUid1;
+	iHdr->iUid2=tmp->iUid2;
+	iHdr->iUid3=tmp->iUid3;
+
+	SSecurityInfo *info = iManager->GetSSecurityInfo();
+	iHdr->iS.iSecureId = info->iSecureId;
+	iHdr->iS.iVendorId = info->iVendorId;
+
+	iHdr->iS.iCaps = iManager->Capability();
+
 	SetPriority(isDllp);
 	SetFixedAddress(isDllp);
-	SetVersion();
-	SetCompressionType();
-	SetFPU();
 
-	SetPaged();
-
-	SetSymbolLookup();
-	SetDebuggable();
-	SetSmpSafe();
+	iHdr->iModuleVersion = iManager->Version();
+	iHdr->iCompressionType = iManager->CompressionMethod();
 	UpdateHeaderCrc();
-}
-
-/**
-This function returns the CPU identifier for the E32 image header.
-@internalComponent
-@released
-*/
-uint16_t E32ImageFile::GetCpuIdentifier()
-{
-	return (uint16)ECpuArmV5;
 }
 
 /**
@@ -990,7 +979,7 @@ This function sets the exciption descriptor in the E32 image .
 */
 void E32ImageFile::SetUpExceptions()
 {
-	char * aExDescName = "Symbian$$CPP$$Exception$$Descriptor";
+	const char aExDescName[] = "Symbian$$CPP$$Exception$$Descriptor";
 	Elf32_Sym * aSym = iElfImage->LookupStaticSymbol(aExDescName);
 	if (aSym)
 	{
@@ -1006,64 +995,6 @@ void E32ImageFile::SetUpExceptions()
 		// The decriptor is always aligned on a 4 byte boundary.
 		iHdr->iExceptionDescriptor = (aSymVaddr - aROBase) | 0x00000001;
 	}
-}
-
-/**
-This function sets the UIDs of the E32 image .
-@internalComponent
-@released
-*/
-void E32ImageFile::SetUids()
-{
-	iHdr->iUid1=iManager->Uid1();
-	iHdr->iUid2=iManager->Uid2();
-	iHdr->iUid3=iManager->Uid3();
-}
-
-/**
-This function sets the secure ID of the E32 image as passed in the command line.
-@internalComponent
-@released
-*/
-void E32ImageFile::SetSecureId()
-{
-	if (iManager->SecureIdOption())
-		iHdr->iS.iSecureId = iManager->SecureId();
-	else
-		iHdr->iS.iSecureId = iManager->Uid3();
-}
-
-/**
-This function sets the vendor Id of the E32 image as passed in command line.
-@internalComponent
-@released
-*/
-void E32ImageFile::SetVendorId()
-{
-	iHdr->iS.iVendorId = iManager->VendorId();
-}
-
-/**
-This function sets the call entry point of the E32 image .
-@internalComponent
-@released
-*/
-void E32ImageFile::SetCallEntryPoints()
-{
-	if (iManager->CallEntryPoint())
-		iHdr->iFlags|=KImageNoCallEntryPoint;
-	else
-		iHdr->iFlags&=~KImageNoCallEntryPoint;
-}
-
-/**
-This function sets the capcbility of the E32 image as specified in the command line.
-@internalComponent
-@released
-*/
-void E32ImageFile::SetCapability()
-{
-	iHdr->iS.iCaps = iManager->Capability();
 }
 
 /**
@@ -1102,133 +1033,6 @@ void E32ImageFile::SetFixedAddress(bool isDllp)
 	}
 	else
 		iHdr->iFlags&=~KImageFixedAddressExe;
-}
-
-/**
-This function sets the version of the E32 image .
-@internalComponent
-@released
-*/
-void E32ImageFile::SetVersion()
-{
-	iHdr->iModuleVersion = iManager->Version();
-}
-
-/**
-This function sets the compression type of the E32 image .
-@internalComponent
-@released
-*/
-void E32ImageFile::SetCompressionType()
-{
-	if(iManager->CompressionMethod())
-		iHdr->iCompressionType = iManager->CompressionMethod();
-	else
-		iHdr->iCompressionType = KFormatNotCompressed;
-}
-
-/**
-This function sets the FPU type that the E32 image targets .
-@internalComponent
-@released
-*/
-void E32ImageFile::SetFPU()
-{
-	iHdr->iFlags &=~ KImageHWFloatMask;
-
-	if (iManager->FPU() == 1)
-		iHdr->iFlags |= KImageHWFloat_VFPv2;
-}
-
-/**
-This function sets the paging attribute in the E32 image.
-@internalComponent
-@released
-*/
-void E32ImageFile::SetPaged()
-{
-	// Code paging.
-
-	if ( iManager->IsCodePaged() )
-	{
-		iHdr->iFlags |= KImageCodePaged;
-		iHdr->iFlags &= ~KImageCodeUnpaged;
-	}
-	else if ( iManager->IsCodeUnpaged() )
-	{
-		iHdr->iFlags |= KImageCodeUnpaged;
-		iHdr->iFlags &= ~KImageCodePaged;
-	}
-	else if ( iManager->IsCodeDefaultPaged() )
-	{
-		iHdr->iFlags &= ~KImageCodePaged;
-		iHdr->iFlags &= ~KImageCodeUnpaged;
-	}
-
-	// Data paging.
-
-	if ( iManager->IsDataPaged() )
-	{
-		iHdr->iFlags |=  KImageDataPaged;
-		iHdr->iFlags &= ~KImageDataUnpaged;
-	}
-	else if ( iManager->IsDataUnpaged() )
-	{
-		iHdr->iFlags |=  KImageDataUnpaged;
-		iHdr->iFlags &= ~KImageDataPaged;
-	}
-	else if ( iManager->IsDataDefaultPaged() )
-	{
-		iHdr->iFlags &= ~KImageDataPaged;
-		iHdr->iFlags &= ~KImageDataUnpaged;
-	}
-}
-
-/**
-This function sets the Debuggable attribute in the E32 image.
-@internalComponent
-@released
-*/
-void E32ImageFile::SetDebuggable()
-{
-	if (iManager->IsDebuggable() == true)
-	{
-		iHdr->iFlags |= KImageDebuggable;
-	}
-	else
-	{
-		iHdr->iFlags &= ~KImageDebuggable;
-	}
-}
-
-
-void E32ImageFile::SetSmpSafe()
-{
-	if ( iManager->IsSmpSafe() )
-	{
-		iHdr->iFlags |= KImageSMPSafe;
-	}
-	else
-	{
-		iHdr->iFlags &= ~KImageSMPSafe;
-	}
-}
-
-/**
-This function sets the named symbol-lookup attribute in the E32 image.
-@internalComponent
-@released
-*/
-void E32ImageFile::SetSymbolLookup()
-{
-	if(iManager->SymNamedLookup())
-	{
-		iHdr->iFlags |= KImageNmdExpData;
-	}
-	else
-	{
-		iHdr->iFlags &= ~KImageNmdExpData;
-	}
 }
 
 /**
@@ -1293,10 +1097,10 @@ TUidType::TUidType(TUid aUid1,TUid aUid2,TUid aUid3)
 
 // needed by E32ImageHeaderV::ValidateHeader...
 TCheckedUid::TCheckedUid(const TUidType& aUidType)
-	{
+{
     iType = aUidType;
     iCheck = ((TE32ImageUids*)this)->Check();
-	}
+}
 
 /**
 This function updates the CRC of the E32 Image.
@@ -1386,15 +1190,15 @@ bool E32ImageFile::WriteImage(const char * aName)
 			os->write(iE32Image, aHeaderSize);
 
 			// Compress and write out code part
-			int srcStart = GetExtendedE32ImageHeaderSize();
-			CompressPages( (TUint8*)iE32Image + srcStart, iHdr->iCodeSize, *os);
+			int offset = GetExtendedE32ImageHeaderSize();
+			CompressPages( (TUint8*)iE32Image + offset, iHdr->iCodeSize, *os);
 
 
 			// Compress and write out data part
-			srcStart += iHdr->iCodeSize;
-			int srcLen = GetE32ImageSize() - srcStart;
+			offset += iHdr->iCodeSize;
+			int srcLen = GetE32ImageSize() - offset;
 
-			CompressPages((TUint8*)iE32Image + srcStart, srcLen, *os);
+			CompressPages((TUint8*)iE32Image + offset, srcLen, *os);
 
 		}
 		else if (compression == 0)
@@ -1431,35 +1235,6 @@ E32ImageFile::~E32ImageFile()
 }
 
 int  DecompressPages(TUint8 * bytes, ifstream& is);
-
-#ifdef __LINUX__
-#include <sys/stat.h>
-/**
-Simple function uses stdlib fstat to obtain the size of the file.
-@param aFileName - e32 image file name
-@internalComponent
-@released
-*/
-int GetFileSize(const char* aFileName) {
-    // Open the file the old-fashioned way :-)
-    struct stat fileInfo;
-    if(stat(aFileName,&fileInfo)!=0) {
-        throw FileError(FILEOPENERROR,(char *)aFileName);
-    }
-    off_t fileSize = fileInfo.st_size;
-    return fileSize;
-}
-#else
-int GetFileSize(const char* aFileName) {
-    _finddata_t fileinfo;
-	int ret=_findfirst((char *)aFileName,&fileinfo);
-	if (ret==-1)
-	{
-		throw Elf2e32Error(FILEOPENERROR, aFileName);
-	}
-    return fileinfo.size;
-}
-#endif
 
 void E32ImageFile::ProcessSymbolInfo()
 {

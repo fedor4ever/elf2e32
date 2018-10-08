@@ -117,6 +117,10 @@ struct SSecurityInfo
     SCapabilitySet iCaps;   // Capabilities for e32image
 };
 
+const uint32_t KFormatNotCompressed=0;
+const uint32_t KUidCompressionDeflate=0x101F7AFC;
+const uint32_t KUidCompressionBytePair=0x102822AA;
+
 struct E32ImageHeader
 {
     uint32_t iUid1;
@@ -126,16 +130,16 @@ struct E32ImageHeader
     char iSignature[4] = {'E', 'P', 'O', 'C'};
     uint32_t iHeaderCrc;         // CRC-32 of entire header
     uint32_t iModuleVersion;     // Version number for this executable (used in link resolution)
-    uint32_t iCompressionType;   // Type of compression used (UID or 0 for none)
+    uint32_t iCompressionType = KUidCompressionDeflate;   // Type of compression used (UID or 0 for none)
     ToolVersion iVersion;     // Version of PETRAN/ELFTRAN which generated this file
     uint32_t iTimeLo;
     uint32_t iTimeHi;
     uint32_t iFlags;               // 0 = exe, 1 = dll, 2 = fixed address exe
     int32_t iCodeSize;             // size of code, import address table, constant data and export dir
     int32_t iDataSize;             // size of initialised data
-    int32_t iHeapSizeMin;
-    int32_t iHeapSizeMax;
-    int32_t iStackSize;
+    int32_t iHeapSizeMin = 0x1000;
+    int32_t iHeapSizeMax = 0x100000;
+    int32_t iStackSize = 0x2000;
     int32_t iBssSize;
     uint32_t iEntryPoint;          // offset into code of entry point
     uint32_t iCodeBase;            // where the code is linked for
@@ -218,10 +222,6 @@ enum Cpu
 const uint32_t KImageDll               = 0x00000001u;
 const uint32_t KImageNoCallEntryPoint  = 0x00000002u;
 const uint32_t KImageFixedAddressExe   = 0x00000004u;
-
-const uint32_t KFormatNotCompressed=0;
-const uint32_t KUidCompressionDeflate=0x101F7AFC;
-const uint32_t KUidCompressionBytePair=0x102822AA;
 
 const int32_t KErrNone=0;
 const int32_t KErrGeneral=(-2);

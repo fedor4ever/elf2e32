@@ -62,7 +62,7 @@ private:
     ParameterManager& operator=(const ParameterManager&) = delete;
 
 public:
-    static ParameterManager *GetInstance(int aArgc, char** aArgv);
+    static ParameterManager *GetInstance(int argc, char** argv, E32ImageHeader* aHdr);
     static ParameterManager *Static();
 	virtual ~ParameterManager();
 
@@ -182,12 +182,10 @@ public:
 	void SetUID1(UINT aSetUINT1);
 	void SetUID2(UINT aSetUINT2);
 	void SetUID3(UINT aSetUINT3);
-	void SetFixedAddress(bool aSetFixedAddress);
 
 	void SetCompressionMethod(UINT aCompressionMethod);
 	void SetSecureId(UINT aSetSecureID);
 	void SetVendorId(UINT aSetVendorID);
-	void SetHeapCommittedSize(UINT aSetHeapCommittedSize);
 	void SetHeapReservedSize(UINT aSetHeapReservedSize);
 	void SetStackCommittedSize(UINT aSetStackCommittedSize);
 	void SetUnfrozen(bool aVal);
@@ -198,7 +196,6 @@ public:
 	void SetLogFile(char * aSetLogFile);
 	void SetMessageFile(char *aMessageFile);
 	void SetDumpMessageFile(char *aDumpMessageFile);
-	void SetDllData(bool newVal);
 	void SetPriority(TProcessPriority anewVal);
 	void SetVersion(UINT aSetVersion);
 	void SetCallEntryPoint(bool aCallEntryPoint);
@@ -267,8 +264,6 @@ public:
     */
 	char * E32Input();
 
-	bool SecureIdOption();
-	bool VendorIdOption();
 	bool SysDefOption();
 	bool LogFileOption();
 	bool MessageFileOption();
@@ -324,17 +319,10 @@ public:
 	char * MessageFile();
 	char * DumpMessageFile();
 	char * FileDumpOptions();
-	int DumpOptions();
-	int SysDefCount();
 
-	//int SysDefOrdinalNum();
-	//char * SysDefSymbol();
+	int SysDefCount();
 	Sys SysDefSymbols(int count);
-	UINT Uid1();
-	UINT Uid2();
-	UINT Uid3();
-	UINT SecureId();
-	UINT VendorId();
+
 	UINT Version();
 	bool FixedAddress();
 
@@ -363,8 +351,14 @@ public:
 	bool IsDebuggable();
 	bool IsSmpSafe();
 
+	E32ImageHeader *GetE32Header();
+	SSecurityInfo *GetSSecurityInfo();
+
 private:
+    E32ImageHeader *iE32Header = nullptr;
     Arguments iOptionArgs;
+    SSecurityInfo iSecInfo;
+
 	/** The number of command line arguments passed into the program */
 	int iArgc;
 
@@ -377,29 +371,8 @@ private:
 	/** REVISIT */
 	char * iImageName = nullptr;
 
-	bool iSecureIDOption = false;
-	bool iVendorIDOption = false;
-
-	/** System level identifier, identifies the general type of a Symbian OS object */
-	UINT iUID1 = 0;
-
-	/** Interface identifier, distinguishes within a type (i.e.within a UID1) */
-	UINT iUID2 = 0;
-
-	/** Project identifier, identifies a particular subtype */
-	UINT iUID3 = 0;
-
-	UINT iSecureID = 0;
-
-	UINT iVendorID = 0;
-
-	UINT iCompressionMethod = KUidCompressionDeflate;
-
 	bool iFixedAddress = false;
 
-	uint32_t iHeapCommittedSize = 0x1000;
-	uint32_t iHeapReservedSize = 0x100000;
-	uint32_t iStackCommittedSize = 0x2000;
 	bool iUnfrozen = false;
 	bool iIgnoreNonCallable = false;
 
@@ -423,8 +396,6 @@ private:
 
 	/** Path name of the intermediate libraries passed as input to the --libpath option */
 	char * iLibPath = nullptr;
-
-	int iDumpOptions = 61; //TDumpFlags::EDumpDefaults
 
 	bool iSysDefOption = false;
 	char * iLogFileName = nullptr;

@@ -11,7 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="--dump=i --e32input=tests\AlternateReaderRecogE32_BYTE.dll" />
+				<Option parameters='--capability=All-TCB --definput=&quot;tests\libcryptou.def&quot; --defoutput=&quot;tests\tmp\out.def&quot; --elfinput=&quot;tests\libcrypto.dll&quot; --output=&quot;tests\tmp\libcrypto-2.4.5.tst.dll&quot; --libpath=&quot;D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib&quot; --linkas=&quot;libcrypto{000a0000}.dll&quot; --dso=&quot;tests\tmp\libcrypto{000a0000}.dso&quot; --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --namedlookup --dlldata --ignorenoncallable --debuggable --smpsafe --uncompressed' />
 				<Compiler>
 					<Add option="-std=c++14" />
 					<Add option="-g -O0" />
@@ -29,7 +29,7 @@
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters='--e32input=&quot;tests\AlternateReaderRecogE32SDK.dll&quot;' />
+				<Option parameters='--dump=a --definput=&quot;tests\libcryptou.def&quot;' />
 				<Compiler>
 					<Add option="-O2" />
 					<Add directory="source" />
@@ -41,11 +41,13 @@
 		</Build>
 		<Compiler>
 			<Add option="-Winit-self" />
+			<Add option="-Wunreachable-code" />
 			<Add option="-std=c++14" />
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 			<Add option="-Wno-write-strings" />
 			<Add option="-Wno-invalid-offsetof" />
+			<Add option="-Wpadded" />
 			<Add option="-D_CRT_NONSTDC_NO_DEPRECATE" />
 			<Add directory="include" />
 		</Compiler>
@@ -68,6 +70,8 @@
 		<Unit filename="source/e32common.h" />
 		<Unit filename="source/e32exporttable.cpp" />
 		<Unit filename="source/e32exporttable.h" />
+		<Unit filename="source/e32flags.cpp" />
+		<Unit filename="source/e32flags.h" />
 		<Unit filename="source/e32imagefile.cpp">
 			<Option compiler="gcc" use="0" buildCommand="$compiler $options -save-temps $file" />
 		</Unit>
@@ -76,16 +80,15 @@
 		<Unit filename="source/e32info.h" />
 		<Unit filename="source/e32parser.cpp" />
 		<Unit filename="source/e32parser.h" />
+		<Unit filename="source/e32producer.cpp" />
+		<Unit filename="source/e32producer.h" />
 		<Unit filename="source/elffilesupplied.cpp" />
 		<Unit filename="source/elffilesupplied.h" />
 		<Unit filename="source/errorhandler.cpp" />
 		<Unit filename="source/errorhandler.h" />
 		<Unit filename="source/farray.h" />
-		<Unit filename="source/filedump.cpp" />
-		<Unit filename="source/filedump.h" />
 		<Unit filename="source/huffman.cpp" />
 		<Unit filename="source/huffman.h" />
-		<Unit filename="source/imgdump.cpp" />
 		<Unit filename="source/inflate.cpp" />
 		<Unit filename="source/inflate.h" />
 		<Unit filename="source/main.cpp" />

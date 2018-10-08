@@ -78,7 +78,7 @@ public:
 	ElfRelocations::Relocations & GetDataRelocations();
 	bool ExeceptionsPresentP();
 	ElfExports::Exports& GetExportsInOrdinalOrder();
-	Elf32_Sym* LookupStaticSymbol(char * aName);
+	Elf32_Sym* LookupStaticSymbol(const char * name);
 public:
 	/**
 	 * The elf header pointer which points to the base of the file records

@@ -78,8 +78,9 @@ const TUint KUidCompressionBytePair=0x102822AA;
 const TUint KDynamicLibraryUidValue=0x10000079;
 const TUint KExecutableImageUidValue=0x1000007a; //All executable targets have
 //UID2:
-const TUint KUidApp              = 0x100039CE; //should be specified by GUI applications only
-const TUint KSharedLibraryUidValue=0x1000008d;
+const TUint KUidApp               = 0x100039CE; //should be specified by GUI applications only
+const TUint KSharedLibraryUidValue= 0x1000008d;
+const TUint KSTDTargetUidValue    = 0x20004C45;
 
 const TUint KCodeSegIdOffset = 12;
 const TUint KImageCodeUnpaged   = 0x00000100u; ///< Executable image should not be demand paged. Exclusive with KImageCodePaged,
@@ -412,16 +413,16 @@ class E32ImageHeader {
         TUint iSignature;           // 'EPOC'
         TUint32 iHeaderCrc;         // CRC-32 of entire header
         TUint32 iModuleVersion;     // Version number for this executable (used in link resolution)
-        TUint32 iCompressionType;   // Type of compression used (UID or 0 for none)
+        TUint32 iCompressionType = KUidCompressionDeflate;   // Type of compression used (UID or 0 for none)
         TVersion iToolsVersion;     // Version of PETRAN/ELFTRAN which generated this file
         TUint32 iTimeLo;
         TUint32 iTimeHi;
         TUint iFlags;               // 0 = exe, 1 = dll, 2 = fixed address exe
         TInt iCodeSize;             // size of code, import address table, constant data and export dir
         TInt iDataSize;             // size of initialised data
-        TInt iHeapSizeMin;
-        TInt iHeapSizeMax;
-        TInt iStackSize;
+        TInt iHeapSizeMin = 0x1000;
+        TInt iHeapSizeMax = 0x100000;
+        TInt iStackSize = 0x2000;
         TInt iBssSize;
         TUint iEntryPoint;          // offset into code of entry point
         TUint iCodeBase;            // where the code is linked for
@@ -440,8 +441,8 @@ class E32ImageHeader {
     };
 
 struct SSecurityInfo {
-    TUint32 iSecureId;
-    TUint32 iVendorId;
+    TUint32 iSecureId = 0;
+    TUint32 iVendorId = 0;
     SCapabilitySet iCaps;   // Capabilities re. platform security
     };
 
