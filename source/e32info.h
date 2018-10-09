@@ -1,3 +1,22 @@
+// Copyright (c) 2018 Strizhniou Fiodar
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Strizhniou Fiodar - initial contribution.
+//
+// Contributors:
+//
+// Description:
+// Class E32Info prints info for specified E32 image
+// @internalComponent
+// @released
+//
+//
+
 #ifndef E32INFO_H
 #define E32INFO_H
 
