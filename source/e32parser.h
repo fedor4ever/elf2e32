@@ -20,6 +20,9 @@
 #ifndef E32PARSER_H
 #define E32PARSER_H
 
+#include <cstdint>
+#include <stddef.h>
+
 class E32ImageHeader;
 class E32ImageHeaderJ;
 class E32ImageHeaderV;
@@ -28,7 +31,7 @@ class E32ImportSection;
 class E32Parser
 {
     public:
-        E32Parser(const char* fileName);
+        E32Parser(const char* fileName, const char* fileBuf = nullptr);
         ~E32Parser();
 
         E32ImageHeader *GetFileLayout();

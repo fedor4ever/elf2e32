@@ -28,18 +28,30 @@
 
 int32_t Adjust(int32_t size);
 
-E32Parser::E32Parser(const char* aFilename): iFileName(aFilename)
-{
-    //ctor
-}
+
+/** \brief ctor for E32Parser class
+ *
+ * That class accepts filename if filebuf not specified
+ *
+ * \param filename - E32 image file for parsing
+ * \param fileBuf - E32 image in memory for parsing
+ *
+ */
+E32Parser::E32Parser(const char* filename, const char* fileBuf):
+    iFileName(filename), iBufferedFile((char*)fileBuf)
+{}
 
 E32Parser::~E32Parser()
 {
-    delete iBufferedFile;
+    if(iFileName)
+        delete iBufferedFile;
 }
 
 void E32Parser::ReadFile()
 {
+    if(iBufferedFile)
+        return;
+
     std::fstream fs(iFileName, fs.binary | fs.in);
     if(!fs)
         throw Elf2e32Error(FILEOPENERROR, iFileName);
@@ -52,10 +64,20 @@ void E32Parser::ReadFile()
     fs.close();
 }
 
+/** \brief Init function for class
+ *
+ * Should be called after ctor and before other functions for read and analyze E32 image.
+ *
+ * \return E32ImageHeader* - pointer to first field in parsed file
+ *
+ */
 E32ImageHeader* E32Parser::GetFileLayout()
 {
-    if(!iFileName)
+    if(!iFileName && !iBufferedFile)
         return nullptr;
+
+    if(iBufferedFile)
+        iFileName = nullptr;
 
     ReadFile();
 

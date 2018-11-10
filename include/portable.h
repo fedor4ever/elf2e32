@@ -337,6 +337,8 @@ struct TExceptionDescriptor {
     TUint32 iROSegmentLimit;
 };
 
+TUint HdrFmtFromFlags(TUint aFlags);
+
 class E32ImageHeader {
     public:
         /**
@@ -394,14 +396,6 @@ class E32ImageHeader {
 
         inline TUint ImportFormat() {
             return ImpFmtFromFlags(iFlags);
-            }
-
-        inline static TUint HdrFmtFromFlags(TUint aFlags) {
-            if (aFlags&KImageHdrFmtMask)
-                return aFlags & KImageHdrFmtMask;
-            if (aFlags&KImageOldJFlag)
-                return KImageHdrFmt_J;
-            return KImageHdrFmt_Original;
             }
 
         inline TInt ValidateHeader(TInt aFileSize, TUint32& aUncompressedSize) const;
@@ -619,10 +613,6 @@ inline TInt E32ImageHeaderV::ValidateExportDescription() const {
             RETURN_FAILURE(KErrNotSupported);
         }
     }
-
-
-
-
 
 
 #if 0

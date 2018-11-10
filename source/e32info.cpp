@@ -25,6 +25,7 @@
 #include "pl_symbol.h"
 #include "e32parser.h"
 #include "errorhandler.h"
+#include "e32validator.h"
 #include "parametermanager.h"
 
 #define REFERENCE_CAPABILITY_NAMES
@@ -585,6 +586,9 @@ void E32Info::Run()
 {
     printf("E32ImageFile \'%s\'\n", iE32File);
     iHdr1 = iE32->GetFileLayout();
+
+    ValidateE32Image(iE32->GetBufferedImage(), iE32->GetFileSize());
+
     char c;
     while((c = *iFlags++))
     {

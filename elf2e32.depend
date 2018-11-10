@@ -7,7 +7,7 @@
 1515405240 d:\codeblock\elf2e32\source\byte_pair.h
 	<portable.h>
 
-1538899925 d:\codeblock\elf2e32\include\portable.h
+1541258746 d:\codeblock\elf2e32\include\portable.h
 	<cstddef>
 	<cstdio>
 	<e32capability.h>
@@ -15,11 +15,11 @@
 
 1527801600 d:\codeblock\elf2e32\include\e32capability.h
 
-1496397420 source:d:\codeblock\elf2e32\source\checksum.cpp
+1539366639 source:d:\codeblock\elf2e32\source\checksum.cpp
 	<portable.h>
 	"checksum.h"
 
-1496397360 d:\codeblock\elf2e32\source\checksum.h
+1539185625 d:\codeblock\elf2e32\source\checksum.h
 	<cstddef>
 
 1533158760 source:d:\codeblock\elf2e32\source\deffile.cpp
@@ -95,7 +95,7 @@
 	"e32imagefile.h"
 	"parametermanager.h"
 
-1538899925 d:\codeblock\elf2e32\source\e32imagefile.h
+1539366730 d:\codeblock\elf2e32\source\e32imagefile.h
 	<vector>
 	<fstream>
 	<iostream>
@@ -111,7 +111,7 @@
 	"pl_common.h"
 	"elfdefs.h"
 
-1538902075 d:\codeblock\elf2e32\source\parametermanager.h
+1539013143 d:\codeblock\elf2e32\source\parametermanager.h
 	<portable.h>
 	<vector>
 	<map>
@@ -137,7 +137,7 @@
 	"pl_elflocalrelocation.h"
 	"pl_symbol.h"
 
-1538899925 d:\codeblock\elf2e32\source\pl_elfimage.h
+1539013143 d:\codeblock\elf2e32\source\pl_elfimage.h
 	<list>
 	"pl_common.h"
 	"elfdefs.h"
@@ -153,7 +153,7 @@
 1525190280 d:\codeblock\elf2e32\source\pl_elflocalrelocation.h
 	"pl_elfrelocation.h"
 
-1538899925 source:d:\codeblock\elf2e32\source\e32imagefile.cpp
+1541858790 source:d:\codeblock\elf2e32\source\e32imagefile.cpp
 	<string>
 	<vector>
 	<cassert>
@@ -299,7 +299,7 @@
 	<iostream>
 	<stdlib.h>
 
-1538899925 source:d:\codeblock\elf2e32\source\main.cpp
+1539013142 source:d:\codeblock\elf2e32\source\main.cpp
 	<stdlib.h>
 	"message.h"
 	"e32producer.h"
@@ -325,7 +325,7 @@
 	<sstream>
 	"byte_pair.h"
 
-1539011433 source:d:\codeblock\elf2e32\source\parametermanager.cpp
+1539013142 source:d:\codeblock\elf2e32\source\parametermanager.cpp
 	<cstring>
 	<iostream>
 	<stdlib.h>
@@ -345,7 +345,7 @@
 	"pl_elfimage.h"
 	"pl_symbol.h"
 
-1538899925 source:d:\codeblock\elf2e32\source\pl_elfimage.cpp
+1539013143 source:d:\codeblock\elf2e32\source\pl_elfimage.cpp
 	"pl_elfimage.h"
 	"errorhandler.h"
 	<stdio.h>
@@ -406,11 +406,12 @@
 	<iostream>
 	<cstring>
 
-1500231960 source:d:\codeblock\elf2e32\source\portable.cpp
+1541855880 source:d:\codeblock\elf2e32\source\portable.cpp
 	<string.h>
 	<iostream>
 	<portable.h>
 	"checksum.h"
+	"e32imagefile.h"
 
 1519416657 source:d:\codeblock\elf2e32\source\stdexe_target.cpp
 	"stdexe_target.h"
@@ -449,7 +450,7 @@
 1533658313 d:\codeblock\elf2e32\source\e32_parser.h
 	<iostream>
 
-1537687620 source:d:\codeblock\elf2e32\source\e32info.cpp
+1541858439 source:d:\codeblock\elf2e32\source\e32info.cpp
 	<cstdio>
 	<cstring>
 	"e32info.h"
@@ -457,31 +458,35 @@
 	"pl_symbol.h"
 	"e32parser.h"
 	"errorhandler.h"
+	"e32validator.h"
 	"parametermanager.h"
 	"e32capability.h"
 
-1537110780 d:\codeblock\elf2e32\source\e32info.h
+1539095914 d:\codeblock\elf2e32\source\e32info.h
 	<cstdint>
 	<cstddef>
 	"e32common.h"
 
-1538899925 d:\codeblock\elf2e32\source\e32common.h
+1539961342 d:\codeblock\elf2e32\source\e32common.h
 	<cstdint>
 	<cstddef>
 
-1537694700 d:\codeblock\elf2e32\source\e32producer.h
+1539358132 d:\codeblock\elf2e32\source\e32producer.h
 
-1538899925 source:d:\codeblock\elf2e32\source\e32producer.cpp
+1541858689 source:d:\codeblock\elf2e32\source\e32producer.cpp
 	<fstream>
 	"e32common.h"
 	"e32parser.h"
 	"e32producer.h"
 	"errorhandler.h"
+	"e32validator.h"
 	"parametermanager.h"
 
-1537687740 d:\codeblock\elf2e32\source\e32parser.h
+1539359604 d:\codeblock\elf2e32\source\e32parser.h
+	<cstdint>
+	<stddef.h>
 
-1537110780 source:d:\codeblock\elf2e32\source\e32parser.cpp
+1541858215 source:d:\codeblock\elf2e32\source\e32parser.cpp
 	<fstream>
 	<cstring>
 	<cstdlib>
@@ -490,9 +495,19 @@
 	"e32parser.h"
 	"errorhandler.h"
 
-1539011993 source:d:\codeblock\elf2e32\source\e32flags.cpp
+1539013142 source:d:\codeblock\elf2e32\source\e32flags.cpp
 	"e32flags.h"
 
-1538899925 d:\codeblock\elf2e32\source\e32flags.h
+1539013142 d:\codeblock\elf2e32\source\e32flags.h
 	"parametermanager.h"
+
+1541858712 source:d:\codeblock\elf2e32\source\e32validator.cpp
+	<cstdio>
+	<assert.h>
+	"e32common.h"
+	"e32parser.h"
+	"e32validator.h"
+
+1541261507 d:\codeblock\elf2e32\source\e32validator.h
+	<cstdint>
 

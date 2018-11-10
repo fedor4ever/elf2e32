@@ -23,6 +23,7 @@
 #include "e32parser.h"
 #include "e32producer.h"
 #include "errorhandler.h"
+#include "e32validator.h"
 #include "parametermanager.h"
 
 using std::ofstream;
@@ -71,6 +72,8 @@ void E32Producer::MakeE32()
 
 void E32Producer::SaveE32(const char* s, size_t size)
 {
+    ValidateE32Image(s, size);
+
     ofstream fs(iMan->E32ImageOutput(), ofstream::binary|ofstream::out);
     if(!fs)
         throw Elf2e32Error(FILEOPENERROR, iMan->E32ImageOutput());
@@ -100,3 +103,13 @@ void E32Producer::SaveE32(const char* s, size_t size)
     fs.close();
 }
 
+uint32_t checkSum(const void *aPtr);
+uint32_t GetUidChecksum(uint32_t uid1, uint32_t uid2, uint32_t uid3)
+{
+    const uint32_t KMaxCheckedUid=3;
+    uint32_t uids[KMaxCheckedUid] = {0};
+    uids[0]=uid1;
+	uids[1]=uid2;
+	uids[2]=uid3;
+    return (checkSum(&( (uint8_t*)uids)[1] ) << 16) | checkSum(uids);
+}

@@ -18,6 +18,9 @@
 #include <iostream>
 #include <portable.h>
 #include "checksum.h"
+#include "e32imagefile.h"
+
+uint32_t GetUidChecksum(uint32_t uid1, uint32_t uid2, uint32_t uid3);
 
 /**
 Validate this image header.
@@ -62,10 +65,9 @@ TInt E32ImageHeaderV::ValidateHeader(TInt aFileSize, TUint32& aUncompressedSize)
 	TUint32 pointerAlignMask = isARM ? 3 : 0;	// mask of bits which must be zero for aligned pointers/offsets
 
 	// check iUid1,iUid2,iUid3,iUidChecksum...
-	TUidType uids = *(const TUidType*)&iUid1;
-	TCheckedUid chkuid(uids);
-	const TUint32* pChkUid = (const TUint32*)&chkuid; // need hackery to verify the UID checksum since everything is private
-	if(pChkUid[3]!=iUidChecksum)
+	TE32ImageUids u(iUid1, iUid2, iUid3);
+	TUint32 chkuid = u.Check();
+	if(chkuid != iUidChecksum)
 		RETURN_FAILURE(KErrCorrupt);
 
 	// check iSignature...
@@ -75,8 +77,7 @@ TInt E32ImageHeaderV::ValidateHeader(TInt aFileSize, TUint32& aUncompressedSize)
 	// check iHeaderCrc...
 	TUint32 supplied_crc = iHeaderCrc;
 	((E32ImageHeaderV*)this)->iHeaderCrc = KImageCrcInitialiser;
-	uint32_t crc = 0;
-	Crc32(crc, this, headerSize);
+	uint32_t crc = Crc32(this, headerSize);
 	((E32ImageHeaderV*)this)->iHeaderCrc = supplied_crc;
 	if(crc!=supplied_crc)
 		RETURN_FAILURE(KErrCorrupt);

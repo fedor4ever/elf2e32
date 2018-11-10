@@ -198,6 +198,21 @@ class E32ImageFile {
         E32ExportTable *iTable=nullptr;
     };
 
+/**
+Class for Uids.
+@internalComponent
+@released
+*/
+class TE32ImageUids
+{
+public:
+	TE32ImageUids(TUint32 aUid1, TUint32 aUid2, TUint32 aUid3);
+	TUint Check();
+private:
+	uint32_t iUids[KMaxCheckedUid] = {0};
+	TUint iCheck=0;
+};
+
 #endif // E32IMAGEFILE_H
 
 

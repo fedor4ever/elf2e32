@@ -36,16 +36,14 @@ uint32_t checkSum(const void *aPtr)
 
 	const uint8 * pB=(const uint8 *)aPtr;
 	const uint8 * pE=pB+(KMaxCheckedUid*KSizeOf_TUID);
-	uint8 buf[(KMaxCheckedUid*KSizeOf_TUID)>>1];
+	uint8 buf[(KMaxCheckedUid*KSizeOf_TUID)>>1] = {0};
 	uint8 * pT=(&buf[0]);
 	while (pB<pE)
 	{
 		*pT++=(*pB);
 		pB+=2;
 	}
-	uint16_t crc=0;
-	Crc(crc,&buf[0],(KMaxCheckedUid*KSizeOf_TUID)>>1);
-	return(crc);
+	return Crc(&buf[0],(KMaxCheckedUid*KSizeOf_TUID)>>1);
 }
 
 //crc table
@@ -83,21 +81,21 @@ Performs a CCITT CRC checksum on the specified data.
 On return from this function, the referenced 16 bit integer contains the checksummed
 value.
 
-@param aCrc    A reference to a 16 bit integer to contain the checksummed value.
 @param aPtr    A pointer to the start of the data to be checksummed.
 @param aLength The length of the data to be checksummed.
+@return        A 16 bit integer contain the checksummed value.
 @internalComponent
 @released
 */
-void Crc(unsigned short & aCrc,const void * aPtr, uint32_t aLength)
+unsigned short Crc(const void * aPtr, uint32_t aLength)
 {
 
 	const uint8 * pB=(const uint8 *)aPtr;
 	const uint8 * pE=pB+aLength;
-	uint32_t crc=aCrc;
+	uint32_t crc=0;
     while (pB<pE)
 		crc=(crc<<8)^crcTab[((crc>>8)^*pB++)&0xff];
-	aCrc=(unsigned short)crc;
+	return crc;
 }
 
 //crc table
@@ -175,19 +173,19 @@ Performs a CCITT CRC-32 checksum on the specified data.
 On return from this function, the referenced 32 bit integer contains the CRC
 value.
 
-@param aCrc		A reference to a 32 bit integer to contain the CRC value.
 @param aPtr		A pointer to the start of the data to be checksummed.
 @param aLength	The length of the data to be checksummed.
+@return         A 32 bit integer contain the CRC value.
 @internalComponent
 @released
 */
-void Crc32(uint32_t & aCrc, const void * aPtr, uint32_t aLength)
+uint32_t Crc32(const void * aPtr, uint32_t aLength)
 {
 	const uint8 * p = (const uint8 *)aPtr;
 	const uint8 * q = p + aLength;
-	uint32_t crc = aCrc;
+	uint32_t crc = 0;
 	while (p < q)
 		crc = (crc >> 8) ^ CrcTab32[(crc ^ *p++) & 0xff];
-	aCrc = crc;
+	return crc;
 }
 

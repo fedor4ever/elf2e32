@@ -11,7 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters='--capability=All-TCB --definput=&quot;tests\libcryptou.def&quot; --defoutput=&quot;tests\tmp\out.def&quot; --elfinput=&quot;tests\libcrypto.dll&quot; --output=&quot;tests\tmp\libcrypto-2.4.5.tst.dll&quot; --libpath=&quot;D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib&quot; --linkas=&quot;libcrypto{000a0000}.dll&quot; --dso=&quot;tests\tmp\libcrypto{000a0000}.dso&quot; --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --namedlookup --dlldata --ignorenoncallable --debuggable --smpsafe --uncompressed' />
+				<Option parameters='--capability=All-TCB --definput=&quot;tests\libcryptou.def&quot; --defoutput=&quot;tests\tmp\out.def&quot; --elfinput=&quot;tests\libcrypto.dll&quot; --output=&quot;tests\tmp\libcrypto-2.4.5.tst.dll&quot; --libpath=&quot;D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib&quot; --linkas=&quot;libcrypto{000a0000}.dll&quot; --dso=&quot;tests\tmp\libcrypto{000a0000}.dso&quot; --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0xa0f00171 --targettype=STDDLL --namedlookup --dlldata --ignorenoncallable --debuggable --smpsafe --uncompressed' />
 				<Compiler>
 					<Add option="-std=c++14" />
 					<Add option="-g -O0" />
@@ -82,6 +82,8 @@
 		<Unit filename="source/e32parser.h" />
 		<Unit filename="source/e32producer.cpp" />
 		<Unit filename="source/e32producer.h" />
+		<Unit filename="source/e32validator.cpp" />
+		<Unit filename="source/e32validator.h" />
 		<Unit filename="source/elffilesupplied.cpp" />
 		<Unit filename="source/elffilesupplied.h" />
 		<Unit filename="source/errorhandler.cpp" />

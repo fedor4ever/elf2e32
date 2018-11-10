@@ -25,6 +25,12 @@
 #include <cstdint>
 #include <cstddef>
 
+#ifdef _DEBUG
+    #define E32IMAGEHEADER_TRACE(_t) printf _t
+#else
+    #define E32IMAGEHEADER_TRACE(_t)
+#endif // E32IMAGEHEADER_TRACE
+
 struct E32EpocExpSymInfoHdr
 {
     int32_t iSize=0;      // size of this Table
@@ -121,6 +127,11 @@ const uint32_t KFormatNotCompressed=0;
 const uint32_t KUidCompressionDeflate=0x101F7AFC;
 const uint32_t KUidCompressionBytePair=0x102822AA;
 
+const uint32_t KDynamicLibraryUidValue=0x10000079;
+const uint32_t KExecutableImageUidValue=0x1000007a; //All executable targets have
+
+const uint32_t KImageCrcInitialiser  = 0xc90fdaa2u;
+
 struct E32ImageHeader
 {
     uint32_t iUid1;
@@ -128,7 +139,7 @@ struct E32ImageHeader
     uint32_t iUid3;
     uint32_t iUidChecksum;
     char iSignature[4] = {'E', 'P', 'O', 'C'};
-    uint32_t iHeaderCrc;         // CRC-32 of entire header
+    uint32_t iHeaderCrc = KImageCrcInitialiser;  // CRC-32 of entire header
     uint32_t iModuleVersion;     // Version number for this executable (used in link resolution)
     uint32_t iCompressionType = KUidCompressionDeflate;   // Type of compression used (UID or 0 for none)
     ToolVersion iVersion;     // Version of PETRAN/ELFTRAN which generated this file
@@ -175,8 +186,6 @@ struct E32ImageHeaderV
     uint8_t  iExportDesc[1];     // description of holes in export table - extend
 };
 
-const uint32_t KImageHdrFmtMask    = 0x0f000000u;
-const int32_t  KImageHdrFmtShift   = 24;
 enum E32HdrFmt
 {
     KImageHdrFmt_Original   = 0x00000000u,  // without compression support
@@ -199,6 +208,7 @@ const int32_t  KImageHWFloatShift      = 20;
 const uint32_t KImageHWFloat_None      = EFpTypeNone << KImageHWFloatShift; // No hardware floating point used
 const uint32_t KImageHWFloat_VFPv2     = EFpTypeVFPv2 << KImageHWFloatShift; // ARM VFPv2 floating point used
 
+const uint32_t KCodeSegIdOffset = 12;
 const uint32_t KImageCodeUnpaged   = 0x00000100u; ///< Executable image should not be demand paged. Exclusive with KImageCodePaged,
 const uint32_t KImageCodePaged    = 0x00000200u; ///< Executable image should be demand paged. Exclusive with KImageCodeUnpaged
 const uint32_t KImageNmdExpData  = 0x00000400u; ///< Flag to indicate when named symbol export data present in image
@@ -209,6 +219,12 @@ const uint32_t KImageDataPaged   = 0x00002000u; ///< Flag to indicate the image 
 const uint32_t KImageDebuggable  = 0x00000800u; ///< Flag to indicate image is debuggable
 const uint32_t KImageSMPSafe   = 0x00004000u; ///< Flag to indicate image is SMP safe
 
+// Relocation types
+const uint16_t KReservedRelocType        = (uint16_t)0x0000;
+const uint16_t KTextRelocType            = (uint16_t)0x1000;
+const uint16_t KDataRelocType            = (uint16_t)0x2000;
+const uint16_t KInferredRelocType        = (uint16_t)0x3000;
+
 enum Cpu
 {
     UnknownCpu=0,
@@ -218,10 +234,6 @@ enum Cpu
     ArmV6Cpu=0x2002,
     MCoreCpu=0x4000
 };
-
-const uint32_t KImageDll               = 0x00000001u;
-const uint32_t KImageNoCallEntryPoint  = 0x00000002u;
-const uint32_t KImageFixedAddressExe   = 0x00000004u;
 
 const int32_t KErrNone=0;
 const int32_t KErrGeneral=(-2);
@@ -237,8 +249,23 @@ const uint32_t KImageHdr_ExpD_SparseBitmap8    =0x02;  ///< Sparse bitmap presen
 const uint32_t KImageHdr_ExpD_Xip              =0xff;  ///< XIP file
 
 // flag values for E32ImageHeader::iFlags
-const uint32_t KImageOldJFlag          = 0x00000008u;  // so we can run binaries built with pre 2.00 tools (hdrfmt=0)
-const uint32_t KImageOldElfFlag        = 0x00000010u;  // so we can run binaries built with pre 2.00 tools (hdrfmt=0)
+const uint32_t KImageDll               = 0x00000001u;
+const uint32_t KImageNoCallEntryPoint  = 0x00000002u;
+const uint32_t KImageFixedAddressExe   = 0x00000004u;
+
+const uint32_t KImageOldJFlag         = 0x00000008u;  /// so we can run binaries built with pre 2.00 tools (hdrfmt=0)
+const uint32_t KImageOldElfFlag       = 0x00000010u;  /// so we can run binaries built with pre 2.00 tools (hdrfmt=0)
+const uint32_t KImageABIMask          = 0x00000018u;  /// only if hdr fmt not zero
+const int32_t  KImageABIShift         = 3;
+const uint32_t KImageABI_GCC98r2      = 0x00000000u;  /// for ARM
+const uint32_t KImageABI_EABI         = 0x00000008u;  /// for ARM
+
+const uint32_t KImageEptMask          = 0x000000e0u;  /// entry point type
+const int32_t  KImageEptShift         = 5;
+const uint32_t KImageEpt_Eka1      = 0x00000000u;
+const uint32_t KImageEpt_Eka2      = 0x00000020u;
+const uint32_t KImageHdrFmtMask    = 0x0f000000u;
+const int32_t  KImageHdrFmtShift   = 24;
 
 const uint32_t KImageImpFmtMask        = 0xf0000000u;
 const int32_t  KImageImpFmtShift       = 28;
@@ -278,5 +305,26 @@ inline uint32_t E32ImportBlock::Size(uint32_t aImpFmt) const
         r += iNumberOfImports * sizeof(uint32_t);
     return r;
 }
+
+/**
+A block of relocations for a single page (4kB) of code/data.
+
+Immediately following this structure are an array of uint16_t values
+each representing a single value in the page which is to be relocated.
+The lower 12 bits of each entry is the offset, in bytes, from start of this page.
+The Upper 4 bits are the relocation type to be applied to the 32-bit value located
+at that offset.
+ - 1 means relocate relative to code section.
+ - 2 means relocate relative to data section.
+ - 3 means relocate relative to code or data section; calculate which.
+
+A value of all zeros (0x0000) is ignored. (Used for padding structure to 4 byte alignment).
+*/
+struct E32RelocBlock
+{
+	uint32_t iPageOffset; ///< Offset, in bytes, for the page being relocated; relative to the section start. Always a multiple of the page size: 4096 bytes.
+	uint32_t iBlockSize;  ///< Size, in bytes, for this block structure. Always a multiple of 4.
+// uint16_t iEntry[]
+};
 
 #endif // E32COMMON_H_INCLUDED

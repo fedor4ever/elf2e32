@@ -1035,23 +1035,10 @@ void E32ImageFile::SetFixedAddress(bool isDllp)
 		iHdr->iFlags&=~KImageFixedAddressExe;
 }
 
-/**
-Class for Uids.
-@internalComponent
-@released
-*/
-class TE32ImageUids
+TUint TE32ImageUids::Check()
 {
-public:
-	TE32ImageUids(TUint32 aUid1, TUint32 aUid2, TUint32 aUid3);
-	void Set(const TUidType& aUidType);
-	TUint Check() { return ((checkSum(((TUint8*)this)+1)<<16)|checkSum(this));}
-private:
-	TUidType iType;
-	TUint iCheck;
-
-};
-
+    return ((checkSum(((TUint8*)this)+1)<<16)|checkSum(this));
+}
 /**
 Constructor for TE32ImageUids.
 @internalComponent
@@ -1059,18 +1046,9 @@ Constructor for TE32ImageUids.
 */
 TE32ImageUids::TE32ImageUids(TUint32 aUid1, TUint32 aUid2, TUint32 aUid3)
 {
-	Set(TUidType(TUid::Uid(aUid1), TUid::Uid(aUid2), TUid::Uid(aUid3)));
-}
-
-/**
-This function sets the Uid.
-@internalComponent
-@released
-*/
-void TE32ImageUids::Set(const TUidType& aUidType)
-{
-    iType=aUidType;
-    iCheck=Check();
+	iUids[0]=aUid1;
+	iUids[1]=aUid2;
+	iUids[2]=aUid3;
 }
 
 /**
@@ -1114,9 +1092,7 @@ void E32ImageFile::UpdateHeaderCrc()
 	TInt hdrsz = GetExtendedE32ImageHeaderSize();
 	iHdr->iUncompressedSize = iChunks.GetOffset() - Align(GetExtendedE32ImageHeaderSize(), sizeof(uint32));
 	iHdr->iHeaderCrc = KImageCrcInitialiser;
-	uint32_t crc = 0;
-	Crc32(crc, iHdr, hdrsz);
-	iHdr->iHeaderCrc = crc;
+	iHdr->iHeaderCrc = Crc32(iHdr, hdrsz);
 }
 
 /**
@@ -1124,6 +1100,7 @@ This function creates a buffer and writes all the data into the buffer.
 @internalComponent
 @released
 */
+int32_t ValidateE32Image(const char *buffer, uint32_t size);
 void E32ImageFile::AllocateE32Image()
 {
 	size_t aImageSize = iChunks.GetOffset();
@@ -1139,6 +1116,9 @@ void E32ImageFile::AllocateE32Image()
 	E32ImageHeaderV* header = (E32ImageHeaderV*)iE32Image;
 	TInt headerSize = header->TotalSize();
 	if(KErrNone!=header->ValidateWholeImage(iE32Image+headerSize,GetE32ImageSize()-headerSize))
+		throw Elf2e32Error(VALIDATIONERROR, iManager->E32ImageOutput());
+
+	if( KErrNone!=ValidateE32Image(iE32Image,GetE32ImageSize()) )
 		throw Elf2e32Error(VALIDATIONERROR, iManager->E32ImageOutput());
 }
 

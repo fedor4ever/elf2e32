@@ -23,8 +23,8 @@
 
 #include <cstddef>
 uint32_t checkSum(const void *aPtr);
-void Crc(uint16_t & aCrc,const void * aPtr,uint32_t aLength);
-void Crc32(uint32_t & aCrc, const void * aPtr, uint32_t aLength);
+uint16_t Crc(const void * aPtr,uint32_t aLength);
+uint32_t Crc32(const void * aPtr, uint32_t aLength);
 
 #endif // CHECKSUM_H
 
