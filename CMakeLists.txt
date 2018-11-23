@@ -31,12 +31,18 @@ add_executable(elf2e32
     source/pl_sym_type.h
     source/pl_symbol.h
     source/staticlibsymbols.h
+	source/e32producer.h
+	source/e32validator.h
+	source/e32flags.h
     source/byte_pair.cpp
     source/checksum.cpp
     source/deffile.cpp
     source/deflatecompress.cpp
     source/e32exporttable.cpp
     source/e32imagefile.cpp
+	source/e32producer.cpp
+	source/e32validator.cpp
+	source/e32flags.cpp
     source/e32info.cpp
     source/e32parser.cpp
     source/elffilesupplied.cpp

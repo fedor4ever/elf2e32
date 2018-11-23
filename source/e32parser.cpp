@@ -26,6 +26,8 @@
 #include "e32parser.h"
 #include "errorhandler.h"
 
+using std::fstream;
+
 int32_t Adjust(int32_t size);
 
 
@@ -52,7 +54,7 @@ void E32Parser::ReadFile()
     if(iBufferedFile)
         return;
 
-    std::fstream fs(iFileName, fs.binary | fs.in);
+    fstream fs(iFileName, fstream::binary | fstream::in);
     if(!fs)
         throw Elf2e32Error(FILEOPENERROR, iFileName);
     fs.seekg(0, fs.end);
