@@ -4,3 +4,5 @@ build
 /.cproject
 /.project
 /Debug/
+/elf2e32.layout
+/elf2e32.depend
