@@ -51,7 +51,7 @@ public:
 	PLUINT32 ProcessSymbols();
 	ElfImports::ImportLibs GetImports();
 	ElfExports* GetExports();
-	Symbol* AddToExports(char* aDll, Symbol* aSymbol);
+	bool AddToExports(char* dll, Symbol* sym);
 	void AddToImports(ElfImportRelocation* aReloc);
 	void AddToLocalRelocations(ElfLocalRelocation* aReloc);
 	void ProcessVerInfo();

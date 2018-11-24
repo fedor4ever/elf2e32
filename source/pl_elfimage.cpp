@@ -363,16 +363,15 @@ PLUINT32  ElfImage::ProcessSymbols(){
 /**
 This function adds exports into the export list
 @param aDll - Dll name
-@param aSymbol - Symbol
+@param symbol - Symbol
 @return
 @internalComponent
 @released
 */
-Symbol* ElfImage::AddToExports(char* aDll, Symbol* aSymbol){
-	if( !iExports ) {
+bool ElfImage::AddToExports(char* aDll, Symbol* symbol){
+	if(!iExports)
 		iExports = new ElfExports();
-	}
-	return iExports->Add( aDll, this, aSymbol );
+	return iExports->Add( aDll, symbol, this );
 }
 
 

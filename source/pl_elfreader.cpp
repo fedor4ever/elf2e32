@@ -19,12 +19,14 @@
 //
 
 #include <string.h>
+#include <fstream>
 
 #include "pl_elfreader.h"
 #include "errorhandler.h"
 
 using std::min;
 using std::list;
+using std::fstream;
 
 
 ElfReader::ElfReader(string aElfInput) :
@@ -36,35 +38,20 @@ ElfReader::~ElfReader(){
 	DELETE_PTR_ARRAY(iMemBlock);
 }
 
+const uint32_t KMaxWindowsIOSize = 31 * 1024 * 1024;
+void ElfReader::Read(){
 
-PLUINT32 ElfReader::Read(){
-	FILE*	aFd;
-
-	if( (aFd = fopen(iElfInput.c_str(),"rb")) == nullptr) {
+    fstream fs(iElfInput.c_str(), fstream::binary | fstream::in);
+    if(!fs)
 		throw Elf2e32Error(FILEOPENERROR, iElfInput);
-	}
 
-	fseek(aFd, 0, SEEK_END);
+    fs.seekg(0, fs.end);
+    size_t elfSize = fs.tellg();
+    fs.seekg(0, fs.beg);
 
-	PLUINT32 aSz = ftell(aFd);
-	iMemBlock = new char[aSz];
-
-	fseek(aFd, 0, SEEK_SET);
-
-	// Certain Windows devices (e.g., network shares) limit the size of I/O operations to 64MB
-	// or less.  We read all the data in individual KMaxWindowsIOSize (32MB) chunks to be safe.
-	PLUINT32 chunkSize = 0;
-	for( PLUINT32 bytesRead = 0; bytesRead < aSz; bytesRead += chunkSize) {
-
-		chunkSize = (min)(aSz - bytesRead, PLUINT32(KMaxWindowsIOSize));
-
-		if( fread(iMemBlock + bytesRead, chunkSize, 1, aFd) != 1) {
-            fclose(aFd);
-			throw Elf2e32Error(FILEREADERROR, iElfInput);
-		}
-	}
-    fclose(aFd);
-	return 0;
+    iMemBlock = new char[elfSize]();
+    fs.read(iMemBlock, elfSize);
+    fs.close();
 }
 
 

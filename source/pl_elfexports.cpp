@@ -56,41 +56,21 @@ bool ElfExports::IsValidExport(ElfImage * aElfImage, Symbol * aSym)
 }
 
 /**
-This function adds export symbols into exports list.
-@param aDll - Dll name
-@param aExecutable - Instance of class ElfImage
-@param aSym - Dll symbol
-@return Dll Symbol if its valid, otherwise nullptr
-@internalComponent
-@released
-*/
-Symbol* ElfExports::Add(char *aDll, ElfImage * aExecutable, Symbol *aSym)
-{
-	if (IsValidExport(aExecutable, aSym))
-	{
-		if( !iDllName )
-			iDllName = aDll;
-
-		iElfExports.push_back(aSym);
-		iSorted = false;
-		return aSym;
-	}
-	return nullptr;
-}
-
-/**
 Function to add elf exports
 @param aDll - Dll name
 @param aSym - Dll symbol
 @internalComponent
 @released
 */
-void ElfExports::Add(char *aDll, Symbol *aSym)
+bool ElfExports::Add(char *aDll, Symbol *aSym, ElfImage *elf)
 {
-	if( !iDllName )
+    if (elf && !IsValidExport(elf, aSym))
+        return false;
+	if(!iDllName)
 		iDllName = aDll;
 	iElfExports.push_back(aSym);
 	iSorted = false;
+	return true;
 }
 
 /**
@@ -182,17 +162,6 @@ Function to get number of exports
 size_t ElfExports::GetNumExports()
 {
 	return iElfExports.size();
-}
-
-/**
-Function to get Dll name
-@return Dll name
-@internalComponent
-@released
-*/
-char* ElfExports::DllName()
-{
-	return iDllName;
 }
 
 /**

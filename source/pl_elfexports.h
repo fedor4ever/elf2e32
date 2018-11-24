@@ -72,8 +72,7 @@ public:
 
 	bool IsValidExport(ElfImage * aElfImage, Symbol * aSym);
 	void FilterExports();
-	Symbol* Add(char *aDll, ElfImage * aExecutable, Symbol *aSym);
-	void Add(char *aDll, Symbol *aSym);
+	bool Add(char *aDll, Symbol *aSym, ElfImage *elf = nullptr);
 	void Sort();
 	void ExportsFilteredP(bool aExportsFilteredP)
 	{
@@ -81,7 +80,6 @@ public:
 	}
 	bool ExportsFilteredP() {return iExportsFilteredP;}
 
-	char* DllName();
 	Exports& GetExports(bool aSorted) ;
 	Exports& GetExportsInOrdinalOrder();
 	size_t GetNumExports();
