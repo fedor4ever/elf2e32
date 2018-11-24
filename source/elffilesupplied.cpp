@@ -234,6 +234,8 @@ Function to validate exports
 */
 void ElfFileSupplied::ValidateDefExports(Symbols &aDefExports)
 {
+    if(iManager->ElfInput().empty())
+        return;
 	/**
 	 * Symbols from DEF file (DEF_Symbols) => Valid_DEF + Absent
 	 * Symbols from ELF file (ELF_Symbols) => Existing  + NEW
