@@ -34,11 +34,13 @@ using std::string;
 void WriteDefString(Symbol *sym, std::fstream &fstr);
 void TokensChecker(const std::vector<std::string> &tokens);
 
+Symbols SymbolsFromDef(const char *defFile);
+
 /**
 Function to Read def file and get the internal representation in structure.
 @param defFile - DEF File name
 */
-Symbols DefFile::GetSymbols(char *defFile)
+Symbols DefFile::GetSymbols(const char *defFile)
 {
 	ReadDefFile(defFile);
 	ParseDefFile();
@@ -49,11 +51,11 @@ Symbols DefFile::GetSymbols(char *defFile)
 Function to read def file line by line to std::vector.
 @param defFile - DEF File name
 */
-void DefFile::ReadDefFile(char * aDefFile)
+void DefFile::ReadDefFile(const char *aDefFile)
 {
     iFileName=aDefFile;
 
-    fstream file(aDefFile, fstream::in /*| fstream::binary | fstream::ate*/);
+    fstream file(aDefFile, fstream::in);
 
     if(!file.is_open())
     {
@@ -204,7 +206,7 @@ Function to write DEF file from symbol entry List.
 @internalComponent
 @released
 */
-void DefFile::WriteDefFile(char *fileName, Symbols * newSymbols)
+void DefFile::WriteDefFile(const char *fileName, const Symbols& newSymbols)
 {
     std::fstream fs;
     fs.open(fileName, std::fstream::out | std::fstream::trunc);
@@ -214,7 +216,7 @@ void DefFile::WriteDefFile(char *fileName, Symbols * newSymbols)
     bool newSymbol = false;
     fs << "EXPORTS\n";
 
-    for(auto x: *newSymbols)
+    for(auto x: newSymbols)
     {
         if(x->GetSymbolStatus()==New)
         {
@@ -231,7 +233,7 @@ void DefFile::WriteDefFile(char *fileName, Symbols * newSymbols)
     if(newSymbol)
     {
         fs << "; NEW:\n";
-        for(auto x: *newSymbols)
+        for(auto x: newSymbols)
         {
             if(x->GetSymbolStatus() != New)
                 continue;
@@ -272,4 +274,10 @@ void WriteDefString(Symbol *sym, std::fstream &fstr)
     }
 
     fstr << "\n";
+}
+
+Symbols SymbolsFromDef(const char *defFile)
+{
+	DefFile def;
+	return def.GetSymbols(defFile);
 }

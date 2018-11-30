@@ -1187,9 +1187,8 @@ void ParameterManager::CheckOptions()
 	{
 	    Message::GetInstance()->ReportMessage(WARNING, NOREQUIREDOPTIONERROR,"--targettype");
         if (DefInput())
-		{
 			iTargetType = ELib;
-		}
+
 	}
 
 	uint32_t UID1 = iE32Header->iUid1, UID2 = iE32Header->iUid2, UID3 = iE32Header->iUid3;

@@ -48,6 +48,9 @@ public:
 	~ElfFileSupplied();
 	void Execute();
 
+	ElfFileSupplied& operator=(const ElfFileSupplied &) = delete;
+	ElfFileSupplied(const ElfFileSupplied &) = delete;
+
 	void ReadElfFile();
 	void ProcessExports();
 	void BuildAll();
@@ -84,7 +87,7 @@ private:
 	PLUINT8 * iExportBitMap = nullptr;
 
 	E32ImageFile * iE32ImageFile = nullptr;
-	ElfReader * iReader = nullptr;
+	ElfImage * iReader = nullptr;
 	ElfProducer * iElfProducer = nullptr;
 
 	PLUINT16 iExportDescSize = 0;

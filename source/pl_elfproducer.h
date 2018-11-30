@@ -56,6 +56,9 @@ enum DYN_ENTRIES {
 using std::string;
 
 #define DEFAULT_VERSION	2
+
+typedef std::list<Symbol*> Symbols;
+
 /**
 This class provides elf contents for the dso file creation. It generates the
 elf header, sections, dynamic array and the relocatrion entries.
@@ -65,12 +68,11 @@ elf header, sections, dynamic array and the relocatrion entries.
 class ElfProducer : public ElfImage
 {
 
-	typedef std::list<Symbol*> SymbolList;
 public:
 	explicit ElfProducer(std::string aElfInput);
 	~ElfProducer();
 
-	void SetSymbolList(SymbolList& aSymbolList);
+	void SetSymbolList(Symbols& sym);
 	void WriteElfFile(char* aDsoFullName,char* aDsoFileName, char* aLinkAs);
 
 private:
@@ -88,7 +90,7 @@ private:
 	PLUINT32		iLinkAsOffset=0;
 
 	/** The export Symbol list*/
-	SymbolList		*iSymbolsList=nullptr;
+	Symbols     	iSymbols;
 
 	/** The proxy DSO full file name*/
 	string			iDsoFullName;

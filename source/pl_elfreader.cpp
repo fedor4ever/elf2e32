@@ -21,7 +21,7 @@
 #include <string.h>
 #include <fstream>
 
-#include "pl_elfreader.h"
+#include "pl_elfimage.h"
 #include "errorhandler.h"
 
 using std::min;
@@ -29,17 +29,7 @@ using std::list;
 using std::fstream;
 
 
-ElfReader::ElfReader(string aElfInput) :
-    ElfImage(aElfInput)
-{}
-
-
-ElfReader::~ElfReader(){
-	DELETE_PTR_ARRAY(iMemBlock);
-}
-
-const uint32_t KMaxWindowsIOSize = 31 * 1024 * 1024;
-void ElfReader::Read(){
+void ElfImage::Read(){
 
     fstream fs(iElfInput.c_str(), fstream::binary | fstream::in);
     if(!fs)
@@ -62,29 +52,14 @@ Funtion for getting elf symbol list
 @internalComponent
 @released
 */
-int ElfReader::GetElfSymbols(list<Symbol*>& aSymbols){
+Symbols ElfImage::GetElfSymbols(){
 
-	if( !iExports ) return 0;
+	if(!iExports)
+		return Symbols();
 
 	//Get the exported symbols
-	vector<Symbol*> aTmpList = iExports->GetExports(true);
-
-	typedef vector<Symbol*> List;
-	List::iterator aItr = aTmpList.begin();
-	while( aItr != aTmpList.end() ){
-		aSymbols.push_back((Symbol*) (*aItr));
-		++aItr;
-	}
-	aTmpList.clear();
-	return aSymbols.size();
-}
-
-/**
-Funtion for getting image details
-@internalComponent
-@released
-*/
-void ElfReader::GetImageDetails(/*E32ImageInterface aInterface*/){
+	vector<Symbol*> tmp = iExports->GetExports(true);
+	return Symbols(tmp.begin(), tmp.end());
 
 }
 
@@ -94,7 +69,7 @@ Funtion for processing elf file
 @internalComponent
 @released
 */
-PLUINT32 ElfReader::ProcessElfFile(){
+PLUINT32 ElfImage::ProcessElfFile(){
 
 	Elf32_Ehdr *aElfHdr = ELF_ENTRY_PTR(Elf32_Ehdr, iMemBlock, 0);
 

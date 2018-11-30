@@ -22,18 +22,21 @@
 #define _PL_ELFEXECUTABLE_H_
 
 #include <list>
-#include "pl_common.h"
+
 #include "elfdefs.h"
+#include "pl_common.h"
 #include "pl_elfimports.h"
-#include "pl_elfrelocations.h"
 #include "pl_elfexports.h"
+#include "pl_elfrelocations.h"
 
 
 class Symbol;
-class ElfRelocations;
 class ElfExports;
+class ElfRelocations;
 class ElfLocalRelocation;
-//static PLUINT32 globalcntr = 0;
+
+typedef std::list <Symbol*>	Symbols;
+
 /**
 This class is for ELF object carrying the elf header, sections, segments.
 @internalComponent
@@ -79,6 +82,13 @@ public:
 	bool ExeceptionsPresentP();
 	ElfExports::Exports& GetExportsInOrdinalOrder();
 	Elf32_Sym* LookupStaticSymbol(const char * name);
+private:
+    char*  iMemBlock = nullptr;
+
+public:
+    void Read();
+	Symbols GetElfSymbols();
+	PLUINT32 ProcessElfFile();
 public:
 	/**
 	 * The elf header pointer which points to the base of the file records

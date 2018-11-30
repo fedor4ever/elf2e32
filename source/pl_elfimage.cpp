@@ -19,16 +19,16 @@
 //
 
 
-#include "pl_elfimage.h"
-
-#include "errorhandler.h"
 #include <stdio.h>
 #include <cstring>
 #include <iostream>
-#include "pl_elfimportrelocation.h"
-#include "pl_symbol.h"
+
 #include "message.h"
+#include "pl_symbol.h"
+#include "pl_elfimage.h"
+#include "errorhandler.h"
 #include "pl_elflocalrelocation.h"
+#include "pl_elfimportrelocation.h"
 
 using std::list;
 using std::cout;
@@ -64,6 +64,7 @@ ElfImage::~ElfImage()
 
 	iNeeded.clear();
 //	iSymbolTable.clear();
+	DELETE_PTR_ARRAY(iMemBlock);
 }
 
 
@@ -186,8 +187,8 @@ Function to Find the Comment Section
 char* ElfImage::FindCommentSection()
 {
 	size_t nShdrs = iElfHeader->e_shnum;
-	char *aCommentSection = ".comment";
-    int length = strlen(aCommentSection);
+	char *commentSection = ".comment";
+    int length = strlen(commentSection);
 
 	if (nShdrs)
 	{
@@ -197,7 +198,7 @@ char* ElfImage::FindCommentSection()
 			if (iSections[i].sh_type == SHT_PROGBITS)
 			{
 				char * aSectionName = iSectionHdrStrTbl + iSections[i].sh_name;
-				if (!strncmp(aSectionName, aCommentSection, length))
+				if (!strncmp(aSectionName, commentSection, length))
 				{
 					char *aComment = ELF_ENTRY_PTR(char, iElfHeader, iSections[i].sh_offset);
 					return aComment;

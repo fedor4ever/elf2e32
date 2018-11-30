@@ -21,7 +21,6 @@
 #include "deffile.h"
 #include "pl_symbol.h"
 #include "pl_elfimage.h"
-#include "pl_elfreader.h"
 #include "errorhandler.h"
 #include "e32imagefile.h"
 #include "pl_elfexports.h"
@@ -42,7 +41,7 @@ ElfFileSupplied::ElfFileSupplied(ParameterManager* aManager) :
     iManager(aManager)
 {
 	iElfProducer = new ElfProducer(aManager->ElfInput());
-	iReader = new ElfReader(aManager->ElfInput());
+	iReader = new ElfImage(aManager->ElfInput());
 }
 
 /**
@@ -84,6 +83,8 @@ void ElfFileSupplied::ReadElfFile()
 	iReader->ProcessElfFile();
 }
 
+Symbols SymbolsFromDef(const char *defFile);
+
 /**
 Function to get symbols from .def file
 @internalComponent
@@ -94,9 +95,7 @@ void ElfFileSupplied::SymbolsFromDEF(Symbols& aDef)
     char * def = iManager->DefInput();
     if(!def)
         return;
-    DefFile * iDefFile = new DefFile();
-	Symbols tmp = iDefFile->GetSymbols(def);
-	delete iDefFile;
+	Symbols tmp = SymbolsFromDef(def);
 	aDef.splice(aDef.begin(), tmp, tmp.begin(), tmp.end());
 }
 
@@ -209,7 +208,7 @@ void ElfFileSupplied::WriteDefFile()
 	if(!aDEFFileName) return;
 
 	DefFile deffile;
-	deffile.WriteDefFile(aDEFFileName, &iSymbols);
+	deffile.WriteDefFile(aDEFFileName, iSymbols);
 }
 
 /**
@@ -278,7 +277,7 @@ void ElfFileSupplied::ValidateDefExports(Symbols &aDefExports)
 	iSymbols = defValidExports;
 
 	if (iReader->iExports)
-		iReader->GetElfSymbols( elfExports );
+		elfExports = iReader->GetElfSymbols();
 
 	// REVISIT - return back if elfexports and defexports is NULL
 

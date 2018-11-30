@@ -25,7 +25,6 @@ add_executable(elf2e32
     source/pl_elfimports.h
     source/pl_elflocalrelocation.h
     source/pl_elfproducer.h
-    source/pl_elfreader.h
     source/pl_elfrelocation.h
     source/pl_elfrelocations.h
     source/pl_sym_type.h

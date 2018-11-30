@@ -688,6 +688,7 @@ void DumpRelocs(char *relocs)
     printf("\n");
 }
 
+Symbols SymbolsFromDef(const char *defFile);
 void GenerateAsmFile()
 {
     ParameterManager *param = ParameterManager::Static();
@@ -699,8 +700,7 @@ void GenerateAsmFile()
     if(!defin)
         throw Elf2e32Error(NOREQUIREDOPTIONERROR, "--definput");
 
-	DefFile *defFile = new DefFile();
-	Symbols aSymList = defFile->GetSymbols(defin);
+	Symbols aSymList = SymbolsFromDef(defin);
 
 	FILE *fptr = nullptr;
 	if(output)

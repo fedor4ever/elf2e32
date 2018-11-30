@@ -63,33 +63,30 @@ This function sets the export Symbol list
 @released
 @param aSymbolList The export Symbol list.
 */
-void ElfProducer::SetSymbolList(SymbolList& aSymbolList){
-	iSymbolsList = &aSymbolList;
-	if (iSymbolsList)
+void ElfProducer::SetSymbolList(Symbols& s){
+	iSymbols = s;
+	if (!iSymbols.empty())
 	{
-		SymbolList::iterator aPos, aEnd;
-		aPos = iSymbolsList->begin();
-		aEnd = iSymbolsList->end();
-		char *aAbsentSymbol = "_._.absent_export_";
-		int length = strlen(aAbsentSymbol);
-		while(aPos != aEnd)
+		char *absentSymbol = "_._.absent_export_";
+		int length = strlen(absentSymbol);
+
+        // Ordinal Number can be upto 0xffff which is 6 digits
+		length +=7;
+        for(auto x: iSymbols)
 		{
 			/* If a symbol is marked as Absent in the DEF file, replace the
 			 * symbol name with "_._.absent_export_<Ordinal Number>"
 			 */
-			if((*aPos)->Absent())
+			if(x->Absent())
 			{
-				int aOrdinalNo = (*aPos)->OrdNum();
-				// Ordinal Number can be upto 0xffff which is 6 digits
-				char * aSymName = new char[length+7];
-				sprintf(aSymName, "_._.absent_export_%d", aOrdinalNo);
-				(*aPos)->SetSymbolName(aSymName);
-				delete[] aSymName;
+                char symName[length] = {'0'};
+				int aOrdinalNo = x->OrdNum();
+				sprintf(symName, "_._.absent_export_%d", aOrdinalNo);
+				x->SetSymbolName(symName);
 			}
-			++aPos;
 		}
 	}
-	iNSymbols = iSymbolsList->size() + 1;
+	iNSymbols = iSymbols.size() + 1;
 }
 
 /**
@@ -154,7 +151,7 @@ void ElfProducer::InitElfContents() {
 	memset( &iElfDynSym[0], 0, sizeof(Elf32_Sym));
 	iDSOSymNameStrTbl.insert(iDSOSymNameStrTbl.end(), 0);
 
-	for(auto aSym: *iSymbolsList)
+	for(auto aSym: iSymbols)
     {
 		string aSymName(aSym->SymbolName());
 		//set symbol info..
@@ -524,16 +521,10 @@ void ElfProducer::CreateProgHeader()
 	iElfHeader->e_phoff		= iElfFileOffset;
 
 	// Update code section data..
-	SymbolList::iterator aItr = iSymbolsList->begin();
-	SymbolList::iterator end  = iSymbolsList->end();
-
-	Symbol *aSym;
 	PLUINT32	aPos = 0;
-	while(aItr != end) {
-		aSym = *aItr;
-
-		iCodeSectionData[aPos] = aSym->OrdNum();
-		++aItr;++aPos;
+	for(auto x: iSymbols)
+    {
+		iCodeSectionData[aPos++] = x->OrdNum();
 	}
 
 	//Create program header

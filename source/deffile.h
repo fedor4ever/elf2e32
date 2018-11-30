@@ -52,11 +52,11 @@ Class for DEF File Handler.
 class DefFile
 {
 	public:
-		Symbols GetSymbols(char *defFile);
-		void WriteDefFile(char *fileName, Symbols *aSymbols);
+		Symbols GetSymbols(const char *defFile);
+		void WriteDefFile(const char *fileName, const Symbols &aSymbols);
 
 	private:
-		void ReadDefFile(char *defFile);
+		void ReadDefFile(const char *defFile);
 		void ParseDefFile();
 		void Tokenizer(std::string aLine, size_t aIndex);
     private:
