@@ -109,8 +109,6 @@ class E32ImageFile {
         void ProcessCodeRelocations();
         void ProcessDataRelocations();
 
-        uint16 GetE32RelocType(ElfRelocation * aReloc);
-
         void ConstructImage();
 
         void InitE32ImageHeader();

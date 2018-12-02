@@ -24,3 +24,4 @@ That tool is replacement for broken one in SDK.
 ## Enhancements:
  - (un-)repacking existing E32 image
 > syntax example: --e32input="tests\libcrypto-2.4.5.SDK.dll" --output="tests\tmp\libcrypto-2.4.5.inflate.dll" --compressionmethod=inflate
+ - list global variables if --dlldata not specified for any targets except STDDLL and STDEXE

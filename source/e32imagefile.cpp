@@ -54,6 +54,7 @@ struct E32RelocPageDesc {
 
 void CreateRelocations(ElfRelocations::Relocations & aRelocations, char * & aRelocs, size_t & aRelocsSize);
 size_t RelocationsSize(ElfRelocations::Relocations & aRelocs);
+uint16 GetE32RelocType(ElfRelocation * aReloc);
 
 template <class T>
 inline T Align(T v, size_t s)
@@ -228,36 +229,36 @@ for the corresponding symbols.
 */
 void E32ImageFile::ProcessImports()
 {
-	string aStrTab;
-	vector<int> aStrTabOffsets;
+	string strTab;
+	vector<int> strTabOffsets;
 	int numDlls = 0;
-	int aNumImports = 0;
+	int numImports = 0;
 	bool namedLookup = iManager->SymNamedLookup();
 
-	ElfImports::ImportLibs aImportMap = iElfImage->GetImports();
+	ElfImports::ImportLibs importLibs = iElfImage->GetImports();
 
 	// First set up the string table and record offsets into string table of each
 	// LinkAs name.
-	for (auto p: aImportMap)
+	for (auto p: importLibs)
 	{
-		ElfImports::RelocationList & aImports = p.second;
-		char* aLinkAs = aImports[0]->iVerRecord->iLinkAs;
+		ElfImports::RelocationList & relocs = p.second;
+		char* aLinkAs = relocs[0]->iVerRecord->iLinkAs;
 
-		aStrTabOffsets.push_back(aStrTab.size()); //
+		strTabOffsets.push_back(strTab.size()); //
 		string s = aLinkAs;
-		aStrTab.insert(aStrTab.end(),s.begin(),s.end());
-		aStrTab.insert(aStrTab.end(),0);
+		strTab.insert(strTab.end(),s.begin(),s.end());
+		strTab.insert(strTab.end(),0);
 		numDlls++;
-		aNumImports += aImports.size();
+		numImports += relocs.size();
 	}
 
 	iNumDlls = numDlls;
-	iNumImports = aNumImports;
+	iNumImports = numImports;
 
 	// Now we can figure out the size of everything
-	size_t aImportSectionSize = sizeof(E32ImportSection) +
+	size_t importSectionSize = sizeof(E32ImportSection) +
             (sizeof(E32ImportBlock) * numDlls) +
-            (sizeof(uint32_t) * aNumImports);
+            (sizeof(uint32_t) * numImports);
 
 	vector<Elf32_Word> aImportSection;
 
@@ -267,20 +268,20 @@ void E32ImageFile::ProcessImports()
 	if( namedLookup ) {
 		// These are the 0th ordinals imported into the import table, one
 		// entry for each DLL.
-		aImportSectionSize += (sizeof(uint32_t) * numDlls);
+		importSectionSize += (sizeof(uint32_t) * numDlls);
 	}
 	// Now fill in the E32ImportBlocks
 	int idx = 0;
-	for (auto p: aImportMap)
+	for (auto p: importLibs)
 	{
-		ElfImports::RelocationList & aImports = p.second;
-		string aDsoName = aImports[0]->iVerRecord->iSOName;
+		ElfImports::RelocationList & imports = p.second;
+		string dsoName = imports[0]->iVerRecord->iSOName;
 
 		//const char * aDSO = FindDSO((*p).first);
-		string aDSO = FindDSO(aDsoName);
+		string aDSO = FindDSO(dsoName);
 
-		aImportSection.push_back(aStrTabOffsets[idx] + aImportSectionSize);
-		int nImports = aImports.size();
+		aImportSection.push_back(strTabOffsets[idx] + importSectionSize);
+		int nImports = imports.size();
 
 		// Take the additional 0th ordinal import into account
 		if( namedLookup ) nImports++;
@@ -294,7 +295,7 @@ void E32ImageFile::ProcessImports()
 		ElfImage aElfImage(iElfImage->iElfInput);
 		aElfImage.ProcessElfFile(aElfFile);
 
-		for(auto aReloc: aImports)
+		for(auto aReloc: imports)
 		{
 			char * aSymName = iElfImage->GetSymbolName(aReloc->iSymNdx);
 			unsigned int aOrdinal = aElfImage.GetSymbolOrdinal(aSymName);
@@ -342,20 +343,20 @@ void E32ImageFile::ProcessImports()
 		delete [] ((char*)aElfFile);
 	}
 
-	assert(aImportSectionSize == aImportSection.size() * sizeof(Elf32_Word));
+	assert(importSectionSize == aImportSection.size() * sizeof(Elf32_Word));
 
-	size_t aTotalSize = Align(aImportSectionSize + aStrTab.size(), sizeof(Elf32_Word));
+	size_t totalSize = Align(importSectionSize + strTab.size(), sizeof(Elf32_Word));
 
 	// Fill in the section header now we have the correct value.
-	aImportSection[0] = aTotalSize;
+	aImportSection[0] = totalSize;
 
 	// Now construct the unified section
-	iImportSectionSize = aTotalSize;
-	iImportSection = (uint32 *)new char[aTotalSize]{0};
-//	memset(iImportSection, 0, aTotalSize);
-	memcpy(iImportSection, (void *)&aImportSection.at(0), aImportSectionSize);
-	char * strTab = ((char *)iImportSection) + aImportSectionSize;
-	memcpy(strTab, aStrTab.data(), aStrTab.size());
+	iImportSectionSize = totalSize;
+	iImportSection = (uint32 *)new char[totalSize]{0};
+//	memset(iImportSection, 0, totalSize);
+	memcpy(iImportSection, (void *)&aImportSection.at(0), importSectionSize);
+	char * buf = ((char *)iImportSection) + importSectionSize;
+	memcpy(buf, strTab.data(), strTab.size());
 }
 
 
@@ -514,13 +515,13 @@ sorted.
 @internalComponent
 @released
 */
-size_t RelocationsSize(ElfRelocations::Relocations & aRelocs)
+size_t RelocationsSize(ElfRelocations::Relocations & relocs)
 {
 	size_t bytecount = 0;
 	int page = -1;
-	for(auto aReloc: aRelocs)
+	for(auto x: relocs)
 	{
-		int p = aReloc->iAddr & 0xfffff000;
+		int p = x->iAddr & 0xfffff000;
 		if (page != p)
 			{
 			if (bytecount%4 != 0)
@@ -537,13 +538,13 @@ size_t RelocationsSize(ElfRelocations::Relocations & aRelocs)
 
 /**
 This function returns the E32 interpretation for an Elf relocation type.
-@param aReloc - relocation entry.
+@param rel - relocation entry.
 @internalComponent
 @released
 */
-uint16 E32ImageFile::GetE32RelocType(ElfRelocation * aReloc)
+uint16 GetE32RelocType(ElfRelocation * rel)
 {
-	ESegmentType aSegType = aReloc->iSegmentType; // iReader->SegmentType(aReloc->iSymbol->st_value);
+	ESegmentType aSegType = rel->iSegmentType; // iReader->SegmentType(rel->iSymbol->st_value);
 	switch (aSegType)
 	{
 	case ESegmentRO:
@@ -888,6 +889,13 @@ void E32ImageFile::SetE32ImgHdrFields()
 		iHdr->iFlags |= KImageDll;
 		if(!AllowDllData())
         {
+            cout << "Found global symbol(s): " << "\n";
+            auto z = iElfImage->iExports->GetExports(false);
+            for(auto x: z)
+            {
+                if(x->CodeDataType() == SymbolTypeData)
+                    cout << x->SymbolName() << "\n";
+            }
             if (iHdr->iDataSize)
                 throw Elf2e32Error(DLLHASINITIALISEDDATAERROR, iManager->ElfInput());
             if (iHdr->iBssSize)
@@ -1214,7 +1222,7 @@ E32ImageFile::~E32ImageFile()
 	delete [] iImportSection;
 }
 
-int  DecompressPages(TUint8 * bytes, ifstream& is);
+int DecompressPages(TUint8 * bytes, ifstream& is);
 
 void E32ImageFile::ProcessSymbolInfo()
 {

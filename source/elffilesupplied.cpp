@@ -162,9 +162,9 @@ void ElfFileSupplied::GetSymbolsFromSysdefoption(Symbols &aIn)
 
 	for (int k=0; k < count; k++)
 	{
-		Symbol *aSymbolEntry = new Symbol(aSysDefSymbols[k].iSysDefSymbolName, SymbolTypeCode);
-		aSymbolEntry->SetOrdinal(aSysDefSymbols[k].iSysDefOrdinalNum);
-		aIn.push_back(aSymbolEntry);
+		Symbol *sym = new Symbol(aSysDefSymbols[k].iSysDefSymbolName, SymbolTypeCode);
+		sym->SetOrdinal(aSysDefSymbols[k].iSysDefOrdinalNum);
+		aIn.push_back(sym);
 	}
 }
 
@@ -461,13 +461,10 @@ Function to write E32 Image file.
 */
 void ElfFileSupplied::WriteE32()
 {
+	const char * e32 = iManager->E32ImageOutput();
 
-	const char * aE32FileName = iManager->E32ImageOutput();
-
-    if(!aE32FileName)
-	{
+    if(!e32)
 	    return;
-	}
 
 	iE32ImageFile = new E32ImageFile(iReader, this, iManager, &iExportTable);
 
@@ -475,9 +472,9 @@ void ElfFileSupplied::WriteE32()
 	{
 		iE32ImageFile->GenerateE32Image();
 
-		if (iE32ImageFile->WriteImage(aE32FileName))
+		if (iE32ImageFile->WriteImage(e32))
 		{
-			//GetELF2E32()->AddFileCleanup(aE32FileName);
+			//GetELF2E32()->AddFileCleanup(e32);
 			delete iE32ImageFile;
 		}
 	}
