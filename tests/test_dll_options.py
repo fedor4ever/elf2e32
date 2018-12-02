@@ -54,6 +54,9 @@ elf2e32+defin+ """ --defoutput="tmp\def2def.def" """,
 ("Test #%d: simple binary creation",
 elf2e32+elfin+""" --output="tmp\elf2baree32.dll" """+implibs+tgttype+linkas+tail,
 elf2e32+elfin+""" --output="tmp\elf2baree32.dll" """+implibs+tgttype+linkas+tail,
+),
+("Test #%d: binary creation with outdated def file",
+elf2e32+caps+defout+elfin+longtail+r" --unfrozen"+r""" --definput="libcryptou_openssl.def" """
 ) )
 
 def SuceededTests(*args):
