@@ -113,10 +113,15 @@ SymbolMissingFromElfError constructor for initializing message index, symbol nam
 @released
 */
 SymbolMissingFromElfError::SymbolMissingFromElfError(int aMessageIndex,
-		list<string> &aSymbolList, const char * aName) :
+		list<string> &symbols, const char * aName) :
 				ErrorHandler(aMessageIndex)
 {
-    MissedSymbol = aSymbolList.size();
+    for(auto x: symbols)
+    {
+        iMissedSymbol+='\t';
+        iMissedSymbol+=x;
+        iMissedSymbol+='\n';
+    }
     iName = aName;
 }
 
@@ -128,8 +133,9 @@ Function to report Symbol Missing From Elf Error.
 void SymbolMissingFromElfError::Report()
 {
     iMessage+=GetMessage(iMessageIndex);
-    char *buf = new char[strlen(iMessage.c_str()) + strlen(iName.c_str()) + 1];
-    sprintf(buf, iMessage.c_str(), MissedSymbol, iName.c_str());
+    char *buf = new char[strlen(iMessage.c_str()) + strlen(iName.c_str()) +
+                                       iMissedSymbol.size() + 1];
+    sprintf(buf, iMessage.c_str(), iMissedSymbol.c_str(), iName.c_str());
     Message::GetInstance()->Output(buf);
 }
 

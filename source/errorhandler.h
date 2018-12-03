@@ -80,10 +80,10 @@ Class for handling Symbol Missing From Elf Errors.
 class SymbolMissingFromElfError : public ErrorHandler
 {
 public:
-	SymbolMissingFromElfError(int aMessageIndex, list<string> &aSymbolList, const char * aName);
+	SymbolMissingFromElfError(int aMessageIndex, list<string> &aSymbols, const char * aName);
 	virtual ~SymbolMissingFromElfError(){}
 	void Report();
-	uint32_t MissedSymbol = 0;
+	string iMissedSymbol;
 };
 
 /**
