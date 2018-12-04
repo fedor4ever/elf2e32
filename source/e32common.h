@@ -132,13 +132,16 @@ const uint32_t KExecutableImageUidValue=0x1000007a; //All executable targets hav
 
 const uint32_t KImageCrcInitialiser  = 0xc90fdaa2u;
 
+const int32_t KHeapSizeLimitMin = 0x1000;
+const int32_t KHeapSizeLimitMax = 0x100000;
+
 struct E32ImageHeader
 {
     uint32_t iUid1;
     uint32_t iUid2;
     uint32_t iUid3;
     uint32_t iUidChecksum;
-    char iSignature[4] = {'E', 'P', 'O', 'C'};
+    const char iSignature[4] = {'E', 'P', 'O', 'C'};
     uint32_t iHeaderCrc = KImageCrcInitialiser;  // CRC-32 of entire header
     uint32_t iModuleVersion;     // Version number for this executable (used in link resolution)
     uint32_t iCompressionType = KUidCompressionDeflate;   // Type of compression used (UID or 0 for none)
@@ -146,10 +149,10 @@ struct E32ImageHeader
     uint32_t iTimeLo;
     uint32_t iTimeHi;
     uint32_t iFlags;               // 0 = exe, 1 = dll, 2 = fixed address exe
-    int32_t iCodeSize;             // size of code, import address table, constant data and export dir
-    int32_t iDataSize;             // size of initialised data
-    int32_t iHeapSizeMin = 0x1000;
-    int32_t iHeapSizeMax = 0x100000;
+    uint32_t iCodeSize;             // size of code, import address table, constant data and export dir
+    uint32_t iDataSize;             // size of initialised data
+    int32_t iHeapSizeMin = KHeapSizeLimitMin;
+    int32_t iHeapSizeMax = KHeapSizeLimitMax;
     int32_t iStackSize = 0x2000;
     int32_t iBssSize;
     uint32_t iEntryPoint;          // offset into code of entry point
@@ -158,7 +161,7 @@ struct E32ImageHeader
     int32_t iDllRefTableCount;     // filling this in enables E32ROM to leave space for it
     uint32_t iExportDirOffset;     // offset into the file of the export address table
     uint32_t iExportDirCount;
-    int32_t iTextSize;             // size of just the text section, also doubles as the offset for the iat w.r.t. the code section
+    uint32_t iTextSize;             // size of just the text section, also doubles as the offset for the iat w.r.t. the code section
     uint32_t iCodeOffset;          // file offset to code section, also doubles as header size
     uint32_t iDataOffset;          // file offset to data section
     uint32_t iImportOffset;        // file offset to import section

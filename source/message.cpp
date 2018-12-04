@@ -32,10 +32,10 @@ using std::endl;
 using std::cout;
 using std::string;
 
-char *errorMssgPrefix="elf2e32 : Error: E";
-char *warnMssgPrefix="elf2e32 : Warning: W";
-char *infoMssgPrefix="elf2e32 : Information: I";
-char *colSpace=": ";
+const char *errorMssgPrefix="elf2e32 : Error: E";
+const char *warnMssgPrefix="elf2e32 : Warning: W";
+const char *infoMssgPrefix="elf2e32 : Information: I";
+const char *colSpace=": ";
 
 constexpr auto MessageArraySize=67;
 

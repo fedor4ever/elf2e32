@@ -27,7 +27,7 @@
 /**
  * Following array is indexed on the SECTION_INDEX enum
  */
-char* SECTION_NAME[] = {
+const char* SECTION_NAME[] = {
 	"",
 	"ER_RO",
 	".dynamic",
@@ -67,7 +67,7 @@ void ElfProducer::SetSymbolList(Symbols& s){
 	iSymbols = s;
 	if (!iSymbols.empty())
 	{
-		char *absentSymbol = "_._.absent_export_";
+		const char *absentSymbol = "_._.absent_export_";
 		int length = strlen(absentSymbol);
 
         // Ordinal Number can be upto 0xffff which is 6 digits
@@ -79,10 +79,10 @@ void ElfProducer::SetSymbolList(Symbols& s){
 			 */
 			if(x->Absent())
 			{
-                char symName[length] = {'0'};
-				int aOrdinalNo = x->OrdNum();
-				sprintf(symName, "_._.absent_export_%d", aOrdinalNo);
+                char *symName = new char[length]{'0'};
+				sprintf(symName, "_._.absent_export_%d", x->OrdNum());
 				x->SetSymbolName(symName);
+				delete symName;
 			}
 		}
 	}
@@ -383,7 +383,7 @@ This function sets the section header fields.
 @param aFlags Section flags
 @param aAddr The address of this section in memory(Here it remains 0)
 */
-void ElfProducer::SetSectionFields(PLUINT32 aSectionIndex, char* aSectionName, PLUINT32 aType, \
+void ElfProducer::SetSectionFields(PLUINT32 aSectionIndex, const char* aSectionName, PLUINT32 aType, \
 								   PLUINT32 aEntSz, PLUINT32 aSectionSize, PLUINT32 aLink, \
 								   PLUINT32 aInfo, PLUINT32 aAddrAlign, PLUINT32 aFlags, \
 								   PLUINT32 aAddr)

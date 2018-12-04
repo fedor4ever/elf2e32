@@ -4,8 +4,8 @@
 #include <cstdint>
 
 class E32Parser;
-class E32ImageHeader;
-class E32ImageHeaderV;
+struct E32ImageHeader;
+struct E32ImageHeaderV;
 
 int32_t ValidateE32Image(const char *buffer, uint32_t size);
 

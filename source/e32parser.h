@@ -20,13 +20,14 @@
 #ifndef E32PARSER_H
 #define E32PARSER_H
 
+#include <ios>
 #include <cstdint>
 #include <stddef.h>
 
-class E32ImageHeader;
-class E32ImageHeaderJ;
-class E32ImageHeaderV;
-class E32ImportSection;
+struct E32ImageHeader;
+struct E32ImageHeaderJ;
+struct E32ImageHeaderV;
+struct E32ImportSection;
 
 class E32Parser
 {
@@ -64,7 +65,7 @@ class E32Parser
 
         const char *iFileName = nullptr;
         char *iBufferedFile = nullptr;
-        size_t iE32Size = 0;
+        std::streamoff iE32Size = 0;
 
         //used in ParseExportBitMap()
         uint8_t *iExportBitMap = nullptr;

@@ -128,7 +128,7 @@ private:
 	void CreateVersionTable();
 	void CreateElfHeader();
 	void CreateSections();
-	void SetSectionFields(PLUINT32 aSectionIndex, char* aSectionName,
+	void SetSectionFields(PLUINT32 aSectionIndex, const char* aSectionName,
 						PLUINT32 aType, PLUINT32 aEntSz, PLUINT32 aSectionSize,
 						PLUINT32 aLink, PLUINT32 aInfo, PLUINT32 aAddrAlign,
 						PLUINT32 aFlags, PLUINT32 aAddr);

@@ -543,7 +543,7 @@ void E32Info::PrintHexData(void *pos, size_t length)
     char *p = (char *)pos;
     char str[LINE_MAX + 1] = {"\n"};
 
-    auto i = 0;
+    size_t i = 0;
     for(; (i + LINE_MAX) < length; i += LINE_MAX)
     {
         printf("%06x: ", i);
@@ -564,7 +564,7 @@ void E32Info::PrintHexData(void *pos, size_t length)
     if(i==length)
         return;
 
-    int diff = length-i;
+    size_t diff = length-i;
     memset(str, ' ', LINE_MAX);
     memcpy(str, (p + i), diff);
 

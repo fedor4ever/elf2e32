@@ -187,7 +187,7 @@ Function to Find the Comment Section
 char* ElfImage::FindCommentSection()
 {
 	size_t nShdrs = iElfHeader->e_shnum;
-	char *commentSection = ".comment";
+	const char *commentSection = ".comment";
     int length = strlen(commentSection);
 
 	if (nShdrs)

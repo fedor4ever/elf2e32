@@ -70,9 +70,9 @@ public:
 
 	struct OptionDesc
 	{
-		char * iName;
+		const char * iName;
 		const void * iParser;
-		char * iDoc;
+		const char * iDoc;
 	};
 
 	struct TargetTypeDesc
@@ -105,7 +105,7 @@ public:
 	typedef std::map<std::string, const OptionDesc *, OptionCompare> OptionMap;
 	typedef std::vector<std::string> LibSearchPaths;
 
-	typedef void (*ParserFn)(ParameterManager *, char *, char *, const OptionDesc *);
+	typedef void (*ParserFn)(ParameterManager *, const char *, char *, const OptionDesc *);
 
 
 	#define DECLARE_PARAM_PARSER(name) \

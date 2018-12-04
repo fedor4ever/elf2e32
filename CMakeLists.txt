@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 2.8)
 
 project(elf2e32)
 
+add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+
 add_executable(elf2e32
     source/byte_pair.h
     source/checksum.h

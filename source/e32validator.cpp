@@ -182,6 +182,12 @@ int32_t E32Validator::ValidateHeader()
 	if(iHdr->iHeapSizeMax<iHdr->iHeapSizeMin)
 		RETURN_FAILURE(KErrCorrupt);
 
+	if(KHeapSizeLimitMin<iHdr->iHeapSizeMin)
+		RETURN_FAILURE(KErrCorrupt);
+
+    if(iHdr->iHeapSizeMax>KHeapSizeLimitMax)
+		RETURN_FAILURE(KErrCorrupt);
+
 	// check iStackSize...
 	if(iHdr->iStackSize<0)
 		RETURN_FAILURE(KErrCorrupt);
@@ -596,7 +602,7 @@ int32_t E32Validator::ValidateImports()
 		if(iat&iPointerAlignMask)
 			RETURN_FAILURE(KErrCorrupt); // Fuzzer can't trigger this because PE imports are for X86 which doesn't have alignment restrictions
 		uint32_t iatEnd = iat+sizeof(uint32_t)*totalImports;
-		if(iatEnd<iat || iatEnd>uint32_t(iHdr->iCodeSize))
+		if(iatEnd<iat || iatEnd>iHdr->iCodeSize)
 			RETURN_FAILURE(KErrCorrupt); // import address table overflows code part of file
 		E32IMAGEHEADER_TRACE(("E32ImportSection IAT offsets 0x%x..0x%x", iat, iatEnd));
     }

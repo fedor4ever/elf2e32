@@ -35,8 +35,8 @@
 using std::cerr;
 using std::endl;
 
-constexpr char *errMssgPrefix="elf2e32 : Error: E";
-constexpr char *colonSpace=": ";
+const char *errMssgPrefix="elf2e32 : Error: E";
+const char *colonSpace=": ";
 
 void ErrorReport(ErrorHandler *handle);
 char *GetMessage(int aMessageIndex);

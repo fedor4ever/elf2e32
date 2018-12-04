@@ -1555,7 +1555,7 @@ Input to the option
 Option that is passed as input
 @return the validated value
 */
-UINT ValidateInputVal(char * aValue, char * aOption)
+UINT ValidateInputVal(char * aValue, const char * aOption)
 {
 	UINT uid;
 	if (!aValue)
@@ -1578,7 +1578,7 @@ Input to the option
 @param aOption
 Option that is passed as input
 */
-void CheckInput(char * aValue, char * aOption)
+void CheckInput(char * aValue, const char * aOption)
 {
 	if (aValue)
 		Message::GetInstance()->ReportMessage(WARNING, VALUEIGNOREDWARNING, aOption);

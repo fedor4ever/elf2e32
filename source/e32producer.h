@@ -20,7 +20,7 @@
 #ifndef E32PRODUCER_H
 #define E32PRODUCER_H
 
-class E32ImageHeader;
+struct E32ImageHeader;
 class ParameterManager;
 
 class E32Producer

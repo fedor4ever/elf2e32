@@ -48,15 +48,15 @@ Class E32ImageChunkDesc for different sections in the E32 image.
 */
 class E32ImageChunkDesc {
     public:
-        E32ImageChunkDesc(char * aData, size_t aSize, size_t aOffset, char * aDoc);
+        E32ImageChunkDesc(const char * aData, const size_t aSize, const size_t aOffset, const char * aDoc);
         ~E32ImageChunkDesc();
         void Init(char * aPlace);
 
     public:
-        char * iData;
-        size_t iSize;
-        size_t iOffset;
-        char * iDoc;
+        const char * iData;
+        const size_t iSize;
+        const size_t iOffset;
+        const char * iDoc;
     };
 
 typedef vector<E32ImageChunkDesc *> ChunkList;
@@ -69,7 +69,7 @@ class E32ImageChunks {
     public:
         ~E32ImageChunks();
 
-        void AddChunk(char * aData, size_t aSize, size_t aOffset, char * aDoc);
+        void AddChunk(const char * aData, size_t aSize, size_t aOffset, const char * aDoc);
         size_t GetOffset();
         void SetOffset(size_t aOffset);
         ChunkList & GetChunks();
@@ -78,9 +78,7 @@ class E32ImageChunks {
 
     private:
         ChunkList iChunks;
-
         size_t iOffset=0;
-
     };
 
 typedef unsigned char uint8;

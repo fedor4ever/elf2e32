@@ -80,7 +80,7 @@ Constructor for E32ImageChunkDesc class.
 @internalComponent
 @released
 */
-E32ImageChunkDesc::E32ImageChunkDesc(char * aData, size_t aSize, size_t aOffset, char * aDoc):
+E32ImageChunkDesc::E32ImageChunkDesc(const char * aData, size_t aSize, size_t aOffset, const char * aDoc):
 	iData(aData), iSize(aSize), iOffset(aOffset), iDoc(aDoc)
 {}
 
@@ -104,7 +104,7 @@ Destructor for E32ImageChunks class.
 */
 E32ImageChunks::~E32ImageChunks()
 {
- 	if(iChunks.size())
+ 	if(!iChunks.empty())
  	{
  		for(auto x: iChunks) delete x;
  	}
@@ -119,7 +119,7 @@ This function creates and adds a chunk into a list.
 @internalComponent
 @released
 */
-void E32ImageChunks::AddChunk(char * aData, size_t aSize, size_t aOffset, char * aDoc)
+void E32ImageChunks::AddChunk(const char * aData, size_t aSize, size_t aOffset, const char * aDoc)
 {
 	E32ImageChunkDesc * aChunk = new E32ImageChunkDesc(aData, aSize, aOffset, aDoc);
 	iChunks.push_back(aChunk);
@@ -175,7 +175,7 @@ void E32ImageChunks::DisasmChunk(uint16_t index, uint32_t length, uint32_t pos)
     if(!length) length = tmp->iSize;
     printf("Disassembled section: %s at addr: %08zx\n",tmp->iDoc, tmp->iOffset+pos);
     printf("Has data:\n");
-    for(auto i = 0, sep = 0; i < length; i++, sep++)
+    for(uint32_t i = 0, sep = 0; i < length; i++, sep++)
     {
         size_t k = *(uint8_t *)(tmp->iData + i + pos);
 

@@ -26,7 +26,7 @@
 #include "e32common.h"
 
 class E32Parser;
-class E32ImageHeader;
+struct E32ImageHeader;
 
 class E32Info
 {
