@@ -886,7 +886,7 @@ This function extracts the E32 image dump options passed as input through the --
 
 @return the name of the dump options if provided as input through --dump or nullptr.
 */
-char * ParameterManager::FileDumpOptions(){
+const char * ParameterManager::FileDumpOptions(){
 	return iOptionArgs.fileDumpOpt;
 }
 

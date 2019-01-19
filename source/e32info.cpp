@@ -33,12 +33,10 @@
 #include "e32capability.h"
 
 void DumpRelocs(char *relocs);
-void GenerateAsmFile();
+void GenerateAsmFile(ParameterManager *param);
 
-E32Info::E32Info(const char* flags, const char* aE32File): iE32File(aE32File), iFlags(flags)
-{
-    iE32 = new E32Parser(aE32File);
-}
+E32Info::E32Info(ParameterManager *param): iParam(param),
+    iFlags(param->FileDumpOptions()) {}
 
 E32Info::~E32Info()
 {
@@ -584,10 +582,15 @@ void E32Info::PrintHexData(void *pos, size_t length)
 
 void E32Info::Run()
 {
-    printf("E32ImageFile \'%s\'\n", iE32File);
-    iHdr1 = iE32->GetFileLayout();
+    if(iParam->E32Input())
+    {
+        iE32File = iParam->E32Input();
+        iE32 = new E32Parser(iE32File);
+        printf("E32ImageFile \'%s\'\n", iE32File);
+        iHdr1 = iE32->GetFileLayout();
 
-    ValidateE32Image(iE32->GetBufferedImage(), iE32->GetFileSize());
+        ValidateE32Image(iE32->GetBufferedImage(), iE32->GetFileSize());
+    }
 
     char c;
     while((c = *iFlags++))
@@ -595,7 +598,7 @@ void E32Info::Run()
         switch(c)
         {
             case 'a':
-                GenerateAsmFile();
+                GenerateAsmFile(iParam);
                 break;
             case 'h':
                 HeaderInfo();
@@ -689,11 +692,8 @@ void DumpRelocs(char *relocs)
 }
 
 Symbols SymbolsFromDef(const char *defFile);
-void GenerateAsmFile()
+void GenerateAsmFile(ParameterManager *param)
 {
-    ParameterManager *param = ParameterManager::Static();
-    if(!param)
-        return;
     char *output = param->E32ImageOutput();
 
     char *defin = param->DefInput();

@@ -72,8 +72,8 @@ int main(int argc, char** argv)
             delete f;
 			return result;
         }
-        if (Instance->E32Input() || Instance->FileDumpOptions()){
-            auto f = new E32Info(Instance->FileDumpOptions(), Instance->E32Input());
+        if (Instance->FileDumpOptions()){
+            auto f = new E32Info(Instance);
             f->Run();
             delete f;
 			return result;

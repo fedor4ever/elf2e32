@@ -34,7 +34,7 @@ struct Arguments
     char *E32OutFile = nullptr; // --output
     char *dsoOutFile = nullptr;
     char *elfFile = nullptr; // --elfinput
-    char *fileDumpOpt = nullptr; // --dump
+    const char *fileDumpOpt = nullptr; // --dump
     char *linkAsOpt = nullptr;
 };
 
@@ -318,7 +318,7 @@ public:
 	char * LogFile();
 	char * MessageFile();
 	char * DumpMessageFile();
-	char * FileDumpOptions();
+	const char * FileDumpOptions();
 
 	int SysDefCount();
 	Sys SysDefSymbols(int count);

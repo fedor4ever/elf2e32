@@ -27,11 +27,12 @@
 
 class E32Parser;
 struct E32ImageHeader;
+class ParameterManager;
 
 class E32Info
 {
     public:
-        E32Info(const char *flags, const char *E32File);
+        E32Info(ParameterManager *param);
         ~E32Info();
         void Run();
     public:
@@ -48,8 +49,9 @@ class E32Info
         void CPUIdentifier(uint16_t CPUType, bool &isARM);
         void ImagePriority(TProcessPriority priority) const;
     private:
-        const char *iE32File = nullptr;
+        ParameterManager *iParam = nullptr;
         const char *iFlags = nullptr;
+        const char *iE32File = nullptr;
         E32Parser *iE32 = nullptr;
         E32ImageHeader *iHdr1 = nullptr;
 };
