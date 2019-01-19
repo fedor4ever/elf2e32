@@ -26,7 +26,6 @@
 #include "e32exporttable.h"
 
 class Symbol;
-class ElfReader;
 class ElfProducer;
 class E32ImageFile;
 class E32ImageHeaderV;

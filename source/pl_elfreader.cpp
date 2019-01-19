@@ -12,7 +12,7 @@
 // Contributors: Strizhniou Fiodar - fix build and runtime errors.
 //
 // Description:
-// Implementation of the Class ElfReader for the elf2e32 tool
+// Implementation of the Class ElfImage for the elf2e32 tool
 // @internalComponent
 // @released
 //
