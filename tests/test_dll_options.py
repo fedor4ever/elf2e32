@@ -27,6 +27,11 @@ counter=0
 longtail=e32bin+implibs+linkas+dsoout+fpu+iud1+uid2+uid3+tgttype+tail
 
 args1=(
+
+("Test #%d: binary creation with outdated def file",
+elf2e32+caps+defout+elfin+longtail+r" --unfrozen"+r""" --definput="libcryptou_openssl.def" """,
+elf2e32+caps+defout+elfin+longtail+r" --unfrozen"+r""" --definput="libcryptou_openssl.def" """,
+),
 ("Test #%d: Full options list",
 elf2e32+caps+defin+defout+elfin+longtail,
 "Full options list!",
@@ -55,16 +60,10 @@ elf2e32+defin+ """ --defoutput="tmp\def2def.def" """,
 elf2e32+elfin+""" --output="tmp\elf2baree32.dll" """+implibs+tgttype+linkas+tail,
 elf2e32+elfin+""" --output="tmp\elf2baree32.dll" """+implibs+tgttype+linkas+tail,
 ),
-("Test #%d: binary creation with outdated def file",
-elf2e32+caps+defout+elfin+longtail+r" --unfrozen"+r""" --definput="libcryptou_openssl.def" """,
-elf2e32+caps+defout+elfin+longtail+r" --unfrozen"+r""" --definput="libcryptou_openssl.def" """,
-),
 ("Test #%d: ful binary creation for ECOM plugin",
-elf2e32+implibs+""" --capability=ProtServ --defoutput=tmp\AlternateReaderRecog{000a0000}.def --elfinput="AlternateReaderRecog.dll" --output="tmp\AlternateReaderRecogE32.dll"  --linkas=AlternateReaderRecog{000a0000}[101ff1ec].dll --dso=tmp\AlternateReaderRecog{000a0000}.dso --fpu=softvfp --uid1=0x10000079 --uid2=0x10009d8d --uid3=0x101ff1ec --targettype=PLUGIN 
---sid=0x101ff1ec --version=10.0 --ignorenoncallable --debuggable --smpsafe --sysdef=_Z24ImplementationGroupProxyRi,1; """,
+elf2e32+implibs+""" --capability=ProtServ --defoutput=tmp\AlternateReaderRecog{000a0000}.def --elfinput="AlternateReaderRecog.dll" --output="tmp\AlternateReaderRecogE32.dll"  --linkas=AlternateReaderRecog{000a0000}[101ff1ec].dll --dso=tmp\AlternateReaderRecog{000a0000}.dso --fpu=softvfp --uid1=0x10000079 --uid2=0x10009d8d --uid3=0x101ff1ec --targettype=PLUGIN --sid=0x101ff1ec --version=10.0 --ignorenoncallable --debuggable --smpsafe --sysdef=_Z24ImplementationGroupProxyRi,1; """,
 
-elf2e32+implibs+""" --capability=ProtServ --defoutput=tmp\AlternateReaderRecog{000a0000}.def --elfinput="AlternateReaderRecog.dll" --output="tmp\AlternateReaderRecogE32.dll"  --linkas=AlternateReaderRecog{000a0000}[101ff1ec].dll --dso=tmp\AlternateReaderRecog{000a0000}.dso --fpu=softvfp --uid1=0x10000079 --uid2=0x10009d8d --uid3=0x101ff1ec --targettype=PLUGIN 
---sid=0x101ff1ec --version=10.0 --ignorenoncallable --debuggable --smpsafe --sysdef=_Z24ImplementationGroupProxyRi,1; """,
+elf2e32+implibs+""" --capability=ProtServ --defoutput=tmp\AlternateReaderRecog{000a0000}.def --elfinput="AlternateReaderRecog.dll" --output="tmp\AlternateReaderRecogE32.dll"  --linkas=AlternateReaderRecog{000a0000}[101ff1ec].dll --dso=tmp\AlternateReaderRecog{000a0000}.dso --fpu=softvfp --uid1=0x10000079 --uid2=0x10009d8d --uid3=0x101ff1ec --targettype=PLUGIN --sid=0x101ff1ec --version=10.0 --ignorenoncallable --debuggable --smpsafe --sysdef=_Z24ImplementationGroupProxyRi,1; """,
 ) )
 
 def SuceededTests(*args):
@@ -76,9 +75,10 @@ def SuceededTests(*args):
       print tmp[0] %counter
       tmp1=tmp[1].replace("%02d", str(counter))
       print tmp1
+      print "\n"
       subprocess.check_call(tmp1)
    except:
-      print "Unexpectable test failure: %s" %tmp[2]
+      print "Unexpectable test failure:\n %s" %tmp[2]
    finally:
       print "\n"
       counter+=1
