@@ -350,7 +350,7 @@ void E32Info::DataSection()
 void E32Info::ExportTable()
 {
     printf("\nNumber of exports = %u\n", iHdr1->iExportDirCount);
-    size_t* exports = (uint32_t*)(iE32->GetBufferedImage() + iHdr1->iExportDirOffset);
+    uint32_t* exports = (uint32_t*)(iE32->GetBufferedImage() + iHdr1->iExportDirOffset);
     uint32_t absoluteEntryPoint = iHdr1->iEntryPoint + iHdr1->iCodeBase;
     uint32_t impfmt = iHdr1->iFlags & KImageImpFmtMask;
     uint32_t absentVal = (impfmt == KImageImpFmt_ELF) ? absoluteEntryPoint : iHdr1->iEntryPoint;
