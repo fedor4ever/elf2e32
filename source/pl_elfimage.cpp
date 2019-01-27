@@ -28,10 +28,11 @@
 #include "pl_elfimage.h"
 #include "errorhandler.h"
 #include "pl_elflocalrelocation.h"
-#include "pl_elfimportrelocation.h"
 
 using std::list;
 using std::cout;
+
+bool ValidRelocEntry(PLUCHAR aType);
 
 /**
 Constructor for class ElfImage
@@ -382,7 +383,7 @@ This function adds imports into the map
 @internalComponent
 @released
 */
-void ElfImage::AddToImports(ElfImportRelocation* aReloc){
+void ElfImage::AddToImports(ElfRelocation* aReloc){
 	SetVersionRecord(aReloc);
 	iImports.Add(aReloc);
 }
@@ -406,7 +407,7 @@ This function records the version of an imported symbol
 void ElfImage::SetVersionRecord( ElfRelocation* aReloc ) {
 	if( !aReloc )
 		return;
-	((ElfImportRelocation*)aReloc)->iVerRecord = &iVerInfo[ iVersionTbl[aReloc->iSymNdx]];
+	aReloc->iVerRecord = &iVerInfo[ iVersionTbl[aReloc->iSymNdx]];
 }
 
 /**
@@ -689,7 +690,7 @@ void ElfImage::ProcessRelocations(T *aElfRel, size_t aSize){
 
 		PLUCHAR aType = ELF32_R_TYPE(aElfRel->r_info );
 
-		if(ElfRelocation::ValidRelocEntry(aType)) {
+		if(ValidRelocEntry(aType)) {
 
 			PLUINT32 aSymIdx = ELF32_R_SYM(aElfRel->r_info);
 			bool aImported = ImportedSymbol( &iElfDynSym[aSymIdx] );
@@ -700,9 +701,9 @@ void ElfImage::ProcessRelocations(T *aElfRel, size_t aSize){
 			ElfRelocation *aRel = nullptr;
 			if(aImported)
 			{
-				aRel = new ElfImportRelocation(this, aElfRel->r_offset, aAddend,
+				aRel = new ElfRelocation(this, aElfRel->r_offset, aAddend,
 						aSymIdx, aType, &tmp);
-				AddToImports((ElfImportRelocation*)aRel);
+				AddToImports(aRel);
 			}
 			else
             {
@@ -1379,4 +1380,28 @@ void ElfImage::ElfInfo()
     cout << "**************************" << "\n";
 }
 
+/**
+This function verifies if the relocation entry is required to be
+handled by the postlinker.
+@param aType - type of relocation
+@return - True if valid relocation type, otherwise false
+@internalComponent
+@released
+*/
+bool ValidRelocEntry(PLUCHAR aType) {
+
+	switch(aType)
+	{
+	case R_ARM_ABS32:
+	case R_ARM_GLOB_DAT:
+	case R_ARM_JUMP_SLOT:
+	case R_ARM_RELATIVE:
+	case R_ARM_GOT_BREL:
+		return true;
+	case R_ARM_NONE:
+		return false;
+	default:
+		return false;
+	}
+}
 

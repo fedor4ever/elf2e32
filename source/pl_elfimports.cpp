@@ -20,7 +20,7 @@
 
 #include <cstring>
 #include "pl_elfimports.h"
-#include "pl_elfimportrelocation.h"
+#include "pl_elfrelocation.h"
 
 ElfImports::ElfImports(){}
 
@@ -39,7 +39,7 @@ ElfImports::~ElfImports()
 
             for(auto y: *rlistTemp)
 			{
-				ElfImportRelocation *temp = y;
+				ElfRelocation *temp = y;
 				delete temp;
 				temp = nullptr;
 			}
@@ -57,7 +57,7 @@ Function to add imports
 @internalComponent
 @released
 */
-void ElfImports::Add(ElfImportRelocation *aReloc){
+void ElfImports::Add(ElfRelocation *aReloc){
     char *aDllName = aReloc->iVerRecord->iLinkAs;
 	iImports[aDllName].insert(iImports[aDllName].end(), aReloc);
 }

@@ -55,7 +55,7 @@ public:
 	ElfImports::ImportLibs GetImports();
 	ElfExports* GetExports();
 	bool AddToExports(char* dll, Symbol* sym);
-	void AddToImports(ElfImportRelocation* aReloc);
+	void AddToImports(ElfRelocation* aReloc);
 	void AddToLocalRelocations(ElfLocalRelocation* aReloc);
 	void ProcessVerInfo();
 

@@ -28,7 +28,7 @@
 
 using std::binary_function;
 
-class ElfImportRelocation;
+class ElfRelocation;
 
 /**
 This class get the list of symbols imported from a list of DSOs.
@@ -44,14 +44,14 @@ public:
 		bool operator() (const char * lhs, const char * rhs) const;
 	};
 
-	typedef std::vector<ElfImportRelocation*> RelocationList;
+	typedef std::vector<ElfRelocation*> RelocationList;
 
 	typedef std::map<const char*, RelocationList, StringPtrLess> ImportLibs;
 
 	ElfImports();
 	~ElfImports();
 
-	void Add(ElfImportRelocation *aReloc);
+	void Add(ElfRelocation *aReloc);
 	PLUINT32 GetImportSize();
 	ImportLibs& GetImports();
 

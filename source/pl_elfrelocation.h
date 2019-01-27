@@ -41,18 +41,17 @@ public:
 			PLUINT32 aIndex, PLUCHAR aRelType, Elf32_Rel* aRel);
 	virtual ~ElfRelocation(){}
 
-	static bool ValidRelocEntry(PLUCHAR aType);
-
 	PLMemAddr32 iAddr;
 	PLUINT32	iAddend;
 	PLUINT32	iSymNdx;
 	PLUCHAR		iRelType;
-	Elf32_Rel	*iRel;
+	Elf32_Rel	*iRel = nullptr;
 	Elf32_Sym	*iSymbol = nullptr;
-	ElfImage 	*iElfImage;
+	ElfImage 	*iElfImage = nullptr;
 	Elf32_Phdr	*iSegment = nullptr;
 	ESegmentType iSegmentType = ESegmentUndefined;
-};
 
+	VersionInfo *iVerRecord = nullptr;
+};
 
 #endif // !defined(_PL_ELFRELOCATION_H_)
