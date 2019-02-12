@@ -200,9 +200,6 @@ E32ImageFile::E32ImageFile(ElfImage * aElfImage = nullptr, ElfFileSupplied *aUse
 	iTable(aTable)
 	{}
 
-E32ImageFile::E32ImageFile():
-    E32ImageFile::E32ImageFile(nullptr, nullptr,nullptr, nullptr){}
-
 /**
 This function generates the E32 image.
 @internalComponent
@@ -214,10 +211,29 @@ void E32ImageFile::GenerateE32Image()
 		ProcessSymbolInfo();
 	}
 	ProcessImports();
-	ProcessCodeRelocations();
-	ProcessDataRelocations();
+	ProcessRelocations();
 	ConstructImage();
+	//PrintAddrInfo(0x58);
 }
+
+void E32ImageFile::PrintAddrInfo(uint32_t addr)
+{
+    if(addr < iHdr->iCodeOffset)
+    {
+        if(addr < sizeof(E32ImageHeader))
+        {
+            cout << "That address belongs to ";
+            if( offsetof(class E32ImageHeader, iExportDirOffset) == addr)
+                cout << "E32ImageHeader.iExportDirOffset.\n";
+        }
+        else if( (addr > sizeof(E32ImageHeader)) && (addr <
+                        (sizeof(E32ImageHeader) + sizeof(E32ImageHeaderComp))) )
+            cout << "That address placed in E32ImageHeaderComp Section\n";
+        else
+            cout << "That address placed in E32ImageHeaderV Section\n";
+    }
+}
+
 
 /**
 This function processes the import map by looking into the dso files
@@ -428,22 +444,13 @@ void E32ImageFile::ReadInputELFFile(string aName, size_t & aFileSize, Elf32_Ehdr
 }
 
 /**
-This function processes Code relocations.
+This function processes Code and Data relocations.
 @internalComponent
 @released
 */
-void E32ImageFile::ProcessCodeRelocations()
+void E32ImageFile::ProcessRelocations()
 {
 	CreateRelocations(iElfImage->GetCodeRelocations(), iCodeRelocs, iCodeRelocsSize);
-}
-
-/**
-This function processes Data relocations.
-@internalComponent
-@released
-*/
-void E32ImageFile::ProcessDataRelocations()
-{
 	CreateRelocations(iElfImage->GetDataRelocations(), iDataRelocs, iDataRelocsSize);
 }
 
@@ -698,9 +705,11 @@ void E32ImageFile::ComputeE32ImageLayout()
 	//	b. symbol lookup is enabled - because this table also indicates the dependencies
 	bool aExportTableNeeded = (iHdr->iExportDirCount || aSymLkupEnabled) ? 1 : 0;
 
-	iHdr->iExportDirOffset = iChunks.GetOffset() + 4;
-	if ( aExportTableNeeded && iTable->AllocateP())
-		iChunks.AddChunk((char *)iTable->GetExportTable(), iTable->GetExportTableSize(), iChunks.GetOffset(), "Export Table");
+	if ( aExportTableNeeded && iTable->AllocateP()){
+        iHdr->iExportDirOffset = iChunks.GetOffset() + 4;
+		iChunks.AddChunk((char *)iTable->GetExportTable(),
+                iTable->GetExportTableSize(), iChunks.GetOffset(), "Export Table");
+    }
 
 	// Symbol info next
 	if( aSymLkupEnabled ){
@@ -888,12 +897,13 @@ void E32ImageFile::SetE32ImgHdrFields()
 		iHdr->iFlags |= KImageDll;
 		if(!AllowDllData())
         {
-            cout << "Found global symbol(s): " << "\n";
             auto z = iElfImage->iExports->GetExports(false);
+            if(!z.empty())
+                cout << "Found global symbol(s):\n";
             for(auto x: z)
             {
                 if(x->CodeDataType() == SymbolTypeData)
-                    cout << x->SymbolName() << "\n";
+                    cout << "\t" << x->SymbolName() << "\n";
             }
             if (iHdr->iDataSize)
                 throw Elf2e32Error(DLLHASINITIALISEDDATAERROR, iManager->ElfInput());
@@ -1110,9 +1120,9 @@ This function creates a buffer and writes all the data into the buffer.
 int32_t ValidateE32Image(const char *buffer, uint32_t size);
 void E32ImageFile::AllocateE32Image()
 {
-	size_t aImageSize = iChunks.GetOffset();
-	iE32Image = new char[aImageSize];
-	memset(iE32Image, 0, aImageSize);
+	size_t imageSize = GetE32ImageSize();
+	iE32Image = new char[imageSize];
+	memset(iE32Image, 0, imageSize);
 
 	ChunkList aChunkList = iChunks.GetChunks();
 	for(auto p: aChunkList)
@@ -1122,10 +1132,10 @@ void E32ImageFile::AllocateE32Image()
 
 	E32ImageHeaderV* header = (E32ImageHeaderV*)iE32Image;
 	TInt headerSize = header->TotalSize();
-	if(KErrNone!=header->ValidateWholeImage(iE32Image+headerSize,GetE32ImageSize()-headerSize))
+	if(KErrNone!=header->ValidateWholeImage(iE32Image+headerSize, imageSize - headerSize))
 		throw Elf2e32Error(VALIDATIONERROR, iManager->E32ImageOutput());
 
-	if( KErrNone!=ValidateE32Image(iE32Image,GetE32ImageSize()) )
+	if( KErrNone!=ValidateE32Image(iE32Image, imageSize) )
 		throw Elf2e32Error(VALIDATIONERROR, iManager->E32ImageOutput());
 }
 

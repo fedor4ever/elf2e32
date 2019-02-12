@@ -70,22 +70,23 @@ int32_t E32Validator::ValidateHeader()
 	if(iBufSize < hdrSize)
 		RETURN_FAILURE(KErrCorrupt);
 
-    if( (iHdr->iFlags&KImageHdrFmtMask) == KImageHdrFmt_J)
+	uint32_t hdrfmt = HdrFmtFromFlags(iHdr->iFlags);
+    if( hdrfmt == KImageHdrFmt_J)
     {
-        iBufSize += sizeof(E32ImageHeaderJ);
+        hdrSize += sizeof(E32ImageHeaderJ);
         if(iBufSize < hdrSize)
             RETURN_FAILURE(KErrCorrupt);
-
-        if( (iHdr->iFlags&KImageHdrFmtMask) == KImageHdrFmt_V)
-        {
-            iBufSize += sizeof(E32ImageHeaderV);
-            if(iBufSize < hdrSize)
-                RETURN_FAILURE(KErrCorrupt);
-        }
     }
+
+    if( hdrfmt == KImageHdrFmt_V)
+    {
+        hdrSize += sizeof(E32ImageHeaderV) + sizeof(E32ImageHeaderJ);
+        if(iBufSize < hdrSize)
+            RETURN_FAILURE(KErrCorrupt);
+    }
+
 	// check header format version...
 	// KImageHdrFmt_J, KImageHdrFmt_Original, KImageHdrFmt_V
-	uint32_t hdrfmt = HdrFmtFromFlags(iHdr->iFlags);
 	if( (hdrfmt != KImageHdrFmt_V) && (hdrfmt != KImageHdrFmt_J) &&
         (hdrfmt != KImageHdrFmt_Original) )
     {
@@ -238,7 +239,9 @@ int32_t E32Validator::ValidateHeader()
     {
         RETURN_FAILURE(KErrCorrupt);
     }
-	else{
+	else if(dataStart){
+        if(!dataEnd)
+            RETURN_FAILURE(KErrCorrupt);
 		if(dataStart<codeEnd)
 			RETURN_FAILURE(KErrCorrupt);
 		if(dataEnd>uncompressedSize)
@@ -495,14 +498,13 @@ int32_t E32Validator::ValidateRelocations(uint32_t offset, uint32_t sectionSize)
 	return KErrNone;
 }
 
-int32_t E32Validator::ValidateImports()
+int32_t E32Validator::ValidateImports() const
 {
     if(!iHdr->iImportOffset)
 		return KErrNone; // no imports
 
     // buffer pointer to read relocation from...
     uint8_t* buf = (uint8_t*)iParser->GetBufferedImage();
-	uint8_t* sectionStart = (uint8_t*)iParser->GetImportSection();
 	uint8_t* bufferEnd = buf + iBufSize; //last byte of E32Image
 
     // read section header (ValidateHeader has alread checked this is OK)...
@@ -510,9 +512,9 @@ int32_t E32Validator::ValidateImports()
 	E32IMAGEHEADER_TRACE(("E32ImportSection 0x%x\n", sectionHeader->iSize));
 
 	// check section lies within buffer...
-	uint8_t* p = (uint8_t*)(sectionHeader+1);  // start of first import block
-	uint8_t* sectionEnd = (uint8_t*)(sectionHeader + sectionHeader->iSize);
-	if( sectionEnd < p )
+	uint8_t* sectionStart = (uint8_t*)sectionHeader; // start of first import block
+	uint8_t* sectionEnd = sectionStart + sectionHeader->iSize;
+	if( sectionEnd < sectionStart )
 		RETURN_FAILURE(KErrCorrupt); // math overflow or not big enough to contain header
 	if(sectionEnd > bufferEnd)
 		RETURN_FAILURE(KErrCorrupt); // overflows buffer
@@ -523,10 +525,11 @@ int32_t E32Validator::ValidateImports()
 	uint32_t totalImports = 0;
 	uint32_t importFormat = iHdr->iFlags&KImageImpFmtMask;
 
+	uint8_t* p = (uint8_t*)(sectionHeader + 1);
     while(numDeps--)
     {
 		// get block header...
-		E32ImportBlock* block = (E32ImportBlock*)p;
+		const E32ImportBlock* block = (E32ImportBlock*)p;
 		p = (uint8_t*)(block+1);
 		if(p<(uint8_t*)block || p>sectionEnd)
 			RETURN_FAILURE(KErrCorrupt); // overflows buffer
@@ -589,8 +592,6 @@ int32_t E32Validator::ValidateImports()
 
 		// move pointer on to next block...
 		p = (uint8_t*)block->NextBlock(importFormat);
-		/// TODO (Administrator#1#11/10/18): Use block++ instead ugly pointer arithmetic
-		//block++;
     }
 
 	// done processing imports; for PE derived files now check import address table (IAT)...

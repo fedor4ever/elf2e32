@@ -30,6 +30,7 @@
 #include "parametermanager.h"
 
 using std::cout;
+bool UnWantedSymbol(const char * aSymbol);
 
 /**
 Constructor for class ElfFileSupplied
@@ -153,17 +154,11 @@ void ElfFileSupplied::GetSymbolsFromSysdefoption(Symbols &aIn)
     int count = iManager->SysDefCount();
 	ParameterManager::Sys aSysDefSymbols[10];
 
-	int i = 0;
-	while (i < count)
+	for(int i =  0; i < count; i++)
 	{
 		aSysDefSymbols[i] = iManager->SysDefSymbols(i);
-		++i;
-	}
-
-	for (int k=0; k < count; k++)
-	{
-		Symbol *sym = new Symbol(aSysDefSymbols[k].iSysDefSymbolName, SymbolTypeCode);
-		sym->SetOrdinal(aSysDefSymbols[k].iSysDefOrdinalNum);
+		Symbol *sym = new Symbol(aSysDefSymbols[i].iSysDefSymbolName, SymbolTypeCode);
+		sym->SetOrdinal(aSysDefSymbols[i].iSysDefOrdinalNum);
 		aIn.push_back(sym);
 	}
 }
@@ -183,15 +178,14 @@ void ElfFileSupplied::ProcessExports()
 
     try
     {
-        ValidateDefExports(symbols);
-    }
-    catch(SymbolMissingFromElfError& aSme)
+        ValidateDefExports(symbols);    }
+    catch(SymbolMissingFromElfError& e)
 	{
 		/* Only DEF file would be generated if symbols found in
 		 * DEF file are missing from the ELF file.
 		 */
 		WriteDefFile();
-		throw aSme;
+		throw e;
 	}
 
 	CreateExports();
@@ -421,7 +415,7 @@ exports are available.
 */
 void ElfFileSupplied::BuildAll()
 {
-	if ((iReader && iReader->iExports) || (iManager->TargetTypeName() == ELib) )
+	if(iReader && iReader->iExports)
 	{
 		WriteDefFile();
 		WriteDSOFile();
@@ -436,18 +430,14 @@ Function to write DSO file.
 */
 void ElfFileSupplied::WriteDSOFile()
 {
-	char * aLinkAs = iManager->LinkAsDLLName();
 	char * aDSOName = iManager->DSOOutput();
 	if(!aDSOName)
-	{
 	    return;
-	}
-
-	ETargetType target = iManager->TargetTypeName();
-	if(target == ELib)
-        SymbolsFromDEF(iSymbols);
 
 	char * aDSOFileName = iManager->FileName(aDSOName);
+	char * aLinkAs = iManager->LinkAsDLLName();
+    SymbolsFromDEF(iSymbols);
+
 	/** This member is responsible for generating the proxy DSO file. */
 
 	iElfProducer->SetSymbolList(iSymbols);
@@ -647,7 +637,7 @@ Function to indicate if the new exports are to be reported as warnings.
 */
 bool ElfFileSupplied::WarnForNewExports()
 {
-	return true;
+	return EPolyDll != iManager->TargetTypeName();
 }
 
 /**
@@ -657,7 +647,7 @@ Function to provide a predicate which checks whether a symbol name is unwanted:
 @internalComponent
 @released
 */
-bool ElfFileSupplied::UnWantedSymbol(const char * aSymbol)
+bool UnWantedSymbol(const char * aSymbol)
 {
 	constexpr size_t symbollistsize = sizeof(Unwantedruntimesymbols) / sizeof(Unwantedruntimesymbols[0]);
 	for (size_t i = 0; i<symbollistsize; i++)

@@ -94,18 +94,16 @@ class E32ImageFile {
     public:
         E32ImageFile(ElfImage * aElfImage, ElfFileSupplied * aUseCase,
                      ParameterManager * aManager, E32ExportTable *aTable);
-        E32ImageFile();
-        virtual ~E32ImageFile();
+        ~E32ImageFile();
 
         void GenerateE32Image();
 
         void ReadInputELFFile(string aName, size_t & aFileSize, Elf32_Ehdr * & aELFFile );
 
         void ProcessImports();
-        string FindDSO(string aName);
+        void ProcessRelocations();
 
-        void ProcessCodeRelocations();
-        void ProcessDataRelocations();
+        string FindDSO(string aName);
 
         void ConstructImage();
 
@@ -183,6 +181,7 @@ class E32ImageFile {
         uint32_t    iSymNameOffset=0;
 
     public:
+        void PrintAddrInfo(uint32_t addr);
         void ProcessSymbolInfo();
         char* CreateSymbolInfo(size_t aBaseOffset);
         void SetSymInfo(E32EpocExpSymInfoHdr& aSymInfo);

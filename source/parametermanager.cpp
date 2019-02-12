@@ -774,7 +774,7 @@ This function extracts the Elf file name that is passed as input through the --e
 @internalComponent
 @released
 
-@return the name of the input Elf file if provided as input through --elfinput or nullptr.
+@return the name of the input Elf file if provided as input through --elfinput or empty string.
 */
 const string& ParameterManager::ElfInput(){
 	return iElfInput;

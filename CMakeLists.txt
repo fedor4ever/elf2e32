@@ -10,9 +10,12 @@ add_executable(elf2e32
     source/deffile.h
     source/e32common.h
     source/e32exporttable.h
+	source/e32flags.h
     source/e32imagefile.h
     source/e32info.h
     source/e32parser.h
+	source/e32producer.h
+	source/e32validator.h
     source/elffilesupplied.h
     source/errorhandler.h
     source/farray.h
@@ -23,7 +26,6 @@ add_executable(elf2e32
     source/pl_common.h
     source/pl_elfexports.h
     source/pl_elfimage.h
-    source/pl_elfimportrelocation.h
     source/pl_elfimports.h
     source/pl_elflocalrelocation.h
     source/pl_elfproducer.h
@@ -32,9 +34,6 @@ add_executable(elf2e32
     source/pl_sym_type.h
     source/pl_symbol.h
     source/staticlibsymbols.h
-	source/e32producer.h
-	source/e32validator.h
-	source/e32flags.h
     source/byte_pair.cpp
     source/checksum.cpp
     source/deffile.cpp
@@ -57,7 +56,6 @@ add_executable(elf2e32
     source/pl_common.cpp
     source/pl_elfexports.cpp
     source/pl_elfimage.cpp
-    source/pl_elfimportrelocation.cpp
     source/pl_elfimports.cpp
     source/pl_elflocalrelocation.cpp
     source/pl_elfproducer.cpp

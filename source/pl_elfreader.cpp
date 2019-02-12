@@ -94,9 +94,7 @@ PLUINT32 ElfImage::ProcessElfFile(){
    		 * Solution: This workaround is only applicable for RVCT compiler. So if the .comment section
    		 * is not available in the elf file, then this workaround is no need to be applied.
    		 */
-   		if(aCommentSection != NULL)
-   		{
-		if (!strncmp(aCommentSection, aARMCompiler, length))
+		if(aCommentSection && (!strncmp(aCommentSection, aARMCompiler, length)) )
 		{
 			int WorkAroundBuildNo = 616;
 			int BuildNo = 0;
@@ -142,7 +140,6 @@ PLUINT32 ElfImage::ProcessElfFile(){
 				ElfImage::FindStaticSymbolTable();
 				ElfImage::ProcessVeneers();
 			}
-		}
 		}
 	}
 	catch(ErrorHandler&)

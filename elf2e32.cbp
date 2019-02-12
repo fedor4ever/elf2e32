@@ -11,12 +11,13 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters='--capability=All-TCB --definput=&quot;tests\libcryptou.def&quot; --defoutput=&quot;tests\tmp\out.def&quot; --elfinput=&quot;tests\libcrypto.dll&quot; --output=&quot;tests\tmp\libcrypto-2.4.5.tst.dll&quot; --libpath=&quot;D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib&quot; --linkas=&quot;libcrypto{000a0000}.dll&quot; --dso=&quot;tests\tmp\libcrypto{000a0000}.dso&quot; --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --dlldata --ignorenoncallable --debuggable --smpsafe --uncompressed' />
+				<Option parameters='--capability=All-TCB --elfinput=&quot;tests\kf_Python_launcher.exe&quot; --output=&quot;tests\tmp\kf_Python_launcher.exe&quot;  --libpath=&quot;D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib&quot; --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDEXE --ignorenoncallable --uncompressed --debuggable --smpsafe' />
 				<Compiler>
 					<Add option="-std=c++14" />
 					<Add option="-g -O0" />
 					<Add option="-g3" />
 					<Add option="-fvar-tracking" />
+					<Add option="-D__STDC_FORMAT_MACROS" />
 					<Add directory="source" />
 					<Add directory="include" />
 				</Compiler>
@@ -101,8 +102,6 @@
 		<Unit filename="source/pl_elfexports.h" />
 		<Unit filename="source/pl_elfimage.cpp" />
 		<Unit filename="source/pl_elfimage.h" />
-		<Unit filename="source/pl_elfimportrelocation.cpp" />
-		<Unit filename="source/pl_elfimportrelocation.h" />
 		<Unit filename="source/pl_elfimports.cpp" />
 		<Unit filename="source/pl_elfimports.h" />
 		<Unit filename="source/pl_elflocalrelocation.cpp" />

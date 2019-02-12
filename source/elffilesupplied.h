@@ -73,8 +73,6 @@ public:
 
 	PLUINT16 GetExportDescSize();
 	PLUINT8 GetExportDescType();
-	//Method to check whether a symbol name is unwanted
-	bool UnWantedSymbol(const char * aSymbol);
 
 private:
 	Symbols iSymbols;

@@ -54,7 +54,18 @@ Destructor for class ElfProducer to release allocated memory
 @released
 */
 ElfProducer::~ElfProducer(){
-	Cleanup();
+    DELETE_PTR(iElfHeader);
+	DELETE_PTR_ARRAY(iSections);
+	DELETE_PTR_ARRAY(iElfDynSym);
+	DELETE_PTR_ARRAY(iVersionTbl);
+	DELETE_PTR_ARRAY(iVersionDef);
+	DELETE_PTR_ARRAY(iDSODaux);
+
+	DELETE_PTR_ARRAY(iProgHeader);
+	DELETE_PTR_ARRAY(iCodeSectionData);
+	DELETE_PTR_ARRAY(iHashTbl);
+	DELETE_PTR_ARRAY(iDSOBuckets);
+	DELETE_PTR_ARRAY(iDSOChains);
 }
 
 /**
@@ -82,7 +93,7 @@ void ElfProducer::SetSymbolList(Symbols& s){
                 char *symName = new char[length]{'0'};
 				sprintf(symName, "_._.absent_export_%d", x->OrdNum());
 				x->SetSymbolName(symName);
-				delete symName;
+				delete[] symName;
 			}
 		}
 	}
@@ -402,27 +413,6 @@ void ElfProducer::SetSectionFields(PLUINT32 aSectionIndex, const char* aSectionN
 	iSections[aSectionIndex].sh_addralign	= aAddrAlign;
 	iSections[aSectionIndex].sh_info			= aInfo;
 	iSections[aSectionIndex].sh_addr			= aAddr;
-}
-
-/**
-This function cleans up the memory allocated to the Elf fields.
-@internalComponent
-@released
-*/
-void ElfProducer::Cleanup()
-{
-	DELETE_PTR(iElfHeader);
-	DELETE_PTR_ARRAY(iSections);
-	DELETE_PTR_ARRAY(iElfDynSym);
-	DELETE_PTR_ARRAY(iVersionTbl);
-	DELETE_PTR_ARRAY(iVersionDef);
-	DELETE_PTR_ARRAY(iDSODaux);
-
-	DELETE_PTR_ARRAY(iProgHeader);
-	DELETE_PTR_ARRAY(iCodeSectionData);
-	DELETE_PTR_ARRAY(iHashTbl);
-	DELETE_PTR_ARRAY(iDSOBuckets);
-	DELETE_PTR_ARRAY(iDSOChains);
 }
 
 /**

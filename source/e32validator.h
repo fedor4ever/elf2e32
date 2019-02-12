@@ -18,7 +18,7 @@ class E32Validator
     private:
         int32_t ValidateHeader();
         int32_t ValidateRelocations(uint32_t offset, uint32_t sectionSize);
-        int32_t ValidateImports();
+        int32_t ValidateImports() const;
         int32_t ValidateExportDescription() const;
     private:
         E32Parser *iParser = nullptr;

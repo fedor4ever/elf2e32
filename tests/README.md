@@ -3,6 +3,7 @@ Those who wish to test the program perform the following steps:
 
  - Verify these files using [vbindiff](https://www.cjmweb.net/vbindiff/). These ranges may differs:
 
+***0x0058 - 0x0059***(E32ImageHeader::iExportDirOffset) - Should be zero for EXE without exports
 ***0x0015 - 0x0018***(E32ImageHeader::iHeaderCrc)
 ***0x0021 - 0x0024***(ToolVersion E32ImageHeader::iVersion)
 ***0x0025 - 0x002A***(E32ImageHeader::iTimeLo and E32ImageHeader::iTimeHi)
