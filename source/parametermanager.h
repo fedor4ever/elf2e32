@@ -75,12 +75,6 @@ public:
 		const char * iDoc;
 	};
 
-	struct TargetTypeDesc
-	{
-		const char * iName;
-		ETargetType iTargetType;
-	};
-
 	struct PriorityValueDesc
 	{
 		const char * iName;

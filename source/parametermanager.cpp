@@ -48,6 +48,12 @@ const char ParamEquals = '=';
 
 static ParameterManager* iInstance;
 
+struct TargetTypeDesc
+{
+    const char * iName;
+    ETargetType iTargetType;
+};
+
 /**
 Constructor for the ParameterManager.
 
@@ -1119,6 +1125,9 @@ bool ParameterManager::IsDebuggable(){
 	return iDebuggable;
 }
 
+//Function symbol for any ECOM plugin load
+const char pluginOption[] = "_Z24ImplementationGroupProxyRi,1;";
+
 /** \brief Verifies and correct wrong input options
  * This function correct multiple conflict opions
  * like --datapaging with different params,
@@ -1187,15 +1196,20 @@ void ParameterManager::CheckOptions()
 	{
 	    Message::GetInstance()->ReportMessage(WARNING, NOREQUIREDOPTIONERROR,"--targettype");
         if (DefInput())
-			iTargetType = ELib;
-
+			SetTargetTypeName(ELib);
 	}
+
+    if((iTargetType == EPolyDll) && !SysDefOption())
+        ParseSysDefs(this, nullptr, (char*)pluginOption, nullptr);
+
+    if(DefInput() && ElfInput().empty() )
+        SetTargetTypeName(ELib);
 
 	uint32_t UID1 = iE32Header->iUid1, UID2 = iE32Header->iUid2, UID3 = iE32Header->iUid3;
 	if(!iSecInfo.iSecureId)
         iSecInfo.iSecureId = UID3;
 
-	switch(iTargetType)
+	switch(TargetTypeName())
 	{
 	case ETargetTypeNotSet:
 		break;
@@ -2517,7 +2531,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseSmpSafe)
 	aPM->SetSmpSafe(true);
 }
 
-static const ParameterManager::TargetTypeDesc DefaultTargetTypes[] =
+static const TargetTypeDesc DefaultTargetTypes[] =
 {
 	{ "DLL", EDll },
 	{ "LIB", ELib },
