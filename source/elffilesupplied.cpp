@@ -185,7 +185,7 @@ void ElfFileSupplied::ProcessExports()
 		 * DEF file are missing from the ELF file.
 		 */
 		WriteDefFile();
-		throw e;
+		throw;
 	}
 
 	CreateExports();
