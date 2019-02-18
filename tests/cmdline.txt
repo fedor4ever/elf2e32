@@ -1,26 +1,38 @@
 #direct run in console from codeblock bin directiry
-elf2e32 --uid1=0x10000079 --namedlookup --libpath="..\tests\SDK_libs" --uid2=0x20004c45 --uid3=0x00000000 --capability=All-TCB --fpu=softvfp --targettype=STDDLL --definput="..\..\tests\libcrypto.def" --dso="..\..\tests\libcrypto{000a0000}.dso" --linkas="libcrypto{000a0000}.dll" --defoutput="..\..\tests\out.def" --elfinput="..\..\tests\libcrypto.dll" --output="..\..\tests\libcrypto-2.4.5.dll" --dlldata
+elf2e32 --uid1=0x10000079 --libpath="..\tests\SDK_libs" --uid2=0x20004c45 --uid3=0x00000000 --capability=All-TCB --fpu=softvfp --targettype=STDDLL --definput="..\..\tests\libcrypto.def" --dso="..\..\tests\tmp\libcrypto{000a0000}.dso" --linkas="libcrypto{000a0000}.dll" --defoutput="..\..\tests\tmp\out.def" --elfinput="..\..\tests\libcrypto.dll" --output="..\..\tests\tmp\libcrypto-2.4.5.dll" --dlldata --namedlookup
 
-elf2e32 --definput=elf2e32\tests\libcryptou.def --dso=elf2e32\tests\libcrypto.dso --linkas=libcrypto{000a0000}.dll
+elf2e32 --definput=elf2e32\tests\libcryptou.def --dso=elf2e32\tests\tmp\libcrypto.dso --linkas=libcrypto{000a0000}.dll
 
 #vs15 run options
-elf2e32 --capability=All-TCB --definput="..\tests\libcryptou.def" --defoutput="..\tests\out.def" --elfinput="..\tests\libcrypto.dll" --output="..\tests\libcrypto-2.4.5.dll" --libpath="..\tests\SDK_libs" --linkas="libcrypto{000a0000}.dll" --dso="..\tests\libcrypto{000a0000}.dso" --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --namedlookup --dlldata
+elf2e32 --capability=All-TCB --definput="..\tests\libcryptou.def" --defoutput="..\tests\tmp\out.def" --elfinput="..\tests\libcrypto.dll" --output="..\tests\tmp\libcrypto-2.4.5.dll" --libpath="..\tests\SDK_libs" --linkas="libcrypto{000a0000}.dll" --dso="..\tests\tmp\libcrypto{000a0000}.dso" --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --dlldata --namedlookup
 
 #codeblock run options
-elf2e32 --capability=All-TCB --definput="tests\libcryptou.def" --defoutput="tests\tmp\out.def" --elfinput="tests\libcrypto.dll" --output="tests\tmp\libcrypto-2.4.5.tst.dll" --libpath="tests\SDK_libs" --linkas="libcrypto{000a0000}.dll" --dso="tests\tmp\libcrypto{000a0000}.dso" --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --namedlookup --dlldata --ignorenoncallable --debuggable --smpsafe --uncompressed
+elf2e32 --capability=All-TCB --definput="tests\libcryptou.def" --defoutput="tests\tmp\out.def" --elfinput="tests\libcrypto.dll" --output="tests\tmp\libcrypto-2.4.5.tst.dll" --libpath="tests\SDK_libs" --linkas="libcrypto{000a0000}.dll" --dso="tests\tmp\libcrypto{000a0000}.dso" --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --dlldata --ignorenoncallable --uncompressed --namedlookup --debuggable --smpsafe
 
 
 #simplified syntax example
-elf2e32 --capability=All-TCB --definput="tests\libcryptou.def" --defoutput="tests\out.def" --elfinput="tests\libcrypto.dll" --output="tests\libcrypto-2.4.5.dll" --libpath="tests\SDK_libs" --linkas="libcrypto{000a0000}.dll" --dso="tests\libcrypto{000a0000}.dso" --fpu=softvfp --uid3=0x00000000 --targettype=STDDLL --namedlookup --dlldata
+elf2e32 --capability=All-TCB --definput="tests\libcryptou.def" --defoutput="tests\tmp\out.def" --elfinput="tests\libcrypto.dll" --output="tests\tmp\libcrypto-2.4.5.dll" --libpath="tests\SDK_libs" --linkas="libcrypto{000a0000}.dll" --dso="tests\tmp\libcrypto{000a0000}.dso" --fpu=softvfp --uid3=0x00000000 --targettype=STDDLL --dlldata --namedlookup
 
 #inplace
-elf2e32 --capability=All-TCB --definput="libcryptou.def" --defoutput="out.def" --elfinput="libcrypto.dll" --output="libcrypto-2.4.5.dll" --libpath="tests\SDK_libs" --linkas="libcrypto{000a0000}.dll" --dso="libcrypto{000a0000}.dso" --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --namedlookup --dlldata
+elf2e32 --capability=All-TCB --definput="libcryptou.def" --defoutput="tmp\out.def" --elfinput="libcrypto.dll" --output="tmp\libcrypto-2.4.5.dll" --libpath="SDK_libs" --linkas="libcrypto{000a0000}.dll" --dso="tmp\libcrypto{000a0000}.dso" --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --dlldata --namedlookup
 
+##Code block run options
 #ECOM test
 --capability=ProtServ --defoutput=tests\tmp\AlternateReaderRecog{000a0000}.def --elfinput="tests\AlternateReaderRecog.dll" --output="tests\tmp\AlternateReaderRecogE32.dll" --libpath=tests\SDK_libs --linkas=AlternateReaderRecog{000a0000}[101ff1ec].dll --dso=tests\tmp\AlternateReaderRecog{000a0000}.dso --fpu=softvfp --uid1=0x10000079 --uid2=0x10009d8d --uid3=0x101ff1ec --targettype=PLUGIN --sysdef=_Z24ImplementationGroupProxyRi,1;
  --sid=0x101ff1ec --version=10.0 --ignorenoncallable --debuggable --smpsafe --uncompressed
 
 #ECOM test
---capability=ProtServ --defoutput=AlternateReaderRecog{000a0000}.def --elfinput="AlternateReaderRecog.dll" --output="AlternateReaderRecogE32.dll" --libpath=SDK_libs --linkas=AlternateReaderRecog{000a0000}[101ff1ec].dll --dso=AlternateReaderRecog{000a0000}.dso --fpu=softvfp --uid1=0x10000079 --uid2=0x10009d8d --uid3=0x101ff1ec --targettype=PLUGIN --sysdef=_Z24ImplementationGroupProxyRi,1; --sid=0x101ff1ec --version=10.0 --ignorenoncallable --uncompressed
+--capability=ProtServ --defoutput=tmp\AlternateReaderRecog{000a0000}.def --elfinput="AlternateReaderRecog.dll" --output="tmp\AlternateReaderRecog.tst.dll" --libpath=SDK_libs --linkas=AlternateReaderRecog{000a0000}[101ff1ec].dll --dso=tmp\AlternateReaderRecog{000a0000}.dso --fpu=softvfp --uid1=0x10000079 --uid2=0x10009d8d --uid3=0x101ff1ec --targettype=PLUGIN --sysdef=_Z24ImplementationGroupProxyRi,1; --sid=0x101ff1ec --version=10.0 --ignorenoncallable --uncompressed
  --debuggable --smpsafe
  
+  --e32input="tests\AlternateReaderRecogE32.dll" --output="tests\tmp\AlternateReaderRecog.inflate.dll" --compressionmethod=inflate
+
+ --e32input="tests\tmp\AlternateReaderRecog.inflate.dll"  --output="tests\tmp\AlternateReaderRecog.inflate2bytepair.dll" --compressionmethod=bytepair
+
+ --e32input="tests\tmp\AlternateReaderRecog.inflate2bytepair.dll"  --output="tests\tmp\AlternateReaderRecog.decomp.dll" --compressionmethod=none
+ 
+ --capability=All-TCB --definput="tests\libcryptou.def" --defoutput="tests\tmp\libcryptou.def" --elfinput="tests\libcrypto.dll" --output="tests\tmp\libcrypto-2.4.5.tst.dll" --libpath="tests\SDK_libs" --linkas="libcrypto{000a0000}.dll" --dso="tests\tmp\libcrypto{000a0000}.dso" --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --dlldata --ignorenoncallable --uncompressed --debuggable --smpsafe
+ 
+ --capability=All-TCB --definput="tests\libcryptou.def" --defoutput="tests\tmp\libcrypto.inf.def" --elfinput="tests\libcrypto.dll" --output="tests\tmp\libcrypto-2.4.5.inf.dll" --libpath="tests\SDK_libs" --linkas="libcrypto{000a0000}.dll" --dso="tests\tmp\libcrypto{000a0000}.inf.dso" --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --dlldata --ignorenoncallable --compressionmethod=inflate --debuggable --smpsafe
+ 
+ --capability=All-TCB --definput="tests\libcryptou.def" --defoutput="tests\tmp\libcrypto.byt.def" --elfinput="tests\libcrypto.dll" --output="tests\tmp\libcrypto-2.4.5.byt.dll" --libpath="tests\SDK_libs" --linkas="libcrypto{000a0000}.dll" --dso="tests\tmp\libcrypto{000a0000}.byt.dso" --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDDLL --dlldata --ignorenoncallable --compressionmethod=bytepair --debuggable --smpsafe

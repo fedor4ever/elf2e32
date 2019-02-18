@@ -132,8 +132,8 @@ const uint32_t KExecutableImageUidValue=0x1000007a; //All executable targets hav
 
 const uint32_t KImageCrcInitialiser  = 0xc90fdaa2u;
 
-const int32_t KHeapSizeLimitMin = 0x1000;
-const int32_t KHeapSizeLimitMax = 0x100000;
+const int32_t KHeapCommittedSize = 0x1000;
+const int32_t KHeapReservedSize = 0x100000;
 
 struct E32ImageHeader
 {
@@ -151,8 +151,8 @@ struct E32ImageHeader
     uint32_t iFlags;               // 0 = exe, 1 = dll, 2 = fixed address exe
     uint32_t iCodeSize;             // size of code, import address table, constant data and export dir
     uint32_t iDataSize;             // size of initialised data
-    int32_t iHeapSizeMin = KHeapSizeLimitMin;
-    int32_t iHeapSizeMax = KHeapSizeLimitMax;
+    int32_t iHeapSizeMin = KHeapCommittedSize;
+    int32_t iHeapSizeMax = KHeapReservedSize;
     int32_t iStackSize = 0x2000;
     int32_t iBssSize;
     uint32_t iEntryPoint;          // offset into code of entry point

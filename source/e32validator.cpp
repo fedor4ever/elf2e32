@@ -4,6 +4,7 @@
 #include "e32common.h"
 #include "e32parser.h"
 #include "e32validator.h"
+#include "message.h"
 
 #ifndef RETURN_FAILURE
 #define RETURN_FAILURE(_r) return (fprintf(stderr, "line %d\n", __LINE__),_r)
@@ -109,7 +110,12 @@ int32_t E32Validator::ValidateHeader()
 
     // check iSignature...
 	if( *(uint32_t*)(iHdr->iSignature) != 0x434f5045) // 'EPOC'
+    {
+        char* f = iParser->GetBufferedImage();
+        if((f[1] == 'E')&&(f[2] == 'L')&&(f[3] == 'F'))
+            Message::GetInstance()->ReportMessage(ERROR, MISMATCHTARGET, "validation buffer");
 		RETURN_FAILURE(KErrCorrupt);
+    }
 
 	// check iHeaderCrc...
 	uint32_t orig_crc = iHdr->iHeaderCrc;
@@ -181,12 +187,6 @@ int32_t E32Validator::ValidateHeader()
 
 	// check iHeapSizeMax...
 	if(iHdr->iHeapSizeMax<iHdr->iHeapSizeMin)
-		RETURN_FAILURE(KErrCorrupt);
-
-	if(KHeapSizeLimitMin<iHdr->iHeapSizeMin)
-		RETURN_FAILURE(KErrCorrupt);
-
-    if(iHdr->iHeapSizeMax>KHeapSizeLimitMax)
 		RETURN_FAILURE(KErrCorrupt);
 
 	// check iStackSize...

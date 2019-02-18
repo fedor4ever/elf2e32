@@ -37,7 +37,7 @@ const char *warnMssgPrefix="elf2e32 : Warning: W";
 const char *infoMssgPrefix="elf2e32 : Information: I";
 const char *colSpace=": ";
 
-constexpr auto MessageArraySize=67;
+constexpr auto MessageArraySize=68;
 
 //Messages stored required for the program
 struct EnglishMessage MessageArray[MessageArraySize]=
@@ -108,7 +108,8 @@ struct EnglishMessage MessageArray[MessageArraySize]=
 	{BYTEPAIRINCONSISTENTSIZEERROR, "Inconsistent sizes discovered during Byte pair uncompression." },
 	{ILLEGALEXPORTFROMDATASEGMENT, "'%s' : '%s' Import relocation does not refer to code segment."},
 	{VALIDATIONERROR, "Image failed validation"},
-	{UNKNOWNCOMPRESSION, "Unknown compression algorythm."}
+	{UNKNOWNCOMPRESSION, "Unknown compression algorythm."},
+    {MISMATCHTARGET, "Expected E32Image, but discovered ELF file: %s."}
 };
 
 /**

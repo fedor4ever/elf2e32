@@ -83,6 +83,9 @@ E32ImageHeader* E32Parser::GetFileLayout()
 
     ReadFile();
 
+    if((iBufferedFile[1] == 'E')&&(iBufferedFile[2] == 'L')&&(iBufferedFile[3] == 'F'))
+        throw Elf2e32Error(MISMATCHTARGET, iFileName);
+
     iHdr = (E32ImageHeader*)iBufferedFile;
     size_t pos = sizeof(E32ImageHeader);
 
@@ -158,10 +161,7 @@ void E32Parser::DecompressImage()
 			Message::GetInstance()->ReportMessage(WARNING, BYTEPAIRINCONSISTENTSIZEERROR);
     }
     else
-    {
-        Message::GetInstance()->ReportMessage(ERROR, UNKNOWNCOMPRESSION);
-        return;
-    }
+        throw Elf2e32Error(UNKNOWNCOMPRESSION);
 
     iHdr = (E32ImageHeader*)iBufferedFile;
     size_t pos = sizeof(E32ImageHeader);
