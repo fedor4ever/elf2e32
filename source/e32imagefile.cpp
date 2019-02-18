@@ -384,15 +384,9 @@ This function checks if a DSO file exists.
 bool ProbePath(string & aPath)
 {
 	fstream input(aPath);
-	if (input.is_open())
-	{
-		input.close();
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	bool r = input.is_open();
+    input.close();
+    return r;
 }
 
 /**

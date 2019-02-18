@@ -43,7 +43,7 @@ class ElfFileSupplied
 {
 
 public:
-	explicit ElfFileSupplied(ParameterManager* aParameterManager);
+	explicit ElfFileSupplied(ParameterManager* parameterManager);
 	~ElfFileSupplied();
 	void Execute();
 
@@ -53,19 +53,19 @@ public:
 	void ReadElfFile();
 	void ProcessExports();
 	void BuildAll();
-	void ValidateDefExports(Symbols& aDefExports);
+	void ValidateDefExports(Symbols& defExports);
 	void CreateExports();
 	void WriteDefFile();
 	void WriteDSOFile();
 	void WriteE32();
 	bool ImageIsDll();
 	bool WarnForNewExports();
-	SymbolType SymbolTypeF(char * aName);
+	SymbolType SymbolTypeF(char * name);
 	E32ImageHeaderV * AllocateE32ImageHeader();
 
-	void GetSymbolsFromSysdefoption(Symbols& aSysdef);
-	void CompareSymbolsFromDEFwithSysdef(Symbols& aSysdef);
-	void SymbolsFromDEF(Symbols& aDef);
+	void GetSymbolsFromSysdefoption(Symbols& sysdef);
+	void CompareSymbolsFromDEFwithSysdef(Symbols& def ,Symbols& sysdef);
+	void SymbolsFromDEF(Symbols& def);
 
 	void CreateExportBitMap();
 	size_t GetNumExports();

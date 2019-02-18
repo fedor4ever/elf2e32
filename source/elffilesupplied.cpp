@@ -105,39 +105,38 @@ Function to compare symbols from .def file and --sysdef input
 @internalComponent
 @released
 */
-void ElfFileSupplied::CompareSymbolsFromDEFwithSysdef(Symbols &aIn)
+void ElfFileSupplied::CompareSymbolsFromDEFwithSysdef(Symbols& aDef, Symbols& aSys)
 {
+    if(aSys.empty())
+        return;
     if(EPolyDll != iManager->TargetTypeName())
         return;
-    if(!iManager->DefInput())
-        return;
 
-    Symbols iDefExports;
-	SymbolsFromDEF(iDefExports);
+    if(!iManager->DefInput() || aDef.empty() ){
+        aDef.splice(aDef.begin(), aSys);
+        return;
+    }
 
 	// Check if the Sysdefs and the DEF file are matching.
 
-	auto aBegin = aIn.begin();
-	auto aEnd = aIn.end();
+	auto sysBegin = aSys.begin();
+	auto sysEnd = aSys.end();
 
-	auto aDefBegin = iDefExports.begin();
-	auto aDefEnd = iDefExports.end();
+	auto defBegin = aDef.begin();
+	auto defEnd = aDef.end();
 
 	std::list<string> aMissingSysDefList;
 
-	while ((aDefBegin != aDefEnd) && (aBegin != aEnd))
+	while ((defBegin != defEnd) && (sysBegin != sysEnd))
 	{
-		if (strcmp((*aBegin)->SymbolName(), (*aDefBegin)->SymbolName()))
-			aMissingSysDefList.push_back((*aBegin)->SymbolName());
-		++aBegin;
-		++aDefBegin;
+		if (strcmp((*sysBegin)->SymbolName(), (*defBegin)->SymbolName()))
+			aMissingSysDefList.push_back((*sysBegin)->SymbolName());
+		++sysBegin;
+		++defBegin;
 	}
 
 	if( aMissingSysDefList.empty() )
-    {
 		throw SysDefMismatchError(SYSDEFSMISMATCHERROR, aMissingSysDefList, iManager->DefInput());
-    };
-    aIn.swap(iDefExports);
 }
 
 /**
@@ -170,15 +169,15 @@ Function to process exports
 */
 void ElfFileSupplied::ProcessExports()
 {
-    Symbols symbols;
+    Symbols def, sys;
 
-    GetSymbolsFromSysdefoption(symbols);
-    SymbolsFromDEF(symbols);
-    CompareSymbolsFromDEFwithSysdef(symbols);
+    SymbolsFromDEF(def);
+    GetSymbolsFromSysdefoption(sys);
+    CompareSymbolsFromDEFwithSysdef(def, sys);
 
     try
     {
-        ValidateDefExports(symbols);    }
+        ValidateDefExports(def);    }
     catch(SymbolMissingFromElfError& e)
 	{
 		/* Only DEF file would be generated if symbols found in
