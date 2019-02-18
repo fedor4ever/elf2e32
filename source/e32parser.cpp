@@ -107,7 +107,7 @@ int DecompressPages(uint8_t* bytes, std::ifstream& is);
 
 void E32Parser::DecompressImage()
 {
-    if(!iHdr->iCompressionType)
+    if(!iFileName) // require file for decompression!!!
         return;
 
     uint32_t buf_size = iHdrJ->iUncompressedSize;
