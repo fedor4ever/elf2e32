@@ -2754,7 +2754,7 @@ DEFINE_PARAM_PARSER(ParameterManager::ParseLibPaths)
             tmp.pop_back();
         }
         aPM->iLibPathList.push_back(tmp);
-        aPathList.erase(0, pos);
+        aPathList.erase(0, pos + 1);
     }
 }
 
