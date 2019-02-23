@@ -278,7 +278,7 @@ struct Elf32_Shdr{
 #define SHT_RELA 4 // The section holds relocation entries with
  // explicit addends, such as type Elf32_Rela for the 32-bit class of
  // object files. An object file may have multiple relocation
- // sections. See Relocationbelow for details.
+ // sections. See Relocation below for details.
 #define SHT_HASH 5 // The section holds a symbol hash table.
 #define SHT_DYNAMIC 6 // The section holds information for dynamic
  // linking.
@@ -291,7 +291,7 @@ struct Elf32_Shdr{
 #define SHT_REL 9 // The section holds relocation entries without
  // explicit addends, such as type Elf32_Rel for the 32-bit class of
  // object files. An object file may have multiple relocation
- // sections. See Relocationbelow for details.
+ // sections. See Relocation below for details.
 #define SHT_SHLIB 10 // This section type is reserved but has
  // unspecified semantics.
 #define SHT_DYNSYM 11 // This section hold dynamic symbol information
