@@ -122,7 +122,7 @@ private:
 	string			iDSOSectionNames;
 
 	void InitElfContents();
-	void SetSymolFields(Symbol *aSym, Elf32_Sym* aElfSym, PLUINT32 aIndex);
+	void SetSymbolFields(Symbol *aSym, Elf32_Sym* aElfSym, PLUINT32 aIndex);
 	void AddToHashTable(const char* aSymName, PLUINT32 aIndex);
 	void CreateVersionTable();
 	void CreateElfHeader();

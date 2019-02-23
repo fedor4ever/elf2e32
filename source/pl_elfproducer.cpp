@@ -24,6 +24,8 @@
 #include "errorhandler.h"
 #include "pl_elfproducer.h"
 
+void InfoPrint(const char* hdr, uint32_t& pos, const uint32_t offset);
+
 /**
  * Following array is indexed on the SECTION_INDEX enum
  */
@@ -74,30 +76,32 @@ This function sets the export Symbol list
 @released
 @param aSymbolList The export Symbol list.
 */
-void ElfProducer::SetSymbolList(Symbols& s){
+void ElfProducer::SetSymbolList(Symbols& s)
+{
 	iSymbols = s;
-	if (!iSymbols.empty())
-	{
-		const char *absentSymbol = "_._.absent_export_";
-		int length = strlen(absentSymbol);
-
-        // Ordinal Number can be upto 0xffff which is 6 digits
-		length +=7;
-        for(auto x: iSymbols)
-		{
-			/* If a symbol is marked as Absent in the DEF file, replace the
-			 * symbol name with "_._.absent_export_<Ordinal Number>"
-			 */
-			if(x->Absent())
-			{
-                char *symName = new char[length]{'0'};
-				sprintf(symName, "_._.absent_export_%d", x->OrdNum());
-				x->SetSymbolName(symName);
-				delete[] symName;
-			}
-		}
-	}
 	iNSymbols = iSymbols.size() + 1;
+
+	if (iSymbols.empty())
+        return;
+
+    const char *absentSymbol = "_._.absent_export_";
+    int length = strlen(absentSymbol);
+
+    // Ordinal Number can be upto 0xffff which is 6 digits
+    length +=7;
+    for(auto x: iSymbols)
+    {
+        /* If a symbol is marked as Absent in the DEF file, replace the
+         * symbol name with "_._.absent_export_<Ordinal Number>"
+         */
+        if(x->Absent())
+        {
+            char *symName = new char[length]{'0'};
+            sprintf(symName, "_._.absent_export_%d", x->OrdNum());
+            x->SetSymbolName(symName);
+            delete[] symName;
+        }
+    }
 }
 
 /**
@@ -128,38 +132,31 @@ This function initializes the Elf members
 */
 void ElfProducer::InitElfContents() {
 
-	iElfHeader		= new Elf32_Ehdr;
-	iSections		= new Elf32_Shdr[MAX_SECTIONS+1];
+	iElfHeader		= new Elf32_Ehdr();
+	iSections		= new Elf32_Shdr[MAX_SECTIONS+1]();
 
-	iElfDynSym		= new Elf32_Sym[iNSymbols];
-	iVersionTbl		= new Elf32_Half[iNSymbols];
+	iElfDynSym		= new Elf32_Sym[iNSymbols]();
+	iVersionTbl		= new Elf32_Half[iNSymbols]();
 	iVersionDef		= new Elf32_Verdef[2];
 	iDSODaux		= new Elf32_Verdaux[2];
 
 	iProgHeader		 = new Elf32_Phdr[2];
-	iCodeSectionData = new PLUINT32[iNSymbols];
+	iCodeSectionData = new PLUINT32[iNSymbols]();
 
-	iHashTbl = new Elf32_HashTable;
+	iHashTbl = new Elf32_HashTable();
 
 	//premeditated
 	iHashTbl->nBuckets = (iNSymbols /3) + (iNSymbols % 0x3);
 
 	iHashTbl->nChains = iNSymbols;
 
-	iDSOBuckets = new Elf32_Sword[iHashTbl->nBuckets];
-	iDSOChains = new Elf32_Sword[iHashTbl->nChains];
-
-	Elf32_Sword	aNullPtr = 0;
-
-	memset(iDSOBuckets, aNullPtr, sizeof(Elf32_Sword)*iHashTbl->nBuckets);
-	memset(iDSOChains,  aNullPtr, sizeof(Elf32_Sword)*iHashTbl->nChains);
-	memset(iCodeSectionData,  0, sizeof(PLUINT32)*iNSymbols);
+	iDSOBuckets = new Elf32_Sword[iHashTbl->nBuckets]();
+	iDSOChains = new Elf32_Sword[iHashTbl->nChains]();
 
 	CreateElfHeader();
 
 	PLUINT32	aIdx = 1;
 
-	memset( &iElfDynSym[0], 0, sizeof(Elf32_Sym));
 	iDSOSymNameStrTbl.insert(iDSOSymNameStrTbl.end(), 0);
 
 	for(auto aSym: iSymbols)
@@ -171,7 +168,7 @@ void ElfProducer::InitElfContents() {
 		iDSOSymNameStrTbl.insert(iDSOSymNameStrTbl.end(), aSymName.begin(), aSymName.end() );
 		iDSOSymNameStrTbl.insert(iDSOSymNameStrTbl.end(), 0);
 
-		SetSymolFields( aSym, &iElfDynSym[aIdx], aIdx);
+		SetSymbolFields( aSym, &iElfDynSym[aIdx], aIdx);
 
 		//set version table info...
 		iVersionTbl[aIdx] = DEFAULT_VERSION;
@@ -242,7 +239,7 @@ This function sets the Elf Symbol fields
 @param aElfSym The Elf Symbol
 @param aCodeIndex The index at which this Symbol refers to in the code section where, we have the ordinal number
 */
-void ElfProducer::SetSymolFields(Symbol *aSym, Elf32_Sym* aElfSym, PLUINT32 aCodeIndex) {
+void ElfProducer::SetSymbolFields(Symbol *aSym, Elf32_Sym* aElfSym, PLUINT32 aCodeIndex) {
 
 	aElfSym->st_other = STV_DEFAULT;
 
@@ -266,12 +263,10 @@ This function adds an entry into the hash table based on the symbol name.
 */
 void ElfProducer::AddToHashTable(const char* aSymName, PLUINT32 aIndex)
 {
-	Elf32_Sword	aNullPtr = 0;
+	PLULONG	hsh = elf_hash((PLUCHAR*)aSymName);
+	PLUINT32  aBIdx = hsh % iHashTbl->nBuckets;
 
-	PLULONG	aHash = elf_hash((PLUCHAR*)aSymName);
-	PLUINT32  aBIdx = aHash % iHashTbl->nBuckets;
-
-	if(iDSOBuckets[aBIdx] == aNullPtr)
+	if(iDSOBuckets[aBIdx] == 0)
 	{
 		iDSOBuckets[aBIdx] = aIndex;
 	}
@@ -279,7 +274,7 @@ void ElfProducer::AddToHashTable(const char* aSymName, PLUINT32 aIndex)
 	{
 		PLUINT32 aCIdx = iDSOBuckets[aBIdx];
 
-		while(iDSOChains[aCIdx] != aNullPtr){
+		while(iDSOChains[aCIdx] != 0){
 
 			/* If the entry is already added into the hash table*/
 			if((PLUINT32)iDSOChains[aCIdx] == aIndex) {
@@ -563,91 +558,120 @@ This function writes the Elf file contents.
 */
 void ElfProducer::WriteElfContents()
 {
-	FILE		*aElfFd;
-	PLUINT32	aIndex;
+	FILE		*elf = nullptr;
+	PLUINT32	index = 0;
 
-	if((aElfFd = fopen(iDsoFullName.c_str(), "wb")) == NULL ) {
+	if((elf = fopen(iDsoFullName.c_str(), "wb")) == NULL ) {
 		throw Elf2e32Error(FILEOPENERROR, iDsoFullName);
 	}
 
 	// The ELF header..
-	fwrite(iElfHeader, 1, sizeof(Elf32_Ehdr), aElfFd);
+    fwrite(iElfHeader, 1, sizeof(Elf32_Ehdr), elf);
+	uint32_t pos = 0, offset = sizeof(Elf32_Ehdr);
+    InfoPrint("Elf Header starts", pos, sizeof(Elf32_Ehdr));
 
 	//Section headers
-	for(aIndex = 0; aIndex <= MAX_SECTIONS; aIndex++) {
-		fwrite(&iSections[aIndex], 1, sizeof(Elf32_Shdr), aElfFd);
+	for(index = 0; index <= MAX_SECTIONS; index++) {
+		fwrite(&iSections[index], 1, sizeof(Elf32_Shdr), elf);
 	}
+	InfoPrint("Section Headers", pos, sizeof(Elf32_Shdr) * index);
 
 
 	//Each section..
 
 		//code
-		for(aIndex = 0; aIndex < iNSymbols; aIndex++) {
-			fwrite(&iCodeSectionData[aIndex], 1, sizeof(PLUINT32), aElfFd );
+		for(index = 0; index < iNSymbols; index++) {
+			fwrite(&iCodeSectionData[index], 1, sizeof(PLUINT32), elf );
 		}
+        InfoPrint(" Code sections", pos, sizeof(PLUINT32) * iNSymbols);
 
 		//dyn table
-		for(aIndex = 0; aIndex <= MAX_DYN_ENTS; aIndex++) {
-			fwrite(&iDSODynTbl[aIndex], 1, sizeof(Elf32_Dyn), aElfFd);
+		for(index = 0; index <= MAX_DYN_ENTS; index++) {
+			fwrite(&iDSODynTbl[index], 1, sizeof(Elf32_Dyn), elf);
 		}
+        InfoPrint(" Dyn table", pos, sizeof(Elf32_Dyn) * index);
 
 		//hash table
-		fwrite(&iHashTbl->nBuckets, 1, sizeof(Elf32_Word), aElfFd);
-		fwrite(&iHashTbl->nChains, 1, sizeof(Elf32_Word), aElfFd);
+		fwrite(&iHashTbl->nBuckets, 1, sizeof(Elf32_Word), elf);
+		fwrite(&iHashTbl->nChains, 1, sizeof(Elf32_Word), elf);
 
-		for(aIndex=0; aIndex < iHashTbl->nBuckets; aIndex++) {
-			fwrite(&iDSOBuckets[aIndex], 1, sizeof(Elf32_Sword), aElfFd);
-
-		}
-		for(aIndex=0; aIndex < iHashTbl->nChains; aIndex++) {
-			fwrite(&iDSOChains[aIndex], 1, sizeof(Elf32_Sword), aElfFd);
+		for(index=0; index < iHashTbl->nBuckets; index++) {
+			fwrite(&iDSOBuckets[index], 1, sizeof(Elf32_Sword), elf);
 
 		}
+		for(index=0; index < iHashTbl->nChains; index++) {
+			fwrite(&iDSOChains[index], 1, sizeof(Elf32_Sword), elf);
+
+		}
+        InfoPrint(" Hash table", pos, sizeof(Elf32_Word) * 2 +
+            iHashTbl->nBuckets * sizeof(Elf32_Sword) +
+            iHashTbl->nChains * sizeof(Elf32_Sword));
 
 		//version def table
-		for(aIndex = 0; aIndex < 2; aIndex++) {
-			fwrite(&iVersionDef[aIndex], 1, sizeof(Elf32_Verdef), aElfFd);
-			fwrite(&iDSODaux[aIndex], 1, sizeof(Elf32_Verdaux), aElfFd);
+		for(index = 0; index < 2; index++) {
+			fwrite(&iVersionDef[index], 1, sizeof(Elf32_Verdef), elf);
+			fwrite(&iDSODaux[index], 1, sizeof(Elf32_Verdaux), elf);
 		}
+        InfoPrint(" Version def table", pos,
+                  (sizeof(Elf32_Verdef) + sizeof(Elf32_Verdaux)) * 2);
 
 		//version table
-		for(aIndex = 0; aIndex < iNSymbols; aIndex++) {
-			fwrite(&iVersionTbl[aIndex], 1, sizeof(Elf32_Half), aElfFd );
+		for(index = 0; index < iNSymbols; index++) {
+			fwrite(&iVersionTbl[index], 1, sizeof(Elf32_Half), elf );
 		}
 
 		if( iSections[VERSION_SECTION].sh_size %4 ) {
 			PLUINT32 aNPads = 4 - (iSections[VERSION_SECTION].sh_size %4);
 			PLUCHAR aPad = '\0';
 			while(aNPads--) {
-				fwrite(&aPad, 1, 1, aElfFd);
+				fwrite(&aPad, 1, 1, elf);
 			}
 		}
+        InfoPrint(" Version table", pos,
+            sizeof(Elf32_Half) * iNSymbols + 4 -
+                  (iSections[VERSION_SECTION].sh_size %4));
 
 		//string table
 		PLUINT32 aSz = iDSOSymNameStrTbl.size();
 		char *aData = new char[aSz];
 		memcpy(aData, iDSOSymNameStrTbl.data(), aSz);
-		fwrite(aData, 1, aSz, aElfFd);
+		fwrite(aData, 1, aSz, elf);
+        InfoPrint(" String table", pos, aSz);
 
 		DELETE_PTR_ARRAY(aData);
 
 		//Sym table
-		for(aIndex = 0; aIndex < iNSymbols; aIndex ++) {
-			fwrite(&iElfDynSym[aIndex], 1, sizeof(Elf32_Sym), aElfFd);
+		for(index = 0; index < iNSymbols; index ++) {
+			fwrite(&iElfDynSym[index], 1, sizeof(Elf32_Sym), elf);
 		}
+        InfoPrint(" Sym table", pos, sizeof(Elf32_Sym) * iNSymbols);
 
 		//section header name table
 		aSz = iDSOSectionNames.size();
 		char *aData1 = new char[ aSz];
 		memcpy(aData1, iDSOSectionNames.data(), aSz);
-		fwrite(aData1, 1, aSz, aElfFd);
+		fwrite(aData1, 1, aSz, elf);
+        InfoPrint(" Section header", pos, aSz);
 		DELETE_PTR_ARRAY(aData1);
 
 	//program header
-	for(aIndex = 0; aIndex < 2; aIndex++) {
-		fwrite(&iProgHeader[aIndex], 1, sizeof(Elf32_Phdr), aElfFd );
+	for(index = 0; index < 2; index++) {
+		fwrite(&iProgHeader[index], 1, sizeof(Elf32_Phdr), elf );
 	}
+    InfoPrint("Program header", pos, sizeof(Elf32_Phdr) * 2);
+#ifdef EXPLORE_DSO_BUILD
+    printf("Filesize: %d\n", pos);
+#endif // EXPLORE_DSO_BUILD
 
-	fclose(aElfFd);
+	fclose(elf);
+}
+
+void InfoPrint(const char* hdr, uint32_t& pos, const uint32_t offset)
+{
+#ifdef EXPLORE_DSO_BUILD
+    printf("%s starts at: %08x and ends at: %08x"
+       " with size: %06x\n\n", hdr, pos, pos + offset, offset);
+    pos += offset;
+#endif // EXPLORE_DSO_BUILD
 }
 
