@@ -888,8 +888,16 @@ void E32ImageFile::SetE32ImgHdrFields()
 		if(!AllowDllData())
         {
             auto z = iElfImage->iExports->GetExports(false);
-            if(!z.empty())
-                cout << "Found global symbol(s):\n";
+
+            for(auto x: z)
+            {
+                if(x->CodeDataType() == SymbolTypeData)
+                {
+                    cout << "Found global symbol(s):\n";
+                    break;
+                }
+            }
+
             for(auto x: z)
             {
                 if(x->CodeDataType() == SymbolTypeData)

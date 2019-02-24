@@ -31,6 +31,7 @@
 
 using std::cout;
 bool UnWantedSymbol(const char * aSymbol);
+Symbols GetExports(ParameterManager *param);
 
 /**
 Constructor for class ElfFileSupplied
@@ -84,84 +85,6 @@ void ElfFileSupplied::ReadElfFile()
 	iReader->ProcessElfFile();
 }
 
-Symbols SymbolsFromDef(const char *defFile);
-
-/**
-Function to get symbols from .def file
-@internalComponent
-@released
-*/
-void ElfFileSupplied::SymbolsFromDEF(Symbols& aDef)
-{
-    char * def = iManager->DefInput();
-    if(!def)
-        return;
-	Symbols tmp = SymbolsFromDef(def);
-	aDef.splice(aDef.begin(), tmp, tmp.begin(), tmp.end());
-}
-
-/**
-Function to compare symbols from .def file and --sysdef input
-@internalComponent
-@released
-*/
-void ElfFileSupplied::CompareSymbolsFromDEFwithSysdef(Symbols& aDef, Symbols& aSys)
-{
-    if(aSys.empty())
-        return;
-    if(EPolyDll != iManager->TargetTypeName())
-        return;
-
-    if(!iManager->DefInput() || aDef.empty() ){
-        aDef.splice(aDef.begin(), aSys);
-        return;
-    }
-
-	// Check if the Sysdefs and the DEF file are matching.
-
-	auto sysBegin = aSys.begin();
-	auto sysEnd = aSys.end();
-
-	auto defBegin = aDef.begin();
-	auto defEnd = aDef.end();
-
-	std::list<string> aMissingSysDefList;
-
-	while ((defBegin != defEnd) && (sysBegin != sysEnd))
-	{
-		if (strcmp((*sysBegin)->SymbolName(), (*defBegin)->SymbolName()))
-			aMissingSysDefList.push_back((*sysBegin)->SymbolName());
-		++sysBegin;
-		++defBegin;
-	}
-
-	if( aMissingSysDefList.empty() )
-		throw SysDefMismatchError(SYSDEFSMISMATCHERROR, aMissingSysDefList, iManager->DefInput());
-}
-
-/**
-Function to convert params in --sysdef option to symbols for EPolyDll target
-@internalComponent
-@released
-*/
-/// FIXME (Administrator#1#05/31/18): Rewrite to allow symbols in any order from --sysdef option
-void ElfFileSupplied::GetSymbolsFromSysdefoption(Symbols &aIn)
-{
-    if(EPolyDll != iManager->TargetTypeName())
-        return;
-
-    int count = iManager->SysDefCount();
-	ParameterManager::Sys aSysDefSymbols[10];
-
-	for(int i =  0; i < count; i++)
-	{
-		aSysDefSymbols[i] = iManager->SysDefSymbols(i);
-		Symbol *sym = new Symbol(aSysDefSymbols[i].iSysDefSymbolName, SymbolTypeCode);
-		sym->SetOrdinal(aSysDefSymbols[i].iSysDefOrdinalNum);
-		aIn.push_back(sym);
-	}
-}
-
 /**
 Function to process exports
 @internalComponent
@@ -169,12 +92,7 @@ Function to process exports
 */
 void ElfFileSupplied::ProcessExports()
 {
-    Symbols def, sys;
-
-    SymbolsFromDEF(def);
-    GetSymbolsFromSysdefoption(sys);
-    CompareSymbolsFromDEFwithSysdef(def, sys);
-
+    Symbols def = GetExports(iManager);
     try
     {
         ValidateDefExports(def);    }
@@ -186,7 +104,6 @@ void ElfFileSupplied::ProcessExports()
 		WriteDefFile();
 		throw;
 	}
-
 	CreateExports();
 }
 

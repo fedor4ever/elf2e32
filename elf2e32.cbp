@@ -11,7 +11,7 @@
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters='--capability=All-TCB --elfinput=&quot;tests\kf_Python_launcher.exe&quot; --output=&quot;tests\tmp\kf_Python_launcher.exe&quot;  --libpath=&quot;D:\Symbian\S60_5th_Edition_SDK_v1.0\epoc32\release\armv5\lib&quot; --fpu=softvfp --uid1=0x10000079 --uid2=0x20004c45 --uid3=0x00000000 --targettype=STDEXE --ignorenoncallable --uncompressed --debuggable --smpsafe' />
+				<Option parameters='--definput=&quot;tests\libcryptou.def&quot; --defoutput=&quot;tests\tmp\out.def&quot; --linkas=&quot;libcrypto{000a0000}.dll&quot; --dso=&quot;tests\tmp\libcrypto{000a0000}.dso&quot;' />
 				<Compiler>
 					<Add option="-std=c++14" />
 					<Add option="-g -O0" />
@@ -85,6 +85,8 @@
 		<Unit filename="source/elffilesupplied.h" />
 		<Unit filename="source/errorhandler.cpp" />
 		<Unit filename="source/errorhandler.h" />
+		<Unit filename="source/exportprocessor.cpp" />
+		<Unit filename="source/exportprocessor.h" />
 		<Unit filename="source/farray.h" />
 		<Unit filename="source/huffman.cpp" />
 		<Unit filename="source/huffman.h" />

@@ -7,15 +7,16 @@ add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 add_executable(elf2e32
     source/byte_pair.h
     source/checksum.h
+    source/exportprocessor.h
     source/deffile.h
     source/e32common.h
     source/e32exporttable.h
-	source/e32flags.h
+    source/e32flags.h
     source/e32imagefile.h
     source/e32info.h
     source/e32parser.h
-	source/e32producer.h
-	source/e32validator.h
+    source/e32producer.h
+    source/e32validator.h
     source/elffilesupplied.h
     source/errorhandler.h
     source/farray.h
@@ -36,13 +37,14 @@ add_executable(elf2e32
     source/staticlibsymbols.h
     source/byte_pair.cpp
     source/checksum.cpp
+    source/exportprocessor.cpp
     source/deffile.cpp
     source/deflatecompress.cpp
     source/e32exporttable.cpp
     source/e32imagefile.cpp
-	source/e32producer.cpp
-	source/e32validator.cpp
-	source/e32flags.cpp
+    source/e32producer.cpp
+    source/e32validator.cpp
+    source/e32flags.cpp
     source/e32info.cpp
     source/e32parser.cpp
     source/elffilesupplied.cpp

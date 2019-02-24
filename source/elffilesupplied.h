@@ -63,10 +63,6 @@ public:
 	SymbolType SymbolTypeF(char * name);
 	E32ImageHeaderV * AllocateE32ImageHeader();
 
-	void GetSymbolsFromSysdefoption(Symbols& sysdef);
-	void CompareSymbolsFromDEFwithSysdef(Symbols& def ,Symbols& sysdef);
-	void SymbolsFromDEF(Symbols& def);
-
 	void CreateExportBitMap();
 	size_t GetNumExports();
 	char * GetExportTable();
