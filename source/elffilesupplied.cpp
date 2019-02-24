@@ -226,8 +226,6 @@ Function to validate exports
 */
 void ElfFileSupplied::ValidateDefExports(Symbols &aDefExports)
 {
-    if(iManager->ElfInput().empty())
-        return;
 	/**
 	 * Symbols from DEF file (DEF_Symbols) => Valid_DEF + Absent
 	 * Symbols from ELF file (ELF_Symbols) => Existing  + NEW
@@ -244,13 +242,19 @@ void ElfFileSupplied::ValidateDefExports(Symbols &aDefExports)
     if (aDefExports.empty())
 		return;
 
+    if(iManager->ElfInput().empty())
+    {
+        iSymbols = aDefExports;
+        return;
+    }
+
 	PLUINT32 aMaxOrdinal = 0;
 	int len = strlen("_ZTI");
 
 	typedef Symbols::iterator Iterator;
 
 
-	//Symbols *aDefExports, defValidExports, defAbsentExports, elfExports;
+	//Symbols aDefExports, defValidExports, defAbsentExports, elfExports;
 	Symbols defValidExports, defAbsentExports, elfExports;
 
     for(auto x: aDefExports)
@@ -414,11 +418,8 @@ exports are available.
 */
 void ElfFileSupplied::BuildAll()
 {
-	if(iReader && iReader->iExports)
-	{
-		WriteDefFile();
-		WriteDSOFile();
-	}
+    WriteDefFile();
+    WriteDSOFile();
 	WriteE32();
 }
 
@@ -435,7 +436,6 @@ void ElfFileSupplied::WriteDSOFile()
 
 	char * aDSOFileName = iManager->FileName(aDSOName);
 	char * aLinkAs = iManager->LinkAsDLLName();
-    SymbolsFromDEF(iSymbols);
 
 	/** This member is responsible for generating the proxy DSO file. */
 
@@ -454,6 +454,9 @@ void ElfFileSupplied::WriteE32()
 
     if(!e32)
 	    return;
+
+    if(iManager->ElfInput().empty())
+        throw Elf2e32Error(NOREQUIREDOPTIONERROR, "--elfinput");
 
 	iE32ImageFile = new E32ImageFile(iReader, this, iManager, &iExportTable);
 
