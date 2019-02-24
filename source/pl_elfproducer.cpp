@@ -108,16 +108,16 @@ void ElfProducer::SetSymbolList(Symbols& s)
 This function takes the file names and generates the proxy dso library.
 @internalComponent
 @released
-@param aDsoFullName The full path and proxy-dso file name
-@param aDsoFileName The proxy-dso file name
+@param dsoFile The full path and proxy-dso file name
+@param fileName The proxy-dso file name
 @param aLinkAs The DLL that defines the export Symbols
 */
-void ElfProducer::WriteElfFile(char* aDsoFullName, char* aDsoFileName , char* aLinkAs){
+void ElfProducer::WriteElfFile(char* dsoFile, char* fileName , char* aLinkAs){
 
 	//This includes the full path followed by the file name
-	iDsoFullName = aDsoFullName;
+	iDsoFile = dsoFile;
 
-	iDSOName = aDsoFileName;
+	iDSOName = fileName;
 	iLinkAs = aLinkAs;
 
 	InitElfContents();
@@ -561,13 +561,13 @@ void ElfProducer::WriteElfContents()
 	FILE		*elf = nullptr;
 	PLUINT32	index = 0;
 
-	if((elf = fopen(iDsoFullName.c_str(), "wb")) == NULL ) {
-		throw Elf2e32Error(FILEOPENERROR, iDsoFullName);
+	if((elf = fopen(iDsoFile.c_str(), "wb")) == NULL ) {
+		throw Elf2e32Error(FILEOPENERROR, iDsoFile);
 	}
 
 	// The ELF header..
     fwrite(iElfHeader, 1, sizeof(Elf32_Ehdr), elf);
-	uint32_t pos = 0, offset = sizeof(Elf32_Ehdr);
+	uint32_t pos = 0;
     InfoPrint("Elf Header starts", pos, sizeof(Elf32_Ehdr));
 
 	//Section headers
@@ -660,7 +660,7 @@ void ElfProducer::WriteElfContents()
 	}
     InfoPrint("Program header", pos, sizeof(Elf32_Phdr) * 2);
 #ifdef EXPLORE_DSO_BUILD
-    printf("Filesize: %d\n", pos);
+    printf("Filesize: %zu\n", pos);
 #endif // EXPLORE_DSO_BUILD
 
 	fclose(elf);

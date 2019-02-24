@@ -367,8 +367,7 @@ void E32ImageFile::ProcessImports()
 
 	// Now construct the unified section
 	iImportSectionSize = totalSize;
-	iImportSection = (uint32 *)new char[totalSize]{0};
-//	memset(iImportSection, 0, totalSize);
+	iImportSection = (uint32 *)new char[totalSize]();
 	memcpy(iImportSection, (void *)&aImportSection.at(0), importSectionSize);
 	char * buf = ((char *)iImportSection) + importSectionSize;
 	memcpy(buf, strTab.data(), strTab.size());
@@ -463,8 +462,7 @@ void CreateRelocations(ElfRelocations::Relocations & aRelocations, char * & aRel
 
 		uint32 aBase = (*aRelocations.begin())->iSegment->p_vaddr;
 		//add for cleanup to be done later..
-		aRelocs = new char[aRelocsSize];
-		memset(aRelocs, 0, aRelocsSize);
+		aRelocs = new char[aRelocsSize]();
 		E32RelocSection * e32reloc = (E32RelocSection * )aRelocs;
 
 		uint16 * data = (uint16 *)(e32reloc + 1);
@@ -828,8 +826,7 @@ void E32ImageFile::AddExportDescription()
 	    assert(memsz > 65536);
 		iHdr->iExportDescSize = memsz;
 		iHdr->iExportDesc[0] = iExportBitMap[0];
-		uint8 * aDesc = new uint8[extra_space];
-		memset(aDesc, 0, extra_space);
+		uint8 * aDesc = new uint8[extra_space]();
 		memcpy(aDesc, &iExportBitMap[1], memsz-1);
 		iChunks.AddChunk((char *)aDesc,extra_space, iChunks.GetOffset(), "Export Description");
 	}
@@ -837,8 +834,7 @@ void E32ImageFile::AddExportDescription()
 	{
 	    assert(((mbs + nbytes) > 65536));
 		iHdr->iExportDescSize = mbs + nbytes;
-		uint8 * aBuf = new uint8[extra_space + 1];
-		memset(aBuf , 0, extra_space + 1);
+		uint8 * aBuf = new uint8[extra_space + 1]();
 		TUint8* mptr = aBuf;
 		TUint8* gptr = mptr + mbs;
 		for (i=0; i<memsz; ++i)
@@ -1115,8 +1111,7 @@ int32_t ValidateE32Image(const char *buffer, uint32_t size);
 void E32ImageFile::AllocateE32Image()
 {
 	size_t imageSize = GetE32ImageSize();
-	iE32Image = new char[imageSize];
-	memset(iE32Image, 0, imageSize);
+	iE32Image = new char[imageSize]();
 
 	ChunkList aChunkList = iChunks.GetChunks();
 	for(auto p: aChunkList)
@@ -1295,8 +1290,7 @@ char* E32ImageFile::CreateSymbolInfo(size_t aBaseOffset)
 		sizeofNames = sizeof(uint16);
 	}
 
-	char* aInfo = new char[aSymInf.iSize];
-	memset(aInfo, 0, aSymInf.iSize);
+	char* aInfo = new char[aSymInf.iSize]();
 	memcpy(aInfo, (void*)&aSymInf, sizeof(aSymInf));
 
 	TUint aPos = aSymInf.iSymbolTblOffset;

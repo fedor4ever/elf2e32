@@ -80,8 +80,7 @@ void E32ExportTable::CreateExportTable(ElfImage * aElfImage)
 		if ((*first)->Absent())
 		{
 			ptr = aElfImage->iEntryPoint;
-			sym = new Elf32_Sym;
-			memset(sym, 0, sizeof(Elf32_Sym));
+			sym = new Elf32_Sym();
 			sym->st_value = ptr;
 			aDelSym = true;
 		}

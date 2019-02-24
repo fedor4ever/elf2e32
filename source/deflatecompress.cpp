@@ -483,8 +483,7 @@ Function DeflateL
 */
 void DeflateL(const TUint8* aBuf, TInt aLength, TBitOutput& aOutput)
 	{
-	TEncoding* encoding=new TEncoding;
-	memset(encoding,0,sizeof(TEncoding));
+	TEncoding* encoding=new TEncoding();
 	DoDeflateL(aBuf,aLength,aOutput,*encoding);
 	delete encoding;
 	}

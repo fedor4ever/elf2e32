@@ -73,7 +73,7 @@ public:
 	~ElfProducer();
 
 	void SetSymbolList(Symbols& sym);
-	void WriteElfFile(char* aDsoFullName,char* aDsoFileName, char* aLinkAs);
+	void WriteElfFile(char* dsoFile, char* fileName, char* aLinkAs);
 
 private:
 
@@ -93,7 +93,7 @@ private:
 	Symbols     	iSymbols;
 
 	/** The proxy DSO full file name*/
-	string			iDsoFullName;
+	string			iDsoFile;
 
 	/*DSO content Fields*/
 
