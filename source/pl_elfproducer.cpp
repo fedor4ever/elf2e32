@@ -82,7 +82,7 @@ void ElfProducer::SetSymbolList(Symbols& s)
 	iNSymbols = iSymbols.size() + 1;
 
 	if (iSymbols.empty())
-        return;
+        throw Elf2e32Error(EMPTYFILEWRITING, iElfInput);
 
     const char *absentSymbol = "_._.absent_export_";
     int length = strlen(absentSymbol);

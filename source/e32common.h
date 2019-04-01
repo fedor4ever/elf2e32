@@ -36,7 +36,7 @@ struct E32EpocExpSymInfoHdr
     int32_t iSize=0;      // size of this Table
     int16_t iFlags=0;
     int16_t iSymCount=0;     // number of symbols
-    int32_t iSymbolTblOffset=0;   // start of the symbol table - offset from byte 0 of this header
+    const int32_t iSymbolTblOffset=sizeof(E32EpocExpSymInfoHdr);   // offset of this header to section with values from Elf32_Addr::st_value
     int32_t iStringTableSz=0;    // size of the string table
     int32_t iStringTableOffset=0;   // start of the string table having names of the symbols - offset from byte 0 of this header
     int32_t iDllCount=0;     // Number of dependent DLLs

@@ -44,6 +44,9 @@ Symbols DefFile::GetSymbols(const char *defFile)
 {
 	ReadDefFile(defFile);
 	ParseDefFile();
+
+	if(iSymbols.empty())
+        throw Elf2e32Error(EMPTYFILEREADING, defFile);
 	return iSymbols;
 }
 
@@ -101,13 +104,14 @@ void DefFile::ParseDefFile()
     {
         if(str.find("NONAME") != string::npos)
         {
-            Symbol aSymbol("", SymbolTypeCode);
+            Symbol sym("", SymbolTypeCode);
             Trim(str);
             Tokenizer(str, LineNum);
             int ordinalNo = iSymbol->OrdNum();
             if (ordinalNo != PreviousOrdinal+1)
             {
-                throw DEFFileError(ORDINALSEQUENCEERROR, (char*)iFileName.c_str(), LineNum, (char*)aSymbol.SymbolName());
+                throw DEFFileError(ORDINALSEQUENCEERROR, (char*)iFileName.c_str(),
+                                   LineNum, (char*)sym.SymbolName());
             }
 
             PreviousOrdinal = ordinalNo;
@@ -212,6 +216,9 @@ void DefFile::WriteDefFile(const char *fileName, const Symbols& newSymbols)
     fs.open(fileName, std::fstream::out | std::fstream::trunc);
     if(!fs.is_open())
         throw Elf2e32Error(FILEOPENERROR,fileName);
+
+    if(newSymbols.empty())
+        throw Elf2e32Error(EMPTYFILEWRITING, fileName);
 
     bool newSymbol = false;
     fs << "EXPORTS\n";
