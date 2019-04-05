@@ -31,16 +31,24 @@
     #define E32IMAGEHEADER_TRACE(_t)
 #endif // E32IMAGEHEADER_TRACE
 
+/** This holds info for entire symname lookup section
+
+Consist from 4 subsections in strict order:
+--section header itself - E32EpocExpSymInfoHdr
+--address table for exported symbols. See Elf32_Sym::Elf32_Sym
+--offset table to function names, every value points to start of function name
+--8 byte char array exported function names
+*/
 struct E32EpocExpSymInfoHdr
 {
-    int32_t iSize=0;      // size of this Table
+    int32_t iSize=0;      /// \details size of entire symname lookup section
     int16_t iFlags=0;
-    int16_t iSymCount=0;     // number of symbols
-    const int32_t iSymbolTblOffset=sizeof(E32EpocExpSymInfoHdr);   // offset of this header to section with values from Elf32_Addr::st_value
-    int32_t iStringTableSz=0;    // size of the string table
-    int32_t iStringTableOffset=0;   // start of the string table having names of the symbols - offset from byte 0 of this header
-    int32_t iDllCount=0;     // Number of dependent DLLs
-    int32_t iDepDllZeroOrdTableOffset=0; // offset of the DLL dependency table - offset from byte 0 of this header.
+    int16_t iSymCount=0;     /// \details number of symbols
+    const int32_t iSymbolTblOffset=sizeof(E32EpocExpSymInfoHdr);   /// \details points to address table for exported symbols. See Elf32_Sym::Elf32_Sym
+    int32_t iStringTableSz=0;    /// \details size of the string table in bytes
+    int32_t iStringTableOffset=0;   /// \details offset of the string table having names of the symbols - begins from byte 0 of this header
+    int32_t iDllCount=0;            /// \details Number of dependent DLLs
+    int32_t iDepDllZeroOrdTableOffset=0; /// \details offset of the DLL dependency table - begins from byte 0 of this header.
 };
 
 struct E32RelocSection
