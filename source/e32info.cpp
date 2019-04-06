@@ -426,12 +426,10 @@ void E32Info::SymbolInfo()
 		return;
 
     char *symTblBase = (char*)symInfoHdr;
-    uint32_t *aSymAddrTbl = (uint32_t*)(symTblBase + symInfoHdr->iSymbolTblOffset);
-    char *aSymNameTbl = (char*)(aSymAddrTbl + symInfoHdr->iSymCount);
+    uint32_t *symAddrTbl = (uint32_t*)(symTblBase + symInfoHdr->iSymbolTblOffset);
+    char *symNameTbl = (char*)(symAddrTbl + symInfoHdr->iSymCount);
 
-    printf("\n");
-
-	printf("\n\n\t\tSymbol Info\n");
+	printf("\n\n\n\t\tSymbol Info\n");
 	if(symInfoHdr->iSymCount)
 	{
         char *strTable = symTblBase + symInfoHdr->iStringTableOffset;
@@ -444,83 +442,84 @@ void E32Info::SymbolInfo()
 		{
 			if(symInfoHdr->iFlags & 1)
 			{
-				uint32_t* offset = ((uint32_t*)aSymNameTbl+i);
+				uint32_t* offset = ((uint32_t*)symNameTbl+i);
 				nameOffset = (*offset << 2);
 				symbolName = strTable + nameOffset;
 			}
 			else
 			{
-				uint16_t* offset = ((uint16_t*)aSymNameTbl+i);
+				uint16_t* offset = ((uint16_t*)symNameTbl+i);
 				nameOffset = (*offset << 2);
 				symbolName = strTable + nameOffset;
 			}
-			printf("0x%08x \t%s\t\n",aSymAddrTbl[i], symbolName);
+			printf("0x%08x \t%s\t\n",symAddrTbl[i], symbolName);
 		}
 	}
     else
 		printf("No Symbol exported\n");
     printf("\n\n");
 
-	if(symInfoHdr->iDllCount)
-	{
-	    char *iData = iE32->GetBufferedImage();
-		// The import table orders the dependencies alphabetically...
-		// We need to list out in the link order...
-		printf("%d Static dependencies found\n", symInfoHdr->iDllCount);
-		uint32_t* aDepTbl = (uint32_t*)((char*)symInfoHdr + symInfoHdr->iDepDllZeroOrdTableOffset);
-		uint32_t* aDepOffset =  (uint32_t*)((char*)aDepTbl - iData);
+	if(!symInfoHdr->iDllCount)
+        return;
 
-		const E32ImportSection* isection = iE32->GetImportSection();
+    char *e32Buf = iE32->GetBufferedImage();
+    // The import table orders the dependencies alphabetically...
+    // We need to list out in the link order...
+    printf("%d Static dependencies found\n", symInfoHdr->iDllCount);
+    uint32_t* aDepTbl = (uint32_t*)((char*)symInfoHdr + symInfoHdr->iDepDllZeroOrdTableOffset);
+    uint32_t* aDepOffset =  (uint32_t*)((char*)aDepTbl - e32Buf);
 
-		/* The import table has offsets to the location (in code section) where the
-		 * import is required. For dependencies pointed by 0th ordinal, this offset
-		 * must be same as the offset of the dependency table entry (relative to
-		 * the code section).
-		 */
-		for(int aDep = 0; aDep < symInfoHdr->iDllCount; aDep++)
-		{
-			const E32ImportBlock* b = (const E32ImportBlock*)(isection + 1);
-			bool aZerothFound = false;
-			for (int32_t d=0; d<iHdr1->iDllRefTableCount; d++)
-			{
-				char* dllname = iE32->GetDLLName(b->iOffsetOfDllName);
-				int32_t n = b->iNumberOfImports;
+    const E32ImportSection* isection = iE32->GetImportSection();// return;
 
-				const uint32_t* p = b->Imports()+ (n - 1);//start from the end of the import table
-				uint32_t impfmt = ImpFmtFromFlags(iHdr1->iFlags);;
-				if (impfmt == KImageImpFmt_ELF)
-				{
-					while (n--)
-					{
-						uint32_t impd_offset = *p--;
-						uint32_t impd = *(uint32_t*)(iData + iHdr1->iCodeOffset + impd_offset);
-						uint32_t ordinal = impd & 0xffff;
+    /* The import table has offsets to the location (in code section) where the
+     * import is required. For dependencies pointed by 0th ordinal, this offset
+     * must be same as the offset of the dependency table entry (relative to
+     * the code section).
+     */
+    for(int aDep = 0; aDep < symInfoHdr->iDllCount; aDep++)
+    {
+        const E32ImportBlock* b = (const E32ImportBlock*)(isection + 1);
+        bool aZerothFound = false;
+        for (int32_t d=0; d<iHdr1->iDllRefTableCount; d++)
+        {
+            char* dllname = iE32->GetDLLName(b->iOffsetOfDllName);
+            int32_t n = b->iNumberOfImports;
 
-						if (ordinal == 0 )
-						{
-							if( impd_offset == (*aDepOffset - iHdr1->iCodeOffset))
-							{
-								/* The offset in import table is same as the offset of this
-								 * dependency entry
-								 */
-								printf("\t%s\n", dllname);
-								aZerothFound = true;
-							}
-							break;
-						}
-					}
-				}
-				if(aZerothFound)
-					break;
+            const uint32_t* p = b->Imports()+ (n - 1);//start from the end of the import table
+            uint32_t impfmt = ImpFmtFromFlags(iHdr1->iFlags);;
+            if (impfmt == KImageImpFmt_ELF)
+            {
+                while (n--)
+                {
+                    uint32_t impd_offset = *p--;
+                    uint32_t impd = *(uint32_t*)(e32Buf + iHdr1->iCodeOffset + impd_offset);
+                    uint32_t ordinal = impd & 0xffff;
 
-				b = b->NextBlock(impfmt);
-			}
-			if(!aZerothFound)
-				printf("!!Invalid dependency listed at %d\n",aDep );
+                    if (ordinal == 0 )
+                    {
+                        if( impd_offset == (uint32_t)((char*)aDepOffset - iHdr1->iCodeOffset))
+                        {
+                            /* The offset in import table is same as the offset of this
+                             * dependency entry
+                             */
+                            printf("\t%s\n", dllname);
+                            aZerothFound = true;
+                        }
+                        break;
+                    }
+                }
+            }
+            if(aZerothFound)
+                break;
 
-			aDepOffset++;
-		}
-	}
+            b = b->NextBlock(impfmt);
+        }
+        if(!aZerothFound)
+            printf("!!Invalid dependency listed at %d\n",aDep );
+
+        aDepOffset++;
+    }
+
 }
 
 /** \brief This function prints in hex
@@ -582,15 +581,15 @@ void E32Info::PrintHexData(void *pos, size_t length)
 
 void E32Info::Run()
 {
-    if(iParam->E32Input())
-    {
-        iE32File = iParam->E32Input();
-        iE32 = new E32Parser(iE32File);
-        printf("E32ImageFile \'%s\'\n", iE32File);
-        iHdr1 = iE32->GetFileLayout();
+    iE32File = iParam->E32Input();
+    if(!iE32File)
+        return;
+    printf("E32ImageFile \'%s\'\n", iE32File);
 
-        ValidateE32Image(iE32->GetBufferedImage(), iE32->GetFileSize());
-    }
+    iE32 = new E32Parser(iE32File);
+    iHdr1 = iE32->GetFileLayout();
+
+    ValidateE32Image(iE32->GetBufferedImage(), iE32->GetFileSize());
 
     char c;
     while((c = *iFlags++))

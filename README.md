@@ -36,7 +36,6 @@ If you wish add some new tricks for E32 Image target use new modules:
 
 ## Known issues:
  - option "--namedlookup" produce slightly different binary in comparison with others
- - option "--dump=t" crash app
 
 ## Build instruction
 ### Code block users can import and build.
