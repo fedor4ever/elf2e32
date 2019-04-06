@@ -225,9 +225,9 @@ size_t E32Parser::GetFileSize() const
     return iE32Size;
 }
 
-char* E32Parser::GetE32RelocSection(uint32_t offSet)
+E32RelocSection* E32Parser::GetRelocSection(uint32_t offSet)
 {
-    return iBufferedFile + offSet;
+    return (E32RelocSection*)(iBufferedFile + offSet);
 }
 
 E32ImportSection *E32Parser::GetImportSection() const

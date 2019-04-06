@@ -52,7 +52,7 @@ class E32Parser
         int32_t UncompressedFileSize() const;
         size_t GetFileSize() const;
         int32_t GetExportDescription();
-        char *GetE32RelocSection(uint32_t offSet);
+        E32RelocSection *GetRelocSection(uint32_t offSet);
     private:
         void ReadFile();
         void ParseExportBitMap();

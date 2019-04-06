@@ -111,7 +111,7 @@ void E32Info::HeaderInfo()
 
 
     if (flags & KImageCodeUnpaged)
-			printf("Code Paging : Unpaged\n");
+        printf("Code Paging : Unpaged\n");
     else if (flags & KImageCodePaged)
         printf("Code Paging : Paged\n");
     else
@@ -125,12 +125,12 @@ void E32Info::HeaderInfo()
     else
         printf("Data Paging : Default\n");
 
-    if (iHdr1->iFlags & KImageDebuggable)
+    if (flags & KImageDebuggable)
         printf("Debuggable : True\n");
     else
         printf("Debuggable : False\n");
 
-    if (iHdr1->iFlags & KImageSMPSafe)
+    if (flags & KImageSMPSafe)
         printf("SMP Safe : True\n");
     else
         printf("SMP Safe : False\n");
@@ -183,18 +183,19 @@ void E32Info::HeaderInfo()
     uint32_t mv = iHdr1->iModuleVersion;
     printf("Module Version: %u.%u\n", mv>>16, mv&0xffff);
 
-    uint32_t impfmt = ImpFmtFromFlags(flags);
-    if (impfmt == KImageImpFmt_PE)
+    switch(ImpFmtFromFlags(flags))
     {
+    case KImageImpFmt_PE:
         printf("Imports are PE-style\n");
-    }
-    else if (impfmt == KImageImpFmt_ELF)
-    {
+        break;
+    case KImageImpFmt_ELF:
         printf("Imports are ELF-style\n");
-    }
-    else if (impfmt == KImageImpFmt_PE2)
-    {
+        break;
+    case KImageImpFmt_PE2:
         printf("Imports are PE-style without redundant ordinal lists\n");
+        break;
+    default:
+        break;
     }
 
     /// TODO (Administrator#1#09/11/18): Print right message for pre-9 binaries
@@ -227,8 +228,7 @@ void E32Info::HeaderInfo()
 
     if (iHdr1->iCodeRelocOffset)
     {
-        E32RelocSection *r=(E32RelocSection *)(iE32->GetBufferedImage() +
-                                               iHdr1->iCodeRelocOffset);
+        E32RelocSection *r = iE32->GetRelocSection(iHdr1->iCodeRelocOffset);
         printf(" %06x %06x", iHdr1->iCodeRelocOffset, r->iNumberOfRelocs);
     }
     else
@@ -241,8 +241,7 @@ void E32Info::HeaderInfo()
 
     if (iHdr1->iDataRelocOffset)
     {
-        E32RelocSection *r=(E32RelocSection *)(iE32->GetBufferedImage() +
-                                               iHdr1->iDataRelocOffset);
+        E32RelocSection *r = iE32->GetRelocSection(iHdr1->iDataRelocOffset);
         printf(" %06x %06x", iHdr1->iDataRelocOffset, r->iNumberOfRelocs);
     }
     printf("\n");
@@ -332,9 +331,9 @@ void E32Info::CodeSection()
     printf("\nCode (text size=%08x)\n", iHdr1->iTextSize);
     PrintHexData(iE32->GetBufferedImage() + iHdr1->iCodeOffset, iHdr1->iCodeSize);
 
-    char *a = iE32->GetE32RelocSection(iHdr1->iCodeRelocOffset);
+    E32RelocSection *a = iE32->GetRelocSection(iHdr1->iCodeRelocOffset);
     if (iHdr1->iCodeRelocOffset)
-        DumpRelocs(a);
+        DumpRelocs((char *)a);
 }
 
 void E32Info::DataSection()
@@ -342,9 +341,9 @@ void E32Info::DataSection()
     printf("\nData\n");
     PrintHexData(iE32->GetBufferedImage() + iHdr1->iDataOffset, iHdr1->iDataSize);
 
-    char *a = iE32->GetE32RelocSection(iHdr1->iDataRelocOffset);
+    E32RelocSection *a = iE32->GetRelocSection(iHdr1->iDataRelocOffset);
     if (iHdr1->iDataRelocOffset)
-        DumpRelocs(a);
+        DumpRelocs((char *)a);
 }
 
 void E32Info::ExportTable()
@@ -369,7 +368,7 @@ void E32Info::ImportTableInfo()
     if(!iHdr1->iImportOffset)
         return;
 
-    char *iData = iE32->GetBufferedImage() + iHdr1->iCodeOffset;
+    char *impTable = iE32->GetBufferedImage() + iHdr1->iCodeOffset;
 
     const E32ImportSection* section = iE32->GetImportSection();
     uint32_t* iat = (uint32_t*)iE32->GetImportAddressTable();
@@ -389,7 +388,7 @@ void E32Info::ImportTableInfo()
             while (n--)
             {
                 uint32_t impd_offset = *p++;
-                uint32_t impd = *(uint32_t*)(iData + impd_offset);
+                uint32_t impd = *(uint32_t*)(impTable + impd_offset);
                 uint32_t ordinal = impd & 0xffff;
                 uint32_t offset = impd >> 16;
 
@@ -408,17 +407,8 @@ void E32Info::ImportTableInfo()
     }
 }
 
-/// TODO (Administrator#1#09/14/18): Investigate how creates data for symbolic lookup
 void E32Info::SymbolInfo()
 {
-    printf("***************************************************\n");
-    printf("***************************************************\n");
-    printf("**********         WARNING!!!           ***********\n");
-    printf("**********  That function is broken!!!  ***********\n");
-    printf("**********         Do not use!!!        ***********\n");
-    printf("***************************************************\n");
-    printf("***************************************************\n");
-
     if(!(iHdr1->iFlags & KImageNmdExpData))
         return;
     E32EpocExpSymInfoHdr *symInfoHdr = iE32->GetEpocExpSymInfoHdr();
@@ -466,8 +456,8 @@ void E32Info::SymbolInfo()
     // The import table orders the dependencies alphabetically...
     // We need to list out in the link order...
     printf("%d Static dependencies found\n", symInfoHdr->iDllCount);
-    uint32_t* aDepTbl = (uint32_t*)((char*)symInfoHdr + symInfoHdr->iDepDllZeroOrdTableOffset);
-    uint32_t* aDepOffset =  (uint32_t*)((char*)aDepTbl - e32Buf);
+    uint32_t* depTbl = (uint32_t*)((char*)symInfoHdr + symInfoHdr->iDepDllZeroOrdTableOffset);
+    uint32_t* depOffset =  (uint32_t*)((char*)depTbl - e32Buf);
 
     const E32ImportSection* isection = iE32->GetImportSection();// return;
 
@@ -497,7 +487,7 @@ void E32Info::SymbolInfo()
 
                     if (ordinal == 0 )
                     {
-                        if( impd_offset == (uint32_t)((char*)aDepOffset - iHdr1->iCodeOffset))
+                        if( impd_offset == (uint32_t)((char*)depOffset - iHdr1->iCodeOffset))
                         {
                             /* The offset in import table is same as the offset of this
                              * dependency entry
@@ -517,7 +507,7 @@ void E32Info::SymbolInfo()
         if(!aZerothFound)
             printf("!!Invalid dependency listed at %d\n",aDep );
 
-        aDepOffset++;
+        depOffset++;
     }
 
 }

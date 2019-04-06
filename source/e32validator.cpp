@@ -416,7 +416,7 @@ int32_t E32Validator::ValidateRelocations(uint32_t offset, uint32_t sectionSize)
 		return KErrNone; // no relocations
 
     // read section header (ValidateHeader has alread checked this is OK)...
-	E32RelocSection* sectionHeader = (E32RelocSection*)iParser->GetE32RelocSection(offset);
+	E32RelocSection* sectionHeader = iParser->GetRelocSection(offset);
 	int32_t size = sectionHeader->iSize;
 	int32_t relocsRemaining = sectionHeader->iNumberOfRelocs;
 	E32IMAGEHEADER_TRACE(("E32RelocSection 0x%x %d\n",size,relocsRemaining));
