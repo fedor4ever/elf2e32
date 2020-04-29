@@ -27,10 +27,11 @@
 #include <cassert>
 #include <iostream>
 #ifndef __LINUX__
-    #include <io.h>
+    #include <sys/io.h>
 #endif
 #include <time.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "h_ver.h"
 #include "e32flags.h"

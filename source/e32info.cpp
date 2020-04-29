@@ -487,7 +487,7 @@ void E32Info::SymbolInfo()
 
                     if (ordinal == 0 )
                     {
-                        if( impd_offset == (uint32_t)((char*)depOffset - iHdr1->iCodeOffset))
+                        if( impd_offset == *(uint32_t*)((char*)depOffset - iHdr1->iCodeOffset))
                         {
                             /* The offset in import table is same as the offset of this
                              * dependency entry
