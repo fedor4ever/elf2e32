@@ -1341,12 +1341,10 @@ char* E32ImageFile::CreateSymbolInfo(size_t aBaseOffset)
 
 void E32ImageFile::SetSymInfo(E32EpocExpSymInfoHdr& aSymInfo)
 {
-	uint32 symSize = sizeof(E32EpocExpSymInfoHdr);
-	memset(&aSymInfo, 0, symSize);
-
 	uint16 aNSymbols = (uint16) iSymAddrTab.size();
 	aSymInfo.iSymCount = aNSymbols;
-	aSymInfo.iSymbolTblOffset = symSize;
+
+	uint32 symSize = sizeof(E32EpocExpSymInfoHdr);
 	symSize += aNSymbols * sizeof(uint32); // Symbol addresses
 	TUint aNameTabSz = iSymbolNames.size();
 	TInt sizeofNames;
