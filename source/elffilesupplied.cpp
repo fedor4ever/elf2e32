@@ -81,7 +81,6 @@ void ElfFileSupplied::ReadElfFile()
 {
     if(iManager->ElfInput().empty())
         return;
-	iReader->Read();
 	iReader->ProcessElfFile();
 }
 

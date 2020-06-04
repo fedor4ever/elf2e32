@@ -83,10 +83,10 @@ public:
 	ElfExports::Exports& GetExportsInOrdinalOrder();
 	Elf32_Sym* LookupStaticSymbol(const char * name);
 private:
+    void Read();
     char*  iMemBlock = nullptr;
 
 public:
-    void Read();
 	Symbols GetElfSymbols();
 	PLUINT32 ProcessElfFile();
 public:

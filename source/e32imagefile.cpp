@@ -278,7 +278,7 @@ void E32ImageFile::ProcessImports()
 	vector<Elf32_Word> aImportSection;
 
 	// This is the 'E32ImportSection' header - fill with 0 for the moment
-	aImportSection.push_back(0);
+	aImportSection.push_back(0); // E32ImportSection::iSize = 0
 
 	if( namedLookup ) {
 		// These are the 0th ordinals imported into the import table, one
@@ -303,12 +303,8 @@ void E32ImageFile::ProcessImports()
 
 		aImportSection.push_back(nImports);
 
-		size_t aSize;
-		Elf32_Ehdr * aElfFile = nullptr;
-		ReadInputELFFile(aDSO, aSize, aElfFile);
-
-		ElfImage aElfImage(iElfImage->iElfInput);
-		aElfImage.ProcessElfFile(aElfFile);
+		ElfImage aElfImage(aDSO);
+		aElfImage.ProcessElfFile();
 
 		for(auto aReloc: imports)
 		{
@@ -319,9 +315,7 @@ void E32ImageFile::ProcessImports()
 			try
 			{
 				if (iElfImage->SegmentType(aReloc->iAddr) != ESegmentRO)
-				{
 					throw Elf2e32Error(ILLEGALEXPORTFROMDATASEGMENT, aSymName, iElfImage->iElfInput);
-				}
 			}
 			/**This catch block introduced here is to avoid deleting partially constructed object(s).
 			Otherwise global catch block will delete the partially constructed object(s) and the tool will crash.
@@ -354,8 +348,6 @@ void E32ImageFile::ProcessImports()
 			aImportSection.push_back(0);
 		}
 		idx++;
-
-		delete [] ((char*)aElfFile);
 	}
 
 	assert(importSectionSize == aImportSection.size() * sizeof(Elf32_Word));
@@ -416,24 +408,6 @@ string E32ImageFile::FindDSO(string aName)
 		}
 	}
 	throw Elf2e32Error(DSONOTFOUNDERROR, aDSOPath);
-}
-
-void E32ImageFile::ReadInputELFFile(string aName, size_t & aFileSize, Elf32_Ehdr * & aELFFile )
-{
-	ifstream input(aName, ifstream::binary|ifstream::in);
-	if (input.is_open())
-	{
-		input.seekg(0,ios::end);
-		aFileSize = (unsigned int) input.tellg();
-		input.seekg(0,ios::beg);
-		aELFFile = (Elf32_Ehdr *)new char [aFileSize];
-		input.read((char *)aELFFile, aFileSize);
-		input.close();
-	}
-	else
-	{
-		throw Elf2e32Error(FILEOPENERROR, aName);
-	}
 }
 
 /**

@@ -98,8 +98,6 @@ class E32ImageFile {
 
         void GenerateE32Image();
 
-        void ReadInputELFFile(string aName, size_t & aFileSize, Elf32_Ehdr * & aELFFile );
-
         void ProcessImports();
         void ProcessRelocations();
 
