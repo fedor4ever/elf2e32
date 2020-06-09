@@ -65,7 +65,7 @@ public:
 
 	void CreateExportBitMap();
 	size_t GetNumExports();
-	char * GetExportTable();
+	PLUINT32* GetExportTable();
 
 	PLUINT16 GetExportDescSize();
 	PLUINT8 GetExportDescType();

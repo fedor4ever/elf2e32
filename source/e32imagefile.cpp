@@ -714,7 +714,6 @@ void E32ImageFile::ComputeE32ImageLayout()
 		iHdr->iDataRelocOffset = iChunks.GetOffset();
 		iChunks.AddChunk(iDataRelocs, iDataRelocsSize, iHdr->iDataRelocOffset, "Data Relocs");
 	}
-
 	iLayoutDone = true;
 }
 
@@ -1213,7 +1212,7 @@ void E32ImageFile::ProcessSymbolInfo()
 	iElfImage->AddToLocalRelocations(rel);
 
 	elfAddr += iTable->GetExportTableSize();// aPlace now points to the symInfo
-	uint32 *zerothOrd = (uint32*)iUseCase->GetExportTable();
+	uint32 *zerothOrd = iUseCase->GetExportTable();
 	*zerothOrd = elfAddr;
 	elfAddr += sizeof(E32EpocExpSymInfoHdr);// aPlace now points to the symbol address
 											// which is just after the syminfo header.

@@ -504,9 +504,9 @@ Function to get export table
 @internalComponent
 @released
 */
-char * ElfFileSupplied::GetExportTable()
+uint32* ElfFileSupplied::GetExportTable()
 {
-	return (char *)iExportTable.GetExportTable();
+	return iExportTable.GetExportTable();
 }
 
 /**

@@ -452,7 +452,6 @@ This function processes the dynamic table.
 PLUINT32 ElfImage::ProcessDynamicEntries(){
 
 	PLUINT32 aIdx = 0;
-	bool aSONameFound = false;
 	bool aPltRelTypeSeen = false, aJmpRelSeen = false;
 	list<PLUINT32>	aNeeded;
 	Elf32_Dyn *aDyn = ELF_ENTRY_PTR(Elf32_Dyn, iElfHeader, iDynSegmentHdr->p_offset);
@@ -481,7 +480,6 @@ PLUINT32 ElfImage::ProcessDynamicEntries(){
 			iRelaEntSize = aDyn[aIdx].d_val;
 			break;
 		case DT_SONAME:
-			aSONameFound = true;
 			iSONameOffset = aDyn[aIdx].d_val;
 			break;
 		case DT_REL:
@@ -569,7 +567,7 @@ PLUINT32 ElfImage::ProcessDynamicEntries(){
 	}
 
 	//String table is found, so get the strings...
-	if(aSONameFound) {
+	if(iSONameOffset) {
 		iSOName = ELF_ENTRY_PTR(char, iStringTable, iSONameOffset);
 	}
 
@@ -658,6 +656,10 @@ void ElfImage::ProcessVerInfo() {
 		}
 		aNeed = ELF_ENTRY_PTR(Elf32_Verneed, aNeed, aNeed->vn_next);
 	}
+	for(int i = 0; i < aSz; i++)
+    {
+        auto x = iVerInfo[i];
+    }
 }
 
 /**
@@ -701,7 +703,7 @@ void ElfImage::ProcessRelocations(T *aElfRel, size_t aSize){
 			ElfRelocation *aRel = nullptr;
 			if(aImported)
 			{
-				aRel = new ElfRelocation(this, aElfRel->r_offset, aAddend,
+				aRel = new ElfRelocation(this, tmp.r_offset, aAddend,
 						aSymIdx, aType, &tmp);
 				AddToImports(aRel);
 			}
