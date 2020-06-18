@@ -140,10 +140,8 @@ Destructor to close log file if logging is enabled and to clear the messaged.
 */
 Message::~Message()
 {
-    if(iLogging)
-    {
+    if(iLogPtr)
 		fclose(iLogPtr);
-    }
 	iMessage.clear();
 }
 
@@ -209,8 +207,7 @@ Message to be displayed
 */
 void Message::Output(const string &aInfo)
 {
-
-    if (iLogging)
+    if (iLogPtr)
     {
 		fputs(aInfo.c_str(),iLogPtr);
 		fputs("\n",iLogPtr);
@@ -312,17 +309,11 @@ void Message::StartLogging(char *aFileName)
 {
 	FILE *fptr=nullptr;
 	string logFile(aFileName);
-
 	// open file for log etc.
 	if((fptr=fopen(logFile.c_str(), "w"))==NULL)
-	{
-		ReportMessage(WARNING, FILEOPENERROR,aFileName);
-	}
+		ReportMessage(WARNING, FILEOPENERROR, aFileName);
 	else
-	{
-	    iLogging = true;
-		iLogPtr=fptr;
-	}
+		iLogPtr = fptr;
 }
 
 /**
@@ -336,19 +327,13 @@ Name of the Message file to be dumped
 void Message::CreateMessageFile(char *aFileName)
 {
 	FILE *fptr;
-
 	// open file for writing messages.
 	if((fptr=fopen(aFileName,"w"))==NULL)
-	{
-		ReportMessage(WARNING, FILEOPENERROR,aFileName);
-	}
+		ReportMessage(WARNING, FILEOPENERROR, aFileName);
 	else
 	{
 		for(int i=0;i<MessageArraySize;i++)
-		{
 			fprintf(fptr,"%d,%s\n",i+1,MessageArray[i].message);
-		}
-
 		fclose(fptr);
 	}
 }
@@ -378,7 +363,6 @@ void Message::InitializeMessages(char *aFileName)
 		rewind(fptr);
 
 		char *messageEntries= new char[fileSize+2];
-
 		//Getting whole file in memory
 		fread(messageEntries, fileSize, 1, fptr);
 
@@ -401,9 +385,7 @@ void Message::InitializeMessages(char *aFileName)
 			int lineLength=strlen(lineToken);
 
 			if( lineToken[strlen(lineToken)-1] == '\r' )
-			{
 				lineToken[strlen(lineToken)-1]='\0';
-			}
 
 			char *message=strchr(lineToken,',');
             char index[16];
@@ -416,9 +398,7 @@ void Message::InitializeMessages(char *aFileName)
 
 			lineToken=strtok(lineToken+lineLength+1,"\n");
 		}
-
 		delete[] messageEntries;
-
 	}
 	else
 	{
@@ -429,6 +409,13 @@ void Message::InitializeMessages(char *aFileName)
 			iMessage.insert(std::pair<int,char*>(MessageArray[i].index,errStr));
 		}
 	}
+}
+
+void Message::Log(const std::string& s, int x, int y, int z)
+{
+    if (iLogPtr)
+		fprintf(iLogPtr, s.c_str(), x, y, z);
+	printf(s.c_str(), x, y, z);
 }
 
 

@@ -718,17 +718,6 @@ void E32ImageFile::ComputeE32ImageLayout()
 }
 
 /**
-This function returns the byte offset in the E32 image from where the
-export table starts.
-@internalComponent
-@released
-*/
-size_t E32ImageFile::GetExportOffset()
-{
-	return iChunks.GetOffset() + 4;
-}
-
-/**
 This function returns E32 image size.
 @internalComponent
 @released
@@ -1205,10 +1194,12 @@ int DecompressPages(TUint8 * bytes, ifstream& is);
 
 void E32ImageFile::ProcessSymbolInfo()
 {
-	Elf32_Addr elfAddr = iTable->iExportTableAddress - 4;// This location points to 0th ord.
+    printf("Relocs: ProcessSymbolInfo() N1\n");
+    Elf32_Addr elfAddr = iTable->iExportTableAddress - 4;// This location points to 0th ord.
 	// Create a relocation entry for the 0th ordinal.
 	ElfLocalRelocation *rel = new ElfLocalRelocation(iElfImage, elfAddr, 0, 0, R_ARM_ABS32,
 		nullptr, ESegmentRO, nullptr, false);
+    printf("elfAddr: %08x\n", elfAddr);
 	iElfImage->AddToLocalRelocations(rel);
 
 	elfAddr += iTable->GetExportTableSize();// aPlace now points to the symInfo
@@ -1256,6 +1247,7 @@ void E32ImageFile::ProcessSymbolInfo()
 		elfAddr += sizeof(uint32);
 		iElfImage->AddToLocalRelocations(rel);
 	}
+	 printf("Relocs: ProcessSymbolInfo() N2\n");
 }
 
 char* E32ImageFile::CreateSymbolInfo(size_t aBaseOffset)
@@ -1304,6 +1296,7 @@ char* E32ImageFile::CreateSymbolInfo(size_t aBaseOffset)
 										// wrt the code section start
 	aOffset += aSymInf.iDepDllZeroOrdTableOffset; // This points to the ordinal zero offset table now
 	for(auto x: iImportTabLocations) {
+        printf("offSet: %08x\n", aOffset);
 		uint32 *aLocation = (aImportTab + x);
 		*aLocation = aOffset;
 		aOffset += sizeof(uint32);
@@ -1319,7 +1312,6 @@ void E32ImageFile::SetSymInfo(E32EpocExpSymInfoHdr& aSymInfo)
 
 	uint32 symSize = sizeof(E32EpocExpSymInfoHdr);
 	symSize += aNSymbols * sizeof(uint32); // Symbol addresses
-	TUint aNameTabSz = iSymbolNames.size();
 	TInt sizeofNames;
 
 	if( iSymNameOffset < 0xffff) {
@@ -1332,8 +1324,11 @@ void E32ImageFile::SetSymInfo(E32EpocExpSymInfoHdr& aSymInfo)
 	}
 	symSize += Align((aNSymbols * sizeofNames), sizeof(uint32)); // Symbol name offsets
 	aSymInfo.iStringTableOffset = symSize;
-	symSize += aNameTabSz; // Symbol names in string tab
+
+	TUint aNameTabSz = iSymbolNames.size();
 	aSymInfo.iStringTableSz = aNameTabSz;
+	symSize += aNameTabSz; // Symbol names in string tab
+
 	aSymInfo.iDepDllZeroOrdTableOffset = symSize;
 	aSymInfo.iDllCount = iNumDlls ;
 	symSize += iNumDlls * sizeof(uint32); // Dependency list - ordinal zero placeholder

@@ -125,15 +125,15 @@ class Message
 		void ReportMessage(int aMsgType, int aMsgIndex,...);
 		void CreateMessageFile(char *fileName);
 		void InitializeMessages(char *fileName);
+		void Log(const std::string &s, int x = 0, int y = 0, int z = 0);
     private:
 		Message(){}
 		Message(const Message& root) = delete;
 		Message& operator=(const Message&) = delete;
 		~Message();
 
-		bool iLogging = false;
 		char* iLogFileName = nullptr;
-		FILE *iLogPtr = nullptr;
+		FILE* iLogPtr = nullptr;
 		Map iMessage;
 };
 

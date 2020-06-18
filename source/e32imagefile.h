@@ -46,18 +46,16 @@ Class E32ImageChunkDesc for different sections in the E32 image.
 @internalComponent
 @released
 */
-class E32ImageChunkDesc {
-    public:
-        E32ImageChunkDesc(const char * aData, const size_t aSize, const size_t aOffset, const char * aDoc);
-        ~E32ImageChunkDesc();
-        void Init(char * aPlace);
-
-    public:
-        const char * iData;
-        const size_t iSize;
-        const size_t iOffset;
-        const char * iDoc;
-    };
+struct E32ImageChunkDesc {
+    E32ImageChunkDesc(const char * aData, const size_t aSize, const size_t aOffset,
+                      const char * aDoc);
+    ~E32ImageChunkDesc();
+    void Init(char * aPlace);
+    const char * iData;
+    const size_t iSize;
+    const size_t iOffset;
+    const char * iDoc;
+};
 
 typedef vector<E32ImageChunkDesc *> ChunkList;
 /**
@@ -112,7 +110,6 @@ class E32ImageFile {
 
         void ComputeE32ImageLayout();
         size_t GetE32ImageSize();
-        size_t GetExportOffset();
         void CreateExportBitMap();
         void AddExportDescription();
 
@@ -138,8 +135,7 @@ class E32ImageFile {
 
         bool WriteImage(const char * aName);
 
-    public:
-
+    private:
         char * iE32Image=nullptr;
         uint8 * iExportBitMap=nullptr;
         ElfImage * iElfImage=nullptr;
@@ -184,10 +180,8 @@ class E32ImageFile {
         char* CreateSymbolInfo(size_t aBaseOffset);
         void SetSymInfo(E32EpocExpSymInfoHdr& aSymInfo);
 
-    public:
-        TInt iSize=0;
-
     private:
+        TInt iSize=0;
         E32ExportTable *iTable=nullptr;
     };
 
