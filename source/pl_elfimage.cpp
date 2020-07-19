@@ -274,10 +274,7 @@ void ElfImage::ProcessVeneers()
 				{
 					ElfLocalRelocation *aRel = new ElfLocalRelocation(this, aOffset, 0, 0, R_ARM_NONE, nullptr,
                                     ESegmentRO, aSym, false, true);
-					if(aRel)
-					{
-					    AddToLocalRelocations(aRel);
-					}
+                    AddToLocalRelocations(aRel);
 				}
 			}
 		}
@@ -709,9 +706,9 @@ void ElfImage::ProcessRelocations(T *aElfRel, size_t aSize){
 			}
 			else
             {
-				 aRel = new ElfLocalRelocation(this, aElfRel->r_offset, aAddend,
+                aRel = new ElfLocalRelocation(this, aElfRel->r_offset, aAddend,
 						aSymIdx, aType, &tmp);
-				 AddToLocalRelocations((ElfLocalRelocation*)aRel);
+                AddToLocalRelocations((ElfLocalRelocation*)aRel);
 			}
 		}
 		aElfRel++;

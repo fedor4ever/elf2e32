@@ -129,7 +129,7 @@ void ElfFileSupplied::CreateExports()
 {
 	if (iReader->iExports || iManager->SymNamedLookup())
 	{
-		iExportTable.CreateExportTable(iReader);;
+		iExportTable.CreateExportTable(iReader);
 		CreateExportBitMap();
 	}
 }
@@ -417,7 +417,7 @@ E32ImageHeaderV * ElfFileSupplied::AllocateE32ImageHeader()
 		return new E32ImageHeaderV;
 	}
 
-	int nexp = GetNumExports();
+	int nexp = iExportTable.GetNumExports();
 
 	size_t memsz = (nexp + 7) >> 3;	// size of complete bitmap
 	size_t mbs = (memsz + 7) >> 3;	// size of meta-bitmap
@@ -469,12 +469,12 @@ Function to create export bitmap
 */
 void ElfFileSupplied::CreateExportBitMap()
 {
-	int nexp = GetNumExports();
+	int nexp = iExportTable.GetNumExports();
 	size_t memsz = (nexp + 7) >> 3;
 	iExportBitMap = new PLUINT8[memsz];
 	memset(iExportBitMap, 0xff, memsz);
 	// skip header
-	PLUINT32 * exports = ((PLUINT32 *)GetExportTable()) + 1;
+	PLUINT32* exports = iExportTable.GetExportTable() + 1;
 	PLUINT32 absentVal = iReader->EntryPointOffset() + iReader->GetROBase();
 	iNumAbsentExports = 0;
 	for (int i=0; i<nexp; ++i)
@@ -485,28 +485,6 @@ void ElfFileSupplied::CreateExportBitMap()
 			++iNumAbsentExports;
 		}
 	}
-}
-
-/**
-Function to get number of exports
-@return Number of exports in export table
-@internalComponent
-@released
-*/
-size_t ElfFileSupplied::GetNumExports()
-{
-	return iExportTable.GetNumExports();
-}
-
-/**
-Function to get export table
-@return Pointer to export table
-@internalComponent
-@released
-*/
-uint32* ElfFileSupplied::GetExportTable()
-{
-	return iExportTable.GetExportTable();
 }
 
 /**

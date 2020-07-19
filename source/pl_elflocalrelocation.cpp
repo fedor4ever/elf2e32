@@ -91,15 +91,11 @@ PLUINT16 ElfLocalRelocation::Fixup()
 {
 	if(!ExportTableReloc() && !iVeneerSymbol)
 	{
-		Elf32_Word * aLoc = iElfImage->GetFixupLocation(this, iAddr);
-		Elf32_Word aLocVal = * aLoc;
-
+		Elf32_Word* aLoc = iElfImage->GetFixupLocation(this, iAddr);
 		if (iRelType == R_ARM_ABS32 || iRelType == R_ARM_GLOB_DAT )
-		{
-
-			Elf32_Word aFixedVal = aLocVal + iSymbol->st_value;
-			*aLoc = aFixedVal;
-		}
+        {
+		    aLoc[0] += iSymbol->st_value;
+        }
 	}
 
 	ESegmentType aType;

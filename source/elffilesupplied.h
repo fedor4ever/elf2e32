@@ -64,8 +64,6 @@ public:
 	E32ImageHeaderV * AllocateE32ImageHeader();
 
 	void CreateExportBitMap();
-	size_t GetNumExports();
-	PLUINT32* GetExportTable();
 
 	PLUINT16 GetExportDescSize();
 	PLUINT8 GetExportDescType();

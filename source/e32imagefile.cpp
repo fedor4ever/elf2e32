@@ -623,7 +623,7 @@ void E32ImageFile::InitE32ImageHeader()
 	iHdr->iDataBase = iElfImage->GetRWBase();
 	iHdr->iDllRefTableCount = iNumDlls;
 	iHdr->iExportDirOffset = 0;
-	iHdr->iExportDirCount = iUseCase->GetNumExports();
+	iHdr->iExportDirCount = iTable->GetNumExports();
 	iHdr->iTextSize = iElfImage->GetROSize();
 	iHdr->iCodeOffset = 0;
 	iHdr->iDataOffset = 0;
@@ -736,12 +736,12 @@ with the entry point functions.
 */
 void E32ImageFile::CreateExportBitMap()
 {
-	int nexp = iUseCase->GetNumExports();
+	int nexp = iTable->GetNumExports();
 	size_t memsz = (nexp + 7) >> 3;
 	iExportBitMap = new uint8[memsz];
 	memset(iExportBitMap, 0xff, memsz);
 	// skip header
-	uint32 * exports = ((uint32 *)iUseCase->GetExportTable()) + 1;
+	uint32 * exports = iTable->GetExportTable() + 1;
 	uint32 absentVal = EntryPointOffset() + iElfImage->GetROBase();
 	iMissingExports = 0;
 	for (int i=0; i<nexp; ++i)
@@ -765,7 +765,7 @@ void E32ImageFile::AddExportDescription()
 	if (iMissingExports == 0)
 		return;	// nothing to do
 
-	int nexp = iUseCase->GetNumExports();
+	int nexp = iTable->GetNumExports();
 	size_t memsz = (nexp + 7) >> 3;	// size of complete bitmap
 	size_t mbs = (memsz + 7) >> 3;	// size of meta-bitmap
 	size_t nbytes = 0;
@@ -1194,17 +1194,16 @@ int DecompressPages(TUint8 * bytes, ifstream& is);
 
 void E32ImageFile::ProcessSymbolInfo()
 {
-    printf("Relocs: ProcessSymbolInfo() N1\n");
     Elf32_Addr elfAddr = iTable->iExportTableAddress - 4;// This location points to 0th ord.
 	// Create a relocation entry for the 0th ordinal.
 	ElfLocalRelocation *rel = new ElfLocalRelocation(iElfImage, elfAddr, 0, 0, R_ARM_ABS32,
 		nullptr, ESegmentRO, nullptr, false);
-    printf("elfAddr: %08x\n", elfAddr);
+
 	iElfImage->AddToLocalRelocations(rel);
 
 	elfAddr += iTable->GetExportTableSize();// aPlace now points to the symInfo
-	uint32 *zerothOrd = iUseCase->GetExportTable();
-	*zerothOrd = elfAddr;
+	uint32 *aZerothOrd = iTable->GetExportTable();
+	*aZerothOrd = elfAddr;
 	elfAddr += sizeof(E32EpocExpSymInfoHdr);// aPlace now points to the symbol address
 											// which is just after the syminfo header.
 	if(!iElfImage->iExports)
@@ -1247,7 +1246,6 @@ void E32ImageFile::ProcessSymbolInfo()
 		elfAddr += sizeof(uint32);
 		iElfImage->AddToLocalRelocations(rel);
 	}
-	 printf("Relocs: ProcessSymbolInfo() N2\n");
 }
 
 char* E32ImageFile::CreateSymbolInfo(size_t aBaseOffset)
