@@ -54,10 +54,7 @@ void E32ExportTable::CreateExportTable(ElfImage * aElfImage)
 	// before the entries themselves. So add 1 to number of exports
 	iNumExports = aExports.size();
 	size_t aSize = iNumExports + 1;
-	iSize = aSize * sizeof(MemAddr);
-
-	if(sizeof(MemAddr) == 8) // on windows sizeof(MemAddr) == 4, on MinGW - 8!
-        iSize/=2; // it generate same output as SDK tool
+	iSize = aSize * sizeof(uint32_t);
 
 	iTable = new uint32_t[aSize];
 	// Set up header
